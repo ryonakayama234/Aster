@@ -1,0 +1,23 @@
+2 + 3 = 5
+
+x + 3 = 8
+
+y = ax + b
+
+E = mc²
+
+P(x) = 0.5
+
+f(x) = x² + 2x + 1
+
+∑ x_i
+
+∂L/∂w
+
+softmax(x_i) = exp(x_i) / Σ_j exp(x_j)
+
+\frac{1}{2}
+
+\sum_{i=1}^{n} x_i
+
+\nabla_\theta L

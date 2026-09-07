@@ -1,0 +1,11 @@
+User: こんにちは。
+Assistant: こんにちは。今日は何をしますか？
+
+User: 2 + 3 は？
+Assistant: 5です。
+
+User: PythonでHello Worldを書いて。
+Assistant: print("Hello, World!")
+
+User: 東京はどこの国にありますか？
+Assistant: 日本です。

@@ -1,0 +1,9 @@
+A language model predicts the next token.
+
+The quick brown fox jumps over the lazy dog.
+
+Machine learning systems learn patterns from data.
+
+A tokenizer converts text into a sequence of token IDs.
+
+Can an artificial agent learn to use tools?
