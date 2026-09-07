@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+.venv/
+
+# Secrets
+.env
+.env.*
+*.key
+
+# Editors / OS
+.vscode/
+.DS_Store
+
+# Aster corpus
+data/raw/
+data/canonical/
+data/holdout/
+
+# Generated artifacts
+artifacts/
+runs/
+reports/generated/
+
+# Model / training files
+*.pt
+*.pth
+*.ckpt
+*.safetensors
