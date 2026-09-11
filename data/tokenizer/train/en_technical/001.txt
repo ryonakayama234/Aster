@@ -1,0 +1,3 @@
+Neurons in an artificial neural network are usually arranged into layers, with information passing from the first layer (the input layer) through one or more intermediate layers to the final layer.
+
+Studies of the molecular basis for memory formation indicate that epigenetic mechanisms operating in neurons in the brain play a central role in determining this capability. 
