@@ -1,0 +1,8 @@
+{"name":"weather","arguments":{"city":"Hamamatsu","units":"metric"}}
+{"name":"fetch_url","arguments":{"url":"https://example.com/docs/api","timeout_seconds":10}}
+{"name":"save_file","arguments":{"path":"artifacts/tokenizer/report.json","overwrite":false}}
+{"name":"shell","arguments":{"command":"find data/tokenizer -type f | sort"}}
+{"name":"lookup","arguments":{"collection":"notes","key":"aster-tokenizer-v0"}}
+{"name":"weather","arguments":{"city":"Tokyo","date":"tomorrow"}}
+{"name":"fetch_url","arguments":{"url":"https://example.org/data?q=tokenizer&lang=ja"}}
+{"name":"save_file","arguments":{"path":"reports/evaluator-v0.txt","overwrite":true}}
