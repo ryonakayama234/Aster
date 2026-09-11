@@ -1,0 +1,10 @@
+{"name":"calculator","arguments":{"expression":"(12 + 8) * 3"}}
+{"name":"search","arguments":{"query":"byte pair encoding tokenizer"}}
+{"name":"read_file","arguments":{"path":"/home/aster/project/README.md"}}
+{"name":"list_files","arguments":{"directory":"data/samples","pattern":"*.txt"}}
+{"name":"python","arguments":{"code":"print(sum([2, 4, 6, 8]))"}}
+{"name":"write_note","arguments":{"title":"Tokenizer memo","content":"Compare tokens per byte on held-out data."}}
+{"name":"search","arguments":{"query":"Python pathlib rglob example","limit":5}}
+{"name":"calculator","arguments":{"expression":"2 ** 10"}}
+{"name":"read_file","arguments":{"path":"src/aster/tokenizer/bpe.py","start_line":1,"end_line":80}}
+{"name":"list_files","arguments":{"directory":"src/aster","pattern":"**/*.py"}}
