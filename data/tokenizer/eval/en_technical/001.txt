@@ -1,0 +1,6 @@
+A compiler translates source code into a representation that can be
+executed by a computer. The compilation process may include lexical
+analysis, parsing, optimization, and code generation.
+
+Modern operating systems manage memory, processes, files, and hardware
+resources while providing applications with a consistent interface.
