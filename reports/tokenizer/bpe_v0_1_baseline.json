@@ -1,0 +1,84 @@
+{
+  "name": "AsterTokenizer BPE v0.1 baseline",
+  "status": "freeze_candidate",
+  "training": {
+    "target_vocab_size": 300,
+    "actual_vocab_size": 300,
+    "merge_count": 44,
+    "min_pair_frequency": 2
+  },
+  "evaluation": {
+    "overall": {
+      "documents": 7,
+      "characters": 2399,
+      "utf8_bytes": 2939,
+      "tokens": 2261,
+      "tokens_per_character": 0.942476,
+      "tokens_per_byte": 0.769309,
+      "round_trip_rate": 1.0
+    },
+    "categories": {
+      "ja_prose": {
+        "characters": 109,
+        "utf8_bytes": 319,
+        "tokens": 242,
+        "tokens_per_character": 2.220183,
+        "tokens_per_byte": 0.758621,
+        "round_trip_rate": 1.0
+      },
+      "ja_dialogue": {
+        "characters": 83,
+        "utf8_bytes": 235,
+        "tokens": 162,
+        "tokens_per_character": 1.951807,
+        "tokens_per_byte": 0.689362,
+        "round_trip_rate": 1.0
+      },
+      "en_technical": {
+        "characters": 329,
+        "utf8_bytes": 329,
+        "tokens": 279,
+        "tokens_per_character": 0.848024,
+        "tokens_per_byte": 0.848024,
+        "round_trip_rate": 1.0
+      },
+      "code": {
+        "characters": 634,
+        "utf8_bytes": 634,
+        "tokens": 492,
+        "tokens_per_character": 0.776025,
+        "tokens_per_byte": 0.776025,
+        "round_trip_rate": 1.0
+      },
+      "math": {
+        "characters": 440,
+        "utf8_bytes": 551,
+        "tokens": 452,
+        "tokens_per_character": 1.027273,
+        "tokens_per_byte": 0.820327,
+        "round_trip_rate": 1.0
+      },
+      "tool_json": {
+        "characters": 654,
+        "utf8_bytes": 654,
+        "tokens": 445,
+        "tokens_per_character": 0.680428,
+        "tokens_per_byte": 0.680428,
+        "round_trip_rate": 1.0
+      },
+      "unicode_edge": {
+        "characters": 150,
+        "utf8_bytes": 217,
+        "tokens": 189,
+        "tokens_per_character": 1.26,
+        "tokens_per_byte": 0.870968,
+        "round_trip_rate": 1.0
+      }
+    }
+  },
+  "freeze_gate": {
+    "round_trip_rate_required": 1.0,
+    "round_trip_passed": true,
+    "note": "Performance metrics are recorded as a baseline, not yet used as hard pass/fail thresholds."
+  }
+}
