@@ -1,12 +1,13 @@
 import argparse
 import hashlib
 import json
+from collections.abc import Iterator
 from pathlib import Path
 
 from aster.corpus.schema import AsterRecord
 
 
-def iter_text_files(raw_dir: Path):
+def iter_text_files(raw_dir: Path) -> Iterator[Path]:
     """Yield UTF-8 text source files in deterministic path order."""
     for path in sorted(raw_dir.rglob("*.txt")):
         if path.is_file():
@@ -36,19 +37,21 @@ def canonicalize_directory(raw_dir: Path, output_path: Path) -> int:
     if not raw_dir.is_dir():
         raise NotADirectoryError(f"raw corpus directory not found: {raw_dir}")
 
-    records = [make_record(path, raw_dir) for path in iter_text_files(raw_dir)]
-
     output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    count = 0
     with output_path.open("w", encoding="utf-8", newline="\n") as file:
-        for record in records:
+        for path in iter_text_files(raw_dir):
+            record = make_record(path, raw_dir)
             line = json.dumps(
                 record.to_dict(),
                 ensure_ascii=False,
                 sort_keys=True,
             )
             file.write(line + "\n")
+            count += 1
 
-    return len(records)
+    return count
 
 
 def main() -> None:
