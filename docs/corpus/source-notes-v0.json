@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "updated_on": "2026-09-20",
+  "evidence": "User-provided mappings in this task; page opening checks where stated. No full-text equivalence or license clearance inferred.",
+  "default_usage": "reading_candidate_not_response_exemplar",
+  "default_usage_status": "proposal_pending_user_preference",
+  "grouping_note": "Batch groups are conservative provisional leakage boundaries, not claims of common original authorship. Split remains unset.",
+  "groups": [
+    {
+      "id": "article-calculemus",
+      "paths": [
+        "prose/ja/001.txt"
+      ],
+      "origin": "external_article",
+      "url": "https://theseus.hatenablog.com/entry/2026/09/12/221731",
+      "title": "ライプニッツの“Calculemus”の典拠について",
+      "verification": "page_opened_title_and_excerpt_consistent",
+      "group": "article-calculemus"
+    },
+    {
+      "id": "article-bsd",
+      "paths": [
+        "prose/ja/002.txt"
+      ],
+      "origin": "external_article",
+      "url": "https://tsujimotter.hatenablog.com/entry/BSD-conjecture-part1",
+      "title": "ミレニアム問題「BSD予想」の主張を1から理解したい！（ざっくり編）",
+      "verification": "page_opened_title_consistent",
+      "group": "article-bsd"
+    },
+    {
+      "id": "article-lean-trust",
+      "paths": [
+        "prose/ja/003.txt"
+      ],
+      "origin": "external_article",
+      "url": "https://qiita.com/kyamaz/items/7b38e5977dc97747d2d9",
+      "title": "『Lean で証明できた』は何を保証するのか？",
+      "verification": "page_opened_title_consistent",
+      "group": "article-lean-trust"
+    },
+    {
+      "id": "article-tex-lean",
+      "paths": [
+        "prose/ja/009.txt"
+      ],
+      "origin": "external_article",
+      "url": "https://zenn.dev/k16/articles/f468f28a08a764",
+      "title": "TeXから始めるLean言語",
+      "verification": "page_opened_title_consistent",
+      "group": "article-tex-lean"
+    },
+    {
+      "id": "article-adverbs",
+      "paths": [
+        "prose/ja/010.txt"
+      ],
+      "origin": "external_article",
+      "url": "https://hsjoihs.hatenablog.com/entry/2026/09/17/101650",
+      "title": "副詞誤訳シリーズ",
+      "verification": "page_opened_title_consistent",
+      "group": "article-adverbs"
+    },
+    {
+      "id": "memes-unknown",
+      "paths": [
+        "prose/ja/004.txt",
+        "prose/ja/005.txt",
+        "prose/ja/006.txt",
+        "prose/ja/007.txt",
+        "prose/ja/008.txt",
+        "prose/ja/011.txt",
+        "prose/ja/012.txt",
+        "prose/ja/013.txt",
+        "prose/ja/014.txt",
+        "prose/ja/015.txt",
+        "prose/ja/016.txt",
+        "prose/ja/017.txt",
+        "prose/ja/018.txt"
+      ],
+      "origin": "internet_meme",
+      "url": null,
+      "verification": "user_reported_original_unknown",
+      "group": "unresolved-memes-batch"
+    },
+    {
+      "id": "manga-transcripts",
+      "paths": [
+        "dialogue/ja/001.txt",
+        "dialogue/ja/002.txt",
+        "dialogue/ja/003.txt",
+        "dialogue/ja/004.txt",
+        "dialogue/ja/005.txt"
+      ],
+      "origin": "manga_transcription",
+      "url": null,
+      "verification": "user_reported_work_and_edition_unknown",
+      "group": "unresolved-manga-batch"
+    },
+    {
+      "id": "marshmallow-qa",
+      "paths": [
+        "dialogue/ja/006.txt",
+        "dialogue/ja/007.txt",
+        "dialogue/ja/008.txt",
+        "dialogue/ja/009.txt"
+      ],
+      "origin": "external_qa",
+      "url": "https://scrapbox.io/marshmallow-rm/",
+      "verification": "collection_opened_individual_pages_unknown",
+      "group": "marshmallow-qa-batch"
+    },
+    {
+      "id": "chatgpt-dialogue",
+      "paths": [
+        "dialogue/ja/010.txt",
+        "dialogue/ja/011.txt",
+        "dialogue/ja/013.txt",
+        "dialogue/ja/014.txt",
+        "dialogue/ja/015.txt"
+      ],
+      "origin": "user_ai_conversation",
+      "url": null,
+      "verification": "user_reported",
+      "group": "unresolved-chatgpt-sessions",
+      "participants": {
+        "question": "user",
+        "answer": "ChatGPT",
+        "model_version": null
+      }
+    },
+    {
+      "id": "x-dialogue",
+      "paths": [
+        "dialogue/ja/012.txt"
+      ],
+      "origin": "social_transcription",
+      "url": null,
+      "verification": "user_reported_post_unknown",
+      "group": "unresolved-x-dialogue"
+    }
+  ]
+}

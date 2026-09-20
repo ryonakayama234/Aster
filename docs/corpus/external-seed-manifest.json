@@ -1,0 +1,92 @@
+{
+  "status": "raw-inventory-only",
+  "retrieved_at": "2026-09-15T00:59:04.329831+00:00",
+  "sources": [
+    {
+      "name": "gsm8k",
+      "repository": "openai/grade-school-math",
+      "requested_ref": "master",
+      "revision": "3101c7d5072418e28b9008a6636bde82a006892c",
+      "files": [
+        {
+          "upstream_path": "LICENSE",
+          "local_path": "data/raw/pool/external-seed/gsm8k/LICENSE",
+          "url": "https://raw.githubusercontent.com/openai/grade-school-math/3101c7d5072418e28b9008a6636bde82a006892c/LICENSE",
+          "sha256": "86bbb73e855821d7c401912fd4bf82e34313e6e3b6fd6f909f2b6cc9e209a53b",
+          "bytes": 1062
+        },
+        {
+          "upstream_path": "README.md",
+          "local_path": "data/raw/pool/external-seed/gsm8k/README.md",
+          "url": "https://raw.githubusercontent.com/openai/grade-school-math/3101c7d5072418e28b9008a6636bde82a006892c/README.md",
+          "sha256": "27e1676d572f2289210170ff6dbb8c2ef7d9f6950c0f08c978ea8ee6b39dca29",
+          "bytes": 6112
+        },
+        {
+          "upstream_path": "grade_school_math/data/train.jsonl",
+          "local_path": "data/raw/pool/external-seed/gsm8k/grade_school_math/data/train.jsonl",
+          "url": "https://raw.githubusercontent.com/openai/grade-school-math/3101c7d5072418e28b9008a6636bde82a006892c/grade_school_math/data/train.jsonl",
+          "sha256": "17f347dc51477c50d4efb83959dbb7c56297aba886e5544ee2aaed3024813465",
+          "bytes": 4166206
+        }
+      ]
+    },
+    {
+      "name": "python-tutorial",
+      "repository": "python/cpython",
+      "requested_ref": "v3.13.0",
+      "revision": "60403a5409ff2c3f3b07dd2ca91a7a3e096839c7",
+      "files": [
+        {
+          "upstream_path": "LICENSE",
+          "local_path": "data/raw/pool/external-seed/python-tutorial/LICENSE",
+          "url": "https://raw.githubusercontent.com/python/cpython/60403a5409ff2c3f3b07dd2ca91a7a3e096839c7/LICENSE",
+          "sha256": "78b12c3a81360b357002334f0e70ea0e92eebf7a9b358805c03c48484945f3bb",
+          "bytes": 13809
+        },
+        {
+          "upstream_path": "Doc/license.rst",
+          "local_path": "data/raw/pool/external-seed/python-tutorial/Doc/license.rst",
+          "url": "https://raw.githubusercontent.com/python/cpython/60403a5409ff2c3f3b07dd2ca91a7a3e096839c7/Doc/license.rst",
+          "sha256": "fde6c4707ae1b5a637285ca44162602bd94fa388a6f6157f1e4aceac113b8bde",
+          "bytes": 55514
+        },
+        {
+          "upstream_path": "Doc/copyright.rst",
+          "local_path": "data/raw/pool/external-seed/python-tutorial/Doc/copyright.rst",
+          "url": "https://raw.githubusercontent.com/python/cpython/60403a5409ff2c3f3b07dd2ca91a7a3e096839c7/Doc/copyright.rst",
+          "sha256": "2f455e3bd119869bf01369ab852d87d11c9e67e5351a7ebc64ab2c0af344aff6",
+          "bytes": 451
+        },
+        {
+          "upstream_path": "Doc/tutorial/introduction.rst",
+          "local_path": "data/raw/pool/external-seed/python-tutorial/Doc/tutorial/introduction.rst",
+          "url": "https://raw.githubusercontent.com/python/cpython/60403a5409ff2c3f3b07dd2ca91a7a3e096839c7/Doc/tutorial/introduction.rst",
+          "sha256": "63064d9dbec912a6d0e89089b16544e5488fbdc06293be4fa8df3c64d37739f0",
+          "bytes": 18984
+        },
+        {
+          "upstream_path": "Doc/tutorial/controlflow.rst",
+          "local_path": "data/raw/pool/external-seed/python-tutorial/Doc/tutorial/controlflow.rst",
+          "url": "https://raw.githubusercontent.com/python/cpython/60403a5409ff2c3f3b07dd2ca91a7a3e096839c7/Doc/tutorial/controlflow.rst",
+          "sha256": "e5da06f2db7559a6539f9a8f48f3ceaa4395f82800160f48f8c4208f4be57c27",
+          "bytes": 40760
+        },
+        {
+          "upstream_path": "Doc/tutorial/datastructures.rst",
+          "local_path": "data/raw/pool/external-seed/python-tutorial/Doc/tutorial/datastructures.rst",
+          "url": "https://raw.githubusercontent.com/python/cpython/60403a5409ff2c3f3b07dd2ca91a7a3e096839c7/Doc/tutorial/datastructures.rst",
+          "sha256": "3c2b7a87519b3e7b1513f5fbb12c9d37ba715c402a6bf032f1b584d555eb979b",
+          "bytes": 24846
+        },
+        {
+          "upstream_path": "Doc/tutorial/errors.rst",
+          "local_path": "data/raw/pool/external-seed/python-tutorial/Doc/tutorial/errors.rst",
+          "url": "https://raw.githubusercontent.com/python/cpython/60403a5409ff2c3f3b07dd2ca91a7a3e096839c7/Doc/tutorial/errors.rst",
+          "sha256": "c1d8deb184bce4aa005a03407d62312a774e38dd62ba73802e5e8ace030ae34e",
+          "bytes": 24234
+        }
+      ]
+    }
+  ]
+}

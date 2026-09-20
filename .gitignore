@@ -20,11 +20,15 @@ __pycache__/
 data/raw/
 data/canonical/
 data/holdout/
+data/training/*/
 
 # Generated artifacts
 artifacts/
 runs/
 reports/generated/
+
+# Independently versioned Sites checkout
+/ui/
 
 # Model / training files
 *.pt

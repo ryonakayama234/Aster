@@ -1,0 +1,30 @@
+{
+  "schema_version": "aster-training-recipe-0",
+  "purpose": "pretrain-pilot-not-corpus-v0",
+  "canonical_build": "09242f8214673bb847af513d86936c8be001fad78579dda7f0dab8ca6d202d6b",
+  "seed": 20260920,
+  "allowed_origins": ["external_article", "user_ai_conversation", "external_dataset", "external_documentation"],
+  "train_byte_budgets": {"prose": 80000, "dialogue": 32000, "python": 56000, "math": 50000},
+  "split_overrides": {
+    "article-calculemus": "train",
+    "article-bsd": "dev",
+    "article-lean-trust": "train",
+    "article-tex-lean": "train",
+    "article-adverbs": "test",
+    "unresolved-chatgpt-sessions": "train",
+    "python-chapter:introduction": "train",
+    "python-chapter:controlflow": "train",
+    "python-chapter:datastructures": "dev",
+    "python-chapter:errors": "test"
+  },
+  "defer_paths": {
+    "data/raw/pool/dialogue/ja/014.txt": "検索・実行表示と回答本文の範囲を確認してから採用",
+    "data/raw/pool/dialogue/ja/015.txt": "コード・実行表示・回答本文の範囲を確認してから採用"
+  },
+  "notes": [
+    "抽出とBPEを観察するための先行実験。正式な配合ではない。",
+    "自然言語の候補をpretrainとして使用。SFTの応答模倣採用ではない。",
+    "tool領域は未採用。GSM8K公式trainからtrain/devのみ作る。",
+    "既存会話の独立性が不明なため同じgroupとしてtrainへ固定。対話の汎化評価はできない。"
+  ]
+}

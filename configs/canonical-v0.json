@@ -1,0 +1,10 @@
+{
+  "schema_version": "aster-canonical-0",
+  "adapters_by_origin": {
+    "external_article": "text_document",
+    "user_ai_conversation": "headed_conversation",
+    "external_dataset": "gsm8k",
+    "external_documentation": "rst_document"
+  },
+  "candidate_statuses": ["candidate_needs_review", "candidate_needs_transform"]
+}
