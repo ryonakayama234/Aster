@@ -7,11 +7,12 @@ from uuid import uuid4
 
 
 class RunLog:
-    def __init__(self, root: Path, kind: str, inputs: dict):
+    def __init__(self, root: Path, kind: str, inputs: dict, *, producer: str = "pipeline"):
         self.id = uuid4().hex
         self.path = root / "runs" / self.id
         self.path.mkdir(parents=True)
         self.seq = 0
+        self.producer = producer
         self.summary = {"schema_version": "aster-run-0", "run_id": self.id,
                         "kind": kind, "inputs": inputs, "status": "running"}
         self.event("started", inputs)
@@ -23,7 +24,7 @@ class RunLog:
     def event(self, kind, data):
         self.seq += 1
         event = {"schema_version": "aster-event-0", "run_id": self.id, "seq": self.seq,
-                 "producer": "pipeline", "kind": kind,
+                 "producer": self.producer, "kind": kind,
                  "time": datetime.now(timezone.utc).isoformat(), "data": data}
         with (self.path / "events.jsonl").open("a", encoding="utf-8") as stream:
             stream.write(json.dumps(event, ensure_ascii=False) + "\n")
@@ -32,3 +33,4 @@ class RunLog:
         self.event(status, data)
         self.summary.update(status=status, last_seq=self.seq, **data)
         self.save()
+
