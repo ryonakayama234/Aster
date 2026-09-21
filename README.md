@@ -31,7 +31,8 @@ AIの仕組み、Python、数学、コンピューターサイエンスを、ひ
 - UTF-8 byte tokenizerと、隣接する頻出ペアをまとめるBPE。
 - Tokenizerの保存・読み込みとCLI。[既存BPE仕様](src/docs/AsterBPE-v0.1.md)。
 - テキストを `id / text / source` のJSONLへ変換する処理。
-- 小さなサンプルとテスト。TinyLMの学習器・tool実行器はまだありません。
+- 小さなサンプルとテスト。
+- [TinyLM本体と事前学習の最小ループ](docs/TinyLM-v0.md)。CPUで少量を覚える実験、train/dev評価、重みの保存・再読込・生成。
 - 外部資料の原本収集と、[canonicalへの自動変換](docs/corpus/canonical-v0.md)。
 - [学習用本文の抽出・分割・配合](docs/corpus/training-view-v0.md)、BPE実験、UIで使う観測bundle。[最初の結果](reports/training-pilot-v0.md)。
 
@@ -66,7 +67,7 @@ canonical変換は台帳からpoolを直接読み、`data/canonical/builds/`に�
 `data/raw/current/`は採用原本を集める用途として残しますが、変換の必須入力にはしません。
 採用・train/dev/test分割を経たpilot学習用入力は`data/training/<view ID>/`へ出力します。
 train本文 → Tokenizerでtoken ID列へ変換 → TinyLM内のembeddingでベクトルへ変換、という流れです。
-embeddingの数値はTinyLMの学習で更新します。この学習部分は未実装です。
+embeddingの数値はTinyLMの学習で更新します。実行方法は [TinyLM-v0](docs/TinyLM-v0.md) を参照してください。
 収集済みというだけで学習可能とは扱わず、採用前に仕様の確認を行います。
 
 学習支援・開発時の約束は [AGENTS.md](AGENTS.md) にまとめています。
@@ -76,4 +77,4 @@ embeddingの数値はTinyLMの学習で更新します。この学習部分は�
 1. [Sitesで素材・Tokenizerを観察する画面](docs/UI/workbench-plan.md)は保存結果の読込まで実装済み。次はローカル実行の接続。
 2. TinyLMの学習前後比較、続いてAgentの道具実行と記録を同じ画面に接続。
 
-TinyLMとAgent実行はまだ未実装です。[開発の現在地と分担](docs/development-status.md)を参照してください。
+TinyLMの最小学習ループはCLIで実行できます。学習結果のSite表示とAgentの道具実行はこれからです。

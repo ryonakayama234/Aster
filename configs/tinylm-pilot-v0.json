@@ -1,0 +1,15 @@
+{
+  "mode": "pilot",
+  "context_length": 128,
+  "width": 64,
+  "heads": 4,
+  "layers": 2,
+  "batch_size": 8,
+  "steps": 200,
+  "eval_every": 50,
+  "learning_rate": 0.003,
+  "weight_decay": 0.01,
+  "seed": 42,
+  "overfit_windows": 1,
+  "threads": 2
+}
