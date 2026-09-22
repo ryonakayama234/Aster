@@ -7,7 +7,7 @@ from typing import TypeAlias
 from aster.evaluator.result import EvaluationResult
 
 JsonValue: TypeAlias = (
-    None | bool | int | float | str | list["JsonValue"] | dict[str, "JsonValue"]
+    bool | int | float | str | list["JsonValue"] | dict[str, "JsonValue"] | None
 )
 
 
