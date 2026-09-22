@@ -41,11 +41,15 @@ class TinyLM(nn.Module):
             if isinstance(module, nn.Linear) and module.bias is not None:
                 nn.init.zeros_(module.bias)
 
-    def forward(self, token_ids):
+    def encode(self, token_ids):
+        """Return the shared contextual representation before any task-specific head."""
         if token_ids.ndim != 2 or not 0 < token_ids.shape[1] <= self.config.context_length:
             raise ValueError('Expected [batch, time] within context_length')
         positions = torch.arange(token_ids.shape[1], device=token_ids.device)
         hidden = self.token_embedding(token_ids) + self.position_embedding(positions)
         for block in self.blocks:
             hidden = block(hidden)
-        return self.lm_head(self.final_norm(hidden))
+        return self.final_norm(hidden)
+
+    def forward(self, token_ids):
+        return self.lm_head(self.encode(token_ids))
