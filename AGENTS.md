@@ -15,6 +15,16 @@ Asterは、自作TinyLMを通してAI・Python・数学・コンピューター�
 - 学習目的を理由に、頼まれた作業を止めたり、必須の小テストを課したりしない。
 - 事実、設計案、未実装、実験による確認を区別する。テスト成功を知能や研究成功の証拠にしない。
 
+## GitHub・外部計算資源のコスト
+
+- 明示的な依頼なしに、従量課金が発生し得るGitHub機能や外部計算資源を有効化しない。
+- `.github/workflows/**` を変更する場合は、原則としてGitHub標準runnerを使う。
+- larger runner・GPU runner・有料runnerを、明示的な確認なしに使用しない。
+- Codespaces、GitHub Models、cloud agentなどの有料・従量課金機能を、明示的な確認なしに新規利用しない。
+- 不要なmatrix build、scheduled workflow、大容量artifact保存、過剰なcacheを追加しない。
+- CI変更時は実行頻度、runner、artifact/cache、外部service利用を確認し、コスト増加の可能性があれば事前に明記する。
+- 無料枠内であっても、同じ検証を重複実行しないようworkflowのtriggerとconcurrencyを設計する。
+
 ## コーパスの所有と由来
 
 - 日本語prose・dialogueは、ユーザーの自作文と、ユーザーが選んだ外部文章・AI対話を候補に含める（2026-09-20更新）。明示的な依頼なしに代筆・外部収集・合成して埋めない。
