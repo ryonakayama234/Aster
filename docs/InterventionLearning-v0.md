@@ -21,6 +21,10 @@ D0 + intervention examples
 supervised update
     ↓
 Student v+1 candidate
+    ↓
+re-calibration + same held-out benchmark
+    ↓
+v0 / v+1 comparison artifact
 ```
 
 ## 重要な境界
@@ -50,6 +54,8 @@ TeacherはActionを返すだけで、環境を実行しない。過去のtraject
 Teacher Actionがstudent candidate集合に存在すれば`teacher_target_index`を持ち、既存`DecisionExample`へ変換できる。
 存在しない場合もrolloutを失敗させず、`trainable=false`の観測として保存する。candidate-generation側の表現力不足とpolicyの選択ミスを混同しないためである。
 
+JSONLは`read_intervention_traces_jsonl(...)`で再読込できる。runtime runとtrainer runを別runとして保持し、後続学習は保存済みintervention evidenceを入力にできる。
+
 ## Dataset aggregation
 
 デフォルトではTeacher disagreementだけでなく、trainableな全visited stateを追加する。
@@ -70,10 +76,10 @@ v0では既存例を静かに置換・deduplicateしない。重複除去、rewe
 
 ## Sites-readable rollout artifacts
 
-`run_logged_intervention_agent(...)`は次を保存する。
+`run_logged_intervention_agent(...)`はruntime evidenceを独立runとして保存する。
 
 ```text
-runs/<run-id>/
+runs/<rollout-run-id>/
 ├── run.json
 ├── events.jsonl
 ├── learning.json
@@ -84,11 +90,46 @@ runs/<run-id>/
 
 `learning.json`には、task success、route counts、Teacher agreement/disagreement、trainable example数、Teacher Actionがcandidateに無かった件数、high-confidence disagreement件数を保存する。
 
+## v0 → v+1比較experiment
+
+`run_logged_intervention_learning_experiment(...)`は一つの学習experimentとして、上のruntime rolloutを子runに持ち、その`rollout_run_id`をlineageとして保存する。runtimeの実測ログをtrainer側へ複製・改変しない。
+
+その後、同じ親modelから次を実行する。
+
+1. parent v0を固定benchmarkで評価する。
+2. interventionを既存datasetへaggregateしてdeep-copied v+1 candidateを学習する。
+3. candidateを同じbenchmarkへ投入する。
+4. v0とv+1について、それぞれcalibration splitだけでtemperatureを独立にfitする。
+5. 同じtest cases / slicesについてraw・calibrated metricsを比較する。
+
+```text
+runs/<experiment-run-id>/
+├── run.json
+├── events.jsonl
+├── experiment.json
+├── training.json
+├── training-examples.jsonl
+├── benchmark-parent/
+│   ├── benchmark.json
+│   ├── predictions.jsonl
+│   └── calibration.json
+└── benchmark-candidate/
+    ├── benchmark.json
+    ├── predictions.jsonl
+    └── calibration.json
+```
+
+`experiment.json`のdeltaはすべて`candidate - parent`として保存する。ただしdelta自体を「改善」「採用可否」という判定へ変換しない。accuracy、NLL、Brier、ECEは方向の意味が異なり、sliceごとのtrade-offもあるためである。
+
+candidateは`promotion = candidate_only`のまま。自動production昇格は行わない。
+
 ## 評価
 
 v+1を作っただけでは採用しない。PR #8の固定benchmarkへcandidateを再投入し、calibration splitだけでtemperatureを再fitして、held-out accuracy / NLL / Brier / ECE / risk-coverage / distribution-shift slicesをv0と比較する。
 
 intervention例への適合が改善してもheld-out generalizationが悪化する可能性がある。その場合も、局所適応とgeneralizationを分離して観測できたことがこのloopの目的に含まれる。
+
+v0とv+1のbenchmark comparisonは、同一suite・同一example count・同一slice集合でなければ失敗させる。比較条件が変わった結果をmodel更新の効果として表示しないためである。
 
 ## v0で意図的に含めないもの
 
