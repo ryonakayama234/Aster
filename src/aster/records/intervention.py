@@ -145,3 +145,20 @@ def write_intervention_traces_jsonl(
     with output.open("w", encoding="utf-8", newline="\n") as stream:
         for trace in traces:
             stream.write(json.dumps(trace.to_dict(), ensure_ascii=False, sort_keys=True) + "\n")
+
+
+def read_intervention_traces_jsonl(path: str | Path) -> tuple[InterventionTrace, ...]:
+    """Reload an intervention artifact for a later training/evaluation run."""
+    input_path = Path(path)
+    traces: list[InterventionTrace] = []
+    with input_path.open("r", encoding="utf-8") as stream:
+        for line_number, line in enumerate(stream, start=1):
+            if not line.strip():
+                continue
+            try:
+                traces.append(InterventionTrace.from_dict(json.loads(line)))
+            except (KeyError, TypeError, ValueError, json.JSONDecodeError) as error:
+                raise ValueError(
+                    f"Invalid intervention trace at {input_path}:{line_number}"
+                ) from error
+    return tuple(traces)
