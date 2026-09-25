@@ -60,8 +60,17 @@ class SeeAlsoDirective(Directive):
         return [node]
 
 
-def reference_role(name, rawtext, text, lineno, inliner, options=None, content=None):
+def reference_role(
+    name: str,
+    rawtext: str,
+    text: str,
+    lineno: int,
+    inliner: object,
+    options: dict[str, object] | None = None,
+    content: list[str] | None = None,
+) -> tuple[list[nodes.Node], list[nodes.Node]]:
     # Preserve visible label; an unresolved cross-document target is not fetched.
+    del name, lineno, inliner, content
     match = re.fullmatch(r'(.+?)\s*<[^>]+>', text)
     label = match.group(1) if match else text.lstrip('~')
     return [nodes.literal(rawtext, label, **(options or {}))], []
