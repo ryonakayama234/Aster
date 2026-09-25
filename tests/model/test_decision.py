@@ -34,7 +34,7 @@ def build_executor() -> ToolExecutor:
     return ToolExecutor(registry)
 
 
-def build_teacher_examples():
+def build_teacher_trajectory():
     task = {
         "kind": "calculate_and_store",
         "operation": "add",
@@ -48,6 +48,11 @@ def build_teacher_examples():
         evaluator=TaskEvaluator(),
         context=RuntimeContext(task=task),
     )
+    return task, trajectory
+
+
+def build_teacher_examples():
+    task, trajectory = build_teacher_trajectory()
     examples = examples_from_teacher_trajectory(trajectory)
     return task, trajectory, examples
 
@@ -109,6 +114,15 @@ def test_teacher_trajectory_becomes_separate_decision_examples():
     )
     restored = DecisionExample.from_dict(examples[2].to_dict())
     assert restored.to_dict() == examples[2].to_dict()
+
+
+@pytest.mark.parametrize("bad_step", ["0", 0.0, False])
+def test_teacher_examples_reject_coerced_runtime_steps(bad_step):
+    _, trajectory = build_teacher_trajectory()
+    trajectory.transitions[0].state_before["step"] = bad_step
+
+    with pytest.raises(ValueError, match="Runtime state step must be an integer"):
+        examples_from_teacher_trajectory(trajectory)
 
 
 def test_candidate_scoring_is_equivariant_to_candidate_order():
