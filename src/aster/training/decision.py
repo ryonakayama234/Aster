@@ -45,7 +45,7 @@ def examples_from_teacher_trajectory(
         state = RuntimeState(
             task=_require_mapping(state_data["task"], "task"),
             memory=_require_mapping(state_data["memory"], "memory"),
-            step=_to_step(state_data["step"]),
+            step=_require_step(state_data["step"]),
         )
         history = Trajectory(trajectory.transitions[:index])
         candidates = builder.build(state, history, transition.available_actions)
@@ -75,13 +75,10 @@ def _require_mapping(value: JsonValue, field: str) -> dict[str, JsonValue]:
     return value
 
 
-def _to_step(value: JsonValue) -> int:
-    if not isinstance(value, (bool, int, float, str)):
-        raise ValueError("Runtime state step must be integer-compatible")
-    try:
-        return int(value)
-    except (TypeError, ValueError) as error:
-        raise ValueError("Runtime state step must be integer-compatible") from error
+def _require_step(value: JsonValue) -> int:
+    if not isinstance(value, int) or isinstance(value, bool):
+        raise ValueError("Runtime state step must be an integer")
+    return value
 
 
 def decision_loss(
