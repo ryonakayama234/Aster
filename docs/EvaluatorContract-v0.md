@@ -188,9 +188,11 @@ policy update          # future
 
 このPRからPyrightをCIへ追加する。
 
-- repo全体は`standard` modeで検査する。
+- 型境界を今回直接扱う`evaluator/`・`records/`・`runtime/`を`standard` modeで検査する。
 - `StepEvaluator` protocolと`run_loop`は最初から`strict` modeで検査する。
 - 値レベルのsemantic invariantはPyrightではなくpytest/runtime validationで保証する。
+
+最初のrepo-wide試行では、今回変更していない`agent/`・`tokenizer/`・`training/`・既存testsにも型負債があることを確認できた。PR #11ではそれらを一括修正せず、型付け済み境界をCIで固定してから対象moduleを段階的に広げる。
 
 型checkerは`Policy`や`StepEvaluator`などのinterface contractを、pytestはserialization・値・behavioral semanticsを担当する。
 strict範囲は今後、境界を型付けできたmoduleから段階的に広げる。
