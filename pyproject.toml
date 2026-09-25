@@ -16,16 +16,15 @@ dev = [
 ]
 
 [tool.pyright]
-include = [
-    "src/aster/evaluator",
-    "src/aster/records",
-    "src/aster/runtime",
-]
+include = ["src/aster"]
 pythonVersion = "3.11"
 typeCheckingMode = "standard"
 strict = [
+    "src/aster/agent/candidates.py",
+    "src/aster/agent/policy.py",
     "src/aster/evaluator/protocol.py",
     "src/aster/runtime/loop.py",
+    "src/aster/tokenizer/bpe.py",
 ]
 
 [tool.setuptools]

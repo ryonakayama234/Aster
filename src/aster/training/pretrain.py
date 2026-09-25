@@ -115,6 +115,8 @@ def train(root, view, tokenizer_dir, config):
         observations = []
         tokens_seen = 0
         order, cursor = [], 0
+        checkpoint: Path | None = None
+        bundle = None
         for step in range(config.steps + 1):
             if step > 0:
                 # Shuffle once per pass and include the tail: no dropped short batch.
@@ -158,6 +160,8 @@ def train(root, view, tokenizer_dir, config):
                           'note': 'overfit measures memorization, not generalization. No Agent trained.'}
                 (run.path / 'training-bundle.json').write_bytes(json_bytes(bundle))
                 print(f"step={step} train_loss={measured['train']['loss']:.4f} tokens_seen={tokens_seen}", flush=True)
+        if checkpoint is None or bundle is None:
+            raise RuntimeError('Training completed without producing an evaluation checkpoint')
         reloaded, _, _ = load_checkpoint(checkpoint, tokenizer_id)
         x, _ = collate(windows[:config.batch_size], tokenizer.eos_id)
         model.eval()

@@ -11,6 +11,7 @@ from aster.inference.decide import score_candidates
 from aster.model.decision_head import DecisionModel
 from aster.records.decision import DecisionExample
 from aster.records.trajectory import Trajectory
+from aster.records.transition import JsonValue
 from aster.runtime.state import RuntimeState
 from aster.tokenizer.artifact import AsterTokenizer
 
@@ -42,9 +43,9 @@ def examples_from_teacher_trajectory(
     for index, transition in enumerate(trajectory.transitions):
         state_data = transition.state_before
         state = RuntimeState(
-            task=state_data["task"],
-            memory=state_data["memory"],
-            step=int(state_data["step"]),
+            task=_require_mapping(state_data["task"], "task"),
+            memory=_require_mapping(state_data["memory"], "memory"),
+            step=_require_step(state_data["step"]),
         )
         history = Trajectory(trajectory.transitions[:index])
         candidates = builder.build(state, history, transition.available_actions)
@@ -66,6 +67,18 @@ def examples_from_teacher_trajectory(
         )
 
     return examples
+
+
+def _require_mapping(value: JsonValue, field: str) -> dict[str, JsonValue]:
+    if not isinstance(value, dict):
+        raise ValueError(f"Runtime state field {field!r} must be an object")
+    return value
+
+
+def _require_step(value: JsonValue) -> int:
+    if not isinstance(value, int) or isinstance(value, bool):
+        raise ValueError("Runtime state step must be an integer")
+    return value
 
 
 def decision_loss(

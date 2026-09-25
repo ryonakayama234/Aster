@@ -33,7 +33,7 @@ class RuleBasedPolicy:
             return Action.stop("tool_failure")
 
         calculation = _successful_output(trajectory, "calculator")
-        if calculation is _MISSING:
+        if isinstance(calculation, _Missing):
             return Action.tool(
                 "calculator",
                 operation=task["operation"],

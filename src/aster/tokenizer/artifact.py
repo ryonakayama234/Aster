@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from pathlib import Path
+from typing import cast
 
 from aster.tokenizer.bpe import BPEModel, train_bpe
 
@@ -154,38 +155,47 @@ def save_tokenizer(tokenizer: AsterTokenizer, output_dir: str | Path) -> None:
 def load_tokenizer(input_dir: str | Path) -> AsterTokenizer:
     input_path = Path(input_dir)
 
-    manifest_data = _read_json(input_path / "manifest.json")
-    vocab_data = _read_json(input_path / "vocab.json")
-    merges_data = _read_json(input_path / "merges.json")
-    special_tokens_data = _read_json(input_path / "special_tokens.json")
+    manifest_data = _read_object(input_path / "manifest.json")
+    vocab_data = _read_object(input_path / "vocab.json")
+    merges_data = _read_array(input_path / "merges.json")
+    special_tokens_data = _read_object(input_path / "special_tokens.json")
 
-    vocab = {
-        int(token_id): bytes.fromhex(token_hex)
-        for token_id, token_hex in vocab_data.items()
-    }
+    vocab: dict[int, bytes] = {}
+    for raw_token_id, token_hex in vocab_data.items():
+        token_id = _parse_token_id(raw_token_id, "Tokenizer vocabulary key")
+        if not isinstance(token_hex, str):
+            raise ValueError("Tokenizer vocabulary values must be hex strings")
+        if token_id in vocab:
+            raise ValueError(f"Duplicate tokenizer vocabulary ID: {token_id}")
+        vocab[token_id] = bytes.fromhex(token_hex)
 
-    merges = [
-        ((entry["left"], entry["right"]), entry["new_id"])
-        for entry in merges_data
-    ]
+    merges: list[tuple[tuple[int, int], int]] = []
+    for raw_entry in merges_data:
+        entry = _as_object(raw_entry, "Tokenizer merge entry")
+        merges.append(
+            (
+                (_require_int(entry, "left"), _require_int(entry, "right")),
+                _require_int(entry, "new_id"),
+            )
+        )
 
     special_tokens = {
-        str(token): int(token_id)
+        token: _require_exact_int(token_id, f"Special-token ID for {token!r}")
         for token, token_id in special_tokens_data.items()
     }
 
     _validate_special_token_ids(vocab, special_tokens)
 
     manifest = TokenizerManifest(
-        name=manifest_data["name"],
-        version=manifest_data["version"],
-        tokenizer_type=manifest_data["tokenizer_type"],
-        encoding=manifest_data["encoding"],
-        base_vocab_size=manifest_data["base_vocab_size"],
-        target_vocab_size=manifest_data["target_vocab_size"],
-        actual_bpe_vocab_size=manifest_data["actual_bpe_vocab_size"],
-        special_token_count=manifest_data["special_token_count"],
-        min_pair_frequency=manifest_data["min_pair_frequency"],
+        name=_require_str(manifest_data, "name"),
+        version=_require_str(manifest_data, "version"),
+        tokenizer_type=_require_str(manifest_data, "tokenizer_type"),
+        encoding=_require_str(manifest_data, "encoding"),
+        base_vocab_size=_require_int(manifest_data, "base_vocab_size"),
+        target_vocab_size=_require_int(manifest_data, "target_vocab_size"),
+        actual_bpe_vocab_size=_require_int(manifest_data, "actual_bpe_vocab_size"),
+        special_token_count=_require_int(manifest_data, "special_token_count"),
+        min_pair_frequency=_require_int(manifest_data, "min_pair_frequency"),
     )
 
     return AsterTokenizer(
@@ -218,3 +228,45 @@ def _write_json(path: Path, data: object) -> None:
 
 def _read_json(path: Path) -> object:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _read_object(path: Path) -> dict[str, object]:
+    return _as_object(_read_json(path), str(path))
+
+
+def _read_array(path: Path) -> list[object]:
+    value = _read_json(path)
+    if not isinstance(value, list):
+        raise ValueError(f"{path} must contain a JSON array")
+    return cast(list[object], value)
+
+
+def _as_object(value: object, label: str) -> dict[str, object]:
+    if not isinstance(value, dict) or not all(isinstance(key, str) for key in value):
+        raise ValueError(f"{label} must be a JSON object with string keys")
+    return cast(dict[str, object], value)
+
+
+def _require_str(data: dict[str, object], key: str) -> str:
+    value = data.get(key)
+    if not isinstance(value, str):
+        raise ValueError(f"{key} must be a string")
+    return value
+
+
+def _require_int(data: dict[str, object], key: str) -> int:
+    if key not in data:
+        raise ValueError(f"Missing required integer field: {key}")
+    return _require_exact_int(data[key], key)
+
+
+def _require_exact_int(value: object, label: str) -> int:
+    if type(value) is not int:
+        raise ValueError(f"{label} must be an integer")
+    return cast(int, value)
+
+
+def _parse_token_id(value: str, label: str) -> int:
+    if not value.isascii() or not value.isdigit() or (len(value) > 1 and value.startswith("0")):
+        raise ValueError(f"{label} must be a canonical non-negative integer string")
+    return int(value)
