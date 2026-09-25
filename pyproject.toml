@@ -16,11 +16,7 @@ dev = [
 ]
 
 [tool.pyright]
-include = [
-    "src/aster/evaluator",
-    "src/aster/records",
-    "src/aster/runtime",
-]
+include = ["src/aster"]
 pythonVersion = "3.11"
 typeCheckingMode = "standard"
 strict = [
