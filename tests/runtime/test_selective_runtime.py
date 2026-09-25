@@ -9,6 +9,7 @@ from aster.evaluator.verifier import TaskEvaluator
 from aster.records.decision import DecisionTrace
 from aster.records.trajectory import Trajectory
 from aster.records.transition import Action
+from aster.reward.contract import RewardSpec
 from aster.runtime.context import RuntimeContext
 from aster.runtime.selective import run_logged_selective_agent
 from aster.runtime.state import RuntimeState
@@ -142,6 +143,12 @@ def test_logged_selective_runtime_falls_back_and_emits_sites_artifacts(tmp_path)
         config=SelectivePolicyConfig(autonomous_threshold=0.8, fallback_threshold=0.6),
         fallback_id="rule-v0",
     )
+    reward_spec = RewardSpec(
+        spec_id="runtime-test-v0",
+        task_success=1.0,
+        failed_execution=-0.25,
+        step_cost=-0.01,
+    )
 
     run_path = run_logged_selective_agent(
         tmp_path,
@@ -149,18 +156,22 @@ def test_logged_selective_runtime_falls_back_and_emits_sites_artifacts(tmp_path)
         executor=build_executor(),
         evaluator=TaskEvaluator(),
         context=RuntimeContext(task=task),
+        reward_spec=reward_spec,
     )
 
     summary = json.loads((run_path / "selective.json").read_text(encoding="utf-8"))
     run = json.loads((run_path / "run.json").read_text(encoding="utf-8"))
     evaluation = json.loads((run_path / "evaluation.json").read_text(encoding="utf-8"))
+    reward = json.loads((run_path / "reward.json").read_text(encoding="utf-8"))
     trajectory_lines = (run_path / "trajectory.jsonl").read_text(encoding="utf-8").splitlines()
     routing_lines = (run_path / "routing.jsonl").read_text(encoding="utf-8").splitlines()
 
     assert run["status"] == "completed"
     assert run["evaluation"] == "evaluation.json"
+    assert run["reward"] == "reward.json"
     assert summary["schema_version"] == "aster-selective-rollout-0"
     assert summary["evaluation_file"] == "evaluation.json"
+    assert summary["reward_file"] == "reward.json"
     assert summary["summary"]["task_success"] is True
     assert summary["summary"]["route_counts"] == {
         "model": 0,
@@ -175,6 +186,10 @@ def test_logged_selective_runtime_falls_back_and_emits_sites_artifacts(tmp_path)
     assert evaluation["summary"]["steps"] == 4
     assert evaluation["summary"]["goal_verified"] is True
     assert evaluation["summary"]["first_goal_verified_step"] == 2
+    assert reward["schema_version"] == "aster-episode-reward-0"
+    assert reward["evaluation_file"] == "evaluation.json"
+    assert reward["spec"] == reward_spec.to_dict()
+    assert reward["result"]["total"] == pytest.approx(0.96)
     assert len(trajectory_lines) == 4
     assert len(routing_lines) == 4
 
@@ -182,6 +197,35 @@ def test_logged_selective_runtime_falls_back_and_emits_sites_artifacts(tmp_path)
     assert first_routing["route"] == "fallback"
     assert first_routing["model_action"] == Action.stop("model_choice").to_dict()
     assert first_routing["final_action"]["name"] == "calculator"
+
+
+def test_logged_selective_runtime_does_not_choose_reward_spec_implicitly(tmp_path):
+    task = {
+        "kind": "calculate_and_store",
+        "operation": "add",
+        "left": 1,
+        "right": 2,
+        "store_as": "total",
+    }
+    policy = SelectivePolicy(
+        FakeDecisionPolicy(scores=(3.0, 0.0)),
+        config=SelectivePolicyConfig(autonomous_threshold=0.8, fallback_threshold=0.6),
+    )
+
+    run_path = run_logged_selective_agent(
+        tmp_path,
+        policy=policy,
+        executor=build_executor(),
+        evaluator=TaskEvaluator(),
+        context=RuntimeContext(task=task),
+    )
+
+    run = json.loads((run_path / "run.json").read_text(encoding="utf-8"))
+    summary = json.loads((run_path / "selective.json").read_text(encoding="utf-8"))
+
+    assert not (run_path / "reward.json").exists()
+    assert "reward" not in run
+    assert summary["reward_file"] is None
 
 
 def _softmax(scores):
