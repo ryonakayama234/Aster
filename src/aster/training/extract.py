@@ -85,7 +85,9 @@ def rst_extract(text: str) -> Extracted:
     directives.register_directive('seealso', SeeAlsoDirective)
     for name in ['term', 'ref', 'class', 'func', 'meth', 'attr', 'mod', 'exc', 'data',
                  'const', 'keyword', 'token', 'option', 'file', 'pep', 'program', 'dfn', 'kbd', 'samp']:
-        roles.register_local_role(name, reference_role)
+        # Docutils 0.22.2 narrows the callback result to reference nodes, but custom
+        # roles may return other inline nodes. This role intentionally returns literal.
+        roles.register_local_role(name, reference_role)  # pyright: ignore[reportArgumentType]
     warnings = io.StringIO()
     tree = publish_doctree(text, settings_overrides={
         'file_insertion_enabled': False, 'raw_enabled': False,
