@@ -51,7 +51,7 @@ class CalculateAndStoreCandidates:
             )
 
         calculation = _successful_output(trajectory, "calculator")
-        if calculation is not _MISSING and "memory.put" in available_actions:
+        if not isinstance(calculation, _Missing) and "memory.put" in available_actions:
             candidates.append(Action.tool("memory.put", key=key, value=calculation))
 
         if "memory.get" in available_actions:
@@ -59,7 +59,7 @@ class CalculateAndStoreCandidates:
 
         if "stop" in available_actions:
             candidates.append(Action.stop("policy_stop"))
-            if calculation is not _MISSING and _successful_get(trajectory, key, calculation):
+            if not isinstance(calculation, _Missing) and _successful_get(trajectory, key, calculation):
                 candidates.append(Action.stop("goal_verified"))
 
         if not candidates:
