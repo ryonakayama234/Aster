@@ -161,10 +161,13 @@ def load_tokenizer(input_dir: str | Path) -> AsterTokenizer:
     special_tokens_data = _read_object(input_path / "special_tokens.json")
 
     vocab: dict[int, bytes] = {}
-    for token_id, token_hex in vocab_data.items():
+    for raw_token_id, token_hex in vocab_data.items():
+        token_id = _parse_token_id(raw_token_id, "Tokenizer vocabulary key")
         if not isinstance(token_hex, str):
             raise ValueError("Tokenizer vocabulary values must be hex strings")
-        vocab[int(token_id)] = bytes.fromhex(token_hex)
+        if token_id in vocab:
+            raise ValueError(f"Duplicate tokenizer vocabulary ID: {token_id}")
+        vocab[token_id] = bytes.fromhex(token_hex)
 
     merges: list[tuple[tuple[int, int], int]] = []
     for raw_entry in merges_data:
@@ -177,7 +180,7 @@ def load_tokenizer(input_dir: str | Path) -> AsterTokenizer:
         )
 
     special_tokens = {
-        token: _to_int(token_id, f"Special-token ID for {token!r}")
+        token: _require_exact_int(token_id, f"Special-token ID for {token!r}")
         for token, token_id in special_tokens_data.items()
     }
 
@@ -254,13 +257,16 @@ def _require_str(data: dict[str, object], key: str) -> str:
 def _require_int(data: dict[str, object], key: str) -> int:
     if key not in data:
         raise ValueError(f"Missing required integer field: {key}")
-    return _to_int(data[key], key)
+    return _require_exact_int(data[key], key)
 
 
-def _to_int(value: object, label: str) -> int:
-    if not isinstance(value, (bool, int, float, str)):
-        raise ValueError(f"{label} must be integer-compatible")
-    try:
-        return int(value)
-    except (TypeError, ValueError) as error:
-        raise ValueError(f"{label} must be integer-compatible") from error
+def _require_exact_int(value: object, label: str) -> int:
+    if type(value) is not int:
+        raise ValueError(f"{label} must be an integer")
+    return cast(int, value)
+
+
+def _parse_token_id(value: str, label: str) -> int:
+    if not value.isascii() or not value.isdigit() or (len(value) > 1 and value.startswith("0")):
+        raise ValueError(f"{label} must be a canonical non-negative integer string")
+    return int(value)
