@@ -2,6 +2,7 @@
 
 import io
 import re
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 
 from docutils import nodes
@@ -66,14 +67,14 @@ def reference_role(
     text: str,
     lineno: int,
     inliner: object,
-    options: dict[str, object] | None = None,
-    content: list[str] | None = None,
+    options: Mapping[str, object] | None = None,
+    content: Sequence[str] | None = None,
 ) -> tuple[list[nodes.Node], list[nodes.Node]]:
     # Preserve visible label; an unresolved cross-document target is not fetched.
     del name, lineno, inliner, content
     match = re.fullmatch(r'(.+?)\s*<[^>]+>', text)
     label = match.group(1) if match else text.lstrip('~')
-    return [nodes.literal(rawtext, label, **(options or {}))], []
+    return [nodes.literal(rawtext, label, **dict(options or {}))], []
 
 
 def rst_extract(text: str) -> Extracted:
