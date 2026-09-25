@@ -113,6 +113,18 @@ class Transition:
     def __post_init__(self):
         if self.step < 0:
             raise ValueError("Transition step must be non-negative")
+        if self.evaluation.action_valid != self.observation.accepted:
+            raise ValueError(
+                "Evaluation action_valid must match observation accepted"
+            )
+        if self.evaluation.execution_success != self.observation.ok:
+            raise ValueError(
+                "Evaluation execution_success must match observation ok"
+            )
+        if self.evaluation.terminal != (self.action.kind == "stop"):
+            raise ValueError(
+                "Evaluation terminal must match whether the action is stop"
+            )
         object.__setattr__(self, "state_before", deepcopy(self.state_before))
         object.__setattr__(self, "state_after", deepcopy(self.state_after))
         object.__setattr__(self, "available_actions", tuple(self.available_actions))
