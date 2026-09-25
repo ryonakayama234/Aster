@@ -28,12 +28,22 @@ Teacher / Reward / Learning
 
 - `action_valid`: Actionがruntimeに受理されたか。
 - `execution_success`: 受理されたActionの実行が成功したか。
-- `goal_satisfied`: task goalが検証済みか。
+- `goal_satisfied`: このstepまでにtask goalが検証済みか。
 - `terminal`: このstepがterminal actionか。
 - `notes`: 判定理由を補助する構造化可能な短い記録。
 
 `Transition`は引き続き、`state_before -> action -> observation -> state_after -> evaluation`を一つのimmutableな経験として保存する。
 `trajectory.jsonl`をstep-level evaluationのsource of truthとし、同じ内容を別JSONLへ複製しない。
+
+runtime factとEvaluator判断の境界を壊さないため、`Transition`は次を不変条件として検査する。
+
+```text
+evaluation.action_valid      == observation.accepted
+evaluation.execution_success == observation.ok
+evaluation.terminal          == (action.kind == "stop")
+```
+
+また`goal_satisfied`はepisode内で累積的である。一度goalがverifiedになった後のTransitionが`goal_satisfied=false`へ戻るTrajectoryは不正とする。
 
 ## StepEvaluator protocol
 
@@ -52,11 +62,15 @@ StepEvaluator.evaluate(
 現在の`TaskEvaluator`はこのprotocolを構造的に満たす。
 将来、code・math・file・webなど別のtask evaluatorへ差し替えてもAgent loop自体を変更しなくてよい。
 
+Protocolは静的なinterface境界を表し、上記の値レベルのsemantic invariantは`Transition` / `Trajectory`がruntimeで強制する。
+
 ## Episode evaluation
 
 stepごとのTransitionから、run全体を説明する`EpisodeEvaluation`を決定論的に導出する。
 
 ```text
+trajectory.jsonl
+    ↓ read back
 Trajectory
     ↓
 evaluate_episode(...)
@@ -97,12 +111,13 @@ runs/<run-id>/
 └── selective.json / learning.json
 ```
 
-`evaluation.json`は次の形を持つ。
+`evaluation.json`は保存済み`trajectory.jsonl`を読み戻した結果から生成し、参照先とSHA-256を保持する。
 
 ```json
 {
   "schema_version": "aster-episode-evaluation-0",
   "trajectory_file": "trajectory.jsonl",
+  "trajectory_sha256": "...",
   "summary": {
     "task_success": true,
     "terminal_reached": true,
@@ -120,6 +135,20 @@ runs/<run-id>/
 ```
 
 Sitesは`evaluation.json`をrun-level summaryとして読み、必要なら`trajectory.jsonl`を展開して各stepの根拠を確認できる。
+`events.jsonl`の`episode_evaluated` eventはsummary自体を複製せず、`evaluation.json`への参照だけを記録する。
+
+## Source-of-truth rule
+
+persisted artifactの依存関係は次に固定する。
+
+```text
+trajectory.jsonl      # canonical step-level evidence
+    ↓ deterministic materialization
+evaluation.json       # run-level view
+```
+
+runtimeが保持しているin-memory `Trajectory`と同じ内容であることに暗黙依存せず、episode artifact生成時には必ず保存済みJSONLを読み戻す。
+`trajectory_sha256`により、後からevaluationとtrajectory bytesの対応を監査できる。
 
 ## 再評価可能性
 
@@ -155,6 +184,17 @@ policy update          # future
 同じEpisodeEvaluationに異なるRewardSpecを適用できるようにし、Agent capabilityの変化とreward designの変化を区別する。
 `evaluator/scoring.py`やRL objectiveはこのPRでは変更しない。
 
+## Static typing boundary
+
+このPRからPyrightをCIへ追加する。
+
+- repo全体は`standard` modeで検査する。
+- `StepEvaluator` protocolと`run_loop`は最初から`strict` modeで検査する。
+- 値レベルのsemantic invariantはPyrightではなくpytest/runtime validationで保証する。
+
+型checkerは`Policy`や`StepEvaluator`などのinterface contractを、pytestはserialization・値・behavioral semanticsを担当する。
+strict範囲は今後、境界を型付けできたmoduleから段階的に広げる。
+
 ## v0で意図的に含めないもの
 
 - scalar reward / reward shaping
@@ -169,10 +209,14 @@ policy update          # future
 ## テストで保証すること
 
 - Action rejectionとaccepted execution failureを別に数える。
+- runtime factと`EvaluationResult`の不整合をTransitionが拒否する。
+- goal verificationが後続stepで未検証へ戻らない。
 - goal verificationの最初のstepを保持する。
 - terminalとtask successを区別する。
-- `evaluation.json`が`trajectory.jsonl`を参照する。
-- artifactにrewardを混入させない。
+- `evaluation.json`を保存済み`trajectory.jsonl`から導出する。
+- `evaluation.json`がtrajectoryのSHA-256を保持する。
+- EpisodeEvaluationのschemaをallowlistで固定し、rewardや学習判断のフィールド追加を明示的変更なしに許さない。
 - selective / intervention logged runの双方が同じepisode evaluation artifactを出す。
+- Pyrightでruntime-facing Protocolの型境界を検査する。
 
-テスト成功はEvaluatorの知能やtask定義の妥当性を意味しない。保証するのはinterface、serialization、集計規則の一貫性である。
+テスト成功はEvaluatorの知能やtask定義の妥当性を意味しない。保証するのはinterface、serialization、集計規則、provenance、semantic invariantの一貫性である。
