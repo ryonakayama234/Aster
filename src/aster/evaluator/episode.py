@@ -1,9 +1,12 @@
 """Deterministic run-level evaluation derived from recorded trajectories."""
 
+import hashlib
 import json
+import os
 from dataclasses import dataclass
 from pathlib import Path
 
+from aster.records.recorder import TrajectoryRecorder
 from aster.records.trajectory import Trajectory
 
 
@@ -111,22 +114,35 @@ def evaluate_episode(trajectory: Trajectory) -> EpisodeEvaluation:
 
 def write_episode_evaluation(
     path: str | Path,
-    trajectory: Trajectory,
-    *,
-    trajectory_file: str = "trajectory.jsonl",
+    trajectory_path: str | Path,
 ) -> EpisodeEvaluation:
-    """Write a Sites-readable episode summary while keeping trajectory as source of truth."""
+    """Write a deterministic summary derived from the persisted trajectory JSONL."""
 
+    path = Path(path)
+    trajectory_path = Path(trajectory_path)
+    trajectory = TrajectoryRecorder.read_jsonl(trajectory_path)
     evaluation = evaluate_episode(trajectory)
     payload = {
         "schema_version": SCHEMA_VERSION,
-        "trajectory_file": trajectory_file,
+        "trajectory_file": _relative_path(path.parent, trajectory_path),
+        "trajectory_sha256": _sha256_file(trajectory_path),
         "summary": evaluation.to_dict(),
     }
-    path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
         json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
     return evaluation
+
+
+def _relative_path(root: Path, target: Path) -> str:
+    return Path(os.path.relpath(target, root)).as_posix()
+
+
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
