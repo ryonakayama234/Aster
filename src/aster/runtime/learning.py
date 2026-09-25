@@ -64,12 +64,13 @@ def run_logged_intervention_agent(
         if len(interventions) != len(trajectory.transitions):
             raise RuntimeError("Intervention trace count must match trajectory length")
 
-        recorder.write_jsonl(run.path / "trajectory.jsonl")
+        trajectory_path = run.path / "trajectory.jsonl"
+        recorder.write_jsonl(trajectory_path)
         write_routing_traces_jsonl(run.path / "routing.jsonl", routing)
         write_intervention_traces_jsonl(run.path / "interventions.jsonl", interventions)
-        episode_evaluation = write_episode_evaluation(
+        write_episode_evaluation(
             run.path / "evaluation.json",
-            trajectory,
+            trajectory_path,
         )
         summary = summarize_intervention_rollout(trajectory, routing, interventions)
         _write_json(
@@ -85,7 +86,7 @@ def run_logged_intervention_agent(
                 "summary": summary,
             },
         )
-        run.event("episode_evaluated", episode_evaluation.to_dict())
+        run.event("episode_evaluated", {"evaluation_file": "evaluation.json"})
         run.event("interventions_collected", summary)
         run.finish(
             "completed",
