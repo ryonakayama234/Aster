@@ -10,10 +10,26 @@ dependencies = ["docutils==0.22.2"]
 
 [project.optional-dependencies]
 training = ["torch>=2.6,<3"]
+dev = [
+    "pytest>=8,<9",
+    "pyright>=1.1,<2",
+]
+
+[tool.pyright]
+include = [
+    "src/aster/evaluator",
+    "src/aster/records",
+    "src/aster/runtime",
+]
+pythonVersion = "3.11"
+typeCheckingMode = "standard"
+strict = [
+    "src/aster/evaluator/protocol.py",
+    "src/aster/runtime/loop.py",
+]
 
 [tool.setuptools]
 package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
-

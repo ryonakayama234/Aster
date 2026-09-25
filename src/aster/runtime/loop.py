@@ -1,10 +1,10 @@
 """Small policy -> execution -> record -> evaluation loop for Agent Kernel v0."""
 
 from aster.agent.policy import Policy
-from aster.evaluator.verifier import TaskEvaluator
+from aster.evaluator.protocol import StepEvaluator
 from aster.records.recorder import TrajectoryRecorder
 from aster.records.trajectory import Trajectory
-from aster.records.transition import Action, Observation, Transition
+from aster.records.transition import Observation, Transition
 from aster.runtime.context import RuntimeContext
 from aster.tools.executor import ToolExecutor
 
@@ -13,7 +13,7 @@ def run_loop(
     *,
     policy: Policy,
     executor: ToolExecutor,
-    evaluator: TaskEvaluator,
+    evaluator: StepEvaluator,
     context: RuntimeContext,
     recorder: TrajectoryRecorder | None = None,
     max_steps: int = 8,

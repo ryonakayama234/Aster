@@ -4,7 +4,8 @@ import json
 from pathlib import Path
 
 from aster.agent.selective import SelectivePolicy
-from aster.evaluator.verifier import TaskEvaluator
+from aster.evaluator.episode import write_episode_evaluation
+from aster.evaluator.protocol import StepEvaluator
 from aster.records.recorder import TrajectoryRecorder
 from aster.records.routing import RoutingTrace, write_routing_traces_jsonl
 from aster.records.runlog import RunLog
@@ -18,7 +19,7 @@ def run_logged_selective_agent(
     *,
     policy: SelectivePolicy,
     executor: ToolExecutor,
-    evaluator: TaskEvaluator,
+    evaluator: StepEvaluator,
     context: RuntimeContext,
     max_steps: int = 8,
 ) -> Path:
@@ -53,8 +54,13 @@ def run_logged_selective_agent(
         if len(traces) != len(trajectory.transitions):
             raise RuntimeError("Selective routing trace count must match trajectory length")
 
-        recorder.write_jsonl(run.path / "trajectory.jsonl")
+        trajectory_path = run.path / "trajectory.jsonl"
+        recorder.write_jsonl(trajectory_path)
         write_routing_traces_jsonl(run.path / "routing.jsonl", traces)
+        write_episode_evaluation(
+            run.path / "evaluation.json",
+            trajectory_path,
+        )
         summary = summarize_selective_rollout(trajectory, traces)
         _write_json(
             run.path / "selective.json",
@@ -65,15 +71,18 @@ def run_logged_selective_agent(
                 "fallback_policy": policy.fallback_id,
                 "trajectory_file": "trajectory.jsonl",
                 "routing_file": "routing.jsonl",
+                "evaluation_file": "evaluation.json",
                 "summary": summary,
             },
         )
+        run.event("episode_evaluated", {"evaluation_file": "evaluation.json"})
         run.event("rolled_out", summary)
         run.finish(
             "completed",
             selective="selective.json",
             trajectory="trajectory.jsonl",
             routing="routing.jsonl",
+            evaluation="evaluation.json",
         )
         return run.path
     except BaseException as error:

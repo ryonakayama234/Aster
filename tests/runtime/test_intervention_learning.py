@@ -97,13 +97,16 @@ def test_intervention_rollout_labels_every_student_visited_state_and_writes_arti
 
     run = json.loads((run_path / "run.json").read_text(encoding="utf-8"))
     learning = json.loads((run_path / "learning.json").read_text(encoding="utf-8"))
+    evaluation = json.loads((run_path / "evaluation.json").read_text(encoding="utf-8"))
     interventions = [
         InterventionTrace.from_dict(json.loads(line))
         for line in (run_path / "interventions.jsonl").read_text(encoding="utf-8").splitlines()
     ]
 
     assert run["status"] == "completed"
+    assert run["evaluation"] == "evaluation.json"
     assert learning["schema_version"] == "aster-intervention-rollout-0"
+    assert learning["evaluation_file"] == "evaluation.json"
     assert learning["summary"]["task_success"] is True
     assert learning["summary"]["steps"] == 4
     assert learning["summary"]["trainable_examples"] == 4
@@ -113,6 +116,12 @@ def test_intervention_rollout_labels_every_student_visited_state_and_writes_arti
         "fallback": 4,
         "abstain": 0,
     }
+    assert evaluation["schema_version"] == "aster-episode-evaluation-0"
+    assert evaluation["trajectory_file"] == "trajectory.jsonl"
+    assert evaluation["summary"]["task_success"] is True
+    assert evaluation["summary"]["steps"] == 4
+    assert evaluation["summary"]["goal_verified"] is True
+    assert evaluation["summary"]["first_goal_verified_step"] == 2
     assert [trace.executed_action.name or trace.executed_action.kind for trace in interventions] == [
         "calculator",
         "memory.put",

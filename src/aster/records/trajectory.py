@@ -9,6 +9,15 @@ from aster.records.transition import Transition
 class Trajectory:
     transitions: tuple[Transition, ...] = ()
 
+    def __post_init__(self) -> None:
+        goal_verified = False
+        for transition in self.transitions:
+            if goal_verified and not transition.evaluation.goal_satisfied:
+                raise ValueError(
+                    "goal_satisfied must remain true after a goal has been verified"
+                )
+            goal_verified = goal_verified or transition.evaluation.goal_satisfied
+
     def __len__(self) -> int:
         return len(self.transitions)
 

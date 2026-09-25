@@ -6,7 +6,8 @@ from pathlib import Path
 from aster.agent.intervention import InterventionPolicy
 from aster.agent.policy import Policy
 from aster.agent.selective import SelectivePolicy
-from aster.evaluator.verifier import TaskEvaluator
+from aster.evaluator.episode import write_episode_evaluation
+from aster.evaluator.protocol import StepEvaluator
 from aster.records.intervention import InterventionTrace, write_intervention_traces_jsonl
 from aster.records.recorder import TrajectoryRecorder
 from aster.records.routing import RoutingTrace, write_routing_traces_jsonl
@@ -23,7 +24,7 @@ def run_logged_intervention_agent(
     teacher: Policy,
     teacher_id: str,
     executor: ToolExecutor,
-    evaluator: TaskEvaluator,
+    evaluator: StepEvaluator,
     context: RuntimeContext,
     max_steps: int = 8,
 ) -> Path:
@@ -63,9 +64,14 @@ def run_logged_intervention_agent(
         if len(interventions) != len(trajectory.transitions):
             raise RuntimeError("Intervention trace count must match trajectory length")
 
-        recorder.write_jsonl(run.path / "trajectory.jsonl")
+        trajectory_path = run.path / "trajectory.jsonl"
+        recorder.write_jsonl(trajectory_path)
         write_routing_traces_jsonl(run.path / "routing.jsonl", routing)
         write_intervention_traces_jsonl(run.path / "interventions.jsonl", interventions)
+        write_episode_evaluation(
+            run.path / "evaluation.json",
+            trajectory_path,
+        )
         summary = summarize_intervention_rollout(trajectory, routing, interventions)
         _write_json(
             run.path / "learning.json",
@@ -76,9 +82,11 @@ def run_logged_intervention_agent(
                 "trajectory_file": "trajectory.jsonl",
                 "routing_file": "routing.jsonl",
                 "interventions_file": "interventions.jsonl",
+                "evaluation_file": "evaluation.json",
                 "summary": summary,
             },
         )
+        run.event("episode_evaluated", {"evaluation_file": "evaluation.json"})
         run.event("interventions_collected", summary)
         run.finish(
             "completed",
@@ -86,6 +94,7 @@ def run_logged_intervention_agent(
             trajectory="trajectory.jsonl",
             routing="routing.jsonl",
             interventions="interventions.jsonl",
+            evaluation="evaluation.json",
         )
         return run.path
     except BaseException as error:

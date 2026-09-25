@@ -153,11 +153,14 @@ def test_logged_selective_runtime_falls_back_and_emits_sites_artifacts(tmp_path)
 
     summary = json.loads((run_path / "selective.json").read_text(encoding="utf-8"))
     run = json.loads((run_path / "run.json").read_text(encoding="utf-8"))
+    evaluation = json.loads((run_path / "evaluation.json").read_text(encoding="utf-8"))
     trajectory_lines = (run_path / "trajectory.jsonl").read_text(encoding="utf-8").splitlines()
     routing_lines = (run_path / "routing.jsonl").read_text(encoding="utf-8").splitlines()
 
     assert run["status"] == "completed"
+    assert run["evaluation"] == "evaluation.json"
     assert summary["schema_version"] == "aster-selective-rollout-0"
+    assert summary["evaluation_file"] == "evaluation.json"
     assert summary["summary"]["task_success"] is True
     assert summary["summary"]["route_counts"] == {
         "model": 0,
@@ -166,6 +169,12 @@ def test_logged_selective_runtime_falls_back_and_emits_sites_artifacts(tmp_path)
     }
     assert summary["summary"]["autonomous_coverage"] == 0.0
     assert summary["summary"]["fallback_rate"] == 1.0
+    assert evaluation["schema_version"] == "aster-episode-evaluation-0"
+    assert evaluation["trajectory_file"] == "trajectory.jsonl"
+    assert evaluation["summary"]["task_success"] is True
+    assert evaluation["summary"]["steps"] == 4
+    assert evaluation["summary"]["goal_verified"] is True
+    assert evaluation["summary"]["first_goal_verified_step"] == 2
     assert len(trajectory_lines) == 4
     assert len(routing_lines) == 4
 
