@@ -41,7 +41,7 @@ Aster RunLog
 Run started / events / output
 ```
 
-Service再起動時に`accepted`または`running`だったJobは`interrupted`へ遷移する。Aster Runのcanonical evidenceは既存`run.json` / `events.jsonl`であり、Serviceはそれを別の事実として書き換えない。
+Service再起動時に`accepted`または`running`だったJobは`interrupted`へ遷移する。Aster Runのcanonical evidenceは既存`run.json` / `events.jsonl`であり、Serviceはそれを別の事実として書き換えない。`run.json`に既存実装由来のlocal pathがある場合、Serviceの公開viewではpathを除き、`checkpoint_file`や`output_artifact_id`のような論理情報へ変換する。
 
 ## Artifact
 

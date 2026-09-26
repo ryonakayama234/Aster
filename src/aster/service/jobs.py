@@ -95,13 +95,14 @@ class JobManager:
         folder = self._folder(job_id)
         job = self._read_job(folder / "job.json")
         run, events, outputs = self._read_run(folder)
-        visible_job = dict(job)
+        visible_job = self._public_job(job)
         if run is not None and visible_job.get("run_id") is None:
             visible_job["run_id"] = run.get("run_id")
+        visible_run = self._public_run(run, folder) if run is not None else None
         bundle: dict[str, object] = {
             "schema_version": "aster-service-job-bundle-0",
             "job": visible_job,
-            "run": run,
+            "run": visible_run,
             "events": events,
             "outputs": outputs,
         }
@@ -119,7 +120,7 @@ class JobManager:
             except (OSError, ValueError, json.JSONDecodeError):
                 continue
         jobs.sort(key=lambda item: str(item.get("accepted_at", "")), reverse=True)
-        return jobs[:50]
+        return [self._public_job(job) for job in jobs[:50]]
 
     def status(self) -> dict[str, object]:
         artifacts = self.catalog.all()
@@ -169,6 +170,31 @@ class JobManager:
         job["ended_at"] = now()
         write_json(folder / "job.json", job)
         write_json(folder / "run-bundle.json", self.read(str(job["job_id"])))
+
+    def _public_job(self, job: dict[str, object]) -> dict[str, object]:
+        public = dict(job)
+        error = public.get("error")
+        if isinstance(error, str):
+            public["error"] = error.replace(str(self.root), "<ASTER_ROOT>")
+        return public
+
+    def _public_run(self, run: dict[str, object], folder: Path) -> dict[str, object]:
+        public = dict(run)
+        raw_checkpoint = public.pop("checkpoint", None)
+        if isinstance(raw_checkpoint, str):
+            checkpoint = Path(raw_checkpoint).resolve()
+            run_id = run.get("run_id")
+            if isinstance(run_id, str):
+                run_root = (folder / "runs" / run_id).resolve()
+                if checkpoint.is_relative_to(run_root):
+                    public["checkpoint_file"] = checkpoint.name
+        raw_output = public.pop("output", None)
+        if isinstance(raw_output, str):
+            output = Path(raw_output).resolve()
+            tokenizer_root = (folder / "artifacts" / "tokenizers").resolve()
+            if output.is_relative_to(tokenizer_root) and re.fullmatch(r"[0-9a-f]{64}", output.name):
+                public["output_artifact_id"] = self.catalog.make_id("tokenizer", output.name)
+        return public
 
     def _promote_tokenizer(self, folder: Path, run: dict[str, object]) -> None:
         raw_output = run.get("output")

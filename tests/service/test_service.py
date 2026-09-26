@@ -79,7 +79,7 @@ def test_job_and_run_have_distinct_ids_and_live_outputs(tmp_path):
         run = root / "runs" / run_id
         run.mkdir(parents=True)
         (run / "run.json").write_text(
-            json.dumps({"schema_version": "aster-run-0", "run_id": run_id, "kind": "pretrain", "status": "completed"}),
+            json.dumps({"schema_version": "aster-run-0", "run_id": run_id, "kind": "pretrain", "status": "completed", "checkpoint": str(run / "checkpoint-000001.pt")}),
             encoding="utf-8",
         )
         (run / "events.jsonl").write_text(
@@ -105,6 +105,8 @@ def test_job_and_run_have_distinct_ids_and_live_outputs(tmp_path):
     assert bundle["job"]["run_id"] == run_id
     assert job_id != run_id
     assert bundle["run"]["run_id"] == run_id
+    assert bundle["run"]["checkpoint_file"] == "checkpoint-000001.pt"
+    assert str(tmp_path) not in json.dumps(bundle)
     assert bundle["training"]["status"] == "completed"
     assert bundle["events"][0]["seq"] == 1
 
