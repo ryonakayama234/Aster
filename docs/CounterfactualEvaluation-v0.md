@@ -144,6 +144,13 @@ runs/<analysis-run-id>/
 - policy-weighted baseline
 - advantage estimate
 
+## validation scope
+
+実装テストでは、calculate-and-storeの決定論的環境でcandidateごとのbranch reward、model probabilityによるbaseline、advantage estimateを数値まで固定して確認する。
+またcounterfactual-safeでないtest toolのhandlerが一度も呼ばれないことを確認する。
+
+これらのテストはbranch実行・serialization・安全境界の整合性を保証するもので、counterfactual advantageが一般環境で因果効果や最適Q値を表すことまでは保証しない。
+
 ## v0で意図的に含めないもの
 
 - unsafe external toolsのsandbox実行
