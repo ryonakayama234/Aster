@@ -28,6 +28,9 @@ class CounterfactualTrace:
     status: str
     branch_dir: str | None = None
     branch_reward_total: float | None = None
+    branch_steps: int | None = None
+    task_success: bool | None = None
+    terminal_reached: bool | None = None
     baseline_reward: float | None = None
     advantage_estimate: float | None = None
     note: str | None = None
@@ -49,10 +52,27 @@ class CounterfactualTrace:
             if value is not None and not math.isfinite(value):
                 raise ValueError(f"{name} must be finite when present")
         if self.status == "completed":
-            if self.branch_dir is None or self.branch_reward_total is None:
-                raise ValueError("Completed counterfactual traces require branch artifacts and reward")
-        elif self.branch_dir is not None or self.branch_reward_total is not None:
-            raise ValueError("Unsupported counterfactual traces cannot claim branch artifacts or reward")
+            if (
+                self.branch_dir is None
+                or self.branch_reward_total is None
+                or self.branch_steps is None
+                or self.task_success is None
+                or self.terminal_reached is None
+            ):
+                raise ValueError("Completed counterfactual traces require branch outcome evidence")
+        elif any(
+            value is not None
+            for value in (
+                self.branch_dir,
+                self.branch_reward_total,
+                self.branch_steps,
+                self.task_success,
+                self.terminal_reached,
+            )
+        ):
+            raise ValueError("Unsupported counterfactual traces cannot claim branch outcome evidence")
+        if self.branch_steps is not None and self.branch_steps < 0:
+            raise ValueError("branch_steps must be non-negative")
         if (self.baseline_reward is None) != (self.advantage_estimate is None):
             raise ValueError("baseline_reward and advantage_estimate must be present together")
 
@@ -71,6 +91,9 @@ class CounterfactualTrace:
             "status": self.status,
             "branch_dir": self.branch_dir,
             "branch_reward_total": self.branch_reward_total,
+            "branch_steps": self.branch_steps,
+            "task_success": self.task_success,
+            "terminal_reached": self.terminal_reached,
             "baseline_reward": self.baseline_reward,
             "advantage_estimate": self.advantage_estimate,
             "value_scope": "full-episode reward under forced action and fixed continuation policy",
