@@ -20,7 +20,7 @@ ORIGIN = "https://aster-learning-lab-zhong.rynaka0112.chatgpt.site"
 
 def make_server(jobs: JobManager, token: str, port: int) -> ThreadingHTTPServer:
     class Handler(BaseHTTPRequestHandler):
-        def log_message(self, *args: object) -> None:
+        def log_message(self, format: str, *args: object) -> None:
             pass
 
         def allowed(self, auth: bool = True) -> bool:
