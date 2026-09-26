@@ -16,7 +16,7 @@ class ArtifactRef:
     kind: str
     digest: str
 
-    def to_dict(self) -> dict[str, str]:
+    def to_dict(self) -> dict[str, object]:
         return {"artifact_id": self.artifact_id, "kind": self.kind, "digest": self.digest}
 
 
