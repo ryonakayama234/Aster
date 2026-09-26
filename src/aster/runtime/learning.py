@@ -6,6 +6,7 @@ from pathlib import Path
 from aster.agent.intervention import InterventionPolicy
 from aster.agent.policy import Policy
 from aster.agent.selective import SelectivePolicy
+from aster.credit.contract import write_credit_result
 from aster.evaluator.episode import write_episode_evaluation
 from aster.evaluator.protocol import StepEvaluator
 from aster.records.intervention import InterventionTrace, write_intervention_traces_jsonl
@@ -76,11 +77,17 @@ def run_logged_intervention_agent(
             trajectory_path,
         )
         reward_result = None
+        credit_result = None
         if reward_spec is not None:
             reward_result = write_reward_result(
                 run.path / "reward.json",
                 episode_evaluation,
                 reward_spec,
+            )
+            credit_result = write_credit_result(
+                run.path / "credit.json",
+                trajectory,
+                reward_result,
             )
         summary = summarize_intervention_rollout(trajectory, routing, interventions)
         _write_json(
@@ -94,12 +101,15 @@ def run_logged_intervention_agent(
                 "interventions_file": "interventions.jsonl",
                 "evaluation_file": "evaluation.json",
                 "reward_file": None if reward_result is None else "reward.json",
+                "credit_file": None if credit_result is None else "credit.json",
                 "summary": summary,
             },
         )
         run.event("episode_evaluated", {"evaluation_file": "evaluation.json"})
         if reward_result is not None:
             run.event("reward_computed", {"reward_file": "reward.json"})
+        if credit_result is not None:
+            run.event("credit_assigned", {"credit_file": "credit.json"})
         run.event("interventions_collected", summary)
         artifacts = {
             "learning": "learning.json",
@@ -110,6 +120,8 @@ def run_logged_intervention_agent(
         }
         if reward_result is not None:
             artifacts["reward"] = "reward.json"
+        if credit_result is not None:
+            artifacts["credit"] = "credit.json"
         run.finish("completed", **artifacts)
         return run.path
     except BaseException as error:
