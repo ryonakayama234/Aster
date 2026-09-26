@@ -42,15 +42,10 @@
                                       ▼
                                  evaluator/
                                       │
-                              Evaluation vector
+                     success / score / verifier
                                       │
                                       ▼
-                                   reward/
-                                      │
-                         RewardSpec → RewardResult
-                                      │
-                                      ▼
-                                    runs/
+                                  runs/
                                       │
                                       ▼
                          training data生成

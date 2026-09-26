@@ -17,7 +17,6 @@ from aster.records.decision import DecisionTrace, serialize_decision_input
 from aster.records.intervention import InterventionTrace
 from aster.records.trajectory import Trajectory
 from aster.records.transition import Action
-from aster.reward.contract import RewardSpec
 from aster.runtime.context import RuntimeContext
 from aster.runtime.learning import run_logged_intervention_agent
 from aster.runtime.loop import run_loop
@@ -86,11 +85,6 @@ def test_intervention_rollout_labels_every_student_visited_state_and_writes_arti
             fallback_threshold=0.5,
         ),
     )
-    reward_spec = RewardSpec(
-        spec_id="intervention-test-v0",
-        task_success=1.0,
-        step_cost=-0.01,
-    )
     run_path = run_logged_intervention_agent(
         tmp_path,
         policy=policy,
@@ -99,13 +93,11 @@ def test_intervention_rollout_labels_every_student_visited_state_and_writes_arti
         executor=build_executor(),
         evaluator=TaskEvaluator(),
         context=RuntimeContext(task=task()),
-        reward_spec=reward_spec,
     )
 
     run = json.loads((run_path / "run.json").read_text(encoding="utf-8"))
     learning = json.loads((run_path / "learning.json").read_text(encoding="utf-8"))
     evaluation = json.loads((run_path / "evaluation.json").read_text(encoding="utf-8"))
-    reward = json.loads((run_path / "reward.json").read_text(encoding="utf-8"))
     interventions = [
         InterventionTrace.from_dict(json.loads(line))
         for line in (run_path / "interventions.jsonl").read_text(encoding="utf-8").splitlines()
@@ -113,10 +105,8 @@ def test_intervention_rollout_labels_every_student_visited_state_and_writes_arti
 
     assert run["status"] == "completed"
     assert run["evaluation"] == "evaluation.json"
-    assert run["reward"] == "reward.json"
     assert learning["schema_version"] == "aster-intervention-rollout-0"
     assert learning["evaluation_file"] == "evaluation.json"
-    assert learning["reward_file"] == "reward.json"
     assert learning["summary"]["task_success"] is True
     assert learning["summary"]["steps"] == 4
     assert learning["summary"]["trainable_examples"] == 4
@@ -132,10 +122,6 @@ def test_intervention_rollout_labels_every_student_visited_state_and_writes_arti
     assert evaluation["summary"]["steps"] == 4
     assert evaluation["summary"]["goal_verified"] is True
     assert evaluation["summary"]["first_goal_verified_step"] == 2
-    assert reward["schema_version"] == "aster-episode-reward-0"
-    assert reward["evaluation_file"] == "evaluation.json"
-    assert reward["spec"] == reward_spec.to_dict()
-    assert reward["result"]["total"] == pytest.approx(0.96)
     assert [trace.executed_action.name or trace.executed_action.kind for trace in interventions] == [
         "calculator",
         "memory.put",

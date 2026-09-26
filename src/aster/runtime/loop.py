@@ -4,7 +4,7 @@ from aster.agent.policy import Policy
 from aster.evaluator.protocol import StepEvaluator
 from aster.records.recorder import TrajectoryRecorder
 from aster.records.trajectory import Trajectory
-from aster.records.transition import Action, Observation, Transition
+from aster.records.transition import Observation, Transition
 from aster.runtime.context import RuntimeContext
 from aster.tools.executor import ToolExecutor
 

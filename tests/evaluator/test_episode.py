@@ -1,9 +1,28 @@
+import hashlib
 import json
+
+import pytest
 
 from aster.evaluator.episode import evaluate_episode, write_episode_evaluation
 from aster.evaluator.result import EvaluationResult
+from aster.records.recorder import TrajectoryRecorder
 from aster.records.trajectory import Trajectory
 from aster.records.transition import Action, ErrorInfo, Observation, Transition
+
+
+SUMMARY_FIELDS = {
+    "task_success",
+    "terminal_reached",
+    "steps",
+    "accepted_actions",
+    "rejected_actions",
+    "successful_executions",
+    "failed_executions",
+    "goal_verified",
+    "first_goal_verified_step",
+    "stop_reason",
+    "notes",
+}
 
 
 def test_episode_evaluation_separates_rejection_execution_failure_and_goal_verification():
@@ -28,17 +47,99 @@ def test_episode_evaluation_separates_rejection_execution_failure_and_goal_verif
     )
 
 
-def test_episode_evaluation_artifact_points_back_to_trajectory(tmp_path):
+def test_episode_evaluation_artifact_is_derived_from_persisted_trajectory(tmp_path):
     trajectory = _example_trajectory()
+    trajectory_path = tmp_path / "trajectory.jsonl"
+    _write_trajectory(trajectory_path, trajectory)
 
-    written = write_episode_evaluation(tmp_path / "evaluation.json", trajectory)
+    written = write_episode_evaluation(tmp_path / "evaluation.json", trajectory_path)
     payload = json.loads((tmp_path / "evaluation.json").read_text(encoding="utf-8"))
+    restored = TrajectoryRecorder.read_jsonl(trajectory_path)
 
+    assert set(payload) == {
+        "schema_version",
+        "trajectory_file",
+        "trajectory_sha256",
+        "summary",
+    }
     assert payload["schema_version"] == "aster-episode-evaluation-0"
     assert payload["trajectory_file"] == "trajectory.jsonl"
+    assert payload["trajectory_sha256"] == hashlib.sha256(
+        trajectory_path.read_bytes()
+    ).hexdigest()
+    assert set(payload["summary"]) == SUMMARY_FIELDS
     assert payload["summary"] == written.to_dict()
+    assert written == evaluate_episode(restored)
     assert payload["summary"]["first_goal_verified_step"] == 2
-    assert "reward" not in payload
+
+
+def test_transition_rejects_action_valid_mismatch():
+    with pytest.raises(ValueError, match="action_valid"):
+        _transition(
+            0,
+            Action.tool("memory.get", key="total"),
+            Observation(accepted=True, ok=True, output={"key": "total", "value": 42}),
+            EvaluationResult(
+                action_valid=False,
+                execution_success=True,
+                goal_satisfied=False,
+            ),
+        )
+
+
+def test_transition_rejects_execution_success_mismatch():
+    with pytest.raises(ValueError, match="execution_success"):
+        _transition(
+            0,
+            Action.tool("memory.get", key="total"),
+            Observation(accepted=True, ok=True, output={"key": "total", "value": 42}),
+            EvaluationResult(
+                action_valid=True,
+                execution_success=False,
+                goal_satisfied=False,
+            ),
+        )
+
+
+def test_transition_rejects_terminal_mismatch():
+    with pytest.raises(ValueError, match="terminal"):
+        _transition(
+            0,
+            Action.tool("memory.get", key="total"),
+            Observation(accepted=True, ok=True, output={"key": "total", "value": 42}),
+            EvaluationResult(
+                action_valid=True,
+                execution_success=True,
+                goal_satisfied=False,
+                terminal=True,
+            ),
+        )
+
+
+def test_trajectory_rejects_goal_satisfaction_regression():
+    verified = _transition(
+        0,
+        Action.tool("memory.get", key="total"),
+        Observation(accepted=True, ok=True, output={"key": "total", "value": 42}),
+        EvaluationResult(
+            action_valid=True,
+            execution_success=True,
+            goal_satisfied=True,
+        ),
+    )
+    regressed = _transition(
+        1,
+        Action.tool("memory.get", key="total"),
+        Observation(accepted=True, ok=True, output={"key": "total", "value": 42}),
+        EvaluationResult(
+            action_valid=True,
+            execution_success=True,
+            goal_satisfied=False,
+        ),
+    )
+
+    with pytest.raises(ValueError, match="goal_satisfied"):
+        Trajectory((verified, regressed))
 
 
 def _example_trajectory() -> Trajectory:
@@ -107,6 +208,13 @@ def _example_trajectory() -> Trajectory:
             ),
         )
     )
+
+
+def _write_trajectory(path, trajectory: Trajectory) -> None:
+    recorder = TrajectoryRecorder()
+    for transition in trajectory.transitions:
+        recorder.record(transition)
+    recorder.write_jsonl(path)
 
 
 def _transition(step, action, observation, evaluation) -> Transition:

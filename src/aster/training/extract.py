@@ -2,6 +2,7 @@
 
 import io
 import re
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 
 from docutils import nodes
@@ -60,11 +61,20 @@ class SeeAlsoDirective(Directive):
         return [node]
 
 
-def reference_role(name, rawtext, text, lineno, inliner, options=None, content=None):
+def reference_role(
+    name: str,
+    rawtext: str,
+    text: str,
+    lineno: int,
+    inliner: object,
+    options: Mapping[str, object] | None = None,
+    content: Sequence[str] | None = None,
+) -> tuple[list[nodes.Node], list[nodes.Node]]:
     # Preserve visible label; an unresolved cross-document target is not fetched.
+    del name, lineno, inliner, content
     match = re.fullmatch(r'(.+?)\s*<[^>]+>', text)
     label = match.group(1) if match else text.lstrip('~')
-    return [nodes.literal(rawtext, label, **(options or {}))], []
+    return [nodes.literal(rawtext, label, **dict(options or {}))], []
 
 
 def rst_extract(text: str) -> Extracted:
@@ -75,7 +85,9 @@ def rst_extract(text: str) -> Extracted:
     directives.register_directive('seealso', SeeAlsoDirective)
     for name in ['term', 'ref', 'class', 'func', 'meth', 'attr', 'mod', 'exc', 'data',
                  'const', 'keyword', 'token', 'option', 'file', 'pep', 'program', 'dfn', 'kbd', 'samp']:
-        roles.register_local_role(name, reference_role)
+        # Docutils 0.22.2 narrows the callback result to reference nodes, but custom
+        # roles may return other inline nodes. This role intentionally returns literal.
+        roles.register_local_role(name, reference_role)  # pyright: ignore[reportArgumentType]
     warnings = io.StringIO()
     tree = publish_doctree(text, settings_overrides={
         'file_insertion_enabled': False, 'raw_enabled': False,
