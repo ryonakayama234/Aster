@@ -10,12 +10,14 @@ MEMORY_PUT_SPEC = ToolSpec(
     name="memory.put",
     description="Store one JSON-compatible value under a key.",
     arguments=(ArgumentSpec("key", "string"), ArgumentSpec("value", "any")),
+    counterfactual_safe=True,
 )
 
 MEMORY_GET_SPEC = ToolSpec(
     name="memory.get",
     description="Read one previously stored value by key.",
     arguments=(ArgumentSpec("key", "string"),),
+    counterfactual_safe=True,
 )
 
 
