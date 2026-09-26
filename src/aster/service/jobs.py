@@ -233,11 +233,18 @@ class JobManager:
         if not paths:
             return None, [], {}
         run_path = paths[0]
-        run = self._read_object(run_path)
+        try:
+            run = self._read_object(run_path)
+        except (OSError, json.JSONDecodeError):
+            return None, [], {}
         events: list[object] = []
         events_path = run_path.parent / "events.jsonl"
         if events_path.exists():
-            for line in events_path.read_text(encoding="utf-8").splitlines():
+            try:
+                event_lines = events_path.read_text(encoding="utf-8").splitlines()
+            except OSError:
+                event_lines = []
+            for line in event_lines:
                 try:
                     events.append(json.loads(line))
                 except json.JSONDecodeError:
@@ -248,7 +255,7 @@ class JobManager:
             if path.exists():
                 try:
                     outputs[key] = json.loads(path.read_text(encoding="utf-8"))
-                except json.JSONDecodeError:
+                except (OSError, json.JSONDecodeError):
                     pass
         return run, events, outputs
 
