@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 from aster.agent.selective import SelectivePolicy
+from aster.credit.contract import write_credit_result
 from aster.evaluator.episode import write_episode_evaluation
 from aster.evaluator.protocol import StepEvaluator
 from aster.records.recorder import TrajectoryRecorder
@@ -65,11 +66,17 @@ def run_logged_selective_agent(
             trajectory_path,
         )
         reward_result = None
+        credit_result = None
         if reward_spec is not None:
             reward_result = write_reward_result(
                 run.path / "reward.json",
                 episode_evaluation,
                 reward_spec,
+            )
+            credit_result = write_credit_result(
+                run.path / "credit.json",
+                trajectory,
+                reward_result,
             )
         summary = summarize_selective_rollout(trajectory, traces)
         _write_json(
@@ -83,12 +90,15 @@ def run_logged_selective_agent(
                 "routing_file": "routing.jsonl",
                 "evaluation_file": "evaluation.json",
                 "reward_file": None if reward_result is None else "reward.json",
+                "credit_file": None if credit_result is None else "credit.json",
                 "summary": summary,
             },
         )
         run.event("episode_evaluated", {"evaluation_file": "evaluation.json"})
         if reward_result is not None:
             run.event("reward_computed", {"reward_file": "reward.json"})
+        if credit_result is not None:
+            run.event("credit_assigned", {"credit_file": "credit.json"})
         run.event("rolled_out", summary)
         artifacts = {
             "selective": "selective.json",
@@ -98,6 +108,8 @@ def run_logged_selective_agent(
         }
         if reward_result is not None:
             artifacts["reward"] = "reward.json"
+        if credit_result is not None:
+            artifacts["credit"] = "credit.json"
         run.finish("completed", **artifacts)
         return run.path
     except BaseException as error:
