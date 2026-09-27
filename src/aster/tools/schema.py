@@ -35,6 +35,7 @@ class ToolSpec:
     name: str
     description: str
     arguments: tuple[ArgumentSpec, ...] = ()
+    counterfactual_safe: bool = False
 
     def __post_init__(self):
         names = [argument.name for argument in self.arguments]

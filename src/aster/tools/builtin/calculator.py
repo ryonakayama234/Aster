@@ -12,6 +12,7 @@ CALCULATOR_SPEC = ToolSpec(
         ArgumentSpec("left", "number"),
         ArgumentSpec("right", "number"),
     ),
+    counterfactual_safe=True,
 )
 
 

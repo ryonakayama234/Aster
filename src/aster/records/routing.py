@@ -9,6 +9,7 @@ from typing import Sequence
 from aster.records.transition import Action
 
 _ROUTE_NAMES = {"model", "fallback", "abstain"}
+_SCHEMA_VERSION = "aster-routing-trace-0"
 
 
 @dataclass(frozen=True, slots=True)
@@ -68,7 +69,7 @@ class RoutingTrace:
 
     def to_dict(self) -> dict:
         return {
-            "schema_version": "aster-routing-trace-0",
+            "schema_version": _SCHEMA_VERSION,
             "step": self.step,
             "model_id": self.model_id,
             "route": self.route,
@@ -86,6 +87,32 @@ class RoutingTrace:
             "final_action": self.final_action.to_dict(),
         }
 
+    @classmethod
+    def from_dict(cls, data: dict) -> "RoutingTrace":
+        if data.get("schema_version") != _SCHEMA_VERSION:
+            raise ValueError("Unsupported routing trace schema")
+        fallback_policy = data.get("fallback_policy")
+        trace = cls(
+            step=int(data["step"]),
+            model_id=str(data["model_id"]),
+            route=str(data["route"]),
+            temperature=float(data["temperature"]),
+            autonomous_threshold=float(data["autonomous_threshold"]),
+            fallback_threshold=float(data["fallback_threshold"]),
+            candidates=tuple(Action.from_dict(item) for item in data["candidates"]),
+            scores=tuple(float(value) for value in data["scores"]),
+            raw_probabilities=tuple(float(value) for value in data["raw_probabilities"]),
+            calibrated_probabilities=tuple(
+                float(value) for value in data["calibrated_probabilities"]
+            ),
+            selected_index=int(data["selected_index"]),
+            final_action=Action.from_dict(data["final_action"]),
+            fallback_policy=None if fallback_policy is None else str(fallback_policy),
+        )
+        if "model_action" in data and trace.model_action.to_dict() != data["model_action"]:
+            raise ValueError("Persisted model_action does not match selected candidate")
+        return trace
+
 
 def write_routing_traces_jsonl(path: str | Path, traces: Sequence[RoutingTrace]) -> None:
     """Write routing evidence as deterministic, Sites-readable JSONL."""
@@ -94,3 +121,20 @@ def write_routing_traces_jsonl(path: str | Path, traces: Sequence[RoutingTrace])
     with output.open("w", encoding="utf-8", newline="\n") as stream:
         for trace in traces:
             stream.write(json.dumps(trace.to_dict(), ensure_ascii=False, sort_keys=True) + "\n")
+
+
+def read_routing_traces_jsonl(path: str | Path) -> tuple[RoutingTrace, ...]:
+    """Read persisted routing evidence for replay/analysis without executing anything."""
+    traces: list[RoutingTrace] = []
+    with Path(path).open("r", encoding="utf-8") as stream:
+        for line_number, line in enumerate(stream, start=1):
+            if not line.strip():
+                continue
+            try:
+                traces.append(RoutingTrace.from_dict(json.loads(line)))
+            except (KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
+                raise ValueError(f"Invalid routing JSONL at line {line_number}") from exc
+    for expected_step, trace in enumerate(traces):
+        if trace.step != expected_step:
+            raise ValueError("Routing trace steps must be contiguous and start at zero")
+    return tuple(traces)

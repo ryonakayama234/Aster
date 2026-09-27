@@ -54,9 +54,16 @@
                                       │
                        assigned + unassigned credit
                                       │
-                                      ▼
-                                    runs/
-                                      │
+                         ┌────────────┴────────────┐
+                         │                         │
+                         ▼                         ▼
+                      runs/              counterfactual analysis
+                                                   │
+                                      forced candidate branches
+                                                   │
+                                        reward / advantage estimate
+                                                   │
+                         └────────────┬────────────┘
                                       ▼
                          training data生成
                                       │
