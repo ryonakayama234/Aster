@@ -13,6 +13,7 @@ from aster.records.recorder import TrajectoryRecorder
 from aster.records.routing import RoutingTrace, write_routing_traces_jsonl
 from aster.records.runlog import RunLog
 from aster.records.trajectory import Trajectory
+from aster.reward.contract import RewardSpec, write_reward_result
 from aster.runtime.context import RuntimeContext
 from aster.tools.executor import ToolExecutor
 
@@ -26,6 +27,7 @@ def run_logged_intervention_agent(
     executor: ToolExecutor,
     evaluator: StepEvaluator,
     context: RuntimeContext,
+    reward_spec: RewardSpec | None = None,
     max_steps: int = 8,
 ) -> Path:
     """Run one student trajectory while labeling every visited state in shadow mode."""
@@ -38,6 +40,7 @@ def run_logged_intervention_agent(
             "teacher_id": teacher_id,
             "routing": policy.config.to_dict(),
             "fallback_policy": policy.fallback_id,
+            "reward_spec": None if reward_spec is None else reward_spec.to_dict(),
             "max_steps": max_steps,
         },
         producer="runtime",
@@ -68,10 +71,17 @@ def run_logged_intervention_agent(
         recorder.write_jsonl(trajectory_path)
         write_routing_traces_jsonl(run.path / "routing.jsonl", routing)
         write_intervention_traces_jsonl(run.path / "interventions.jsonl", interventions)
-        write_episode_evaluation(
+        episode_evaluation = write_episode_evaluation(
             run.path / "evaluation.json",
             trajectory_path,
         )
+        reward_result = None
+        if reward_spec is not None:
+            reward_result = write_reward_result(
+                run.path / "reward.json",
+                episode_evaluation,
+                reward_spec,
+            )
         summary = summarize_intervention_rollout(trajectory, routing, interventions)
         _write_json(
             run.path / "learning.json",
@@ -83,19 +93,24 @@ def run_logged_intervention_agent(
                 "routing_file": "routing.jsonl",
                 "interventions_file": "interventions.jsonl",
                 "evaluation_file": "evaluation.json",
+                "reward_file": None if reward_result is None else "reward.json",
                 "summary": summary,
             },
         )
         run.event("episode_evaluated", {"evaluation_file": "evaluation.json"})
+        if reward_result is not None:
+            run.event("reward_computed", {"reward_file": "reward.json"})
         run.event("interventions_collected", summary)
-        run.finish(
-            "completed",
-            learning="learning.json",
-            trajectory="trajectory.jsonl",
-            routing="routing.jsonl",
-            interventions="interventions.jsonl",
-            evaluation="evaluation.json",
-        )
+        artifacts = {
+            "learning": "learning.json",
+            "trajectory": "trajectory.jsonl",
+            "routing": "routing.jsonl",
+            "interventions": "interventions.jsonl",
+            "evaluation": "evaluation.json",
+        }
+        if reward_result is not None:
+            artifacts["reward"] = "reward.json"
+        run.finish("completed", **artifacts)
         return run.path
     except BaseException as error:
         run.finish(
