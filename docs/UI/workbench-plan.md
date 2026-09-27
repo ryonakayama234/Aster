@@ -1,7 +1,8 @@
 # Asterの学習・Agent作業画面
 
-2026-09-20。Sitesの素材・Tokenizer画面を実装済み。保存bundleのブラウザ内読込・本文比較・BPE・考察保存が動く。
-ローカルPython実行接続、TinyLM学習、Agent実行はまだ未実装。
+2026-09-27更新。素材・Tokenizer観察、共有Corpus、学習観測の保存/比較に加え、ServiceContract-v0のPretrain接続をSitesへ公開。PR #16対応ServiceがPC側に必要。実HTTP+DOMの200-step検証済み、実機ブラウザ接続は未確認。Agent実行は未実装。
+
+継続する設計の正本は [SitesWorkbenchContract-v0.md](SitesWorkbenchContract-v0.md)、作業・検証履歴は [SitesWorkbench-changelog.md](SitesWorkbench-changelog.md)。以降の実装順は当初計画として残し、最新の対応範囲は上記を参照。
 Sites用のソースは `ui/` の独立したチェックアウト。親のAsterや原本データはSiteへ送らない。
 参考は同フォルダのmain.pngとtool.png。掲載された数値・モデル名・epochは構想例で、実測値ではない。
 
