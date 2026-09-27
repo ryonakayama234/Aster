@@ -50,6 +50,11 @@
                          RewardSpec → RewardResult
                                       │
                                       ▼
+                                   credit/
+                                      │
+                       assigned + unassigned credit
+                                      │
+                                      ▼
                                     runs/
                                       │
                                       ▼
