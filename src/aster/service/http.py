@@ -15,7 +15,14 @@ from urllib.parse import urlsplit
 from aster.service.contracts import JobSpec
 from aster.service.jobs import JobBusyError, JobManager
 
-ORIGIN = "https://aster-learning-lab-zhong.rynaka0112.chatgpt.site"
+SITES_ORIGIN = "https://aster-learning-lab-zhong.rynaka0112.chatgpt.site"
+ALLOWED_ORIGINS = frozenset(
+    {
+        SITES_ORIGIN,
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    }
+)
 
 
 def make_server(jobs: JobManager, token: str, port: int) -> ThreadingHTTPServer:
@@ -31,18 +38,22 @@ def make_server(jobs: JobManager, token: str, port: int) -> ThreadingHTTPServer:
                 f"127.0.0.1:{server_port}",
                 f"localhost:{server_port}",
             )
-            valid_origin = origin in (None, ORIGIN)
+            valid_origin = origin is None or origin in ALLOWED_ORIGINS
             valid_auth = not auth or secrets.compare_digest(
                 self.headers.get("Authorization", ""), "Bearer " + token
             )
             return valid_host and valid_origin and valid_auth
 
+        def add_cors_headers(self) -> None:
+            origin = self.headers.get("Origin")
+            if origin in ALLOWED_ORIGINS:
+                self.send_header("Access-Control-Allow-Origin", origin)
+                self.send_header("Vary", "Origin")
+
         def respond(self, status: int, data: object) -> None:
             body = json.dumps(data, ensure_ascii=False).encode("utf-8")
             self.send_response(status)
-            if self.headers.get("Origin") == ORIGIN:
-                self.send_header("Access-Control-Allow-Origin", ORIGIN)
-                self.send_header("Vary", "Origin")
+            self.add_cors_headers()
             self.send_header("Cache-Control", "no-store")
             self.send_header("Content-Type", "application/json; charset=utf-8")
             self.send_header("Content-Length", str(len(body)))
@@ -54,7 +65,7 @@ def make_server(jobs: JobManager, token: str, port: int) -> ThreadingHTTPServer:
                 self.respond(403, {"error": "Origin/Host denied"})
                 return
             self.send_response(204)
-            self.send_header("Access-Control-Allow-Origin", ORIGIN)
+            self.add_cors_headers()
             self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
             self.send_header("Access-Control-Allow-Headers", "Authorization, Content-Type")
             self.send_header("Access-Control-Allow-Private-Network", "true")
