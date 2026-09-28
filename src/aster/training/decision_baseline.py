@@ -521,9 +521,9 @@ def _compare_episode_policies(
                 coverage = _candidate_coverage_for_trajectory(
                     trajectory, str(seed["episode_id"])
                 )
-                candidate_total += coverage["teacher_actions"]
-                candidate_present += coverage["present"]
-                missing_teacher_actions.extend(coverage["missing"])
+                candidate_total += cast(int, coverage["teacher_actions"])
+                candidate_present += cast(int, coverage["present"])
+                missing_teacher_actions.extend(cast(list[str], coverage["missing"]))
             if selective is not None:
                 for trace in selective.routing_traces:
                     route_counts[trace.route] += 1
