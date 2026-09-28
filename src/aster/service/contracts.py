@@ -7,7 +7,7 @@ import math
 
 SCHEMA_JOB_SPEC = "aster-job-spec-0"
 ARTIFACT_KINDS = frozenset({"training_view", "tokenizer"})
-JOB_KINDS = frozenset({"tokenizer", "pretrain"})
+JOB_KINDS = frozenset({"tokenizer", "pretrain", "agent"})
 
 
 @dataclass(frozen=True)

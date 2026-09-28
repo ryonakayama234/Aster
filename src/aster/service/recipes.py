@@ -54,6 +54,13 @@ class RecipeRegistry:
                 parameter_names=(),
                 description="Run the fixed TinyLM overfit recipe for wiring and memorization observation.",
             ),
+            "agent-calculate-store-v0": RecipeInfo(
+                recipe_id="agent-calculate-store-v0",
+                kind="agent",
+                input_names=(),
+                parameter_names=(),
+                description="Run the fixed 40 + 2 calculate-and-store Agent episode with calculator and memory tools.",
+            ),
         }
 
     def list(self) -> list[dict[str, object]]:
@@ -67,6 +74,18 @@ class RecipeRegistry:
             raise ValueError("Recipe inputs do not match the contract")
         if set(spec.parameters) != set(recipe.parameter_names):
             raise ValueError("Recipe parameters do not match the contract")
+
+        if spec.kind == "agent":
+            return PreparedJob(
+                command=[
+                    self.python,
+                    "-m",
+                    "aster.runtime.service_agent",
+                    "--root",
+                    str(job_root),
+                ],
+                timeout_seconds=60,
+            )
 
         view = self.catalog.resolve(spec.inputs["training_view"], "training_view")
         if spec.kind == "tokenizer":

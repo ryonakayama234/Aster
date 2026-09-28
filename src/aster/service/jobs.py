@@ -110,6 +110,8 @@ class JobManager:
             bundle["tokenizer"] = outputs.get("tokenizer")
         if visible_job.get("kind") == "pretrain":
             bundle["training"] = outputs.get("training")
+        if visible_job.get("kind") == "agent":
+            bundle["agent"] = outputs.get("agent")
         return bundle
 
     def summaries(self) -> list[dict[str, object]]:
@@ -126,8 +128,8 @@ class JobManager:
         artifacts = self.catalog.all()
         return {
             "schema_version": "aster-service-status-0",
-            "version": "aster-service-0.1",
-            "capabilities": ["tokenizer.train", "model.pretrain"],
+            "version": "aster-service-0.2",
+            "capabilities": ["tokenizer.train", "model.pretrain", "agent.run"],
             "recipes": self.recipes.list(),
             "artifacts": artifacts,
             "jobs": self.summaries(),
@@ -250,7 +252,11 @@ class JobManager:
                 except json.JSONDecodeError:
                     pass
         outputs: dict[str, object] = {}
-        for name, key in (("tokenizer-bundle.json", "tokenizer"), ("training-bundle.json", "training")):
+        for name, key in (
+            ("tokenizer-bundle.json", "tokenizer"),
+            ("training-bundle.json", "training"),
+            ("agent-bundle.json", "agent"),
+        ):
             path = run_path.parent / name
             if path.exists():
                 try:
