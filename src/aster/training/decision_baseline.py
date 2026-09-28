@@ -13,7 +13,7 @@ import platform
 import resource
 from pathlib import Path
 import time
-from typing import Sequence
+from typing import Sequence, cast
 
 import torch
 
@@ -37,9 +37,11 @@ from aster.model.decision_head import DecisionModel
 from aster.model.tiny_lm import ModelConfig, TinyLM
 from aster.records.decision import serialize_decision_input
 from aster.records.runlog import RunLog
+from aster.records.trajectory import Trajectory
 from aster.records.transition import JsonValue
 from aster.runtime.context import RuntimeContext
 from aster.runtime.loop import run_loop
+from aster.runtime.state import RuntimeState
 from aster.tokenizer.artifact import AsterTokenizer, train_aster_tokenizer
 from aster.tools.builtin.calculator import CALCULATOR_SPEC, calculator
 from aster.tools.builtin.memory import MEMORY_GET_SPEC, MEMORY_PUT_SPEC, memory_get, memory_put
@@ -471,6 +473,9 @@ def _compare_episode_policies(
 
     rows: list[dict[str, object]] = []
     aggregates: dict[str, dict[str, object]] = {}
+    candidate_total = 0
+    candidate_present = 0
+    missing_teacher_actions: list[str] = []
     for policy_name in ("rule", "model", "model+fallback"):
         successes = 0
         steps = 0
@@ -504,11 +509,21 @@ def _compare_episode_policies(
                 policy=policy,
                 executor=_build_executor(),
                 evaluator=TaskEvaluator(),
-                context=RuntimeContext(task=seed["task"], memory=seed["memory"]),
+                context=RuntimeContext(
+                    task=cast(dict[str, JsonValue], seed["task"]),
+                    memory=cast(dict[str, JsonValue], seed["memory"]),
+                ),
             )
             evaluation = evaluate_episode(trajectory)
             successes += int(evaluation.task_success)
             steps += evaluation.steps
+            if policy_name == "rule":
+                coverage = _candidate_coverage_for_trajectory(
+                    trajectory, str(seed["episode_id"])
+                )
+                candidate_total += coverage["teacher_actions"]
+                candidate_present += coverage["present"]
+                missing_teacher_actions.extend(coverage["missing"])
             if selective is not None:
                 for trace in selective.routing_traces:
                     route_counts[trace.route] += 1
@@ -540,10 +555,48 @@ def _compare_episode_policies(
         "split": split,
         "episodes": rows,
         "summary": aggregates,
+        "candidate_builder": {
+            "candidate_builder_id": CANDIDATE_BUILDER_ID,
+            "teacher_actions": candidate_total,
+            "present": candidate_present,
+            "coverage": None if not candidate_total else candidate_present / candidate_total,
+            "missing": missing_teacher_actions,
+        },
         "note": (
             "Episode tasks are reconstructed from step-0 benchmark states. Candidate-set and "
             "candidate-order perturbations remain decision-level slices; runtime uses the canonical builder."
         ),
+    }
+
+
+def _candidate_coverage_for_trajectory(
+    trajectory: Trajectory,
+    episode_id: str,
+) -> dict[str, object]:
+    builder = CalculateAndStoreCandidates()
+    present = 0
+    missing: list[str] = []
+    for index, transition in enumerate(trajectory.transitions):
+        state_data = transition.state_before
+        task = state_data.get("task")
+        memory = state_data.get("memory")
+        if not isinstance(task, dict) or not isinstance(memory, dict):
+            raise ValueError("Recorded runtime state must contain task and memory objects")
+        state = RuntimeState(
+            task=cast(dict[str, JsonValue], task),
+            memory=cast(dict[str, JsonValue], memory),
+            step=transition.step,
+        )
+        history = Trajectory(trajectory.transitions[:index])
+        candidates = builder.build(state, history, transition.available_actions)
+        if transition.action in candidates:
+            present += 1
+        else:
+            missing.append(f"{episode_id}/step-{transition.step}")
+    return {
+        "teacher_actions": len(trajectory.transitions),
+        "present": present,
+        "missing": missing,
     }
 
 
