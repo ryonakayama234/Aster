@@ -12,6 +12,7 @@ from aster.evaluator.episode import write_episode_evaluation
 from aster.evaluator.verifier import TaskEvaluator
 from aster.records.recorder import TrajectoryRecorder
 from aster.records.runlog import RunLog
+from aster.records.transition import JsonValue
 from aster.runtime.context import RuntimeContext
 from aster.runtime.loop import run_loop
 from aster.tools.builtin.calculator import CALCULATOR_SPEC, calculator
@@ -21,7 +22,7 @@ from aster.tools.registry import ToolRegistry
 
 RECIPE_ID = "agent-calculate-store-v0"
 POLICY_ID = "rule-calculate-store-v0"
-TASK = {
+TASK: dict[str, JsonValue] = {
     "kind": "calculate_and_store",
     "operation": "add",
     "left": 40,
@@ -56,7 +57,7 @@ def run_calculate_store_recipe(root: str | Path, *, max_steps: int = 8) -> Path:
     recorder = TrajectoryRecorder()
 
     try:
-        trajectory = run_loop(
+        run_loop(
             policy=RuleBasedPolicy(),
             executor=build_executor(),
             evaluator=TaskEvaluator(),
