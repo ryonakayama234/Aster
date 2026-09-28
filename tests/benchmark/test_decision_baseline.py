@@ -73,6 +73,8 @@ def test_baseline_seals_test_then_final_test_uses_saved_artifact(tmp_path):
         "model",
         "model+fallback",
     }
+    assert baseline["dev"]["episodes"]["candidate_builder"]["coverage"] == 1.0
+    assert baseline["dev"]["episodes"]["candidate_builder"]["missing"] == []
     assert baseline["resources"]["torch_num_threads"] == 2
     assert baseline["resources"]["train_wall_seconds"] >= 0
 
@@ -98,6 +100,7 @@ def test_baseline_seals_test_then_final_test_uses_saved_artifact(tmp_path):
         "model",
         "model+fallback",
     }
+    assert final_test["episodes"]["candidate_builder"]["coverage"] == 1.0
 
 
 def test_saved_artifact_reproduces_scores_in_separate_python_process(tmp_path):
