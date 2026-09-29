@@ -170,3 +170,9 @@ accuracyが低くても、この5条件が成立して原因を追えるならIs
 - optimizerを含むtraining resume
 
 次は、このartifactとbaseline evidenceをServiceのallowlisted recipeへ公開し、aster-web #2からRun比較を観測する段階です。
+
+## 2026-09-29: Train-Fit Diagnostics追加
+
+学習前後のtrain全件raw評価と既存artifactの`diagnose-train`コマンドを追加した。
+`last_loss`だけでfit成功を判断しない。学習順序・学習率・データ・thresholdは変更していない。
+仕様・実行方法・次の実験条件は[DecisionTrainDiagnostics-v0](DecisionTrainDiagnostics-v0.md)、実測は[診断結果](../reports/decision-train-diagnostics-v0.md)を参照。

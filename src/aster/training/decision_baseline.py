@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 import json
+import math
 import platform
 import resource
 from pathlib import Path
@@ -153,6 +154,13 @@ def run_logged_decision_baseline(
         )
         _check_context_capacity(model, tokenizer, train_cases, "train")
 
+        initial_start = time.perf_counter()
+        with torch.random.fork_rng(devices=[]):
+            initial_train = _predict_cases(model, tokenizer, train_cases)
+        initial_train_metrics = _train_metrics(initial_train)
+        _write_train_predictions(run.path / "initial-train-predictions.jsonl", train_cases, initial_train)
+        initial_train_seconds = time.perf_counter() - initial_start
+
         train_start = time.perf_counter()
         losses = train_decision(
             model,
@@ -161,6 +169,13 @@ def run_logged_decision_baseline(
             config.train_config(),
         )
         train_seconds = time.perf_counter() - train_start
+
+        train_eval_start = time.perf_counter()
+        with torch.random.fork_rng(devices=[]):
+            final_train = _predict_cases(model, tokenizer, train_cases)
+        final_train_metrics = _train_metrics(final_train)
+        _write_train_predictions(run.path / "train-predictions.jsonl", train_cases, final_train)
+        train_eval_seconds = time.perf_counter() - train_eval_start
 
         calibration_start = time.perf_counter()
         calibration_raw = _predict_cases(
@@ -234,6 +249,12 @@ def run_logged_decision_baseline(
             "losses": losses,
             "first_loss": losses[0],
             "last_loss": losses[-1],
+            "loss_semantics": "online pre-update single-example loss; not final train NLL",
+            "initial_train": initial_train_metrics,
+            "final_train": final_train_metrics,
+            "optimizer_updates": config.steps,
+            "example_exposures": config.steps,
+            "equivalent_epochs": config.steps / len(train_cases),
         }
         _write_json(run.path / "training.json", training_payload)
         _write_predictions(
@@ -246,8 +267,13 @@ def run_logged_decision_baseline(
         resources = {
             "device": "cpu",
             "torch_num_threads": torch.get_num_threads(),
+            "torch_version": torch.__version__,
+            "python_version": platform.python_version(),
+            "platform": platform.platform(),
             "tokenizer_wall_seconds": tokenizer_seconds,
             "train_wall_seconds": train_seconds,
+            "initial_train_evaluation_wall_seconds": initial_train_seconds,
+            "final_train_evaluation_wall_seconds": train_eval_seconds,
             "mean_train_step_wall_seconds": train_seconds / config.steps,
             "calibration_wall_seconds": calibration_seconds,
             "dev_decision_wall_seconds": dev_decision_seconds,
@@ -265,6 +291,14 @@ def run_logged_decision_baseline(
             "suite_sha256": suite_sha256,
             "split_manifest": "split-manifest.json",
             "training": "training.json",
+            "train": {
+                "initial": initial_train_metrics,
+                "final": final_train_metrics,
+                "initial_predictions": "initial-train-predictions.jsonl",
+                "predictions": "train-predictions.jsonl",
+                "temperature": 1.0,
+                "scope": "memorization diagnostic, not generalization evidence",
+            },
             "development_predictions": "development-predictions.jsonl",
             "data_policy": {
                 "model_update": "train",
@@ -306,6 +340,8 @@ def run_logged_decision_baseline(
             artifact="model-artifact/manifest.json",
             split_manifest="split-manifest.json",
             training="training.json",
+            train_predictions="train-predictions.jsonl",
+            initial_train_predictions="initial-train-predictions.jsonl",
             development_predictions="development-predictions.jsonl",
             test_status="sealed",
         )
@@ -316,6 +352,112 @@ def run_logged_decision_baseline(
             error_type=type(error).__name__,
             error=str(error),
         )
+        raise
+
+
+
+def _raw_nll(prediction: DecisionPrediction) -> float:
+    """Stable log-sum-exp, without clipping small target probabilities."""
+    maximum = max(prediction.logits)
+    return (maximum - prediction.logits[prediction.target_index]
+            + math.log(sum(math.exp(value - maximum) for value in prediction.logits)))
+
+
+def _train_metrics(predictions: Sequence[DecisionPrediction]) -> dict[str, float | int]:
+    if not predictions:
+        raise ValueError("Train diagnostics require at least one case")
+    correct = sum(int(row.correct) for row in predictions)
+    return {
+        "examples": len(predictions),
+        "correct": correct,
+        "accuracy": correct / len(predictions),
+        "nll": sum(_raw_nll(row) for row in predictions) / len(predictions),
+    }
+
+
+def _write_train_predictions(
+    path: Path,
+    cases: Sequence[BenchmarkCase],
+    predictions: Sequence[DecisionPrediction],
+) -> None:
+    with path.open("w", encoding="utf-8", newline="\n") as stream:
+        for case, prediction in zip(cases, predictions, strict=True):
+            if case.case_id != prediction.case_id or case.split != "train":
+                raise ValueError("Train prediction does not match its case")
+            alternatives = [score for index, score in enumerate(prediction.logits)
+                            if index != prediction.target_index]
+            row = prediction.to_dict()
+            row.update(
+                target_action=case.example.target.to_dict(),
+                predicted_action=case.example.candidates[prediction.predicted_index].to_dict(),
+                candidates=[candidate.to_dict() for candidate in case.example.candidates],
+                target_probability=prediction.raw_probabilities[prediction.target_index],
+                nll=_raw_nll(prediction),
+                target_margin=(prediction.logits[prediction.target_index] - max(alternatives)
+                               if alternatives else None),
+                step=case.example.state.step,
+                leakage_group=case.leakage_group,
+            )
+            stream.write(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n")
+
+
+def run_logged_decision_train_diagnostics(
+    root: str | Path,
+    artifact_dir: str | Path,
+    suite: BenchmarkSuite,
+    *,
+    source_git_sha: str | None = None,
+) -> Path:
+    """Read a saved artifact and evaluate train only, without training/calibration."""
+    model, tokenizer, manifest = load_decision_artifact(artifact_dir)
+    if manifest.get("suite_id") != suite.suite_id or manifest.get("suite_sha256") != _suite_sha256(suite):
+        raise ValueError("Train diagnostic suite does not match the model artifact lineage")
+    if manifest.get("candidate_builder_id") != CANDIDATE_BUILDER_ID:
+        raise ValueError("Unsupported candidate builder for train diagnostics")
+    cases = suite.cases_for("train")
+    if not cases:
+        raise ValueError("Train diagnostics require a non-empty train split")
+    run = RunLog(Path(root), "decision_train_diagnostics", {
+        "artifact_id": manifest["artifact_id"],
+        "suite_id": suite.suite_id,
+        "suite_sha256": manifest["suite_sha256"],
+        "source_git_sha": source_git_sha,
+        "evaluated_split": "train",
+    }, producer="evaluator")
+    started = time.perf_counter()
+    try:
+        predictions = _predict_cases(model, tokenizer, cases)
+        _write_train_predictions(run.path / "train-predictions.jsonl", cases, predictions)
+        payload = {
+            "schema_version": "aster-decision-train-diagnostics-0",
+            "artifact_id": manifest["artifact_id"],
+            "suite_id": suite.suite_id,
+            "suite_sha256": manifest["suite_sha256"],
+            "source_git_sha": source_git_sha,
+            "split": "train",
+            "temperature": 1.0,
+            "metrics": _train_metrics(predictions),
+            "initial_train": None,
+            "initial_train_status": "unavailable_from_final_artifact",
+            "model_update": False,
+            "temperature_fit": False,
+            "test": {"status": "sealed"},
+            "resources": {
+                "device": "cpu",
+                "torch_num_threads": torch.get_num_threads(),
+                "torch_version": torch.__version__,
+                "python_version": platform.python_version(),
+                "platform": platform.platform(),
+                "wall_seconds": time.perf_counter() - started,
+            },
+        }
+        _write_json(run.path / "train-diagnostics.json", payload)
+        run.finish("completed", diagnostics="train-diagnostics.json",
+                   predictions="train-predictions.jsonl", test_status="sealed")
+        return run.path
+    except BaseException as error:
+        run.finish("interrupted" if isinstance(error, KeyboardInterrupt) else "failed",
+                   error_type=type(error).__name__, error=str(error))
         raise
 
 

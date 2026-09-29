@@ -13,6 +13,7 @@ from aster.training.decision_baseline import (
     DecisionBaselineConfig,
     run_logged_decision_baseline,
     run_logged_decision_final_test,
+    run_logged_decision_train_diagnostics,
 )
 
 
@@ -42,6 +43,9 @@ def main() -> int:
     test = subparsers.add_parser("test", help="reveal test for one saved model artifact")
     test.add_argument("--artifact", type=Path, required=True)
 
+    diagnose = subparsers.add_parser("diagnose-train", help="evaluate saved artifact on train only")
+    diagnose.add_argument("--artifact", type=Path, required=True)
+
     args = parser.parse_args()
     root = args.root.resolve()
     torch.set_num_threads(args.threads)
@@ -62,7 +66,12 @@ def main() -> int:
         artifact = args.artifact
         if not artifact.is_absolute():
             artifact = (root / artifact).resolve()
-        run_path = run_logged_decision_final_test(root, artifact, suite)
+        if args.command == "diagnose-train":
+            run_path = run_logged_decision_train_diagnostics(
+                root, artifact, suite, source_git_sha=_git_sha(root),
+            )
+        else:
+            run_path = run_logged_decision_final_test(root, artifact, suite)
 
     print(run_path)
     return 0
