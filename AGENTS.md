@@ -42,6 +42,9 @@ Asterは、自作TinyLMを通してAI・Python・数学・コンピューター�
 - v0を固定してTokenizerとTinyLMで評価した後、v0.1へ変更する。改善案をv0へ静かに混ぜない。
 - Corpusの版とTokenizerの版は別。既存AsterTokenizer-v0.1がCorpus-v0を使っても矛盾しない。
 - まず既存の単純なbyte-level BPEを使う。速度や品質に問題が出たら計測して改善する。
+- Decision課題のTokenizer/入力表現比較は、一般Corpus用AsterTokenizerの置換と混同しない。同じdecision内容・candidate・教師・更新順を固定し、保存済みTokenizer artifactのdigest、系列長、padding込みtoken量、parameter数、CPU費用を記録する。
+- Decisionのsealed test / reserved testは、比較条件を決めるためのTokenizer学習・長さ確認・scoreへ流さない。debug runとpreregistered measurement、ChatGPT/GitHub runner測定とユーザーWSL測定を区別する。
+- 語彙数が異なるモデルを比較するとき「同じseedだから同じ初期weight」とは扱わない。共有したtensor/semantic rowと共有できない語彙依存weightを分け、hashで残す。
 - このWSLチェックアウトではLinux側のPython・Gitを使う。ユーザーの未コミット作業を保護する。
 - 既存の読み込み対象拡張子・特殊トークン・文書境界を確認してから接続する。
 - 外部コードを収集時に実行しない。将来の実行器はネットワークなし・隔離・時間/資源制限を設ける。
