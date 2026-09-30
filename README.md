@@ -91,7 +91,7 @@ Decision baselineはtestを自動開封しません。まずdevelopment runを�
 [初回診断結果](reports/decision-state-diagnostics-v0.md)では、既知課題の自力完了は成立し、新しい数値・キー・履歴への応用に弱点が残る。
 この変更はPR #25に依存する研究ブランチ上の実装であり、main/Service/Webに導入済みとは扱わない。
 
-1. 状態診断の失敗を分析し、少量のtrain拡張と新split/構造holdoutを設計する。旧testは封印を維持。
+1. [失敗/Tokenizer監査](reports/decision-failure-audit-v0.md)と[データ4条件比較](docs/DecisionDataIntervention-v0.md)を研究ブランチに追加。[実測報告](reports/decision-data-intervention-v0.md)でtrain fit・元課題保持・変更課題episodeを分ける。旧testと予約prefix testはモデル評価せず封印を維持。次は必要に応じTokenizer/入力表現の独立比較へ進む。
 2. 保存済みDecisionModelと固定task suiteをServiceのallowlisted recipeへ公開し、`aster-web`でrule / model / model+fallbackのRunを観測・比較する。
 3. Interventionの訂正 → candidate再学習 → 親子比較を、同じArtifact/Run/Evaluator契約へ接続する。
 

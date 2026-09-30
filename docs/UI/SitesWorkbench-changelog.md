@@ -122,3 +122,16 @@
 - 検証: pytest111 passed、Pyright 0 errors/0 warnings。新CLIをユーザーPCではまだ実行していない。main向けのみの既存CIをstacked PRで実行済みとは呼ばない。
 - 変更はCLI/reportsのみ。ServiceContract-v0/v1、公開recipe、artifact catalog、aster-web、Site公開版は変更なし。UIへpath入力や内部Pythonを露出しない。
 - 次: 小さなtrain拡張と新split/構造holdoutを設計。公開bundle/Service/Web比較は対応PRで別に進める。
+
+## 2026-09-30: 失敗/Tokenizer監査とデータ介入4条件（Issue #24）
+
+- ユーザー依頼: 次に提案した失敗分析と小さなデータ比較を実際に進める。
+- 基準: PR #26 / faec3c4df4982a7dea1d176440fafa0df2504f14。後続stacked research PRで、mainへ未導入。
+- キャッシュ済みdev predictionのdigest/正誤/token分割を検査する監査CLIと、元8判断のTokenizerを固定した4条件のequal-budget学習CLIを追加。
+- 各arm32提示slot×50epoch、1,600 updates/exposures。unique判断8/16/16/32と反復を区別。seed内の初期weightとshuffle indexを共通にした。
+- 元48 dev＋同時数値/キー変更8件とrule/model-only各8episodeを保存。学習後のcheckpointを再読込し、評価中のweights一致と候補coverageを検査。
+- 新しい冗長計算prefix生成familyをtestに予約し、全派生をtest groupへ置く。suite内容/教師検証/digestのみ保存しmodel scoreなし。旧testも封印。devはtrain由来の診断で独立holdoutではない。
+- 設計/実測はdocs/DecisionDataIntervention-v0.md、reports/decision-failure-audit-v0.md、reports/decision-data-intervention-v0.md/.json。
+- 検証: pytest115 passed、Pyright0 errors/0 warnings。実測はChatGPT Linux CPUで、ユーザーWSLでの新CLI実行は未確認。GitHub main向けCIをstacked PRで実行済みとは扱わない。
+- ServiceContract-v0/v1、public recipe/artifact catalog、aster-web、Site公開版は変更なし。UI接続/Job化/自動promotionは未実装。
+- 次: 実測のtrain fitと元課題保持を踏まえ、Tokenizer/入力表現を独立条件で比較する。Service/Web接続は固定recipeと公開bundleを定義してから別PRで進める。
