@@ -111,3 +111,14 @@
 2. ユーザーPCのWSL2/CPUでdevelopment baselineを実行し、Git SHA / Run ID / resource実測 / dev失敗例を記録する。
 3. 条件を固定した後、保存済みartifactのfinal-testを一度実行する。
 4. そのartifactと固定suiteをServiceへallowlistし、aster-web #2でrule / model / model+fallbackのRun比較へ進む。
+
+## 2026-09-30: Decision fit実測と状態診断CLI（Issue #23 / #24）
+
+- ユーザー依頼: 5Runの実測を#23へ記録し、#24の小さな診断課題を実装。
+- 基準: PR #25 / `0fa5736e30d38c6569a1c6419e774d16748235f7`上のstacked research PR。mainへ未導入。
+- ユーザーWSLの実測をreports/decision-fit-user-pc-v0.md/.jsonへ保存。3seedでLR0.001/50epoch train fit成立、旧結果やseed43を保持。
+- 到達可能な遅延履歴、数値/キー変更、候補逆順の48 dev decision、train-only step対照とfirst-candidate対照、rule/model-onlyの6初期task episodeを実装。
+- 保存済み6checkpointをChatGPT Linux CPUで読み込み、元の既知課題は完了、新しい数値/キーの初回probeは失敗。由来・全prediction/trajectory・weights不変・test封印を記録。
+- 検証: pytest111 passed、Pyright 0 errors/0 warnings。新CLIをユーザーPCではまだ実行していない。main向けのみの既存CIをstacked PRで実行済みとは呼ばない。
+- 変更はCLI/reportsのみ。ServiceContract-v0/v1、公開recipe、artifact catalog、aster-web、Site公開版は変更なし。UIへpath入力や内部Pythonを露出しない。
+- 次: 小さなtrain拡張と新split/構造holdoutを設計。公開bundle/Service/Web比較は対応PRで別に進める。

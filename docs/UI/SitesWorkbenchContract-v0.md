@@ -90,6 +90,10 @@ HTTPとDOMの検証を、ブラウザ描画・実ユーザーPC接続の検証�
 
 ## 継続する変更契約
 
+2026-09-30研究接続メモ: Decision fit/状態診断はAsterのoffline CLIとcanonical Runで実測する。
+現段階でService/Webへの公開は追加していない。将来の表示ではtrain fit、dev診断、model-only episodeを分離し、モデル/Tokenizer/suite/元Run/候補由来を同じbundleから辿る。
+UIでdiagnostic successを再計算せず、未提供の値を推測しない。具体的な公開schemaとallowlisted recipeは対応Service PRで定義する。
+
 今後Aster/Sitesに関連する作業をするときは、同じ作業内で次を行う。
 
 1. ServiceContract、本書、最新changelog、関係するAGENTS.mdを読む。

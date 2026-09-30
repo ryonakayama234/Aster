@@ -1,0 +1,591 @@
+{
+  "schema_version": "aster-user-fit-evidence-0",
+  "provenance": "user-provided WSL2 CPU Run archives, 2026-09-30; summaries only, original archives remain outside Git",
+  "runs": [
+    {
+      "run_id": "f2f49aab1e524a469439b92a86096c7a",
+      "zip_sha256": "ca82d059748d19b2500efc34db0e4bde2cb33cafbd90b4ac7d903ef3df1e62a7",
+      "study_json_sha256": "11a44426456ea84d5c6b159e17ff9f6640b868e77dac0fa56c4206472239be47",
+      "config": {
+        "context_length": 2048,
+        "epochs": 25,
+        "heads": 2,
+        "layers": 1,
+        "learning_rate": 0.003,
+        "min_pair_frequency": 1,
+        "seed": 42,
+        "stability_window": 3,
+        "target_vocab_size": 512,
+        "train_backbone": true,
+        "width": 16
+      },
+      "resources": {
+        "device": "cpu",
+        "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+        "process_max_rss_kib": 307992,
+        "python_version": "3.12.3",
+        "tokenizer_wall_seconds": 0.364268899999999,
+        "torch_num_threads": 2,
+        "torch_version": "2.14.0+cpu",
+        "total_process_cpu_seconds": 27.6032441,
+        "total_wall_seconds": 18.683811357000003
+      },
+      "suite_sha256": "f17737e1dd608973aa644aaf42dc8e7a8700295180238ec09a7f696ba8c4563c",
+      "initial_model_sha256": "19261b4f8111590e0335c9d33c3642e85135791f30e6dc8312f91b33745be16d",
+      "arms": [
+        {
+          "arm_id": "one-fixed",
+          "final": {
+            "accuracy": 1.0,
+            "all_target_margins_positive": true,
+            "correct": 1,
+            "examples": 1,
+            "min_target_margin": 2.8185460567474365,
+            "nll": 0.11270061568012896
+          },
+          "fit_target_met": true,
+          "optimizer_updates": 25,
+          "example_exposures": 25,
+          "consecutive_fit_at_end": 26,
+          "checkpoint_id": "decision_fit:da3db33d7af030b957c6e8b6b68c0d3e097f4e7ffbac3aa76190a95cf05236df",
+          "model_state_sha256": "778dea31069afa5ad28a4d5f7f55b79777313a7e85e75e72720d3035d7398647",
+          "source_git_sha": "0fa5736e30d38c6569a1c6419e774d16748235f7",
+          "tokenizer_sha256": "d68bd292d060625256cdcf16398d70db7d379542b8fe8aea45cbc7da611f9692",
+          "reported_reload_metrics_match": true,
+          "validation": "all epoch accuracy/NLL and model file hash rechecked from user ZIP"
+        },
+        {
+          "arm_id": "two-fixed",
+          "final": {
+            "accuracy": 0.5,
+            "all_target_margins_positive": false,
+            "correct": 1,
+            "examples": 2,
+            "min_target_margin": -0.00590825080871582,
+            "nll": 0.6809686529207098
+          },
+          "fit_target_met": false,
+          "optimizer_updates": 50,
+          "example_exposures": 50,
+          "consecutive_fit_at_end": 0,
+          "checkpoint_id": "decision_fit:218260aa777fcd21dc27879a7e7cbe1d7397574475f7b5cb1ab750225af41080",
+          "model_state_sha256": "9cc9c6f51d9f0e31f1aef0594d8ebe582870e8a5dceff45c43a22414f2142789",
+          "source_git_sha": "0fa5736e30d38c6569a1c6419e774d16748235f7",
+          "tokenizer_sha256": "d68bd292d060625256cdcf16398d70db7d379542b8fe8aea45cbc7da611f9692",
+          "reported_reload_metrics_match": true,
+          "validation": "all epoch accuracy/NLL and model file hash rechecked from user ZIP"
+        },
+        {
+          "arm_id": "eight-fixed",
+          "final": {
+            "accuracy": 0.625,
+            "all_target_margins_positive": false,
+            "correct": 5,
+            "examples": 8,
+            "min_target_margin": -0.08762621879577637,
+            "nll": 0.6999996805277703
+          },
+          "fit_target_met": false,
+          "optimizer_updates": 200,
+          "example_exposures": 200,
+          "consecutive_fit_at_end": 0,
+          "checkpoint_id": "decision_fit:fd67aab89a562f40d8dabcf861a7b8400c3be825a7362ed13cf1687cbbcee023",
+          "model_state_sha256": "2aa7deee01aede241bd5b1c6fbcb27715460d1b5fc29c0c4718ae73c1df99a00",
+          "source_git_sha": "0fa5736e30d38c6569a1c6419e774d16748235f7",
+          "tokenizer_sha256": "d68bd292d060625256cdcf16398d70db7d379542b8fe8aea45cbc7da611f9692",
+          "reported_reload_metrics_match": true,
+          "validation": "all epoch accuracy/NLL and model file hash rechecked from user ZIP"
+        },
+        {
+          "arm_id": "eight-shuffle",
+          "final": {
+            "accuracy": 0.75,
+            "all_target_margins_positive": false,
+            "correct": 6,
+            "examples": 8,
+            "min_target_margin": -0.002335071563720703,
+            "nll": 0.5546916894024897
+          },
+          "fit_target_met": false,
+          "optimizer_updates": 200,
+          "example_exposures": 200,
+          "consecutive_fit_at_end": 0,
+          "checkpoint_id": "decision_fit:adb5c4396515dfc57ebbe8ce4ab5c06baf1ee5d5ccb9142c86320d14dc00c9a1",
+          "model_state_sha256": "3384c8dbf2652a9b2b12ffc2b95257524b6e39a83fc31000ca4467db88492d40",
+          "source_git_sha": "0fa5736e30d38c6569a1c6419e774d16748235f7",
+          "tokenizer_sha256": "d68bd292d060625256cdcf16398d70db7d379542b8fe8aea45cbc7da611f9692",
+          "reported_reload_metrics_match": true,
+          "validation": "all epoch accuracy/NLL and model file hash rechecked from user ZIP"
+        }
+      ]
+    },
+    {
+      "run_id": "f4e435a8fe734ad2b54e24da26795cef",
+      "zip_sha256": "064aacea4da60e5fc112bd90eaba65d8b5e478b084ac8a6969e6f54cf016ea19",
+      "study_json_sha256": "62cfc6858fa81448216f219739fe79ea2ce31f7a85321a48b543ec199b46b622",
+      "config": {
+        "context_length": 2048,
+        "epochs": 25,
+        "heads": 2,
+        "layers": 1,
+        "learning_rate": 0.001,
+        "min_pair_frequency": 1,
+        "seed": 42,
+        "stability_window": 3,
+        "target_vocab_size": 512,
+        "train_backbone": true,
+        "width": 16
+      },
+      "resources": {
+        "device": "cpu",
+        "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+        "process_max_rss_kib": 309232,
+        "python_version": "3.12.3",
+        "tokenizer_wall_seconds": 0.38421635600002446,
+        "torch_num_threads": 2,
+        "torch_version": "2.14.0+cpu",
+        "total_process_cpu_seconds": 27.0059152,
+        "total_wall_seconds": 17.66528529499999
+      },
+      "suite_sha256": "f17737e1dd608973aa644aaf42dc8e7a8700295180238ec09a7f696ba8c4563c",
+      "initial_model_sha256": "19261b4f8111590e0335c9d33c3642e85135791f30e6dc8312f91b33745be16d",
+      "arms": [
+        {
+          "arm_id": "one-fixed",
+          "final": {
+            "accuracy": 1.0,
+            "all_target_margins_positive": true,
+            "correct": 1,
+            "examples": 1,
+            "min_target_margin": 1.2691617012023926,
+            "nll": 0.4422515991620919
+          },
+          "fit_target_met": true,
+          "optimizer_updates": 25,
+          "example_exposures": 25,
+          "consecutive_fit_at_end": 26,
+          "checkpoint_id": "decision_fit:7d1a9c60829a1fa6c21c025994cb60ba0a89bb88b0cdb68eabfd4193b1419401",
+          "model_state_sha256": "0e5b9bf49531b521af1246e63aac0883776bdad5fe6e9bb18e339c3a7d0476c5",
+          "source_git_sha": "0fa5736e30d38c6569a1c6419e774d16748235f7",
+          "tokenizer_sha256": "d68bd292d060625256cdcf16398d70db7d379542b8fe8aea45cbc7da611f9692",
+          "reported_reload_metrics_match": true,
+          "validation": "all epoch accuracy/NLL and model file hash rechecked from user ZIP"
+        },
+        {
+          "arm_id": "two-fixed",
+          "final": {
+            "accuracy": 0.5,
+            "all_target_margins_positive": false,
+            "correct": 1,
+            "examples": 2,
+            "min_target_margin": -0.0007342100143432617,
+            "nll": 0.9552771076033069
+          },
+          "fit_target_met": false,
+          "optimizer_updates": 50,
+          "example_exposures": 50,
+          "consecutive_fit_at_end": 0,
+          "checkpoint_id": "decision_fit:161256a396ba95cf9725b254872c873423890f6a1f156995fe7e3c77abfbd869",
+          "model_state_sha256": "0f9bb337a0db5cbbb15df93f11a9475319bed2aac96c91a67d7f099c1288ee46",
+          "source_git_sha": "0fa5736e30d38c6569a1c6419e774d16748235f7",
+          "tokenizer_sha256": "d68bd292d060625256cdcf16398d70db7d379542b8fe8aea45cbc7da611f9692",
+          "reported_reload_metrics_match": true,
+          "validation": "all epoch accuracy/NLL and model file hash rechecked from user ZIP"
+        },
+        {
+          "arm_id": "eight-fixed",
+          "final": {
+            "accuracy": 0.75,
+            "all_target_margins_positive": false,
+            "correct": 6,
+            "examples": 8,
+            "min_target_margin": -0.153961181640625,
+            "nll": 0.43295580200650663
+          },
+          "fit_target_met": false,
+          "optimizer_updates": 200,
+          "example_exposures": 200,
+          "consecutive_fit_at_end": 0,
+          "checkpoint_id": "decision_fit:f0505135955b84cba0be312b627fd9045d9b82c8b1e3c72c396252c020490217",
+          "model_state_sha256": "7c9c59e73e4ccc43943077ab6ca3e5ee959d2131f7c12a323b1bf971c92983a3",
+          "source_git_sha": "0fa5736e30d38c6569a1c6419e774d16748235f7",
+          "tokenizer_sha256": "d68bd292d060625256cdcf16398d70db7d379542b8fe8aea45cbc7da611f9692",
+          "reported_reload_metrics_match": true,
+          "validation": "all epoch accuracy/NLL and model file hash rechecked from user ZIP"
+        },
+        {
+          "arm_id": "eight-shuffle",
+          "final": {
+            "accuracy": 1.0,
+            "all_target_margins_positive": true,
+            "correct": 8,
+            "examples": 8,
+            "min_target_margin": 0.4170650243759155,
+            "nll": 0.3289352434700026
+          },
+          "fit_target_met": false,
+          "optimizer_updates": 200,
+          "example_exposures": 200,
+          "consecutive_fit_at_end": 2,
+          "checkpoint_id": "decision_fit:2068b2b0929bc73290267931870d797d3ef1a36f1b03999b343686056674fbb5",
+          "model_state_sha256": "bcf74acfee2bfb9c3222aa5bb1cf8284818df3d21fca2b0304ba6a83717b92d6",
+          "source_git_sha": "0fa5736e30d38c6569a1c6419e774d16748235f7",
+          "tokenizer_sha256": "d68bd292d060625256cdcf16398d70db7d379542b8fe8aea45cbc7da611f9692",
+          "reported_reload_metrics_match": true,
+          "validation": "all epoch accuracy/NLL and model file hash rechecked from user ZIP"
+        }
+      ]
+    },
+    {
+      "run_id": "96d2e995bf15464c9733b618f7e7da69",
+      "zip_sha256": "e72f8e5b7b2079ba1b2f144eb8b4f3807367ca9900901a13d309e148d712ad19",
+      "study_json_sha256": "1f4b65ae25923fcbde775022e00629b4479b04ad754c608e8f68fa46db736e3b",
+      "config": {
+        "context_length": 2048,
+        "epochs": 50,
+        "heads": 2,
+        "layers": 1,
+        "learning_rate": 0.001,
+        "min_pair_frequency": 1,
+        "seed": 42,
+        "stability_window": 3,
+        "target_vocab_size": 512,
+        "train_backbone": true,
+        "width": 16
+      },
+      "resources": {
+        "device": "cpu",
+        "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+        "process_max_rss_kib": 309736,
+        "python_version": "3.12.3",
+        "tokenizer_wall_seconds": 0.3782938939999667,
+        "torch_num_threads": 2,
+        "torch_version": "2.14.0+cpu",
+        "total_process_cpu_seconds": 52.0467153,
+        "total_wall_seconds": 33.73935053499997
+      },
+      "suite_sha256": "f17737e1dd608973aa644aaf42dc8e7a8700295180238ec09a7f696ba8c4563c",
+      "initial_model_sha256": "19261b4f8111590e0335c9d33c3642e85135791f30e6dc8312f91b33745be16d",
+      "arms": [
+        {
+          "arm_id": "one-fixed",
+          "final": {
+            "accuracy": 1.0,
+            "all_target_margins_positive": true,
+            "correct": 1,
+            "examples": 1,
+            "min_target_margin": 2.185971975326538,
+            "nll": 0.20270109682391035
+          },
+          "fit_target_met": true,
+          "optimizer_updates": 50,
+          "example_exposures": 50,
+          "consecutive_fit_at_end": 51,
+          "checkpoint_id": "decision_fit:ec916d6e9031179e14d7ad9b1b21875109998fe10fd6eb2734f1b371cc5bdf03",
+          "model_state_sha256": "4fc3baac562f6bd2785598a3777f8983172d4ea0a03ff82956f100612f3c105c",
+          "source_git_sha": "0fa5736e30d38c6569a1c6419e774d16748235f7",
+          "tokenizer_sha256": "d68bd292d060625256cdcf16398d70db7d379542b8fe8aea45cbc7da611f9692",
+          "reported_reload_metrics_match": true,
+          "validation": "all epoch accuracy/NLL and model file hash rechecked from user ZIP"
+        },
+        {
+          "arm_id": "two-fixed",
+          "final": {
+            "accuracy": 1.0,
+            "all_target_margins_positive": true,
+            "correct": 2,
+            "examples": 2,
+            "min_target_margin": 0.002617478370666504,
+            "nll": 0.5937486422818318
+          },
+          "fit_target_met": true,
+          "optimizer_updates": 100,
+          "example_exposures": 100,
+          "consecutive_fit_at_end": 20,
+          "checkpoint_id": "decision_fit:51f30791cb4220352381a72470c1a478e33f510a87fd53a2d8ed0c0a34717c57",
+          "model_state_sha256": "7c03d276392082a528ac73111c18acf8848511020f99fdea8a15d0a4f95dadaf",
+          "source_git_sha": "0fa5736e30d38c6569a1c6419e774d16748235f7",
+          "tokenizer_sha256": "d68bd292d060625256cdcf16398d70db7d379542b8fe8aea45cbc7da611f9692",
+          "reported_reload_metrics_match": true,
+          "validation": "all epoch accuracy/NLL and model file hash rechecked from user ZIP"
+        },
+        {
+          "arm_id": "eight-fixed",
+          "final": {
+            "accuracy": 1.0,
+            "all_target_margins_positive": true,
+            "correct": 8,
+            "examples": 8,
+            "min_target_margin": 5.067813873291016,
+            "nll": 0.010364488059075219
+          },
+          "fit_target_met": true,
+          "optimizer_updates": 400,
+          "example_exposures": 400,
+          "consecutive_fit_at_end": 16,
+          "checkpoint_id": "decision_fit:3b24729ad76d1c3725038f710fbb456ea96c55da1c95fc44a4bf48acbf432d87",
+          "model_state_sha256": "67e51524072d2a93f9b8661e78535e0d4a720a223ffde0459b5b32ca9ecc971e",
+          "source_git_sha": "0fa5736e30d38c6569a1c6419e774d16748235f7",
+          "tokenizer_sha256": "d68bd292d060625256cdcf16398d70db7d379542b8fe8aea45cbc7da611f9692",
+          "reported_reload_metrics_match": true,
+          "validation": "all epoch accuracy/NLL and model file hash rechecked from user ZIP"
+        },
+        {
+          "arm_id": "eight-shuffle",
+          "final": {
+            "accuracy": 1.0,
+            "all_target_margins_positive": true,
+            "correct": 8,
+            "examples": 8,
+            "min_target_margin": 5.258491516113281,
+            "nll": 0.0062871144801363455
+          },
+          "fit_target_met": true,
+          "optimizer_updates": 400,
+          "example_exposures": 400,
+          "consecutive_fit_at_end": 27,
+          "checkpoint_id": "decision_fit:1703d923bb3d9cae910d6a92d5d391641898cc0d031765349b4eda3ede331e17",
+          "model_state_sha256": "f164800a4e4cf3aa737effb36844ca69a92b33e669547103c411ce89e3fd08e3",
+          "source_git_sha": "0fa5736e30d38c6569a1c6419e774d16748235f7",
+          "tokenizer_sha256": "d68bd292d060625256cdcf16398d70db7d379542b8fe8aea45cbc7da611f9692",
+          "reported_reload_metrics_match": true,
+          "validation": "all epoch accuracy/NLL and model file hash rechecked from user ZIP"
+        }
+      ]
+    },
+    {
+      "run_id": "c947381d2b6341fea2ed5d5a60ccb175",
+      "zip_sha256": "f0d9d828335cbb9d8515507df459a6ed5703280676de90d7aec8c6ca78d97fca",
+      "study_json_sha256": "bab0944d9298686c1b9467a9f832bb371352647c2314e1e0a6ff69a1b1e00b8a",
+      "config": {
+        "context_length": 2048,
+        "epochs": 50,
+        "heads": 2,
+        "layers": 1,
+        "learning_rate": 0.001,
+        "min_pair_frequency": 1,
+        "seed": 43,
+        "stability_window": 3,
+        "target_vocab_size": 512,
+        "train_backbone": true,
+        "width": 16
+      },
+      "resources": {
+        "device": "cpu",
+        "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+        "process_max_rss_kib": 309716,
+        "python_version": "3.12.3",
+        "tokenizer_wall_seconds": 0.37820555300004344,
+        "torch_num_threads": 2,
+        "torch_version": "2.14.0+cpu",
+        "total_process_cpu_seconds": 52.3932247,
+        "total_wall_seconds": 34.06636438700002
+      },
+      "suite_sha256": "f17737e1dd608973aa644aaf42dc8e7a8700295180238ec09a7f696ba8c4563c",
+      "initial_model_sha256": "4171fd221aad64f34361548f7b0aa756394856aaf934be762a75623151c7de02",
+      "arms": [
+        {
+          "arm_id": "one-fixed",
+          "final": {
+            "accuracy": 1.0,
+            "all_target_margins_positive": true,
+            "correct": 1,
+            "examples": 1,
+            "min_target_margin": 2.0213944911956787,
+            "nll": 0.23443029057859535
+          },
+          "fit_target_met": true,
+          "optimizer_updates": 50,
+          "example_exposures": 50,
+          "consecutive_fit_at_end": 48,
+          "checkpoint_id": "decision_fit:5ae97bdfa19d894a2f6d72ec674cac7db4bc15b8c20e061ec5bf10aff696462b",
+          "model_state_sha256": "cee0b8f4f7aeaae973886e32507e98e4f98d5fa9d27348c7102dca5e4422b503",
+          "source_git_sha": "0fa5736e30d38c6569a1c6419e774d16748235f7",
+          "tokenizer_sha256": "d68bd292d060625256cdcf16398d70db7d379542b8fe8aea45cbc7da611f9692",
+          "reported_reload_metrics_match": true,
+          "validation": "all epoch accuracy/NLL and model file hash rechecked from user ZIP"
+        },
+        {
+          "arm_id": "two-fixed",
+          "final": {
+            "accuracy": 1.0,
+            "all_target_margins_positive": true,
+            "correct": 2,
+            "examples": 2,
+            "min_target_margin": 0.003104686737060547,
+            "nll": 0.5949094673021907
+          },
+          "fit_target_met": true,
+          "optimizer_updates": 100,
+          "example_exposures": 100,
+          "consecutive_fit_at_end": 20,
+          "checkpoint_id": "decision_fit:5cf867d43e3b26533f5f1083decf84b4276846071d885edc8c08a8c03f03f8c7",
+          "model_state_sha256": "b9984b7e5c7600b2872e499f4c13f500cefc6f3da4fb145f3a5375097ba11c57",
+          "source_git_sha": "0fa5736e30d38c6569a1c6419e774d16748235f7",
+          "tokenizer_sha256": "d68bd292d060625256cdcf16398d70db7d379542b8fe8aea45cbc7da611f9692",
+          "reported_reload_metrics_match": true,
+          "validation": "all epoch accuracy/NLL and model file hash rechecked from user ZIP"
+        },
+        {
+          "arm_id": "eight-fixed",
+          "final": {
+            "accuracy": 1.0,
+            "all_target_margins_positive": true,
+            "correct": 8,
+            "examples": 8,
+            "min_target_margin": 0.45982348918914795,
+            "nll": 0.2874289450287645
+          },
+          "fit_target_met": true,
+          "optimizer_updates": 400,
+          "example_exposures": 400,
+          "consecutive_fit_at_end": 5,
+          "checkpoint_id": "decision_fit:b22a283726c73bd21276dfef34f4b2178f6fa817faa6d956a32318a767914eab",
+          "model_state_sha256": "20c72ac66a2a111349f11b211bc8f6990187e1a9470a83835e9298fc9308ceb9",
+          "source_git_sha": "0fa5736e30d38c6569a1c6419e774d16748235f7",
+          "tokenizer_sha256": "d68bd292d060625256cdcf16398d70db7d379542b8fe8aea45cbc7da611f9692",
+          "reported_reload_metrics_match": true,
+          "validation": "all epoch accuracy/NLL and model file hash rechecked from user ZIP"
+        },
+        {
+          "arm_id": "eight-shuffle",
+          "final": {
+            "accuracy": 1.0,
+            "all_target_margins_positive": true,
+            "correct": 8,
+            "examples": 8,
+            "min_target_margin": 1.021329641342163,
+            "nll": 0.1433521731020378
+          },
+          "fit_target_met": true,
+          "optimizer_updates": 400,
+          "example_exposures": 400,
+          "consecutive_fit_at_end": 32,
+          "checkpoint_id": "decision_fit:e5b40818795827410bf85156294cf59923ffe78e9448c41e1eabbfc11de484e0",
+          "model_state_sha256": "3c33b8a64c9a65437ca634220ead991d332b5554ba017bec2d6708a327c10f95",
+          "source_git_sha": "0fa5736e30d38c6569a1c6419e774d16748235f7",
+          "tokenizer_sha256": "d68bd292d060625256cdcf16398d70db7d379542b8fe8aea45cbc7da611f9692",
+          "reported_reload_metrics_match": true,
+          "validation": "all epoch accuracy/NLL and model file hash rechecked from user ZIP"
+        }
+      ]
+    },
+    {
+      "run_id": "058b98770b9e4f51a457e3fd5fbdb206",
+      "zip_sha256": "2bef5afd37f8c0a3ad4cbc923d1199467475219e02ae2a0b5e7d1dbbafc08ce7",
+      "study_json_sha256": "6a927b20204f4718d507364f69034896763812f92656026a4ebf068650669a96",
+      "config": {
+        "context_length": 2048,
+        "epochs": 50,
+        "heads": 2,
+        "layers": 1,
+        "learning_rate": 0.001,
+        "min_pair_frequency": 1,
+        "seed": 44,
+        "stability_window": 3,
+        "target_vocab_size": 512,
+        "train_backbone": true,
+        "width": 16
+      },
+      "resources": {
+        "device": "cpu",
+        "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+        "process_max_rss_kib": 309852,
+        "python_version": "3.12.3",
+        "tokenizer_wall_seconds": 0.39472001900003306,
+        "torch_num_threads": 2,
+        "torch_version": "2.14.0+cpu",
+        "total_process_cpu_seconds": 52.958654700000004,
+        "total_wall_seconds": 34.46614975600005
+      },
+      "suite_sha256": "f17737e1dd608973aa644aaf42dc8e7a8700295180238ec09a7f696ba8c4563c",
+      "initial_model_sha256": "45b80d965b0c97622c86c98dfbdb504e9ea46b04e26425ef26addca8f6cc073f",
+      "arms": [
+        {
+          "arm_id": "one-fixed",
+          "final": {
+            "accuracy": 1.0,
+            "all_target_margins_positive": true,
+            "correct": 1,
+            "examples": 1,
+            "min_target_margin": 1.9666235446929932,
+            "nll": 0.24672917102639075
+          },
+          "fit_target_met": true,
+          "optimizer_updates": 50,
+          "example_exposures": 50,
+          "consecutive_fit_at_end": 51,
+          "checkpoint_id": "decision_fit:6b55700d5df88956c55f86dfbe7495ec0233c02fe7369b6d8c2afb6360f6cb95",
+          "model_state_sha256": "4bfc9be00a80a73cf7cf28f4bb4c68ae31aa1a4c4c88a0ebd8f35f75d44da78c",
+          "source_git_sha": "0fa5736e30d38c6569a1c6419e774d16748235f7",
+          "tokenizer_sha256": "d68bd292d060625256cdcf16398d70db7d379542b8fe8aea45cbc7da611f9692",
+          "reported_reload_metrics_match": true,
+          "validation": "all epoch accuracy/NLL and model file hash rechecked from user ZIP"
+        },
+        {
+          "arm_id": "two-fixed",
+          "final": {
+            "accuracy": 1.0,
+            "all_target_margins_positive": true,
+            "correct": 2,
+            "examples": 2,
+            "min_target_margin": 0.055763959884643555,
+            "nll": 0.5875784773497246
+          },
+          "fit_target_met": true,
+          "optimizer_updates": 100,
+          "example_exposures": 100,
+          "consecutive_fit_at_end": 26,
+          "checkpoint_id": "decision_fit:279365011ca872349d12e97a26cb7c3ec452d88ed1b3c6ac640e71a2f8409462",
+          "model_state_sha256": "d33675760c964bb2107811bab248b13c3010f82aae65cceccc55aa5a4e448abc",
+          "source_git_sha": "0fa5736e30d38c6569a1c6419e774d16748235f7",
+          "tokenizer_sha256": "d68bd292d060625256cdcf16398d70db7d379542b8fe8aea45cbc7da611f9692",
+          "reported_reload_metrics_match": true,
+          "validation": "all epoch accuracy/NLL and model file hash rechecked from user ZIP"
+        },
+        {
+          "arm_id": "eight-fixed",
+          "final": {
+            "accuracy": 1.0,
+            "all_target_margins_positive": true,
+            "correct": 8,
+            "examples": 8,
+            "min_target_margin": 5.273060321807861,
+            "nll": 0.009342706202595637
+          },
+          "fit_target_met": true,
+          "optimizer_updates": 400,
+          "example_exposures": 400,
+          "consecutive_fit_at_end": 16,
+          "checkpoint_id": "decision_fit:69d31b26c2a4ccf6575eee7cf7500b246e356f97c266e7386826c0ddafcb7fa6",
+          "model_state_sha256": "a38517e33f546cb40c45d175889989f9b44407dd6effbbedbc74c0c06b7b4eae",
+          "source_git_sha": "0fa5736e30d38c6569a1c6419e774d16748235f7",
+          "tokenizer_sha256": "d68bd292d060625256cdcf16398d70db7d379542b8fe8aea45cbc7da611f9692",
+          "reported_reload_metrics_match": true,
+          "validation": "all epoch accuracy/NLL and model file hash rechecked from user ZIP"
+        },
+        {
+          "arm_id": "eight-shuffle",
+          "final": {
+            "accuracy": 1.0,
+            "all_target_margins_positive": true,
+            "correct": 8,
+            "examples": 8,
+            "min_target_margin": 4.656595706939697,
+            "nll": 0.008006094411243319
+          },
+          "fit_target_met": true,
+          "optimizer_updates": 400,
+          "example_exposures": 400,
+          "consecutive_fit_at_end": 23,
+          "checkpoint_id": "decision_fit:bde3b9581fda706f5045a3312285128904e72167ab67b77ee5ed85daf837dbe7",
+          "model_state_sha256": "f96910529e59e59ea46116e28de9655f41e4e0d05d015af4e5c02e5ea649e695",
+          "source_git_sha": "0fa5736e30d38c6569a1c6419e774d16748235f7",
+          "tokenizer_sha256": "d68bd292d060625256cdcf16398d70db7d379542b8fe8aea45cbc7da611f9692",
+          "reported_reload_metrics_match": true,
+          "validation": "all epoch accuracy/NLL and model file hash rechecked from user ZIP"
+        }
+      ]
+    }
+  ]
+}

@@ -85,8 +85,14 @@ Decision baselineはtestを自動開封しません。まずdevelopment runを�
 
 ## 次に作るもの
 
-1. Decision baselineをユーザーPCのCPUで実測し、Run ID、Git SHA、step時間、評価時間、最大RSS、dev/final-testの範囲と失敗例を記録する。
-2. 保存済みDecisionModel Artifactと固定task suiteをAster Serviceのallowlisted recipeへ公開し、`aster-web`でrule / model / model+fallbackのRunを観測・比較する。
-3. その後にInterventionの訂正 → candidate再学習 → 親子比較を、同じArtifact/Run/Evaluator契約へ接続する。
+2026-09-30: PR #25上のCPU fitをユーザーWSL2で実測し、LR0.001・50epochの8判断でseed42/43/44すべてtrain fit成立。
+[実測記録](reports/decision-fit-user-pc-v0.md) と [状態診断の設計](docs/DecisionStateDiagnostics-v0.md) を参照。
+保存checkpointを更新せずに診断するCLI `scripts/run_decision_state_diagnostics.py` を追加した。
+[初回診断結果](reports/decision-state-diagnostics-v0.md)では、既知課題の自力完了は成立し、新しい数値・キー・履歴への応用に弱点が残る。
+この変更はPR #25に依存する研究ブランチ上の実装であり、main/Service/Webに導入済みとは扱わない。
+
+1. 状態診断の失敗を分析し、少量のtrain拡張と新split/構造holdoutを設計する。旧testは封印を維持。
+2. 保存済みDecisionModelと固定task suiteをServiceのallowlisted recipeへ公開し、`aster-web`でrule / model / model+fallbackのRunを観測・比較する。
+3. Interventionの訂正 → candidate再学習 → 親子比較を、同じArtifact/Run/Evaluator契約へ接続する。
 
 Aster Service / aster-webは任意shellやrepository-local pathを公開せず、Job / Run / Artifactを分離する方針を維持します。

@@ -1,0 +1,1482 @@
+{
+  "schema_version": "aster-state-diagnostic-evidence-0",
+  "execution_environment": "ChatGPT Linux CPU; not user WSL execution; frozen user checkpoints loaded in separate Python processes",
+  "records": [
+    {
+      "schema_version": "aster-decision-state-diagnostics-0",
+      "checkpoint_id": "decision_fit:3b24729ad76d1c3725038f710fbb456ea96c55da1c95fc44a4bf48acbf432d87",
+      "suite_id": "calculate-and-store-state-diagnostics-v0",
+      "suite_sha256": "5b525f40b2a4fe754ee62fe12d9d375fb07a4cc564faf0d6335a82a58423894d",
+      "overall": {
+        "candidate_coverage": 1.0,
+        "cases": 48,
+        "first_candidate_correct": 12,
+        "groups": 2,
+        "min_target_margin": -5.962964773178101,
+        "model_accuracy": 0.4791666666666667,
+        "model_correct": 23,
+        "nll_on_covered": 1.6756645173762106,
+        "step_only_correct": 32
+      },
+      "slices": {
+        "candidate_permutation": {
+          "candidate_coverage": 1.0,
+          "cases": 8,
+          "first_candidate_correct": 2,
+          "groups": 2,
+          "min_target_margin": 5.067813873291016,
+          "model_accuracy": 1.0,
+          "model_correct": 8,
+          "nll_on_covered": 0.010364488741115785,
+          "step_only_correct": 8
+        },
+        "key_shift": {
+          "candidate_coverage": 1.0,
+          "cases": 8,
+          "first_candidate_correct": 2,
+          "groups": 2,
+          "min_target_margin": -5.962964773178101,
+          "model_accuracy": 0.125,
+          "model_correct": 1,
+          "nll_on_covered": 2.7399532496131522,
+          "step_only_correct": 8
+        },
+        "numeric_shift": {
+          "candidate_coverage": 1.0,
+          "cases": 8,
+          "first_candidate_correct": 2,
+          "groups": 2,
+          "min_target_margin": -5.713400840759277,
+          "model_accuracy": 0.25,
+          "model_correct": 2,
+          "nll_on_covered": 3.333513976760262,
+          "step_only_correct": 8
+        },
+        "reachable_delay": {
+          "candidate_coverage": 1.0,
+          "cases": 16,
+          "first_candidate_correct": 4,
+          "groups": 2,
+          "min_target_margin": -4.755250334739685,
+          "model_accuracy": 0.25,
+          "model_correct": 4,
+          "nll_on_covered": 1.979895450167084,
+          "step_only_correct": 0
+        },
+        "seen_control": {
+          "candidate_coverage": 1.0,
+          "cases": 8,
+          "first_candidate_correct": 2,
+          "groups": 2,
+          "min_target_margin": 5.0678136348724365,
+          "model_accuracy": 1.0,
+          "model_correct": 8,
+          "nll_on_covered": 0.010364488808566497,
+          "step_only_correct": 8
+        }
+      },
+      "permutation_checks": [
+        {
+          "case_id": "add/seen/phase-0/delay-0/reverse",
+          "max_reordered_logit_difference": 0.0,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "add/seen/phase-1/delay-0/reverse",
+          "max_reordered_logit_difference": 0.0,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "add/seen/phase-2/delay-0/reverse",
+          "max_reordered_logit_difference": 2.384185791015625e-07,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "add/seen/phase-3/delay-0/reverse",
+          "max_reordered_logit_difference": 4.76837158203125e-07,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "subtract/seen/phase-0/delay-0/reverse",
+          "max_reordered_logit_difference": 2.384185791015625e-07,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "subtract/seen/phase-1/delay-0/reverse",
+          "max_reordered_logit_difference": 2.384185791015625e-07,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "subtract/seen/phase-2/delay-0/reverse",
+          "max_reordered_logit_difference": 0.0,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "subtract/seen/phase-3/delay-0/reverse",
+          "max_reordered_logit_difference": 2.384185791015625e-07,
+          "same_selected_action": true
+        }
+      ],
+      "episodes": [
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "add/seen",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "seen"
+        },
+        {
+          "failure": null,
+          "policy": "model_only",
+          "steps": 4,
+          "success": true,
+          "task_id": "add/seen",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "seen"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "subtract/seen",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "seen"
+        },
+        {
+          "failure": null,
+          "policy": "model_only",
+          "steps": 4,
+          "success": true,
+          "task_id": "subtract/seen",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "seen"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "add/numbers",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "numbers"
+        },
+        {
+          "failure": "stopped_without_goal",
+          "policy": "model_only",
+          "steps": 2,
+          "success": false,
+          "task_id": "add/numbers",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "numbers"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "subtract/numbers",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "numbers"
+        },
+        {
+          "failure": "stopped_without_goal",
+          "policy": "model_only",
+          "steps": 2,
+          "success": false,
+          "task_id": "subtract/numbers",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "numbers"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "add/key",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "key"
+        },
+        {
+          "failure": "stopped_without_goal",
+          "policy": "model_only",
+          "steps": 1,
+          "success": false,
+          "task_id": "add/key",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "key"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "subtract/key",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "key"
+        },
+        {
+          "failure": "stopped_without_goal",
+          "policy": "model_only",
+          "steps": 1,
+          "success": false,
+          "task_id": "subtract/key",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "key"
+        }
+      ],
+      "weights_unchanged": true,
+      "model_update": false,
+      "temperature_fit": false,
+      "test": {
+        "status": "sealed"
+      },
+      "resources": {
+        "device": "cpu",
+        "python_torch_version": "2.14.0+cpu",
+        "threads": 2
+      },
+      "scope": "dev probes descended from two seen train task templates; not independent held-out families",
+      "candidate_shortcut_limit": "first-candidate is a weak control; candidate builder itself supplies arguments and goal_verified",
+      "diagnostic_run_id": "f9f6f39f0da74d64ae020287ab471792",
+      "seed": 42,
+      "arm": "eight-fixed",
+      "training_source_sha": "0fa5736e30d38c6569a1c6419e774d16748235f7",
+      "checkpoint_model_sha256": "67e51524072d2a93f9b8661e78535e0d4a720a223ffde0459b5b32ca9ecc971e",
+      "diagnostics_json_sha256": "3521d70987605a242bd103c7c9d8cc3fccdb0053cb8237602f5ffa36d78306d3",
+      "diagnostic_source": "working tree for this PR atop 0fa5736e30d38c6569a1c6419e774d16748235f7; harness replays preserved user weights, not training"
+    },
+    {
+      "schema_version": "aster-decision-state-diagnostics-0",
+      "checkpoint_id": "decision_fit:1703d923bb3d9cae910d6a92d5d391641898cc0d031765349b4eda3ede331e17",
+      "suite_id": "calculate-and-store-state-diagnostics-v0",
+      "suite_sha256": "5b525f40b2a4fe754ee62fe12d9d375fb07a4cc564faf0d6335a82a58423894d",
+      "overall": {
+        "candidate_coverage": 1.0,
+        "cases": 48,
+        "first_candidate_correct": 12,
+        "groups": 2,
+        "min_target_margin": -6.58539080619812,
+        "model_accuracy": 0.5416666666666666,
+        "model_correct": 26,
+        "nll_on_covered": 1.5235874026936955,
+        "step_only_correct": 32
+      },
+      "slices": {
+        "candidate_permutation": {
+          "candidate_coverage": 1.0,
+          "cases": 8,
+          "first_candidate_correct": 2,
+          "groups": 2,
+          "min_target_margin": 5.2584922313690186,
+          "model_accuracy": 1.0,
+          "model_correct": 8,
+          "nll_on_covered": 0.006287114546460304,
+          "step_only_correct": 8
+        },
+        "key_shift": {
+          "candidate_coverage": 1.0,
+          "cases": 8,
+          "first_candidate_correct": 2,
+          "groups": 2,
+          "min_target_margin": -6.58539080619812,
+          "model_accuracy": 0.25,
+          "model_correct": 2,
+          "nll_on_covered": 3.9210822172794524,
+          "step_only_correct": 8
+        },
+        "numeric_shift": {
+          "candidate_coverage": 1.0,
+          "cases": 8,
+          "first_candidate_correct": 2,
+          "groups": 2,
+          "min_target_margin": -6.13569974899292,
+          "model_accuracy": 0.375,
+          "model_correct": 3,
+          "nll_on_covered": 2.2613182122971702,
+          "step_only_correct": 8
+        },
+        "reachable_delay": {
+          "candidate_coverage": 1.0,
+          "cases": 16,
+          "first_candidate_correct": 4,
+          "groups": 2,
+          "min_target_margin": -3.577863097190857,
+          "model_accuracy": 0.3125,
+          "model_correct": 5,
+          "nll_on_covered": 1.473274879082838,
+          "step_only_correct": 0
+        },
+        "seen_control": {
+          "candidate_coverage": 1.0,
+          "cases": 8,
+          "first_candidate_correct": 2,
+          "groups": 2,
+          "min_target_margin": 5.258492469787598,
+          "model_accuracy": 1.0,
+          "model_correct": 8,
+          "nll_on_covered": 0.006287113873415073,
+          "step_only_correct": 8
+        }
+      },
+      "permutation_checks": [
+        {
+          "case_id": "add/seen/phase-0/delay-0/reverse",
+          "max_reordered_logit_difference": 2.384185791015625e-07,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "add/seen/phase-1/delay-0/reverse",
+          "max_reordered_logit_difference": 4.76837158203125e-07,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "add/seen/phase-2/delay-0/reverse",
+          "max_reordered_logit_difference": 4.76837158203125e-07,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "add/seen/phase-3/delay-0/reverse",
+          "max_reordered_logit_difference": 0.0,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "subtract/seen/phase-0/delay-0/reverse",
+          "max_reordered_logit_difference": 2.384185791015625e-07,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "subtract/seen/phase-1/delay-0/reverse",
+          "max_reordered_logit_difference": 4.76837158203125e-07,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "subtract/seen/phase-2/delay-0/reverse",
+          "max_reordered_logit_difference": 0.0,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "subtract/seen/phase-3/delay-0/reverse",
+          "max_reordered_logit_difference": 2.384185791015625e-07,
+          "same_selected_action": true
+        }
+      ],
+      "episodes": [
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "add/seen",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "seen"
+        },
+        {
+          "failure": null,
+          "policy": "model_only",
+          "steps": 4,
+          "success": true,
+          "task_id": "add/seen",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "seen"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "subtract/seen",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "seen"
+        },
+        {
+          "failure": null,
+          "policy": "model_only",
+          "steps": 4,
+          "success": true,
+          "task_id": "subtract/seen",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "seen"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "add/numbers",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "numbers"
+        },
+        {
+          "failure": "stopped_without_goal",
+          "policy": "model_only",
+          "steps": 2,
+          "success": false,
+          "task_id": "add/numbers",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "numbers"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "subtract/numbers",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "numbers"
+        },
+        {
+          "failure": "stopped_without_goal",
+          "policy": "model_only",
+          "steps": 2,
+          "success": false,
+          "task_id": "subtract/numbers",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "numbers"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "add/key",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "key"
+        },
+        {
+          "failure": "stopped_without_goal",
+          "policy": "model_only",
+          "steps": 1,
+          "success": false,
+          "task_id": "add/key",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "key"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "subtract/key",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "key"
+        },
+        {
+          "failure": "stopped_without_goal",
+          "policy": "model_only",
+          "steps": 1,
+          "success": false,
+          "task_id": "subtract/key",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "key"
+        }
+      ],
+      "weights_unchanged": true,
+      "model_update": false,
+      "temperature_fit": false,
+      "test": {
+        "status": "sealed"
+      },
+      "resources": {
+        "device": "cpu",
+        "python_torch_version": "2.14.0+cpu",
+        "threads": 2
+      },
+      "scope": "dev probes descended from two seen train task templates; not independent held-out families",
+      "candidate_shortcut_limit": "first-candidate is a weak control; candidate builder itself supplies arguments and goal_verified",
+      "diagnostic_run_id": "74fb820e0d1c4b51ba1ea0d205ed31b6",
+      "seed": 42,
+      "arm": "eight-shuffle",
+      "training_source_sha": "0fa5736e30d38c6569a1c6419e774d16748235f7",
+      "checkpoint_model_sha256": "f164800a4e4cf3aa737effb36844ca69a92b33e669547103c411ce89e3fd08e3",
+      "diagnostics_json_sha256": "cef7ebaec5e134aa25750bd11745646bdcb545f8b24f1995eb92b88b7c6f0167",
+      "diagnostic_source": "working tree for this PR atop 0fa5736e30d38c6569a1c6419e774d16748235f7; harness replays preserved user weights, not training"
+    },
+    {
+      "schema_version": "aster-decision-state-diagnostics-0",
+      "checkpoint_id": "decision_fit:b22a283726c73bd21276dfef34f4b2178f6fa817faa6d956a32318a767914eab",
+      "suite_id": "calculate-and-store-state-diagnostics-v0",
+      "suite_sha256": "5b525f40b2a4fe754ee62fe12d9d375fb07a4cc564faf0d6335a82a58423894d",
+      "overall": {
+        "candidate_coverage": 1.0,
+        "cases": 48,
+        "first_candidate_correct": 12,
+        "groups": 2,
+        "min_target_margin": -2.822767473757267,
+        "model_accuracy": 0.4791666666666667,
+        "model_correct": 23,
+        "nll_on_covered": 1.2006640859889088,
+        "step_only_correct": 32
+      },
+      "slices": {
+        "candidate_permutation": {
+          "candidate_coverage": 1.0,
+          "cases": 8,
+          "first_candidate_correct": 2,
+          "groups": 2,
+          "min_target_margin": 0.45982348918914795,
+          "model_accuracy": 1.0,
+          "model_correct": 8,
+          "nll_on_covered": 0.28742892423317973,
+          "step_only_correct": 8
+        },
+        "key_shift": {
+          "candidate_coverage": 1.0,
+          "cases": 8,
+          "first_candidate_correct": 2,
+          "groups": 2,
+          "min_target_margin": -2.363950392231345,
+          "model_accuracy": 0.0,
+          "model_correct": 0,
+          "nll_on_covered": 2.078521959982213,
+          "step_only_correct": 8
+        },
+        "numeric_shift": {
+          "candidate_coverage": 1.0,
+          "cases": 8,
+          "first_candidate_correct": 2,
+          "groups": 2,
+          "min_target_margin": -2.822767473757267,
+          "model_accuracy": 0.0,
+          "model_correct": 0,
+          "nll_on_covered": 2.0539085228156444,
+          "step_only_correct": 8
+        },
+        "reachable_delay": {
+          "candidate_coverage": 1.0,
+          "cases": 16,
+          "first_candidate_correct": 4,
+          "groups": 2,
+          "min_target_margin": -1.8588287830352783,
+          "model_accuracy": 0.4375,
+          "model_correct": 7,
+          "nll_on_covered": 1.2483480893784498,
+          "step_only_correct": 0
+        },
+        "seen_control": {
+          "candidate_coverage": 1.0,
+          "cases": 8,
+          "first_candidate_correct": 2,
+          "groups": 2,
+          "min_target_margin": 0.45982348918914795,
+          "model_accuracy": 1.0,
+          "model_correct": 8,
+          "nll_on_covered": 0.2874289301455156,
+          "step_only_correct": 8
+        }
+      },
+      "permutation_checks": [
+        {
+          "case_id": "add/seen/phase-0/delay-0/reverse",
+          "max_reordered_logit_difference": 0.0,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "add/seen/phase-1/delay-0/reverse",
+          "max_reordered_logit_difference": 1.1920928955078125e-07,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "add/seen/phase-2/delay-0/reverse",
+          "max_reordered_logit_difference": 0.0,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "add/seen/phase-3/delay-0/reverse",
+          "max_reordered_logit_difference": 2.384185791015625e-07,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "subtract/seen/phase-0/delay-0/reverse",
+          "max_reordered_logit_difference": 1.1920928955078125e-07,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "subtract/seen/phase-1/delay-0/reverse",
+          "max_reordered_logit_difference": 0.0,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "subtract/seen/phase-2/delay-0/reverse",
+          "max_reordered_logit_difference": 0.0,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "subtract/seen/phase-3/delay-0/reverse",
+          "max_reordered_logit_difference": 2.384185791015625e-07,
+          "same_selected_action": true
+        }
+      ],
+      "episodes": [
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "add/seen",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "seen"
+        },
+        {
+          "failure": null,
+          "policy": "model_only",
+          "steps": 4,
+          "success": true,
+          "task_id": "add/seen",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "seen"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "subtract/seen",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "seen"
+        },
+        {
+          "failure": null,
+          "policy": "model_only",
+          "steps": 4,
+          "success": true,
+          "task_id": "subtract/seen",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "seen"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "add/numbers",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "numbers"
+        },
+        {
+          "failure": "stopped_without_goal",
+          "policy": "model_only",
+          "steps": 2,
+          "success": false,
+          "task_id": "add/numbers",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "numbers"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "subtract/numbers",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "numbers"
+        },
+        {
+          "failure": "stopped_without_goal",
+          "policy": "model_only",
+          "steps": 2,
+          "success": false,
+          "task_id": "subtract/numbers",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "numbers"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "add/key",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "key"
+        },
+        {
+          "failure": "stopped_without_goal",
+          "policy": "model_only",
+          "steps": 2,
+          "success": false,
+          "task_id": "add/key",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "key"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "subtract/key",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "key"
+        },
+        {
+          "failure": "stopped_without_goal",
+          "policy": "model_only",
+          "steps": 2,
+          "success": false,
+          "task_id": "subtract/key",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "key"
+        }
+      ],
+      "weights_unchanged": true,
+      "model_update": false,
+      "temperature_fit": false,
+      "test": {
+        "status": "sealed"
+      },
+      "resources": {
+        "device": "cpu",
+        "python_torch_version": "2.14.0+cpu",
+        "threads": 2
+      },
+      "scope": "dev probes descended from two seen train task templates; not independent held-out families",
+      "candidate_shortcut_limit": "first-candidate is a weak control; candidate builder itself supplies arguments and goal_verified",
+      "diagnostic_run_id": "b9618ee89bb0451d93ee67e8eb779b8e",
+      "seed": 43,
+      "arm": "eight-fixed",
+      "training_source_sha": "0fa5736e30d38c6569a1c6419e774d16748235f7",
+      "checkpoint_model_sha256": "20c72ac66a2a111349f11b211bc8f6990187e1a9470a83835e9298fc9308ceb9",
+      "diagnostics_json_sha256": "b29977c7a3ec67cba4122f1fe4cc346b03fd4f24612096827a4966dd9ef740d1",
+      "diagnostic_source": "working tree for this PR atop 0fa5736e30d38c6569a1c6419e774d16748235f7; harness replays preserved user weights, not training"
+    },
+    {
+      "schema_version": "aster-decision-state-diagnostics-0",
+      "checkpoint_id": "decision_fit:e5b40818795827410bf85156294cf59923ffe78e9448c41e1eabbfc11de484e0",
+      "suite_id": "calculate-and-store-state-diagnostics-v0",
+      "suite_sha256": "5b525f40b2a4fe754ee62fe12d9d375fb07a4cc564faf0d6335a82a58423894d",
+      "overall": {
+        "candidate_coverage": 1.0,
+        "cases": 48,
+        "first_candidate_correct": 12,
+        "groups": 2,
+        "min_target_margin": -4.723578691482544,
+        "model_accuracy": 0.6041666666666666,
+        "model_correct": 29,
+        "nll_on_covered": 1.1381289893238538,
+        "step_only_correct": 32
+      },
+      "slices": {
+        "candidate_permutation": {
+          "candidate_coverage": 1.0,
+          "cases": 8,
+          "first_candidate_correct": 2,
+          "groups": 2,
+          "min_target_margin": 1.021329641342163,
+          "model_accuracy": 1.0,
+          "model_correct": 8,
+          "nll_on_covered": 0.14335217479455498,
+          "step_only_correct": 8
+        },
+        "key_shift": {
+          "candidate_coverage": 1.0,
+          "cases": 8,
+          "first_candidate_correct": 2,
+          "groups": 2,
+          "min_target_margin": -4.723578691482544,
+          "model_accuracy": 0.5,
+          "model_correct": 4,
+          "nll_on_covered": 2.045890370563809,
+          "step_only_correct": 8
+        },
+        "numeric_shift": {
+          "candidate_coverage": 1.0,
+          "cases": 8,
+          "first_candidate_correct": 2,
+          "groups": 2,
+          "min_target_margin": -3.6599371433258057,
+          "model_accuracy": 0.25,
+          "model_correct": 2,
+          "nll_on_covered": 1.8946057424330096,
+          "step_only_correct": 8
+        },
+        "reachable_delay": {
+          "candidate_coverage": 1.0,
+          "cases": 16,
+          "first_candidate_correct": 4,
+          "groups": 2,
+          "min_target_margin": -0.5334352254867554,
+          "model_accuracy": 0.4375,
+          "model_correct": 7,
+          "nll_on_covered": 1.3007867370802912,
+          "step_only_correct": 0
+        },
+        "seen_control": {
+          "candidate_coverage": 1.0,
+          "cases": 8,
+          "first_candidate_correct": 2,
+          "groups": 2,
+          "min_target_margin": 1.021329641342163,
+          "model_accuracy": 1.0,
+          "model_correct": 8,
+          "nll_on_covered": 0.14335217399116584,
+          "step_only_correct": 8
+        }
+      },
+      "permutation_checks": [
+        {
+          "case_id": "add/seen/phase-0/delay-0/reverse",
+          "max_reordered_logit_difference": 0.0,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "add/seen/phase-1/delay-0/reverse",
+          "max_reordered_logit_difference": 2.384185791015625e-07,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "add/seen/phase-2/delay-0/reverse",
+          "max_reordered_logit_difference": 2.384185791015625e-07,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "add/seen/phase-3/delay-0/reverse",
+          "max_reordered_logit_difference": 2.384185791015625e-07,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "subtract/seen/phase-0/delay-0/reverse",
+          "max_reordered_logit_difference": 0.0,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "subtract/seen/phase-1/delay-0/reverse",
+          "max_reordered_logit_difference": 1.1920928955078125e-07,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "subtract/seen/phase-2/delay-0/reverse",
+          "max_reordered_logit_difference": 0.0,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "subtract/seen/phase-3/delay-0/reverse",
+          "max_reordered_logit_difference": 2.384185791015625e-07,
+          "same_selected_action": true
+        }
+      ],
+      "episodes": [
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "add/seen",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "seen"
+        },
+        {
+          "failure": null,
+          "policy": "model_only",
+          "steps": 4,
+          "success": true,
+          "task_id": "add/seen",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "seen"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "subtract/seen",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "seen"
+        },
+        {
+          "failure": null,
+          "policy": "model_only",
+          "steps": 4,
+          "success": true,
+          "task_id": "subtract/seen",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "seen"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "add/numbers",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "numbers"
+        },
+        {
+          "failure": "stopped_without_goal",
+          "policy": "model_only",
+          "steps": 2,
+          "success": false,
+          "task_id": "add/numbers",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "numbers"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "subtract/numbers",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "numbers"
+        },
+        {
+          "failure": "stopped_without_goal",
+          "policy": "model_only",
+          "steps": 2,
+          "success": false,
+          "task_id": "subtract/numbers",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "numbers"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "add/key",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "key"
+        },
+        {
+          "failure": "stopped_without_goal",
+          "policy": "model_only",
+          "steps": 2,
+          "success": false,
+          "task_id": "add/key",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "key"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "subtract/key",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "key"
+        },
+        {
+          "failure": "stopped_without_goal",
+          "policy": "model_only",
+          "steps": 2,
+          "success": false,
+          "task_id": "subtract/key",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "key"
+        }
+      ],
+      "weights_unchanged": true,
+      "model_update": false,
+      "temperature_fit": false,
+      "test": {
+        "status": "sealed"
+      },
+      "resources": {
+        "device": "cpu",
+        "python_torch_version": "2.14.0+cpu",
+        "threads": 2
+      },
+      "scope": "dev probes descended from two seen train task templates; not independent held-out families",
+      "candidate_shortcut_limit": "first-candidate is a weak control; candidate builder itself supplies arguments and goal_verified",
+      "diagnostic_run_id": "48778f8186584742ac08703dfb382b10",
+      "seed": 43,
+      "arm": "eight-shuffle",
+      "training_source_sha": "0fa5736e30d38c6569a1c6419e774d16748235f7",
+      "checkpoint_model_sha256": "3c33b8a64c9a65437ca634220ead991d332b5554ba017bec2d6708a327c10f95",
+      "diagnostics_json_sha256": "ca88f220ace8f8364755f485b684b062be42a16738edd4db9bce48e3fb7c4e87",
+      "diagnostic_source": "working tree for this PR atop 0fa5736e30d38c6569a1c6419e774d16748235f7; harness replays preserved user weights, not training"
+    },
+    {
+      "schema_version": "aster-decision-state-diagnostics-0",
+      "checkpoint_id": "decision_fit:69d31b26c2a4ccf6575eee7cf7500b246e356f97c266e7386826c0ddafcb7fa6",
+      "suite_id": "calculate-and-store-state-diagnostics-v0",
+      "suite_sha256": "5b525f40b2a4fe754ee62fe12d9d375fb07a4cc564faf0d6335a82a58423894d",
+      "overall": {
+        "candidate_coverage": 1.0,
+        "cases": 48,
+        "first_candidate_correct": 12,
+        "groups": 2,
+        "min_target_margin": -5.777588605880737,
+        "model_accuracy": 0.4791666666666667,
+        "model_correct": 23,
+        "nll_on_covered": 2.0183005609463915,
+        "step_only_correct": 32
+      },
+      "slices": {
+        "candidate_permutation": {
+          "candidate_coverage": 1.0,
+          "cases": 8,
+          "first_candidate_correct": 2,
+          "groups": 2,
+          "min_target_margin": 5.27306056022644,
+          "model_accuracy": 1.0,
+          "model_correct": 8,
+          "nll_on_covered": 0.009342704972176041,
+          "step_only_correct": 8
+        },
+        "key_shift": {
+          "candidate_coverage": 1.0,
+          "cases": 8,
+          "first_candidate_correct": 2,
+          "groups": 2,
+          "min_target_margin": -5.7419593334198,
+          "model_accuracy": 0.125,
+          "model_correct": 1,
+          "nll_on_covered": 3.1831164935709895,
+          "step_only_correct": 8
+        },
+        "numeric_shift": {
+          "candidate_coverage": 1.0,
+          "cases": 8,
+          "first_candidate_correct": 2,
+          "groups": 2,
+          "min_target_margin": -5.481590032577515,
+          "model_accuracy": 0.0,
+          "model_correct": 0,
+          "nll_on_covered": 4.015814272661507,
+          "step_only_correct": 8
+        },
+        "reachable_delay": {
+          "candidate_coverage": 1.0,
+          "cases": 16,
+          "first_candidate_correct": 4,
+          "groups": 2,
+          "min_target_margin": -5.777588605880737,
+          "model_accuracy": 0.375,
+          "model_correct": 6,
+          "nll_on_covered": 2.4460935947983815,
+          "step_only_correct": 0
+        },
+        "seen_control": {
+          "candidate_coverage": 1.0,
+          "cases": 8,
+          "first_candidate_correct": 2,
+          "groups": 2,
+          "min_target_margin": 5.273060321807861,
+          "model_accuracy": 1.0,
+          "model_correct": 8,
+          "nll_on_covered": 0.009342704876913521,
+          "step_only_correct": 8
+        }
+      },
+      "permutation_checks": [
+        {
+          "case_id": "add/seen/phase-0/delay-0/reverse",
+          "max_reordered_logit_difference": 2.384185791015625e-07,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "add/seen/phase-1/delay-0/reverse",
+          "max_reordered_logit_difference": 0.0,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "add/seen/phase-2/delay-0/reverse",
+          "max_reordered_logit_difference": 2.384185791015625e-07,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "add/seen/phase-3/delay-0/reverse",
+          "max_reordered_logit_difference": 4.76837158203125e-07,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "subtract/seen/phase-0/delay-0/reverse",
+          "max_reordered_logit_difference": 0.0,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "subtract/seen/phase-1/delay-0/reverse",
+          "max_reordered_logit_difference": 2.384185791015625e-07,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "subtract/seen/phase-2/delay-0/reverse",
+          "max_reordered_logit_difference": 0.0,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "subtract/seen/phase-3/delay-0/reverse",
+          "max_reordered_logit_difference": 0.0,
+          "same_selected_action": true
+        }
+      ],
+      "episodes": [
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "add/seen",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "seen"
+        },
+        {
+          "failure": null,
+          "policy": "model_only",
+          "steps": 4,
+          "success": true,
+          "task_id": "add/seen",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "seen"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "subtract/seen",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "seen"
+        },
+        {
+          "failure": null,
+          "policy": "model_only",
+          "steps": 4,
+          "success": true,
+          "task_id": "subtract/seen",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "seen"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "add/numbers",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "numbers"
+        },
+        {
+          "failure": "stopped_without_goal",
+          "policy": "model_only",
+          "steps": 2,
+          "success": false,
+          "task_id": "add/numbers",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "numbers"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "subtract/numbers",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "numbers"
+        },
+        {
+          "failure": "stopped_without_goal",
+          "policy": "model_only",
+          "steps": 2,
+          "success": false,
+          "task_id": "subtract/numbers",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "numbers"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "add/key",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "key"
+        },
+        {
+          "failure": "stopped_without_goal",
+          "policy": "model_only",
+          "steps": 2,
+          "success": false,
+          "task_id": "add/key",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "key"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "subtract/key",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "key"
+        },
+        {
+          "failure": "stopped_without_goal",
+          "policy": "model_only",
+          "steps": 2,
+          "success": false,
+          "task_id": "subtract/key",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "key"
+        }
+      ],
+      "weights_unchanged": true,
+      "model_update": false,
+      "temperature_fit": false,
+      "test": {
+        "status": "sealed"
+      },
+      "resources": {
+        "device": "cpu",
+        "python_torch_version": "2.14.0+cpu",
+        "threads": 2
+      },
+      "scope": "dev probes descended from two seen train task templates; not independent held-out families",
+      "candidate_shortcut_limit": "first-candidate is a weak control; candidate builder itself supplies arguments and goal_verified",
+      "diagnostic_run_id": "0127983175d54532a1661e5eadf0bd4d",
+      "seed": 44,
+      "arm": "eight-fixed",
+      "training_source_sha": "0fa5736e30d38c6569a1c6419e774d16748235f7",
+      "checkpoint_model_sha256": "a38517e33f546cb40c45d175889989f9b44407dd6effbbedbc74c0c06b7b4eae",
+      "diagnostics_json_sha256": "da8d8db35b5192374be19fae983f364b843d2f7c69a88204fbbabed7807c6145",
+      "diagnostic_source": "working tree for this PR atop 0fa5736e30d38c6569a1c6419e774d16748235f7; harness replays preserved user weights, not training"
+    },
+    {
+      "schema_version": "aster-decision-state-diagnostics-0",
+      "checkpoint_id": "decision_fit:bde3b9581fda706f5045a3312285128904e72167ab67b77ee5ed85daf837dbe7",
+      "suite_id": "calculate-and-store-state-diagnostics-v0",
+      "suite_sha256": "5b525f40b2a4fe754ee62fe12d9d375fb07a4cc564faf0d6335a82a58423894d",
+      "overall": {
+        "candidate_coverage": 1.0,
+        "cases": 48,
+        "first_candidate_correct": 12,
+        "groups": 2,
+        "min_target_margin": -6.200422286987305,
+        "model_accuracy": 0.5416666666666666,
+        "model_correct": 26,
+        "nll_on_covered": 1.4305629870275596,
+        "step_only_correct": 32
+      },
+      "slices": {
+        "candidate_permutation": {
+          "candidate_coverage": 1.0,
+          "cases": 8,
+          "first_candidate_correct": 2,
+          "groups": 2,
+          "min_target_margin": 4.656595468521118,
+          "model_accuracy": 1.0,
+          "model_correct": 8,
+          "nll_on_covered": 0.008006093541381931,
+          "step_only_correct": 8
+        },
+        "key_shift": {
+          "candidate_coverage": 1.0,
+          "cases": 8,
+          "first_candidate_correct": 2,
+          "groups": 2,
+          "min_target_margin": -6.200422286987305,
+          "model_accuracy": 0.125,
+          "model_correct": 1,
+          "nll_on_covered": 3.019084407438875,
+          "step_only_correct": 8
+        },
+        "numeric_shift": {
+          "candidate_coverage": 1.0,
+          "cases": 8,
+          "first_candidate_correct": 2,
+          "groups": 2,
+          "min_target_margin": -5.043680667877197,
+          "model_accuracy": 0.375,
+          "model_correct": 3,
+          "nll_on_covered": 1.9120833187402064,
+          "step_only_correct": 8
+        },
+        "reachable_delay": {
+          "candidate_coverage": 1.0,
+          "cases": 16,
+          "first_candidate_correct": 4,
+          "groups": 2,
+          "min_target_margin": -5.936690330505371,
+          "model_accuracy": 0.375,
+          "model_correct": 6,
+          "nll_on_covered": 1.8180990043425642,
+          "step_only_correct": 0
+        },
+        "seen_control": {
+          "candidate_coverage": 1.0,
+          "cases": 8,
+          "first_candidate_correct": 2,
+          "groups": 2,
+          "min_target_margin": 4.656595468521118,
+          "model_accuracy": 1.0,
+          "model_correct": 8,
+          "nll_on_covered": 0.008006093759766353,
+          "step_only_correct": 8
+        }
+      },
+      "permutation_checks": [
+        {
+          "case_id": "add/seen/phase-0/delay-0/reverse",
+          "max_reordered_logit_difference": 0.0,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "add/seen/phase-1/delay-0/reverse",
+          "max_reordered_logit_difference": 4.76837158203125e-07,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "add/seen/phase-2/delay-0/reverse",
+          "max_reordered_logit_difference": 2.384185791015625e-07,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "add/seen/phase-3/delay-0/reverse",
+          "max_reordered_logit_difference": 4.76837158203125e-07,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "subtract/seen/phase-0/delay-0/reverse",
+          "max_reordered_logit_difference": 0.0,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "subtract/seen/phase-1/delay-0/reverse",
+          "max_reordered_logit_difference": 0.0,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "subtract/seen/phase-2/delay-0/reverse",
+          "max_reordered_logit_difference": 0.0,
+          "same_selected_action": true
+        },
+        {
+          "case_id": "subtract/seen/phase-3/delay-0/reverse",
+          "max_reordered_logit_difference": 2.384185791015625e-07,
+          "same_selected_action": true
+        }
+      ],
+      "episodes": [
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "add/seen",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "seen"
+        },
+        {
+          "failure": null,
+          "policy": "model_only",
+          "steps": 4,
+          "success": true,
+          "task_id": "add/seen",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "seen"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "subtract/seen",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "seen"
+        },
+        {
+          "failure": null,
+          "policy": "model_only",
+          "steps": 4,
+          "success": true,
+          "task_id": "subtract/seen",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "seen"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "add/numbers",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "numbers"
+        },
+        {
+          "failure": "stopped_without_goal",
+          "policy": "model_only",
+          "steps": 2,
+          "success": false,
+          "task_id": "add/numbers",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "numbers"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "subtract/numbers",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "numbers"
+        },
+        {
+          "failure": "stopped_without_goal",
+          "policy": "model_only",
+          "steps": 2,
+          "success": false,
+          "task_id": "subtract/numbers",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "numbers"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "add/key",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "key"
+        },
+        {
+          "failure": "stopped_without_goal",
+          "policy": "model_only",
+          "steps": 2,
+          "success": false,
+          "task_id": "add/key",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "key"
+        },
+        {
+          "failure": null,
+          "policy": "rule",
+          "steps": 4,
+          "success": true,
+          "task_id": "subtract/key",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "key"
+        },
+        {
+          "failure": "stopped_without_goal",
+          "policy": "model_only",
+          "steps": 2,
+          "success": false,
+          "task_id": "subtract/key",
+          "teacher_candidate_coverage": 1.0,
+          "variant": "key"
+        }
+      ],
+      "weights_unchanged": true,
+      "model_update": false,
+      "temperature_fit": false,
+      "test": {
+        "status": "sealed"
+      },
+      "resources": {
+        "device": "cpu",
+        "python_torch_version": "2.14.0+cpu",
+        "threads": 2
+      },
+      "scope": "dev probes descended from two seen train task templates; not independent held-out families",
+      "candidate_shortcut_limit": "first-candidate is a weak control; candidate builder itself supplies arguments and goal_verified",
+      "diagnostic_run_id": "b36fab7df7b14ee784139f9f18a29177",
+      "seed": 44,
+      "arm": "eight-shuffle",
+      "training_source_sha": "0fa5736e30d38c6569a1c6419e774d16748235f7",
+      "checkpoint_model_sha256": "f96910529e59e59ea46116e28de9655f41e4e0d05d015af4e5c02e5ea649e695",
+      "diagnostics_json_sha256": "74abf1701915dc5c329505ca03131b2771197b51e089db8ec3366bb7f5c8ecff",
+      "diagnostic_source": "working tree for this PR atop 0fa5736e30d38c6569a1c6419e774d16748235f7; harness replays preserved user weights, not training"
+    }
+  ]
+}

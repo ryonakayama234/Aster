@@ -646,7 +646,8 @@ def _prediction_rows(
 
 
 def _stable_fit(history: Sequence[dict[str, object]], window: int) -> bool:
-    measured = [row for row in history if int(row["epoch"]) > 0]
+    measured = [row for row in history
+                if isinstance(epoch := row.get("epoch"), int) and epoch > 0]
     if len(measured) < window:
         return False
     for row in measured[-window:]:
