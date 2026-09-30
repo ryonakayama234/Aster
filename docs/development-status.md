@@ -1,5 +1,14 @@
 # 開発の現在地
 
+## 2026-10-01：状態判断の学習前検証
+
+Issue #24の後続として[事前計画](DecisionStateRepresentation-v0.md)と
+[実測](../reports/state-representation-preflight-v0.md)を研究PRに追加。
+48件のdev対照課題、実Toolによるprefix再実行、遅延prefixからルール継続、
+教師に依存しない短縮入力と候補集合の曖昧性監査を実装した。
+学習比較・モデル能力の改善・Service/Web公開は未実装。この節は研究PRの状態であり、merge前にmain導入済みとは扱わない。
+判断#24、言語#21、観測#29→aster-web#2、育成#20を別の達成条件で進める。
+
 2026-09-28。Issue #19 / PR #22時点。
 基準mainは `76516c6ca7e7d83b868c2e68a6232327e80b6ab1`。固定Agent Service v1（PR #18）はmainへmerge済みです。
 
