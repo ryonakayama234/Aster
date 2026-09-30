@@ -1,0 +1,1621 @@
+{
+  "schema_version": "aster-decision-failure-audit-study-0",
+  "runs": [
+    {
+      "checkpoint_id": "decision_fit:3b24729ad76d1c3725038f710fbb456ea96c55da1c95fc44a4bf48acbf432d87",
+      "correct_by_slice": {
+        "candidate_permutation": 8,
+        "key_shift": 1,
+        "numeric_shift": 2,
+        "reachable_delay": 4,
+        "seen_control": 8
+      },
+      "error_confusion": {
+        "key_shift": {
+          "calculator -> stop:policy_stop": 2,
+          "memory.get -> stop:policy_stop": 1,
+          "memory.put -> stop:policy_stop": 2,
+          "stop:goal_verified -> memory.get": 2
+        },
+        "numeric_shift": {
+          "calculator -> memory.get": 1,
+          "memory.get -> stop:policy_stop": 2,
+          "memory.put -> stop:policy_stop": 2,
+          "stop:goal_verified -> calculator": 1
+        },
+        "reachable_delay": {
+          "calculator -> memory.get": 2,
+          "calculator -> stop:policy_stop": 2,
+          "memory.get -> stop:policy_stop": 2,
+          "memory.put -> memory.get": 4,
+          "stop:goal_verified -> memory.get": 2
+        }
+      },
+      "interpretation": "Token changes and errors co-occur; this is not a causal tokenizer intervention.",
+      "longest_vocabulary_token_bytes": 129,
+      "model_update": false,
+      "new_inference": false,
+      "phase_zero": [
+        {
+          "case_id": "add/seen/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "left": 2,
+              "operation": "add",
+              "right": 3
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "model_correct": true,
+          "slice": "seen_control",
+          "target_action": {
+            "arguments": {
+              "left": 2,
+              "operation": "add",
+              "right": 3
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 10,
+          "unseen_in_anchor_token_occurrences": 0
+        },
+        {
+          "case_id": "subtract/seen/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "left": 9,
+              "operation": "subtract",
+              "right": 4
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "model_correct": true,
+          "slice": "seen_control",
+          "target_action": {
+            "arguments": {
+              "left": 9,
+              "operation": "subtract",
+              "right": 4
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 10,
+          "unseen_in_anchor_token_occurrences": 0
+        },
+        {
+          "case_id": "add/numbers/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "left": 6,
+              "operation": "add",
+              "right": 10
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "model_correct": true,
+          "slice": "numeric_shift",
+          "target_action": {
+            "arguments": {
+              "left": 6,
+              "operation": "add",
+              "right": 10
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 23,
+          "unseen_in_anchor_token_occurrences": 11
+        },
+        {
+          "case_id": "subtract/numbers/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "key": "result"
+            },
+            "kind": "tool",
+            "name": "memory.get"
+          },
+          "model_correct": false,
+          "slice": "numeric_shift",
+          "target_action": {
+            "arguments": {
+              "left": 20,
+              "operation": "subtract",
+              "right": 7
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 23,
+          "unseen_in_anchor_token_occurrences": 11
+        },
+        {
+          "case_id": "add/key/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "reason": "policy_stop"
+            },
+            "kind": "stop",
+            "name": null
+          },
+          "model_correct": false,
+          "slice": "key_shift",
+          "target_action": {
+            "arguments": {
+              "left": 2,
+              "operation": "add",
+              "right": 3
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 24,
+          "unseen_in_anchor_token_occurrences": 6
+        },
+        {
+          "case_id": "subtract/key/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "reason": "policy_stop"
+            },
+            "kind": "stop",
+            "name": null
+          },
+          "model_correct": false,
+          "slice": "key_shift",
+          "target_action": {
+            "arguments": {
+              "left": 9,
+              "operation": "subtract",
+              "right": 4
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 24,
+          "unseen_in_anchor_token_occurrences": 7
+        }
+      ],
+      "prediction_file_sha256": "49bec6926029578d0bfa324adb839215b0dc2be578f3d6768ab1bf260da7a449",
+      "schema_version": "aster-decision-failure-audit-0",
+      "source_run_id": "f9f6f39f0da74d64ae020287ab471792",
+      "suite_sha256": "5b525f40b2a4fe754ee62fe12d9d375fb07a4cc564faf0d6335a82a58423894d",
+      "test": "sealed",
+      "token_length_ranges": {
+        "candidate_permutation": [
+          10,
+          31
+        ],
+        "key_shift": [
+          24,
+          107
+        ],
+        "numeric_shift": [
+          23,
+          62
+        ],
+        "reachable_delay": [
+          70,
+          137
+        ],
+        "seen_control": [
+          10,
+          31
+        ]
+      },
+      "tokenizer_sha256": "d68bd292d060625256cdcf16398d70db7d379542b8fe8aea45cbc7da611f9692",
+      "seed": 42,
+      "arm": "eight-fixed",
+      "audit_run_id": "e32f3014f0614604af6f39a1324523cd"
+    },
+    {
+      "checkpoint_id": "decision_fit:1703d923bb3d9cae910d6a92d5d391641898cc0d031765349b4eda3ede331e17",
+      "correct_by_slice": {
+        "candidate_permutation": 8,
+        "key_shift": 2,
+        "numeric_shift": 3,
+        "reachable_delay": 5,
+        "seen_control": 8
+      },
+      "error_confusion": {
+        "key_shift": {
+          "calculator -> stop:policy_stop": 2,
+          "memory.get -> stop:policy_stop": 1,
+          "memory.put -> stop:policy_stop": 2,
+          "stop:goal_verified -> calculator": 1
+        },
+        "numeric_shift": {
+          "memory.get -> stop:policy_stop": 2,
+          "memory.put -> stop:policy_stop": 2,
+          "stop:goal_verified -> stop:policy_stop": 1
+        },
+        "reachable_delay": {
+          "calculator -> memory.get": 2,
+          "calculator -> stop:policy_stop": 2,
+          "memory.get -> stop:policy_stop": 1,
+          "memory.put -> memory.get": 4,
+          "stop:goal_verified -> memory.get": 2
+        }
+      },
+      "interpretation": "Token changes and errors co-occur; this is not a causal tokenizer intervention.",
+      "longest_vocabulary_token_bytes": 129,
+      "model_update": false,
+      "new_inference": false,
+      "phase_zero": [
+        {
+          "case_id": "add/seen/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "left": 2,
+              "operation": "add",
+              "right": 3
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "model_correct": true,
+          "slice": "seen_control",
+          "target_action": {
+            "arguments": {
+              "left": 2,
+              "operation": "add",
+              "right": 3
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 10,
+          "unseen_in_anchor_token_occurrences": 0
+        },
+        {
+          "case_id": "subtract/seen/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "left": 9,
+              "operation": "subtract",
+              "right": 4
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "model_correct": true,
+          "slice": "seen_control",
+          "target_action": {
+            "arguments": {
+              "left": 9,
+              "operation": "subtract",
+              "right": 4
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 10,
+          "unseen_in_anchor_token_occurrences": 0
+        },
+        {
+          "case_id": "add/numbers/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "left": 6,
+              "operation": "add",
+              "right": 10
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "model_correct": true,
+          "slice": "numeric_shift",
+          "target_action": {
+            "arguments": {
+              "left": 6,
+              "operation": "add",
+              "right": 10
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 23,
+          "unseen_in_anchor_token_occurrences": 11
+        },
+        {
+          "case_id": "subtract/numbers/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "left": 20,
+              "operation": "subtract",
+              "right": 7
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "model_correct": true,
+          "slice": "numeric_shift",
+          "target_action": {
+            "arguments": {
+              "left": 20,
+              "operation": "subtract",
+              "right": 7
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 23,
+          "unseen_in_anchor_token_occurrences": 11
+        },
+        {
+          "case_id": "add/key/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "reason": "policy_stop"
+            },
+            "kind": "stop",
+            "name": null
+          },
+          "model_correct": false,
+          "slice": "key_shift",
+          "target_action": {
+            "arguments": {
+              "left": 2,
+              "operation": "add",
+              "right": 3
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 24,
+          "unseen_in_anchor_token_occurrences": 6
+        },
+        {
+          "case_id": "subtract/key/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "reason": "policy_stop"
+            },
+            "kind": "stop",
+            "name": null
+          },
+          "model_correct": false,
+          "slice": "key_shift",
+          "target_action": {
+            "arguments": {
+              "left": 9,
+              "operation": "subtract",
+              "right": 4
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 24,
+          "unseen_in_anchor_token_occurrences": 7
+        }
+      ],
+      "prediction_file_sha256": "8ec899e0f159dc6fd6428f208e073534e01e6dee51b5996b060cfbcaea3cf86f",
+      "schema_version": "aster-decision-failure-audit-0",
+      "source_run_id": "74fb820e0d1c4b51ba1ea0d205ed31b6",
+      "suite_sha256": "5b525f40b2a4fe754ee62fe12d9d375fb07a4cc564faf0d6335a82a58423894d",
+      "test": "sealed",
+      "token_length_ranges": {
+        "candidate_permutation": [
+          10,
+          31
+        ],
+        "key_shift": [
+          24,
+          107
+        ],
+        "numeric_shift": [
+          23,
+          62
+        ],
+        "reachable_delay": [
+          70,
+          137
+        ],
+        "seen_control": [
+          10,
+          31
+        ]
+      },
+      "tokenizer_sha256": "d68bd292d060625256cdcf16398d70db7d379542b8fe8aea45cbc7da611f9692",
+      "seed": 42,
+      "arm": "eight-shuffle",
+      "audit_run_id": "45b74d1d860f4cb9a267b8637d5dea89"
+    },
+    {
+      "checkpoint_id": "decision_fit:b22a283726c73bd21276dfef34f4b2178f6fa817faa6d956a32318a767914eab",
+      "correct_by_slice": {
+        "candidate_permutation": 8,
+        "reachable_delay": 7,
+        "seen_control": 8
+      },
+      "error_confusion": {
+        "key_shift": {
+          "calculator -> memory.get": 2,
+          "memory.get -> calculator": 1,
+          "memory.get -> stop:policy_stop": 1,
+          "memory.put -> stop:policy_stop": 2,
+          "stop:goal_verified -> memory.put": 2
+        },
+        "numeric_shift": {
+          "calculator -> memory.get": 2,
+          "memory.get -> calculator": 1,
+          "memory.get -> stop:policy_stop": 1,
+          "memory.put -> calculator": 2,
+          "stop:goal_verified -> memory.get": 2
+        },
+        "reachable_delay": {
+          "calculator -> stop:policy_stop": 2,
+          "memory.get -> calculator": 2,
+          "memory.put -> calculator": 1,
+          "memory.put -> stop:policy_stop": 2,
+          "stop:goal_verified -> calculator": 1,
+          "stop:goal_verified -> stop:policy_stop": 1
+        }
+      },
+      "interpretation": "Token changes and errors co-occur; this is not a causal tokenizer intervention.",
+      "longest_vocabulary_token_bytes": 129,
+      "model_update": false,
+      "new_inference": false,
+      "phase_zero": [
+        {
+          "case_id": "add/seen/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "left": 2,
+              "operation": "add",
+              "right": 3
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "model_correct": true,
+          "slice": "seen_control",
+          "target_action": {
+            "arguments": {
+              "left": 2,
+              "operation": "add",
+              "right": 3
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 10,
+          "unseen_in_anchor_token_occurrences": 0
+        },
+        {
+          "case_id": "subtract/seen/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "left": 9,
+              "operation": "subtract",
+              "right": 4
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "model_correct": true,
+          "slice": "seen_control",
+          "target_action": {
+            "arguments": {
+              "left": 9,
+              "operation": "subtract",
+              "right": 4
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 10,
+          "unseen_in_anchor_token_occurrences": 0
+        },
+        {
+          "case_id": "add/numbers/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "key": "total"
+            },
+            "kind": "tool",
+            "name": "memory.get"
+          },
+          "model_correct": false,
+          "slice": "numeric_shift",
+          "target_action": {
+            "arguments": {
+              "left": 6,
+              "operation": "add",
+              "right": 10
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 23,
+          "unseen_in_anchor_token_occurrences": 11
+        },
+        {
+          "case_id": "subtract/numbers/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "key": "result"
+            },
+            "kind": "tool",
+            "name": "memory.get"
+          },
+          "model_correct": false,
+          "slice": "numeric_shift",
+          "target_action": {
+            "arguments": {
+              "left": 20,
+              "operation": "subtract",
+              "right": 7
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 23,
+          "unseen_in_anchor_token_occurrences": 11
+        },
+        {
+          "case_id": "add/key/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "key": "diagnostic_total"
+            },
+            "kind": "tool",
+            "name": "memory.get"
+          },
+          "model_correct": false,
+          "slice": "key_shift",
+          "target_action": {
+            "arguments": {
+              "left": 2,
+              "operation": "add",
+              "right": 3
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 24,
+          "unseen_in_anchor_token_occurrences": 6
+        },
+        {
+          "case_id": "subtract/key/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "key": "diagnostic_result"
+            },
+            "kind": "tool",
+            "name": "memory.get"
+          },
+          "model_correct": false,
+          "slice": "key_shift",
+          "target_action": {
+            "arguments": {
+              "left": 9,
+              "operation": "subtract",
+              "right": 4
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 24,
+          "unseen_in_anchor_token_occurrences": 7
+        }
+      ],
+      "prediction_file_sha256": "ab0038fbd2da6b5f1beee73ab2654f6f1219149e8733b89b43e885edbb600cd4",
+      "schema_version": "aster-decision-failure-audit-0",
+      "source_run_id": "b9618ee89bb0451d93ee67e8eb779b8e",
+      "suite_sha256": "5b525f40b2a4fe754ee62fe12d9d375fb07a4cc564faf0d6335a82a58423894d",
+      "test": "sealed",
+      "token_length_ranges": {
+        "candidate_permutation": [
+          10,
+          31
+        ],
+        "key_shift": [
+          24,
+          107
+        ],
+        "numeric_shift": [
+          23,
+          62
+        ],
+        "reachable_delay": [
+          70,
+          137
+        ],
+        "seen_control": [
+          10,
+          31
+        ]
+      },
+      "tokenizer_sha256": "d68bd292d060625256cdcf16398d70db7d379542b8fe8aea45cbc7da611f9692",
+      "seed": 43,
+      "arm": "eight-fixed",
+      "audit_run_id": "65dddf670cc94c3a9786f9e9623a8d44"
+    },
+    {
+      "checkpoint_id": "decision_fit:e5b40818795827410bf85156294cf59923ffe78e9448c41e1eabbfc11de484e0",
+      "correct_by_slice": {
+        "candidate_permutation": 8,
+        "key_shift": 4,
+        "numeric_shift": 2,
+        "reachable_delay": 7,
+        "seen_control": 8
+      },
+      "error_confusion": {
+        "key_shift": {
+          "calculator -> memory.get": 2,
+          "memory.get -> stop:policy_stop": 2
+        },
+        "numeric_shift": {
+          "calculator -> memory.get": 2,
+          "memory.get -> calculator": 1,
+          "memory.get -> stop:policy_stop": 1,
+          "memory.put -> calculator": 1,
+          "memory.put -> memory.get": 1
+        },
+        "reachable_delay": {
+          "calculator -> stop:policy_stop": 2,
+          "memory.get -> memory.put": 4,
+          "memory.put -> stop:policy_stop": 2,
+          "stop:goal_verified -> memory.put": 1
+        }
+      },
+      "interpretation": "Token changes and errors co-occur; this is not a causal tokenizer intervention.",
+      "longest_vocabulary_token_bytes": 129,
+      "model_update": false,
+      "new_inference": false,
+      "phase_zero": [
+        {
+          "case_id": "add/seen/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "left": 2,
+              "operation": "add",
+              "right": 3
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "model_correct": true,
+          "slice": "seen_control",
+          "target_action": {
+            "arguments": {
+              "left": 2,
+              "operation": "add",
+              "right": 3
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 10,
+          "unseen_in_anchor_token_occurrences": 0
+        },
+        {
+          "case_id": "subtract/seen/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "left": 9,
+              "operation": "subtract",
+              "right": 4
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "model_correct": true,
+          "slice": "seen_control",
+          "target_action": {
+            "arguments": {
+              "left": 9,
+              "operation": "subtract",
+              "right": 4
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 10,
+          "unseen_in_anchor_token_occurrences": 0
+        },
+        {
+          "case_id": "add/numbers/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "key": "total"
+            },
+            "kind": "tool",
+            "name": "memory.get"
+          },
+          "model_correct": false,
+          "slice": "numeric_shift",
+          "target_action": {
+            "arguments": {
+              "left": 6,
+              "operation": "add",
+              "right": 10
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 23,
+          "unseen_in_anchor_token_occurrences": 11
+        },
+        {
+          "case_id": "subtract/numbers/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "key": "result"
+            },
+            "kind": "tool",
+            "name": "memory.get"
+          },
+          "model_correct": false,
+          "slice": "numeric_shift",
+          "target_action": {
+            "arguments": {
+              "left": 20,
+              "operation": "subtract",
+              "right": 7
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 23,
+          "unseen_in_anchor_token_occurrences": 11
+        },
+        {
+          "case_id": "add/key/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "key": "diagnostic_total"
+            },
+            "kind": "tool",
+            "name": "memory.get"
+          },
+          "model_correct": false,
+          "slice": "key_shift",
+          "target_action": {
+            "arguments": {
+              "left": 2,
+              "operation": "add",
+              "right": 3
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 24,
+          "unseen_in_anchor_token_occurrences": 6
+        },
+        {
+          "case_id": "subtract/key/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "key": "diagnostic_result"
+            },
+            "kind": "tool",
+            "name": "memory.get"
+          },
+          "model_correct": false,
+          "slice": "key_shift",
+          "target_action": {
+            "arguments": {
+              "left": 9,
+              "operation": "subtract",
+              "right": 4
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 24,
+          "unseen_in_anchor_token_occurrences": 7
+        }
+      ],
+      "prediction_file_sha256": "ea4da0e80b1e3df08f70da1d0988082b09e60680f385d572979a1d5243d93307",
+      "schema_version": "aster-decision-failure-audit-0",
+      "source_run_id": "48778f8186584742ac08703dfb382b10",
+      "suite_sha256": "5b525f40b2a4fe754ee62fe12d9d375fb07a4cc564faf0d6335a82a58423894d",
+      "test": "sealed",
+      "token_length_ranges": {
+        "candidate_permutation": [
+          10,
+          31
+        ],
+        "key_shift": [
+          24,
+          107
+        ],
+        "numeric_shift": [
+          23,
+          62
+        ],
+        "reachable_delay": [
+          70,
+          137
+        ],
+        "seen_control": [
+          10,
+          31
+        ]
+      },
+      "tokenizer_sha256": "d68bd292d060625256cdcf16398d70db7d379542b8fe8aea45cbc7da611f9692",
+      "seed": 43,
+      "arm": "eight-shuffle",
+      "audit_run_id": "abf888eafddc44e7827e7dc15c86dc3b"
+    },
+    {
+      "checkpoint_id": "decision_fit:69d31b26c2a4ccf6575eee7cf7500b246e356f97c266e7386826c0ddafcb7fa6",
+      "correct_by_slice": {
+        "candidate_permutation": 8,
+        "key_shift": 1,
+        "reachable_delay": 6,
+        "seen_control": 8
+      },
+      "error_confusion": {
+        "key_shift": {
+          "calculator -> memory.get": 2,
+          "memory.get -> calculator": 1,
+          "memory.get -> memory.put": 1,
+          "memory.put -> stop:policy_stop": 2,
+          "stop:goal_verified -> memory.put": 1
+        },
+        "numeric_shift": {
+          "calculator -> memory.get": 2,
+          "memory.get -> calculator": 1,
+          "memory.get -> stop:policy_stop": 1,
+          "memory.put -> stop:policy_stop": 2,
+          "stop:goal_verified -> memory.get": 1,
+          "stop:goal_verified -> stop:policy_stop": 1
+        },
+        "reachable_delay": {
+          "calculator -> stop:policy_stop": 4,
+          "memory.get -> memory.put": 2,
+          "memory.get -> stop:policy_stop": 2,
+          "stop:goal_verified -> stop:policy_stop": 2
+        }
+      },
+      "interpretation": "Token changes and errors co-occur; this is not a causal tokenizer intervention.",
+      "longest_vocabulary_token_bytes": 129,
+      "model_update": false,
+      "new_inference": false,
+      "phase_zero": [
+        {
+          "case_id": "add/seen/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "left": 2,
+              "operation": "add",
+              "right": 3
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "model_correct": true,
+          "slice": "seen_control",
+          "target_action": {
+            "arguments": {
+              "left": 2,
+              "operation": "add",
+              "right": 3
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 10,
+          "unseen_in_anchor_token_occurrences": 0
+        },
+        {
+          "case_id": "subtract/seen/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "left": 9,
+              "operation": "subtract",
+              "right": 4
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "model_correct": true,
+          "slice": "seen_control",
+          "target_action": {
+            "arguments": {
+              "left": 9,
+              "operation": "subtract",
+              "right": 4
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 10,
+          "unseen_in_anchor_token_occurrences": 0
+        },
+        {
+          "case_id": "add/numbers/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "key": "total"
+            },
+            "kind": "tool",
+            "name": "memory.get"
+          },
+          "model_correct": false,
+          "slice": "numeric_shift",
+          "target_action": {
+            "arguments": {
+              "left": 6,
+              "operation": "add",
+              "right": 10
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 23,
+          "unseen_in_anchor_token_occurrences": 11
+        },
+        {
+          "case_id": "subtract/numbers/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "key": "result"
+            },
+            "kind": "tool",
+            "name": "memory.get"
+          },
+          "model_correct": false,
+          "slice": "numeric_shift",
+          "target_action": {
+            "arguments": {
+              "left": 20,
+              "operation": "subtract",
+              "right": 7
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 23,
+          "unseen_in_anchor_token_occurrences": 11
+        },
+        {
+          "case_id": "add/key/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "key": "diagnostic_total"
+            },
+            "kind": "tool",
+            "name": "memory.get"
+          },
+          "model_correct": false,
+          "slice": "key_shift",
+          "target_action": {
+            "arguments": {
+              "left": 2,
+              "operation": "add",
+              "right": 3
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 24,
+          "unseen_in_anchor_token_occurrences": 6
+        },
+        {
+          "case_id": "subtract/key/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "key": "diagnostic_result"
+            },
+            "kind": "tool",
+            "name": "memory.get"
+          },
+          "model_correct": false,
+          "slice": "key_shift",
+          "target_action": {
+            "arguments": {
+              "left": 9,
+              "operation": "subtract",
+              "right": 4
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 24,
+          "unseen_in_anchor_token_occurrences": 7
+        }
+      ],
+      "prediction_file_sha256": "25abea31bb360ee144ee0a849b2d5d595c97f4aa842a854d954b2d16f743d7e2",
+      "schema_version": "aster-decision-failure-audit-0",
+      "source_run_id": "0127983175d54532a1661e5eadf0bd4d",
+      "suite_sha256": "5b525f40b2a4fe754ee62fe12d9d375fb07a4cc564faf0d6335a82a58423894d",
+      "test": "sealed",
+      "token_length_ranges": {
+        "candidate_permutation": [
+          10,
+          31
+        ],
+        "key_shift": [
+          24,
+          107
+        ],
+        "numeric_shift": [
+          23,
+          62
+        ],
+        "reachable_delay": [
+          70,
+          137
+        ],
+        "seen_control": [
+          10,
+          31
+        ]
+      },
+      "tokenizer_sha256": "d68bd292d060625256cdcf16398d70db7d379542b8fe8aea45cbc7da611f9692",
+      "seed": 44,
+      "arm": "eight-fixed",
+      "audit_run_id": "aef6d262bbda44d18c86fc473e8b4f35"
+    },
+    {
+      "checkpoint_id": "decision_fit:bde3b9581fda706f5045a3312285128904e72167ab67b77ee5ed85daf837dbe7",
+      "correct_by_slice": {
+        "candidate_permutation": 8,
+        "key_shift": 1,
+        "numeric_shift": 3,
+        "reachable_delay": 6,
+        "seen_control": 8
+      },
+      "error_confusion": {
+        "key_shift": {
+          "calculator -> memory.get": 2,
+          "memory.get -> calculator": 1,
+          "memory.put -> stop:policy_stop": 2,
+          "stop:goal_verified -> memory.get": 1,
+          "stop:goal_verified -> memory.put": 1
+        },
+        "numeric_shift": {
+          "calculator -> memory.get": 2,
+          "memory.get -> memory.put": 2,
+          "stop:goal_verified -> memory.put": 1
+        },
+        "reachable_delay": {
+          "calculator -> stop:policy_stop": 2,
+          "memory.get -> memory.put": 3,
+          "memory.get -> stop:policy_stop": 1,
+          "memory.put -> memory.get": 2,
+          "stop:goal_verified -> memory.get": 1,
+          "stop:goal_verified -> stop:policy_stop": 1
+        }
+      },
+      "interpretation": "Token changes and errors co-occur; this is not a causal tokenizer intervention.",
+      "longest_vocabulary_token_bytes": 129,
+      "model_update": false,
+      "new_inference": false,
+      "phase_zero": [
+        {
+          "case_id": "add/seen/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "left": 2,
+              "operation": "add",
+              "right": 3
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "model_correct": true,
+          "slice": "seen_control",
+          "target_action": {
+            "arguments": {
+              "left": 2,
+              "operation": "add",
+              "right": 3
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 10,
+          "unseen_in_anchor_token_occurrences": 0
+        },
+        {
+          "case_id": "subtract/seen/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "left": 9,
+              "operation": "subtract",
+              "right": 4
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "model_correct": true,
+          "slice": "seen_control",
+          "target_action": {
+            "arguments": {
+              "left": 9,
+              "operation": "subtract",
+              "right": 4
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 10,
+          "unseen_in_anchor_token_occurrences": 0
+        },
+        {
+          "case_id": "add/numbers/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "key": "total"
+            },
+            "kind": "tool",
+            "name": "memory.get"
+          },
+          "model_correct": false,
+          "slice": "numeric_shift",
+          "target_action": {
+            "arguments": {
+              "left": 6,
+              "operation": "add",
+              "right": 10
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 23,
+          "unseen_in_anchor_token_occurrences": 11
+        },
+        {
+          "case_id": "subtract/numbers/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "key": "result"
+            },
+            "kind": "tool",
+            "name": "memory.get"
+          },
+          "model_correct": false,
+          "slice": "numeric_shift",
+          "target_action": {
+            "arguments": {
+              "left": 20,
+              "operation": "subtract",
+              "right": 7
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 23,
+          "unseen_in_anchor_token_occurrences": 11
+        },
+        {
+          "case_id": "add/key/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "key": "diagnostic_total"
+            },
+            "kind": "tool",
+            "name": "memory.get"
+          },
+          "model_correct": false,
+          "slice": "key_shift",
+          "target_action": {
+            "arguments": {
+              "left": 2,
+              "operation": "add",
+              "right": 3
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 24,
+          "unseen_in_anchor_token_occurrences": 6
+        },
+        {
+          "case_id": "subtract/key/phase-0/delay-0",
+          "model_action": {
+            "arguments": {
+              "key": "diagnostic_result"
+            },
+            "kind": "tool",
+            "name": "memory.get"
+          },
+          "model_correct": false,
+          "slice": "key_shift",
+          "target_action": {
+            "arguments": {
+              "left": 9,
+              "operation": "subtract",
+              "right": 4
+            },
+            "kind": "tool",
+            "name": "calculator"
+          },
+          "target_token_length": 24,
+          "unseen_in_anchor_token_occurrences": 7
+        }
+      ],
+      "prediction_file_sha256": "8fcab38621bea0dc2bed7fbd2f104d9301a1fd760e56f787641c014f4ee73189",
+      "schema_version": "aster-decision-failure-audit-0",
+      "source_run_id": "b36fab7df7b14ee784139f9f18a29177",
+      "suite_sha256": "5b525f40b2a4fe754ee62fe12d9d375fb07a4cc564faf0d6335a82a58423894d",
+      "test": "sealed",
+      "token_length_ranges": {
+        "candidate_permutation": [
+          10,
+          31
+        ],
+        "key_shift": [
+          24,
+          107
+        ],
+        "numeric_shift": [
+          23,
+          62
+        ],
+        "reachable_delay": [
+          70,
+          137
+        ],
+        "seen_control": [
+          10,
+          31
+        ]
+      },
+      "tokenizer_sha256": "d68bd292d060625256cdcf16398d70db7d379542b8fe8aea45cbc7da611f9692",
+      "seed": 44,
+      "arm": "eight-shuffle",
+      "audit_run_id": "54efde645dd7441697424442515459e5"
+    }
+  ],
+  "shared_tokenization_examples": [
+    {
+      "case_id": "add/seen/phase-0/delay-0",
+      "slice": "seen_control",
+      "target_action": {
+        "arguments": {
+          "left": 2,
+          "operation": "add",
+          "right": 3
+        },
+        "kind": "tool",
+        "name": "calculator"
+      },
+      "target_input": "{\"candidate\":{\"arguments\":{\"left\":2,\"operation\":\"add\",\"right\":3},\"kind\":\"tool\",\"name\":\"calculator\"},\"history\":[],\"schema\":\"aster-decision-input-0\",\"state\":{\"memory\":{},\"step\":0,\"task\":{\"kind\":\"calculate_and_store\",\"left\":2,\"operation\":\"add\",\"right\":3,\"store_as\":\"total\"}}}",
+      "target_token_ids": [
+        512,
+        453,
+        400,
+        385,
+        34,
+        461,
+        497,
+        48,
+        493,
+        513
+      ],
+      "target_token_length": 10,
+      "target_token_pieces": [
+        "<bos>",
+        "{\"candidate\":{\"arguments\":{\"",
+        "left\":2,\"operation\":\"add\",\"right\":3",
+        "},\"kind\":\"tool\",\"name\":\"calculator",
+        "\"",
+        "},\"history\":[",
+        "],\"schema\":\"aster-decision-input-0\",\"state\":{\"memory\":{},\"step\":",
+        "0",
+        ",\"task\":{\"kind\":\"calculate_and_store\",\"left\":2,\"operation\":\"add\",\"right\":3,\"store_as\":\"total\"}}}",
+        "<eos>"
+      ],
+      "unseen_in_anchor_token_occurrences": 0
+    },
+    {
+      "case_id": "subtract/seen/phase-0/delay-0",
+      "slice": "seen_control",
+      "target_action": {
+        "arguments": {
+          "left": 9,
+          "operation": "subtract",
+          "right": 4
+        },
+        "kind": "tool",
+        "name": "calculator"
+      },
+      "target_input": "{\"candidate\":{\"arguments\":{\"left\":9,\"operation\":\"subtract\",\"right\":4},\"kind\":\"tool\",\"name\":\"calculator\"},\"history\":[],\"schema\":\"aster-decision-input-0\",\"state\":{\"memory\":{},\"step\":0,\"task\":{\"kind\":\"calculate_and_store\",\"left\":9,\"operation\":\"subtract\",\"right\":4,\"store_as\":\"result\"}}}",
+      "target_token_ids": [
+        512,
+        453,
+        401,
+        385,
+        34,
+        461,
+        497,
+        48,
+        494,
+        513
+      ],
+      "target_token_length": 10,
+      "target_token_pieces": [
+        "<bos>",
+        "{\"candidate\":{\"arguments\":{\"",
+        "left\":9,\"operation\":\"subtract\",\"right\":4",
+        "},\"kind\":\"tool\",\"name\":\"calculator",
+        "\"",
+        "},\"history\":[",
+        "],\"schema\":\"aster-decision-input-0\",\"state\":{\"memory\":{},\"step\":",
+        "0",
+        ",\"task\":{\"kind\":\"calculate_and_store\",\"left\":9,\"operation\":\"subtract\",\"right\":4,\"store_as\":\"result\"}}}",
+        "<eos>"
+      ],
+      "unseen_in_anchor_token_occurrences": 0
+    },
+    {
+      "case_id": "add/numbers/phase-0/delay-0",
+      "slice": "numeric_shift",
+      "target_action": {
+        "arguments": {
+          "left": 6,
+          "operation": "add",
+          "right": 10
+        },
+        "kind": "tool",
+        "name": "calculator"
+      },
+      "target_input": "{\"candidate\":{\"arguments\":{\"left\":6,\"operation\":\"add\",\"right\":10},\"kind\":\"tool\",\"name\":\"calculator\"},\"history\":[],\"schema\":\"aster-decision-input-0\",\"state\":{\"memory\":{},\"step\":0,\"task\":{\"kind\":\"calculate_and_store\",\"left\":6,\"operation\":\"add\",\"right\":10,\"store_as\":\"total\"}}}",
+      "target_token_ids": [
+        512,
+        453,
+        330,
+        54,
+        332,
+        395,
+        49,
+        48,
+        385,
+        34,
+        461,
+        497,
+        48,
+        460,
+        330,
+        54,
+        332,
+        395,
+        49,
+        48,
+        451,
+        487,
+        513
+      ],
+      "target_token_length": 23,
+      "target_token_pieces": [
+        "<bos>",
+        "{\"candidate\":{\"arguments\":{\"",
+        "left\":",
+        "6",
+        ",\"operation\":\"",
+        "add\",\"right\":",
+        "1",
+        "0",
+        "},\"kind\":\"tool\",\"name\":\"calculator",
+        "\"",
+        "},\"history\":[",
+        "],\"schema\":\"aster-decision-input-0\",\"state\":{\"memory\":{},\"step\":",
+        "0",
+        ",\"task\":{\"kind\":\"calculate_and_store\",\"",
+        "left\":",
+        "6",
+        ",\"operation\":\"",
+        "add\",\"right\":",
+        "1",
+        "0",
+        ",\"store_as",
+        "\":\"total\"}}}",
+        "<eos>"
+      ],
+      "unseen_in_anchor_token_occurrences": 11
+    },
+    {
+      "case_id": "subtract/numbers/phase-0/delay-0",
+      "slice": "numeric_shift",
+      "target_action": {
+        "arguments": {
+          "left": 20,
+          "operation": "subtract",
+          "right": 7
+        },
+        "kind": "tool",
+        "name": "calculator"
+      },
+      "target_input": "{\"candidate\":{\"arguments\":{\"left\":20,\"operation\":\"subtract\",\"right\":7},\"kind\":\"tool\",\"name\":\"calculator\"},\"history\":[],\"schema\":\"aster-decision-input-0\",\"state\":{\"memory\":{},\"step\":0,\"task\":{\"kind\":\"calculate_and_store\",\"left\":20,\"operation\":\"subtract\",\"right\":7,\"store_as\":\"result\"}}}",
+      "target_token_ids": [
+        512,
+        453,
+        330,
+        50,
+        48,
+        332,
+        397,
+        55,
+        385,
+        34,
+        461,
+        497,
+        48,
+        460,
+        330,
+        50,
+        48,
+        332,
+        397,
+        55,
+        451,
+        488,
+        513
+      ],
+      "target_token_length": 23,
+      "target_token_pieces": [
+        "<bos>",
+        "{\"candidate\":{\"arguments\":{\"",
+        "left\":",
+        "2",
+        "0",
+        ",\"operation\":\"",
+        "subtract\",\"right\":",
+        "7",
+        "},\"kind\":\"tool\",\"name\":\"calculator",
+        "\"",
+        "},\"history\":[",
+        "],\"schema\":\"aster-decision-input-0\",\"state\":{\"memory\":{},\"step\":",
+        "0",
+        ",\"task\":{\"kind\":\"calculate_and_store\",\"",
+        "left\":",
+        "2",
+        "0",
+        ",\"operation\":\"",
+        "subtract\",\"right\":",
+        "7",
+        ",\"store_as",
+        "\":\"result\"}}}",
+        "<eos>"
+      ],
+      "unseen_in_anchor_token_occurrences": 11
+    },
+    {
+      "case_id": "add/key/phase-0/delay-0",
+      "slice": "key_shift",
+      "target_action": {
+        "arguments": {
+          "left": 2,
+          "operation": "add",
+          "right": 3
+        },
+        "kind": "tool",
+        "name": "calculator"
+      },
+      "target_input": "{\"candidate\":{\"arguments\":{\"left\":2,\"operation\":\"add\",\"right\":3},\"kind\":\"tool\",\"name\":\"calculator\"},\"history\":[],\"schema\":\"aster-decision-input-0\",\"state\":{\"memory\":{},\"step\":0,\"task\":{\"kind\":\"calculate_and_store\",\"left\":2,\"operation\":\"add\",\"right\":3,\"store_as\":\"diagnostic_total\"}}}",
+      "target_token_ids": [
+        512,
+        453,
+        400,
+        385,
+        34,
+        461,
+        497,
+        48,
+        491,
+        259,
+        100,
+        105,
+        97,
+        103,
+        110,
+        111,
+        335,
+        105,
+        99,
+        95,
+        261,
+        339,
+        402,
+        513
+      ],
+      "target_token_length": 24,
+      "target_token_pieces": [
+        "<bos>",
+        "{\"candidate\":{\"arguments\":{\"",
+        "left\":2,\"operation\":\"add\",\"right\":3",
+        "},\"kind\":\"tool\",\"name\":\"calculator",
+        "\"",
+        "},\"history\":[",
+        "],\"schema\":\"aster-decision-input-0\",\"state\":{\"memory\":{},\"step\":",
+        "0",
+        ",\"task\":{\"kind\":\"calculate_and_store\",\"left\":2,\"operation\":\"add\",\"right\":3,\"store_as",
+        "\":\"",
+        "d",
+        "i",
+        "a",
+        "g",
+        "n",
+        "o",
+        "st",
+        "i",
+        "c",
+        "_",
+        "to",
+        "tal",
+        "\"}}}",
+        "<eos>"
+      ],
+      "unseen_in_anchor_token_occurrences": 6
+    },
+    {
+      "case_id": "subtract/key/phase-0/delay-0",
+      "slice": "key_shift",
+      "target_action": {
+        "arguments": {
+          "left": 9,
+          "operation": "subtract",
+          "right": 4
+        },
+        "kind": "tool",
+        "name": "calculator"
+      },
+      "target_input": "{\"candidate\":{\"arguments\":{\"left\":9,\"operation\":\"subtract\",\"right\":4},\"kind\":\"tool\",\"name\":\"calculator\"},\"history\":[],\"schema\":\"aster-decision-input-0\",\"state\":{\"memory\":{},\"step\":0,\"task\":{\"kind\":\"calculate_and_store\",\"left\":9,\"operation\":\"subtract\",\"right\":4,\"store_as\":\"diagnostic_result\"}}}",
+      "target_token_ids": [
+        512,
+        453,
+        401,
+        385,
+        34,
+        461,
+        497,
+        48,
+        492,
+        259,
+        100,
+        105,
+        97,
+        103,
+        110,
+        111,
+        335,
+        105,
+        99,
+        95,
+        340,
+        116,
+        402,
+        513
+      ],
+      "target_token_length": 24,
+      "target_token_pieces": [
+        "<bos>",
+        "{\"candidate\":{\"arguments\":{\"",
+        "left\":9,\"operation\":\"subtract\",\"right\":4",
+        "},\"kind\":\"tool\",\"name\":\"calculator",
+        "\"",
+        "},\"history\":[",
+        "],\"schema\":\"aster-decision-input-0\",\"state\":{\"memory\":{},\"step\":",
+        "0",
+        ",\"task\":{\"kind\":\"calculate_and_store\",\"left\":9,\"operation\":\"subtract\",\"right\":4,\"store_as",
+        "\":\"",
+        "d",
+        "i",
+        "a",
+        "g",
+        "n",
+        "o",
+        "st",
+        "i",
+        "c",
+        "_",
+        "resul",
+        "t",
+        "\"}}}",
+        "<eos>"
+      ],
+      "unseen_in_anchor_token_occurrences": 7
+    }
+  ]
+}

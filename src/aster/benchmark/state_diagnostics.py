@@ -162,92 +162,14 @@ def run_state_diagnostics(root: str | Path, checkpoint: str | Path, *, source_gi
         raise ValueError("Diagnostics require an eight-example fit checkpoint")
     suite = build_state_diagnostic_suite()
     lookup = fit_step_lookup(original.cases_for("train"))
-    state_before = {name: tensor.detach().clone() for name, tensor in model.state_dict().items()}
     run = RunLog(Path(root), "decision_state_diagnostics", {
         "checkpoint_id": manifest["checkpoint_id"], "suite_id": suite.suite_id,
         "suite_sha256": _suite_digest(suite), "source_git_sha": source_git_sha,
         "model_update": False, "temperature_fit": False, "test": "sealed",
     }, producer="evaluator")
-    started = time.perf_counter()
     try:
-        rows = []
-        for case in suite.cases:
-            example = case.example
-            with torch.no_grad():
-                scores = score_candidates(model, tokenizer, example.state,
-                                          example.trajectory, example.candidates)
-            logits = [float(v) for v in scores.tolist()]
-            target = example.target_index
-            nll = float(torch.logsumexp(scores.double(), dim=0).item()) - logits[target]
-            predicted = int(scores.argmax().item())
-            label = lookup.get(example.state.step)
-            step_action = next((a for a in example.candidates if action_label(a) == label), None)
-            texts = [serialize_decision_input(example.state, example.trajectory, a)
-                     for a in example.candidates]
-            rows.append({
-                "case_id": case.case_id, "slice": case.slice_name, "split": "dev",
-                "leakage_group": case.leakage_group, "step": example.state.step,
-                "candidate_coverage": example.target in example.candidates,
-                "candidates": [a.to_dict() for a in example.candidates],
-                "target_action": example.target.to_dict(), "target_index": target,
-                "model_action": example.candidates[predicted].to_dict(),
-                "model_correct": predicted == target, "logits": logits, "nll": nll,
-                "target_probability": math.exp(-nll),
-                "target_margin": logits[target] - max(v for i, v in enumerate(logits) if i != target),
-                "step_only_label": label, "step_only_abstained": step_action is None,
-                "step_only_correct": step_action == example.target,
-                "first_candidate_correct": example.candidates[0] == example.target,
-                "case_sha256": _digest(case.to_dict()),
-                "input_sha256": [_digest(t) for t in texts],
-                "token_lengths": [len(tokenizer.encode(t, add_bos=True, add_eos=True)) for t in texts],
-            })
-        by_slice: dict[str, list[dict]] = defaultdict(list)
-        for row in rows:
-            by_slice[row["slice"]].append(row)
-        by_id = {row["case_id"]: row for row in rows}
-        permutations = []
-        for row in by_slice["candidate_permutation"]:
-            base = by_id[row["case_id"].removesuffix("/reverse")]
-            permutations.append({"case_id": row["case_id"],
-                                 "same_selected_action": row["model_action"] == base["model_action"],
-                                 "max_reordered_logit_difference": max(abs(a-b) for a, b in zip(
-                                     row["logits"], reversed(base["logits"]), strict=True))})
-        episodes = []
-        for operation, variant, task in _task_specs():
-            for policy_name, policy in (("rule", RuleBasedPolicy()), ("model_only", ModelPolicy(model, tokenizer))):
-                coverage = []
-
-                class AuditedPolicy:
-                    def decide(self, state, trajectory, available_actions):
-                        teacher_action = RuleBasedPolicy().decide(state, trajectory, available_actions)
-                        candidates = CalculateAndStoreCandidates().build(state, trajectory, available_actions)
-                        coverage.append(teacher_action in candidates)
-                        return policy.decide(state, trajectory, available_actions)
-
-                trajectory = run_loop(policy=AuditedPolicy(), executor=_executor(), evaluator=TaskEvaluator(),
-                                      context=RuntimeContext(task=task), max_steps=8)
-                last = trajectory.last
-                success = bool(last and last.evaluation.terminal and last.evaluation.goal_satisfied)
-                episodes.append({"task_id": f"{operation}/{variant}", "variant": variant,
-                                 "policy": policy_name, "success": success, "steps": len(trajectory.transitions),
-                                 "teacher_candidate_coverage": sum(coverage) / len(coverage),
-                                 "trajectory": [t.to_dict() for t in trajectory.transitions],
-                                 "failure": None if success else "step_limit" if last and not last.evaluation.terminal else "stopped_without_goal"})
-        unchanged = all(torch.equal(state_before[name], tensor) for name, tensor in model.state_dict().items())
-        if not unchanged:
-            raise RuntimeError("Read-only diagnostics changed model weights")
-        report = {
-            "schema_version": SCHEMA, "checkpoint_id": manifest["checkpoint_id"],
-            "checkpoint_manifest": manifest, "suite_id": suite.suite_id, "suite_sha256": _suite_digest(suite),
-            "overall": _summary(rows), "slices": {name: _summary(rs) for name, rs in by_slice.items()},
-            "step_lookup": lookup, "permutation_checks": permutations,
-            "episodes": [{k: v for k, v in ep.items() if k != "trajectory"} for ep in episodes],
-            "weights_unchanged": unchanged, "model_update": False, "temperature_fit": False,
-            "test": {"status": "sealed"}, "wall_seconds": time.perf_counter() - started,
-            "resources": {"python_torch_version": torch.__version__, "threads": torch.get_num_threads(), "device": "cpu"},
-            "scope": "dev probes descended from two seen train task templates; not independent held-out families",
-            "candidate_shortcut_limit": "first-candidate is a weak control; candidate builder itself supplies arguments and goal_verified",
-        }
+        report, rows, episodes = measure_state_diagnostics(model, tokenizer, suite=suite, step_lookup=lookup)
+        report.update(checkpoint_id=manifest["checkpoint_id"], checkpoint_manifest=manifest)
         _write(run.path / "diagnostic-suite.json", suite.to_dict())
         _write(run.path / "diagnostics.json", report)
         for name, records in (("predictions.jsonl", rows), ("episodes.jsonl", episodes)):
@@ -258,6 +180,101 @@ def run_state_diagnostics(root: str | Path, checkpoint: str | Path, *, source_gi
         run.finish("failed", error=str(error))
         raise
     return run.path
+
+
+def measure_state_diagnostics(model, tokenizer, *, suite=None, task_specs=None, step_lookup=None):
+    """Evaluate supplied frozen model on explicit dev probes; never load test cases.
+
+    The checkpoint wrapper keeps its original anchor validation. New research
+    recipes can share this measurement without pretending to be eight-fit runs.
+    """
+    suite = suite if suite is not None else build_state_diagnostic_suite()
+    if any(case.split != "dev" for case in suite.cases):
+        raise ValueError("State diagnostics accepts dev probes only")
+    task_specs = tuple(task_specs) if task_specs is not None else _task_specs()
+    lookup = step_lookup if step_lookup is not None else fit_step_lookup(
+        build_calculate_and_store_suite().cases_for("train"))
+    state_before = {name: tensor.detach().clone() for name, tensor in model.state_dict().items()}
+    model.eval()
+    started = time.perf_counter()
+    rows = []
+    for case in suite.cases:
+        example = case.example
+        with torch.no_grad():
+            scores = score_candidates(model, tokenizer, example.state,
+                                      example.trajectory, example.candidates)
+        logits = [float(v) for v in scores.tolist()]
+        target = example.target_index
+        nll = float(torch.logsumexp(scores.double(), dim=0).item()) - logits[target]
+        predicted = int(scores.argmax().item())
+        label = lookup.get(example.state.step)
+        step_action = next((a for a in example.candidates if action_label(a) == label), None)
+        texts = [serialize_decision_input(example.state, example.trajectory, a)
+                 for a in example.candidates]
+        rows.append({
+            "case_id": case.case_id, "slice": case.slice_name, "split": "dev",
+            "leakage_group": case.leakage_group, "step": example.state.step,
+            "candidate_coverage": example.target in example.candidates,
+            "candidates": [a.to_dict() for a in example.candidates],
+            "target_action": example.target.to_dict(), "target_index": target,
+            "model_action": example.candidates[predicted].to_dict(),
+            "model_correct": predicted == target, "logits": logits, "nll": nll,
+            "target_probability": math.exp(-nll),
+            "target_margin": logits[target] - max(v for i, v in enumerate(logits) if i != target),
+            "step_only_label": label, "step_only_abstained": step_action is None,
+            "step_only_correct": step_action == example.target,
+            "first_candidate_correct": example.candidates[0] == example.target,
+            "case_sha256": _digest(case.to_dict()),
+            "input_sha256": [_digest(t) for t in texts],
+            "token_lengths": [len(tokenizer.encode(t, add_bos=True, add_eos=True)) for t in texts],
+        })
+    by_slice: dict[str, list[dict]] = defaultdict(list)
+    for row in rows:
+        by_slice[row["slice"]].append(row)
+    by_id = {row["case_id"]: row for row in rows}
+    permutations = []
+    for row in by_slice["candidate_permutation"]:
+        base = by_id[row["case_id"].removesuffix("/reverse")]
+        permutations.append({"case_id": row["case_id"],
+                             "same_selected_action": row["model_action"] == base["model_action"],
+                             "max_reordered_logit_difference": max(abs(a-b) for a, b in zip(
+                                 row["logits"], reversed(base["logits"]), strict=True))})
+    episodes = []
+    for operation, variant, task in task_specs:
+        for policy_name, policy in (("rule", RuleBasedPolicy()), ("model_only", ModelPolicy(model, tokenizer))):
+            coverage = []
+
+            class AuditedPolicy:
+                def decide(self, state, trajectory, available_actions):
+                    teacher_action = RuleBasedPolicy().decide(state, trajectory, available_actions)
+                    candidates = CalculateAndStoreCandidates().build(state, trajectory, available_actions)
+                    coverage.append(teacher_action in candidates)
+                    return policy.decide(state, trajectory, available_actions)
+
+            trajectory = run_loop(policy=AuditedPolicy(), executor=_executor(), evaluator=TaskEvaluator(),
+                                  context=RuntimeContext(task=task), max_steps=8)
+            last = trajectory.last
+            success = bool(last and last.evaluation.terminal and last.evaluation.goal_satisfied)
+            episodes.append({"task_id": f"{operation}/{variant}", "variant": variant,
+                             "policy": policy_name, "success": success, "steps": len(trajectory.transitions),
+                             "teacher_candidate_coverage": sum(coverage) / len(coverage),
+                             "trajectory": [t.to_dict() for t in trajectory.transitions],
+                             "failure": None if success else "step_limit" if last and not last.evaluation.terminal else "stopped_without_goal"})
+    unchanged = all(torch.equal(state_before[name], tensor) for name, tensor in model.state_dict().items())
+    if not unchanged:
+        raise RuntimeError("Read-only diagnostics changed model weights")
+    report = {
+        "schema_version": SCHEMA, "suite_id": suite.suite_id, "suite_sha256": _suite_digest(suite),
+        "overall": _summary(rows), "slices": {name: _summary(rs) for name, rs in by_slice.items()},
+        "step_lookup": lookup, "permutation_checks": permutations,
+        "episodes": [{k: v for k, v in ep.items() if k != "trajectory"} for ep in episodes],
+        "weights_unchanged": unchanged, "model_update": False, "temperature_fit": False,
+        "test": {"status": "sealed"}, "wall_seconds": time.perf_counter() - started,
+        "resources": {"python_torch_version": torch.__version__, "threads": torch.get_num_threads(), "device": "cpu"},
+        "scope": "dev probes descended from two seen train task templates; not independent held-out families",
+        "candidate_shortcut_limit": "first-candidate is a weak control; candidate builder itself supplies arguments and goal_verified",
+    }
+    return report, rows, episodes
 
 
 def _suite_digest(suite: BenchmarkSuite) -> str:

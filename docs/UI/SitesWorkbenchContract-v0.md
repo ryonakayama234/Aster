@@ -105,3 +105,6 @@ UIでdiagnostic successを再計算せず、未提供の値を推測しない。
 7. READMEや旧計画の現状説明と矛盾を残さない。過去の観測結果は書き換えず、追記で訂正する。
 
 本書は将来案を勝手に実装する包括許可ではない。各作業の範囲はその時のユーザー指示で決め、未実装の部分は区別する。
+
+2026-09-30データ介入研究メモ: 将来の比較表示はarm名だけでなく、提示回数/更新回数、unique判断数、元課題group数、同じTokenizer/初期weightの識別、train fit成立、元課題保持、dev probeの由来を表示する。
+反復slotの増加を新課題の増加と同一視しない。dev probeの親trainとの重なり、test scored_cases=0、reserved procedural prefixと独立task familyの違いをbundle正本から表示する。この研究CLIはService公開recipeではなく、UI接続は未実装。
