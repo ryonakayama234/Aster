@@ -38,6 +38,8 @@ AIの仕組み、Python、数学、コンピューターサイエンスを、ひ
 - Agent KernelのPolicy → ToolExecutor → Observation → State → Evaluatorと、固定`agent-calculate-store-v0`をAster Serviceから実行・観測する経路。[ServiceContract-v1](docs/ServiceContract-v1.md)。
 - TinyLM shared backbone + scalar Decision Head、Decision benchmark、temperature calibration、model/fallback/abstain routing。
 - [Decision CPU Baseline v0](docs/DecisionBaseline-v0.md)。BPE/weight update=train、temperature=calibration、design observation=dev、test=別runという分離、DecisionModel Artifact、別process reload、rule/model/model+fallback比較を実装。
+- [Decision fit実験](docs/DecisionFitExperiment-v0.md)と[状態診断](docs/DecisionStateDiagnostics-v0.md)。train fitと状態変化への汎化を分け、保存checkpointを更新せずに数値・キー・履歴変更を診断する。
+- [失敗/Tokenizer監査](reports/decision-failure-audit-v0.md)と[データ4条件比較](docs/DecisionDataIntervention-v0.md)。候補coverage、train fit、model-only episode、旧test/予約testの封印を分離して記録する。
 
 JSONLは一行に一つのJSONを入れる保存形式です。保存にJSONを使うことと、モデルにJSONの生成を教えることは別です。
 現在のTokenizerビルダーは `.txt` を読みます。コーパス変換器のJSONLをそのまま渡す接続にはなっていません。
@@ -85,14 +87,12 @@ Decision baselineはtestを自動開封しません。まずdevelopment runを�
 
 ## 次に作るもの
 
-2026-09-30: PR #25上のCPU fitをユーザーWSL2で実測し、LR0.001・50epochの8判断でseed42/43/44すべてtrain fit成立。
-[実測記録](reports/decision-fit-user-pc-v0.md) と [状態診断の設計](docs/DecisionStateDiagnostics-v0.md) を参照。
-保存checkpointを更新せずに診断するCLI `scripts/run_decision_state_diagnostics.py` を追加した。
-[初回診断結果](reports/decision-state-diagnostics-v0.md)では、既知課題の自力完了は成立し、新しい数値・キー・履歴への応用に弱点が残る。
-この変更はPR #25に依存する研究ブランチ上の実装であり、main/Service/Webに導入済みとは扱わない。
+2026-09-30: Decision baseline / fit / state diagnostics / data interventionの研究stack（PR #22, #26, #27）をmainへ統合した。
+ユーザーWSL2では8判断のtrain fitを確認した一方、[状態診断](reports/decision-state-diagnostics-v0.md)と[データ4条件実測](reports/decision-data-intervention-v0.md)では数値・キー変更への安定した自力成功は確認できていない。候補coverageは保たれているため、次はデータ量だけでなく入力表現を独立条件として切り分ける。
 
-1. [失敗/Tokenizer監査](reports/decision-failure-audit-v0.md)と[データ4条件比較](docs/DecisionDataIntervention-v0.md)を研究ブランチに追加。[実測報告](reports/decision-data-intervention-v0.md)でtrain fit・元課題保持・変更課題episodeを分ける。旧testと予約prefix testはモデル評価せず封印を維持。次は必要に応じTokenizer/入力表現の独立比較へ進む。
-2. 保存済みDecisionModelと固定task suiteをServiceのallowlisted recipeへ公開し、`aster-web`でrule / model / model+fallbackのRunを観測・比較する。
-3. Interventionの訂正 → candidate再学習 → 親子比較を、同じArtifact/Run/Evaluator契約へ接続する。
+1. Issue #28 / Draft PR #30で、同じ32 unique decisionを使った専用BPE対ByteTokenizer比較を実装・実測する。[比較protocol](docs/DecisionTokenizerComparison-v0.md)では保存済みBPEをdigest固定で読み、同じ更新順・共有可能な初期重み・token/parameter/CPU費用を記録する。preregistered seed42/43/44測定はまだ未完了。
+2. Issue #29 → `aster-web` #2で、保存実験の学習曲線、最初の誤答、token分割、candidate score、state、episode伝播をAster正本bundleから比較表示する。Web側でsuccess/rewardを再計算しない。
+3. Issue #20で、Agent実行 → teacher訂正 → candidate再学習 → 同一Evaluatorで親子比較、までの最初のLearning Loopを閉じる。改善自体は完了条件にしない。
+4. Issue #21のTinyLM言語pilotはDecision研究と別レーンで進め、train暗記とheld-out言語能力を混同しない。
 
 Aster Service / aster-webは任意shellやrepository-local pathを公開せず、Job / Run / Artifactを分離する方針を維持します。
