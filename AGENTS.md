@@ -42,6 +42,9 @@ Asterは、自作TinyLMを通してAI・Python・数学・コンピューター�
 - v0を固定してTokenizerとTinyLMで評価した後、v0.1へ変更する。改善案をv0へ静かに混ぜない。
 - Corpusの版とTokenizerの版は別。既存AsterTokenizer-v0.1がCorpus-v0を使っても矛盾しない。
 - まず既存の単純なbyte-level BPEを使う。速度や品質に問題が出たら計測して改善する。
+- Decision課題のTokenizer/入力表現比較は、一般Corpus用AsterTokenizerの置換と混同しない。同じdecision内容・candidate・教師・更新順を固定し、保存済みTokenizer artifactのdigest、系列長、padding込みtoken量、parameter数、CPU費用を記録する。
+- Decisionのsealed test / reserved testは、比較条件を決めるためのTokenizer学習・長さ確認・scoreへ流さない。debug runとpreregistered measurement、ChatGPT/GitHub runner測定とユーザーWSL測定を区別する。
+- 語彙数が異なるモデルを比較するとき「同じseedだから同じ初期weight」とは扱わない。共有したtensor/semantic rowと共有できない語彙依存weightを分け、hashで残す。
 - このWSLチェックアウトではLinux側のPython・Gitを使う。ユーザーの未コミット作業を保護する。
 - 既存の読み込み対象拡張子・特殊トークン・文書境界を確認してから接続する。
 - 外部コードを収集時に実行しない。将来の実行器はネットワークなし・隔離・時間/資源制限を設ける。
@@ -53,3 +56,11 @@ Asterは、自作TinyLMを通してAI・Python・数学・コンピューター�
 - 同じ作業内で設計契約を現状へ更新し、changelogへ変更理由・ソースcommit/PR・検証結果・未検証・公開状態・次の課題を追記してGitへ保存する。
 - API契約とUI責務を区別し、Job/Run/Artifactの識別、出典・採用理由、実測と保存再生の区別を保つ。
 - 将来案は未実装と明示する。前提PRが未マージなら導入済みと扱わない。設計書を完成記録だけ先に更新しない。
+
+## 反証可能な研究の継続契約（2026-09-30）
+
+- 各実験の実装・測定前に「考えたこと/観測根拠」「仮説と反証になる結果」「固定条件/変更点/対照」「達成目標/停止条件/結果別の次の分岐」をdocsへ記録する。
+- 配線成功、train fit、dev対応、自力episode完了、独立holdoutを分ける。仕組みの追加を研究成果の代用にしない。
+- 条件変更は測定前に改版する。改善なしや悪化も証拠と判断を残して終了できる。
+- こちらで可能な実装・検証・記録は進め、ユーザーPC/私的素材/本人の選定が必要な役割だけ、目的・具体手順・返してほしい成果物を提示する。
+- 実測後は同じ作業でreportsへ全条件・未取得・限界・次の分岐を残す。言語能力と行動能力の成果を混同しない。

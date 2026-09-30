@@ -135,3 +135,21 @@
 - 検証: pytest115 passed、Pyright0 errors/0 warnings。実測はChatGPT Linux CPUで、ユーザーWSLでの新CLI実行は未確認。GitHub main向けCIをstacked PRで実行済みとは扱わない。
 - ServiceContract-v0/v1、public recipe/artifact catalog、aster-web、Site公開版は変更なし。UI接続/Job化/自動promotionは未実装。
 - 次: 実測のtrain fitと元課題保持を踏まえ、Tokenizer/入力表現を独立条件で比較する。Service/Web接続は固定recipeと公開bundleを定義してから別PRで進める。
+
+## 2026-09-30: Decision Tokenizer比較の配線（Issue #28 / PR #30）
+
+- PR #22/#26/#27をmainへ統合した後、同じ32 unique decisionで専用BPEとByteTokenizerだけを変える比較harnessをDraft PR #30へ追加。
+- 保存済みBPEは公開digestを既定で要求し、本測定時に再学習しない。Byte側は既存UTF-8 byte ID 0..255へBOS/EOSを加えたDecision artifactとして扱う。
+- shapeが共通のTransformer/Decision Head等と、意味が対応するraw-byte/BOS/EOS行だけを共有初期化し、全weight同一とは記録しない。
+- token ID・UTF-8 byte range・系列長・padding込みtoken量、parameter数、learning curve、reload、56 dev decision、model-only episodeの最初の誤答をAster Runへ保存する実装。
+- reserved testはsuite/digestだけを保存し、Tokenizer長さ確認にもscoreにも使わない。old testも封印を維持。
+- GitHub標準CPU runnerの1-epoch debug wiringでは119 pytestが成功し、Pyrightも成功。これはIssue #28のseed42/43/44実測には数えない。
+- Service/API/aster-web/Site公開版はこのPRで変更しない。将来Issue #29 → aster-web #2で比較bundleを公開するときも、UIはAsterが保存したscore/success/token境界を再計算しない。
+
+## 2026-09-30: Decision入力比較の全6arm測定と研究契約
+
+- PR #30の初期化条件でseed42/43/44×BPE/Byteを50epoch測定。監査に保存logits/選択Action/数値指標の照合を追加し、各arm30分のdeadlineを強制した。
+- Byte train fitは3/3seed、BPEは1/3seed。数値変更episodeは両方式全seed0/2。キー変更の安定改善なし。次は#24の到達可能な状態と短い構造化入力の比較を事前設計する。
+- 関連回帰64test、deadline検査を含む比較5test成功。9,792 train predictionと336 dev行を独立照合。Linux CPUの測定、ユーザーWSL測定は未実施。旧test/予約test未評価。過去の元cached auditログの再照合は未実施。
+- reports/decision-tokenizer-comparison-v0.md/.jsonへ全条件と証拠を保存。devは親trainの2groupを共有し独立holdoutではない。
+- 公開bundle (#29)、aster-web #2、Service recipe/UI/Site公開版は未変更。今回の計測値をUIに導入済みとは扱わない。
