@@ -70,3 +70,44 @@
 - Site側の完全なJob bundle永続化は未実装。Service記録と公開用JSON書出しで追跡する。
 - 新しいローカルCorpusをSiteへ送るService APIは未実装。既存共有済みCorpus/共有ファイル方式は利用可能。
 - code_sha256と詳細diagnosticsはAster原記録が正本。公開用UIコピーとは区別する。
+
+## 2026-09-28: Issue #19 DecisionModel CPU baseline実装
+
+### 依頼と基準
+
+- `Aster #19`だけを先に実装し、学習済みDecisionModelをWebへ公開する前に、漏洩のない比較・保存・再読込の基準を作る。
+- 基準main: `76516c6ca7e7d83b868c2e68a6232327e80b6ab1`。固定Agent Service v1はmainへmerge済み。
+- 対応PR: #22 `feat/decision-baseline-v0`。
+- UI/APIを同時に拡張しない。ServiceContract-v1のallowlisted recipe、Job/Run分離、localhost/security境界は変更しない。
+
+### 実装
+
+- `DecisionModel Artifact`を追加。weights、model config、Tokenizer、candidate builder、suite digest、training config、calibration/routing設定、source Git SHAを関連付け、model/Tokenizer digestをload時に検査する。
+- optimizer stateは保存せず`resume_supported=false`を明示。推論再読込とtraining resumeを区別する。
+- development baselineを`train → calibration → dev`に限定。BPEとweight updateはtrainのみ、temperatureはcalibrationのみ、devでDecision/episode/routingを観測し、testは`sealed`として残す。
+- final-testを別entry pointにし、保存済みArtifactをloadしてtestだけを評価する。final-testではweight updateと再calibrationをしない。
+- RuleBasedPolicy / ModelPolicy / SelectivePolicy(model+fallback)を同じsplit由来のtaskで比較し、episode successとmodel/fallback/abstain routeを分離する。
+- 保存直後のscore再現確認に加え、pytestで別Python processからartifactをloadしてscore/argmaxを比較する検証を追加。
+- CPU観測としてthread数、各区間wall time、平均step time、process CPU time、Linux max RSSをRunへ保存する。
+- ローカル実行CLI `scripts/run_decision_baseline.py`を追加。
+
+### 検証状態
+
+- PR作成時点ではGitHub Actions pytest / Pyrightを起動済み。結果はこの履歴へ成功確認後に追記する。
+- ユーザーPC上の実測Run ID、実行SHA、step速度、最大RSS、dev/final-test結果は未取得。GitHub CI成功をユーザーPCの能力実測として扱わない。
+- 現行`calculate-and-store-v0`は小さなsynthetic suiteであり、高scoreを広いAgent能力の証拠にしない。
+- Wolframで30分を更新だけに使う単純上限を再確認した場合、平均1秒/stepで1800 step、2秒/stepで900 step。評価・保存時間を含まない計算例であり実測値ではない。
+
+### Sites / Serviceへの影響
+
+- このPRではaster-webを変更しない。
+- Serviceの`GET /artifacts`へDecisionModelをまだ公開しない。
+- `agent-calculate-store-v0`は引き続き固定RuleBasedPolicyのrecipe。
+- Sites Workbenchの責務「操作・表示・比較」、Aster側の責務「実行・評価・canonical evidence」を維持する。
+
+### 次
+
+1. PR #22のpytest / Pyrightを確認し、失敗があれば修正する。
+2. ユーザーPCのWSL2/CPUでdevelopment baselineを実行し、Git SHA / Run ID / resource実測 / dev失敗例を記録する。
+3. 条件を固定した後、保存済みartifactのfinal-testを一度実行する。
+4. そのartifactと固定suiteをServiceへallowlistし、aster-web #2でrule / model / model+fallbackのRun比較へ進む。

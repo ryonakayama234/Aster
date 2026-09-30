@@ -35,6 +35,9 @@ AIの仕組み、Python、数学、コンピューターサイエンスを、ひ
 - [TinyLM本体と事前学習の最小ループ](docs/TinyLM-v0.md)。CPUで少量を覚える実験、train/dev評価、重みの保存・再読込・生成。
 - 外部資料の原本収集と、[canonicalへの自動変換](docs/corpus/canonical-v0.md)。
 - [学習用本文の抽出・分割・配合](docs/corpus/training-view-v0.md)、BPE実験、UIで使う観測bundle。[最初の結果](reports/training-pilot-v0.md)。
+- Agent KernelのPolicy → ToolExecutor → Observation → State → Evaluatorと、固定`agent-calculate-store-v0`をAster Serviceから実行・観測する経路。[ServiceContract-v1](docs/ServiceContract-v1.md)。
+- TinyLM shared backbone + scalar Decision Head、Decision benchmark、temperature calibration、model/fallback/abstain routing。
+- [Decision CPU Baseline v0](docs/DecisionBaseline-v0.md)。BPE/weight update=train、temperature=calibration、design observation=dev、test=別runという分離、DecisionModel Artifact、別process reload、rule/model/model+fallback比較を実装。
 
 JSONLは一行に一つのJSONを入れる保存形式です。保存にJSONを使うことと、モデルにJSONの生成を教えることは別です。
 現在のTokenizerビルダーは `.txt` を読みます。コーパス変換器のJSONLをそのまま渡す接続にはなっていません。
@@ -70,11 +73,20 @@ train本文 → Tokenizerでtoken ID列へ変換 → TinyLM内のembeddingでベ
 embeddingの数値はTinyLMの学習で更新します。実行方法は [TinyLM-v0](docs/TinyLM-v0.md) を参照してください。
 収集済みというだけで学習可能とは扱わず、採用前に仕様の確認を行います。
 
+Decision baselineはtestを自動開封しません。まずdevelopment runを作り、条件を固定した後だけ保存済みartifactをtestします。
+
+```bash
+.venv/bin/python scripts/run_decision_baseline.py --root . --threads 2 train
+.venv/bin/python scripts/run_decision_baseline.py --root . --threads 2 test \
+  --artifact runs/<development-run-id>/model-artifact
+```
+
 学習支援・開発時の約束は [AGENTS.md](AGENTS.md) にまとめています。
 
 ## 次に作るもの
 
-1. [Sitesで素材・Tokenizerを観察する画面](docs/UI/workbench-plan.md)は保存結果の読込まで実装済み。次はローカル実行の接続。
-2. TinyLMの学習前後比較、続いてAgentの道具実行と記録を同じ画面に接続。
+1. Decision baselineをユーザーPCのCPUで実測し、Run ID、Git SHA、step時間、評価時間、最大RSS、dev/final-testの範囲と失敗例を記録する。
+2. 保存済みDecisionModel Artifactと固定task suiteをAster Serviceのallowlisted recipeへ公開し、`aster-web`でrule / model / model+fallbackのRunを観測・比較する。
+3. その後にInterventionの訂正 → candidate再学習 → 親子比較を、同じArtifact/Run/Evaluator契約へ接続する。
 
-TinyLMの最小学習ループはCLIで実行できます。学習結果のSite表示とAgentの道具実行はこれからです。
+Aster Service / aster-webは任意shellやrepository-local pathを公開せず、Job / Run / Artifactを分離する方針を維持します。
