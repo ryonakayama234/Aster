@@ -11,6 +11,7 @@ import hashlib
 import json
 from pathlib import Path
 import platform
+import signal
 import time
 from typing import Any
 
@@ -559,6 +560,10 @@ def run_tokenizer_comparison(
         results: list[dict[str, Any]] = []
         orders: dict[str, list[list[str]]] = {}
         for name in ("bpe", "byte"):
+            def deadline_expired(signum, frame):
+                raise TimeoutError(f"{name} exceeded 1800 seconds for training/reload/dev")
+            old_handler = signal.signal(signal.SIGALRM, deadline_expired)
+            signal.setitimer(signal.ITIMER_REAL, 1800)
             tokenizer = tokenizers[name]
             state = initial_states[name]
             arm = DecisionFitArm(name, case_ids, "shuffle")
@@ -641,6 +646,8 @@ def run_tokenizer_comparison(
                     "weights_unchanged": dev_report["weights_unchanged"],
                 },
             )
+            signal.setitimer(signal.ITIMER_REAL, 0)
+            signal.signal(signal.SIGALRM, old_handler)
 
         if orders["bpe"] != orders["byte"]:
             raise RuntimeError("Tokenizer arms did not receive identical shuffle orders")
@@ -679,6 +686,9 @@ def run_tokenizer_comparison(
         _write_json(run.path / "study.json", study)
         run.finish("completed", study="study.json", test_status="sealed")
     except BaseException as error:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        if 'old_handler' in locals():
+            signal.signal(signal.SIGALRM, old_handler)
         run.finish(
             "interrupted" if isinstance(error, KeyboardInterrupt) else "failed",
             error=str(error),

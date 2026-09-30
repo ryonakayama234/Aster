@@ -1,6 +1,7 @@
 """Audit cached frozen-model errors and tokenization; do not run new inference."""
 from collections import Counter, defaultdict
 import json
+import math
 from pathlib import Path
 
 from aster.benchmark.state_diagnostics import _digest, _suite_digest, build_state_diagnostic_suite, action_label
@@ -44,6 +45,7 @@ def audit_cached_failures(root: str | Path, diagnostic_run: str | Path, checkpoi
         is_correct = row["model_action"] == row["target_action"]
         if is_correct != row["model_correct"]:
             raise ValueError("Cached correctness mismatch")
+        validate_cached_scores(row, example)
         selected = Action(**row["model_action"])
         if is_correct:
             correct[case.slice_name] += 1
@@ -73,3 +75,27 @@ def audit_cached_failures(root: str | Path, diagnostic_run: str | Path, checkpoi
     _write_jsonl(run.path / "token-cases.jsonl", results)
     run.finish("completed", audit="audit.json", token_cases="token-cases.jsonl", test_status="sealed")
     return run.path
+
+
+def validate_cached_scores(row, example) -> None:
+    """Recompute cached choices and numeric diagnostics without model inference."""
+    candidates = [a.to_dict() for a in example.candidates]
+    logits = row.get("logits")
+    if row.get("candidates") != candidates or row.get("target_index") != example.target_index:
+        raise ValueError("Cached candidate order/target index mismatch")
+    if (not isinstance(logits, list) or len(logits) != len(candidates)
+            or not all(type(v) in (int, float) and math.isfinite(v) for v in logits)):
+        raise ValueError("Cached logits must be finite and match candidates")
+    selected = max(range(len(logits)), key=lambda i: logits[i])
+    if row.get("model_action") != candidates[selected]:
+        raise ValueError("Cached model action does not match logits argmax")
+    target = example.target_index
+    maximum = max(logits)
+    nll = maximum - logits[target] + math.log(sum(math.exp(v-maximum) for v in logits))
+    margin = logits[target] - max(v for i, v in enumerate(logits) if i != target)
+    for field, expected in (("nll", nll), ("target_probability", math.exp(-nll)),
+                            ("target_margin", margin)):
+        actual = row.get(field)
+        if (type(actual) not in (int, float) or not math.isfinite(actual)
+                or not math.isclose(actual, expected, rel_tol=1e-7, abs_tol=1e-9)):
+            raise ValueError(f"Cached {field} does not match logits")
