@@ -85,6 +85,11 @@ Decision baselineはtestを自動開封しません。まずdevelopment runを�
 
 ## 次に作るもの
 
+2026-10-01: [状態判断と短縮入力の事前計画](docs/DecisionStateRepresentation-v0.md)と
+学習前検証CLI `scripts/run_state_representation_preflight.py` を追加した研究PRを用意。
+[実測](reports/state-representation-preflight-v0.md)は48件のprefix再実行・ルール継続・候補shortcut監査。
+モデル改善やService/Web導入の測定ではない。次は同じByte/モデル/学習予算でraw/compactを比較する。
+
 2026-09-30: PR #25上のCPU fitをユーザーWSL2で実測し、LR0.001・50epochの8判断でseed42/43/44すべてtrain fit成立。
 [実測記録](reports/decision-fit-user-pc-v0.md) と [状態診断の設計](docs/DecisionStateDiagnostics-v0.md) を参照。
 保存checkpointを更新せずに診断するCLI `scripts/run_decision_state_diagnostics.py` を追加した。
