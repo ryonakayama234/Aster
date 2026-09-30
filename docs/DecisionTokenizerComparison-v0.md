@@ -13,7 +13,7 @@ PR #27のデータ4条件比較では、元8判断の専用BPEを固定したま
 - `scripts/run_decision_tokenizer_comparison.py` にCPU実行CLIを追加。
 - GitHub標準CPU runner上の1-epoch debug wiringで、BPE/Byte両armの学習、checkpoint再読込、dev診断、model-only episode記録まで通した。
 - このdebug runは条件が異なるため **Issue #28の実測結果には数えない**。
-- seed42/43/44のpreregistered measurementはまだ実行していない。
+- seed42/43/44の50epoch測定を完了した。[全条件と次の判断](../reports/decision-tokenizer-comparison-v0.md)を参照。
 
 ## 固定する学習課題
 

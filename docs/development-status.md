@@ -101,3 +101,7 @@ CIのpytest/Pyright成功やGitHub runnerの速度を、ユーザーPCの能力�
 - モデル候補は自動昇格しない。改善・不変・悪化を同じ物差しで見てから採用する。
 
 Decision baselineの仕様は [DecisionBaseline-v0](DecisionBaseline-v0.md)、Agent Service境界は [ServiceContract-v1](ServiceContract-v1.md) を参照してください。
+
+## 2026-09-30の研究状況更新
+
+PR #27はmainへmerge済み。PR #30はDraftで、BPE/Byteの全6arm測定を[報告](../reports/decision-tokenizer-comparison-v0.md)した。Byteでtrain fitは安定したが数値/キー変更の自力完了が安定改善したとは言えない。次は#24の状態判断・短い構造化表現比較、#29→aster-web #2の観測公開。#21の言語pilotは別実験。旧test/予約testは引き続き封印。

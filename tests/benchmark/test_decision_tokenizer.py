@@ -133,3 +133,24 @@ def test_one_epoch_debug_run_keeps_reserved_test_sealed_and_orders_paired(
         bpe_arm["parameter_counts"]["total_parameters"]
         != byte_arm["parameter_counts"]["total_parameters"]
     )
+
+
+def test_arm_deadline_marks_failed_run_and_restores_signal(tmp_path, monkeypatch):
+    import signal
+    _, bpe_sha = _fixture_bpe(tmp_path / 'saved-bpe')
+    previous = signal.getsignal(signal.SIGALRM)
+
+    def expire(*args, **kwargs):
+        assert signal.getitimer(signal.ITIMER_REAL)[0] > 0
+        signal.getsignal(signal.SIGALRM)(signal.SIGALRM, None)
+
+    monkeypatch.setattr(comparison, '_run_arm', expire)
+    with pytest.raises(TimeoutError, match='1800 seconds'):
+        comparison.run_tokenizer_comparison(tmp_path, tmp_path/'saved-bpe',
+            config=DecisionFitStudyConfig(epochs=1,width=8,target_vocab_size=320),
+            expected_bpe_sha256=bpe_sha)
+    runs = list((tmp_path/'runs').glob('*/run.json'))
+    assert len(runs) == 1
+    assert json.loads(runs[0].read_text())['status'] == 'failed'
+    assert signal.getitimer(signal.ITIMER_REAL)[0] == 0
+    assert signal.getsignal(signal.SIGALRM) == previous

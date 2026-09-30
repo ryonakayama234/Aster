@@ -96,3 +96,7 @@ Decision baselineはtestを自動開封しません。まずdevelopment runを�
 4. Issue #21のTinyLM言語pilotはDecision研究と別レーンで進め、train暗記とheld-out言語能力を混同しない。
 
 Aster Service / aster-webは任意shellやrepository-local pathを公開せず、Job / Run / Artifactを分離する方針を維持します。
+
+## Decision入力比較の実測（2026-09-30）
+
+[PR #30の条件による全6armの報告](reports/decision-tokenizer-comparison-v0.md)。Byteは3/3seedで32判断の最後3epoch fit成立、専用BPEは1/3seed。数値変更episodeは両方式全seedで0/2、キー変更はByte seed42の1/2のみ。Tokenizer置換だけで安定対応したとは扱わず、次は状態判断と短い構造化表現を比較する。反証可能な研究の継続契約をAGENTS.mdへ追加。PRはDraft、Service/Webへは未公開。
