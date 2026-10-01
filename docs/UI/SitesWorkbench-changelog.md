@@ -196,3 +196,13 @@
 - baselineは既知正常8/8、置換モデル5〜6/8。誤値変更によるAction変化0〜2/32組に対し、反復回数変更9〜28/32組。実測・限界・次の正常例保持案をreportsへ保存。
 - 失敗配線Runも保持。独立cached auditで768固定予測・192対照・3,247訪問予測・5,119transition・768episodeの停止時正しさを照合。全pytest159 passed、Pyright0 errors/0 warnings。Linux CPU実測でユーザーWSLは未測定。
 - Service/API/Web/公開recipe/モデルpromotionは変更なし。契約違い・candidate情報・invalidの将来表示契約だけ更新。保存結果の観測は#29→aster-web#2。次の混合学習は未実装・未測定。
+
+
+## 2026-10-01：Aster全体の照合と次のv1混合比較計画
+
+- 添付Aster計画PDF、両repo main、Aster PR #36 head 5291a377abb3140cbf4255ec094738cbf0b7c3aa、研究report/生成コード、一次研究を照合。
+- docs/DecisionMixedTraining-v0.mdへ全体像、正常例を残す64slotの2条件、v1教師・候補・評価の一致、preflight、指標、停止条件・分岐を記録。
+- Wolframで64×25=1,600更新/arm、6arm=9,600、Action各400提示を確認。正常例提示はcontrol1,600/mixed1,200で異なることを明記。
+- 文書・算術検証のみ。生成preflight、実装、学習、能力新測定、ユーザーWSL/ブラウザ確認は未実施。pytest/CI成功を今回の成果として主張しない。
+- branch docs/decision-mixed-v1-next-stepはPR #36 headを基準とする文書のみのDraft。API/Service/aster-web/Site公開/モデル採用は変更しない。
+- 次：同計画の実Tool生成preflightとdigest正式登録。観測#29→aster-web#2、言語#21、育成#20を別経路で維持。ユーザー側の追加作業不要。

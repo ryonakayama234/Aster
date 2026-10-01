@@ -112,3 +112,10 @@ Aster Service / aster-webは任意shellやrepository-local pathを公開せず�
 [PR #30の条件による全6armの報告](reports/decision-tokenizer-comparison-v0.md)。Byteは3/3seedで32判断の最後3epoch fit成立、専用BPEは1/3seed。数値変更episodeは両方式全seedで0/2、キー変更はByte seed42の1/2のみ。Tokenizer置換だけで安定対応したとは扱わず、次は状態判断と短い構造化表現を比較する。反証可能な研究の継続契約をAGENTS.mdへ追加。PRはDraft、Service/Webへは未公開。
 
 2026-10-01: 保存済み6モデルを更新せずcurrent-state v1で診断。[事前計画](docs/DecisionFixedV1Diagnostics-v0.md)と[実測](reports/decision-fixed-v1-diagnostics-v0.md)。正常例置換モデルは既知正常判断5〜6/8、対照は全seed8/8。誤値変更より関連put反復による選択変化が大きい。次は正常例保持の混合対照を別protocolで設計する。今回の診断とv1は研究Draft上で、main/Service/aster-web/公開モデル導入は未実施。
+
+### 2026-10-01：次のv1学習比較計画（未測定）
+
+[全体像と正常例保持の混合比較](docs/DecisionMixedTraining-v0.md)を研究ブランチへ追加。
+PR #36の診断を受け、v1で正常経路を残す2条件を、各1,600更新・各Action400提示へ揃える案。
+正常例の個別exposure差、旧v0からの仕様変更、同family devの限界を明記。
+今回の成果は調査と計画保存。生成preflight・学習runner・新しい能力実測・Service/aster-web公開は未実施。

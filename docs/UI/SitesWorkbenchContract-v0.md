@@ -120,3 +120,6 @@ UIでdiagnostic successを再計算せず、未提供の値を推測しない。
 2026-10-01入力表現比較メモ: raw/compactのserializer IDをcheckpointと表示metadataへ保持する。teacher-prefix判断、対照組の両方正答、prefixからのmodel-only継続、最初からの自力episodeを別の値として表示する。訪問入力のcontext超過はinvalidとして件数と理由を示し、失敗率へ合算しない。比較の共通評価可能case数と全開始case数を併記する。今回の結果は研究CLIであり#29/aster-web#2への公開は未実装。
 
 2026-10-01固定v1診断: 将来の比較画面では学習契約v0と評価契約v1、候補のみ対照、train重複、教師Action一致と停止時成功、context超過invalidを分離する。実測正本はreports/decision-fixed-v1-diagnostics-v0.md/.json。今回のCLI診断はService公開bundle/Webへ未接続。
+
+
+2026-10-01混合学習計画メモ：[DecisionMixedTraining-v0](../DecisionMixedTraining-v0.md)は未測定。将来の比較は学習/評価のgoal契約、unique判断数と提示slot数、Action頻度、正常例の個別exposure、union-train重複を示す。teacher-prefix、prefix継続、初期episodeを分離する。新trainとの照合で非重複件数は変わり得るため、旧reportの分母を流用しない。API/Web実装は#29→aster-web#2の後続。
