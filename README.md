@@ -141,3 +141,14 @@ Service/aster-web/公開モデルへ未導入。正式学習結果は測定完�
 共通非重複24対照組はcompact4/2/2→relations0/0/0、共通prefix完了も低下。関係入力を採用しない。
 測定後のtrain-only関係パターン表はdev104/128をカバーし全て正答したが、非ニューラル/外部抽出の探索対照。
 次はAction種類の選択と候補引数の結び付けを分ける診断案。未実装。公開モデル/Service/Webは未変更。
+
+### 2026-10-02：数値特徴から行動種類を学習する診断
+
+[事前条件](docs/DecisionActionTypes-v0.md)に基づき、観測済みC/M/Fの3特徴→4Action種類を16parameterの線形分類器で学習する研究ブランチ。
+引数は既存candidateへ結合。生履歴読解と引数生成は外部実装へ残す。preflightでtrain特徴4種、dev128/128・新初期4/4の特徴重複を確認。
+従って未知特徴の汎化とは呼ばない。正式結果は測定後にreportsへ保存する。
+[言語読解への接続設計](docs/LanguageToActionRoadmap-v0.md)も追加。次token事前学習と課題用の事実抽出学習を分け、ランダム/事前学習初期化を同条件で比較する案。言語学習は未実施。
+
+2026-10-02正式診断完了: [全3seed結果](reports/decision-action-types-study-v0.md)。train fit、128判断/128prefix、対照32組、追加4初期taskが全seed成立。
+外部抽出C/M/Fの4既知特徴パターンとcandidate結合を使う成果で、生履歴読解/引数生成/未知規則の汎化ではない。
+次は文字列→事実/Task readerの同条件ランダム/事前学習初期化比較を準備。言語事前学習は今回未実施。main/Service/Web/モデル自動採用は未変更。
