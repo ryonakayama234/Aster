@@ -129,3 +129,15 @@ PR #36の診断を受け、v1で正常経路を残す2条件を、各1,600更新
 [事前登録](docs/DecisionMixedMeasurement-v0.md)と[実測](reports/decision-mixed-v1-study-v0.md)。正常例を保持する両条件で全3seed stable fit、共通正常32/32、既知初期2/2。非重複主対照24組は対照4/4/4、混合4/2/2で安定改善なし。共通有効prefix成功差は-8/+7/+29、未知数値初期完了は混合seed44だけ1/2。他5条件0/2。次は観測事実の関係を明示する入力との対照を事前登録する（未実装）。研究CLIのみ、main/Service/Web/公開モデルへ未導入。
 
 実行：`.venv/bin/python scripts/run_decision_mixed_v1.py --root .`。保存監査：`.venv/bin/python scripts/audit_decision_mixed_v1.py runs/<Run ID>`。旧testは未使用。
+
+### 2026-10-01：関係抽出とAction選択を切り分ける比較
+
+PR #39の正常例保持混合trainを固定し、compact入力と観測関係を明示する入力を比較する研究ブランチ。
+[事前条件](docs/DecisionRelationsComparison-v0.md)。登録preflightでは48train/128devの衝突0、
+共通非重複主対照24組、最大系列長compact1190/relations519を確認。これは学習前検証であり能力改善ではない。
+Service/aster-web/公開モデルへ未導入。正式学習結果は測定完了後にreportsへ記録する。
+
+2026-10-01正式比較完了: [全6条件report](reports/decision-relations-study-v0.md)。両方式全seed stable fit/正常保持。
+共通非重複24対照組はcompact4/2/2→relations0/0/0、共通prefix完了も低下。関係入力を採用しない。
+測定後のtrain-only関係パターン表はdev104/128をカバーし全て正答したが、非ニューラル/外部抽出の探索対照。
+次はAction種類の選択と候補引数の結び付けを分ける診断案。未実装。公開モデル/Service/Webは未変更。

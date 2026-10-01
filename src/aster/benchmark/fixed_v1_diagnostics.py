@@ -211,16 +211,16 @@ def preflight(cases, pairs, union, input_targets) -> dict[str, Any]:
                 independent_holdout=False, test_constructed=0, test_scored=0)
 
 
-def score(model, tokenizer, example, *, reverse=False) -> dict[str, Any]:
+def score(model, tokenizer, example, *, reverse=False, serializer=compact_input) -> dict[str, Any]:
     candidates = tuple(reversed(example.candidates)) if reverse else example.candidates
-    texts = [compact_input(example.state, example.trajectory, a) for a in candidates]
+    texts = [serializer(example.state, example.trajectory, a) for a in candidates]
     ids = [tokenizer.encode(t, add_bos=True, add_eos=True) for t in texts]
     if any(tokenizer.decode(v) != t for v,t in zip(ids,texts,strict=True)):
         raise ValueError("Tokenizer round-trip mismatch")
     if max(map(len,ids)) > model.backbone.config.context_length:
         return dict(invalid="context_exceeded", max_tokens=max(map(len,ids)))
     with torch.no_grad():
-        scores = score_candidates(model,tokenizer,example.state,example.trajectory,candidates,serializer=compact_input)
+        scores = score_candidates(model,tokenizer,example.state,example.trajectory,candidates,serializer=serializer)
     if not bool(torch.isfinite(scores).all()):
         raise ValueError("Nonfinite scores")
     values = scores.tolist()
@@ -234,12 +234,12 @@ def score(model, tokenizer, example, *, reverse=False) -> dict[str, Any]:
                 inputs=texts, token_ids=ids, input_sha256=digest(texts), max_tokens=max(map(len,ids)))
 
 
-def rollout(model, tokenizer, example):
+def rollout(model, tokenizer, example, *, serializer=compact_input):
     session = replay(example)
     rows, invalid, first_error = [], None, None
     for _ in range(8):
         visited = session.example()
-        row = score(model, tokenizer, visited)
+        row = score(model, tokenizer, visited, serializer=serializer)
         if row["invalid"]:
             invalid = row["invalid"]
             break
