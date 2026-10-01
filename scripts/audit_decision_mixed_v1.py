@@ -29,7 +29,7 @@ def check_score(row):
     assert digest(row['inputs'])==row['input_sha256']
 
 
-def audit(run):
+def audit(run, *, serializers=None):
     study=json.loads((run/'study.json').read_text())
     cases=read_rows(run/'dev-cases.jsonl')
     pairs=json.loads((run/'pairs.json').read_text())
@@ -37,6 +37,7 @@ def audit(run):
     train_data={r['case_id']:DecisionExample.from_dict(r['example']) for r in read_rows(run/'train-cases.jsonl')}
     for model in study['models']:
         assert model['status']=='completed'
+        serializer = compact_input if serializers is None else serializers[model['arm']]
         path=run/f"seed-{model['seed']}"/model['arm']
         curve=read_rows(path/'learning-curve.jsonl')
         by_epoch=defaultdict(list)
@@ -69,7 +70,7 @@ def audit(run):
         for c,r in zip(cases,dev,strict=True):
             ex=DecisionExample.from_dict(c['example'])
             assert c['case_id']==r['case_id'] and r['target']==ex.target.to_dict()
-            assert r['inputs']==[compact_input(ex.state,ex.trajectory,a) for a in ex.candidates]
+            assert r['inputs']==[serializer(ex.state,ex.trajectory,a) for a in ex.candidates]
             check_score(r); totals['dev_predictions']+=1
         selected=[p for p in pairs if p['nonoverlap']]
         assert model['dev']['pairs']['nonoverlap_both_correct']==sum(by_id[p['left']]['correct'] and by_id[p['right']]['correct'] for p in selected)
@@ -83,7 +84,7 @@ def audit(run):
                     visited=session.example()
                     assert r['state']==visited.state.to_dict()
                     assert r['target']==visited.target.to_dict()
-                    assert r['inputs']==[compact_input(visited.state,visited.trajectory,a) for a in visited.candidates]
+                    assert r['inputs']==[serializer(visited.state,visited.trajectory,a) for a in visited.candidates]
                     check_score(r); assert r['selected']==saved['action']
                     totals['visited_predictions']+=1
                 transition=session.execute(Action.from_dict(saved['action']))

@@ -29,11 +29,11 @@ SCHEMA = "aster-decision-mixed-v1-study-0"
 SERIALIZER = "aster-decision-compact-input-0"
 
 
-def load_v1_checkpoint(path):
+def load_v1_checkpoint(path, *, serializer_id=SERIALIZER):
     contract = json.loads((path.parent/"training-contract.json").read_text())
-    if contract["goal_contract"] != CURRENT_GOAL_V1 or contract["input_serializer_id"] != SERIALIZER:
+    if contract["goal_contract"] != CURRENT_GOAL_V1 or contract["input_serializer_id"] != serializer_id:
         raise ValueError("v1 training contract mismatch")
-    model, tokenizer, manifest = load_decision_fit_checkpoint(path, expected_input_serializer_id=SERIALIZER)
+    model, tokenizer, manifest = load_decision_fit_checkpoint(path, expected_input_serializer_id=serializer_id)
     if contract["checkpoint_id"] != manifest["checkpoint_id"] or digest(contract["slots"]) != contract["slot_sha256"]:
         raise ValueError("v1 checkpoint/slots identity mismatch")
     return model, tokenizer, manifest
@@ -49,7 +49,7 @@ def validate_registered(actual, registered):
             raise ValueError("Registered training slots mismatch")
 
 
-def train_arm(path, suite, slots, tokenizer, initial, config, *, source):
+def train_arm(path, suite, slots, tokenizer, initial, config, *, source, serializer=compact_input, serializer_id=SERIALIZER):
     path.mkdir(parents=True)
     by_id = {c.case_id: c for c in suite.cases}
     normal_ids = {c.case_id for c in suite.cases if c.slice_name == "normal"}
@@ -68,7 +68,7 @@ def train_arm(path, suite, slots, tokenizer, initial, config, *, source):
         start = time.perf_counter()
         rng = torch.get_rng_state().clone()
         before = _state_digest(model.state_dict())
-        predictions = _predict_cases(model, tokenizer, suite.cases, serializer=compact_input)
+        predictions = _predict_cases(model, tokenizer, suite.cases, serializer=serializer)
         metrics = _fit_metrics(predictions)
         common = _fit_metrics([p for p in predictions if p.case_id in normal_ids])
         if before != _state_digest(model.state_dict()) or not torch.equal(rng, torch.get_rng_state()):
@@ -89,12 +89,12 @@ def train_arm(path, suite, slots, tokenizer, initial, config, *, source):
             online_losses = []
             for index in order:
                 example = by_id[slots[index]].example
-                lengths = [len(tokenizer.encode(compact_input(example.state, example.trajectory, a),
+                lengths = [len(tokenizer.encode(serializer(example.state, example.trajectory, a),
                                                 add_bos=True, add_eos=True)) for a in example.candidates]
                 tokens += sum(lengths)
                 padded += len(lengths)*max(lengths)
                 optimizer.zero_grad(set_to_none=True)
-                loss = decision_loss(model, tokenizer, example, serializer=compact_input)
+                loss = decision_loss(model, tokenizer, example, serializer=serializer)
                 if not bool(torch.isfinite(loss)):
                     raise ValueError("Nonfinite training loss")
                 loss.backward()
@@ -110,14 +110,14 @@ def train_arm(path, suite, slots, tokenizer, initial, config, *, source):
             print(f"seed={config.seed} arm={path.name} epoch={epoch}/{config.epochs} train={curves[-1]['metrics']['correct']}/{len(suite.cases)}", flush=True)
         manifest = _save_fit_checkpoint(path/"checkpoint", model, tokenizer, suite=suite,
             suite_sha256=digest(suite.to_dict()), arm=arm, config=config,
-            initial_model_sha256=initial_hash, source_git_sha=source["git_sha"], input_serializer_id=SERIALIZER)
+            initial_model_sha256=initial_hash, source_git_sha=source["git_sha"], input_serializer_id=serializer_id)
         _write_json(path/"training-contract.json", dict(goal_contract=CURRENT_GOAL_V1,
-                    input_serializer_id=SERIALIZER, slots=slots, slot_sha256=digest(slots),
+                    input_serializer_id=serializer_id, slots=slots, slot_sha256=digest(slots),
                     checkpoint_id=manifest["checkpoint_id"]))
-        reloaded, rt, rm = load_v1_checkpoint(path/"checkpoint")
+        reloaded, rt, rm = load_v1_checkpoint(path/"checkpoint", serializer_id=serializer_id)
         cached = [r for r in prediction_rows if r["epoch"] == config.epochs]
         current = _prediction_rows(epoch=config.epochs, cases=suite.cases,
-                     predictions=_predict_cases(reloaded, rt, suite.cases, serializer=compact_input))
+                     predictions=_predict_cases(reloaded, rt, suite.cases, serializer=serializer))
         if current != cached:
             raise ValueError("Reload train predictions mismatch")
         summary = dict(seed=config.seed, arm=path.name, unique=len(suite.cases), slots=len(slots),
@@ -125,7 +125,7 @@ def train_arm(path, suite, slots, tokenizer, initial, config, *, source):
             final=curves[-1]["metrics"], common_normal=curves[-1]["common_normal_metrics"],
             initial_weight_sha256=initial_hash, order_sha256=digest([r["slot_indices"] for r in orders]),
             checkpoint_id=rm["checkpoint_id"], tokenizer_sha256=rm["tokenizer_sha256"],
-            training_goal_contract=CURRENT_GOAL_V1, reload_match=True,
+            training_goal_contract=CURRENT_GOAL_V1, input_serializer_id=serializer_id, reload_match=True,
             tokens=tokens, padded_tokens=padded, train_wall_seconds=update_wall,
             train_eval_wall_seconds=eval_wall, parameter_count=sum(p.numel() for p in model.parameters()),
             process_max_rss_kib=_max_rss_kib())
@@ -137,7 +137,7 @@ def train_arm(path, suite, slots, tokenizer, initial, config, *, source):
         raise
 
 
-def measure_dev(path, model, tokenizer, cases, pairs, train_cases, slots):
+def measure_dev(path, model, tokenizer, cases, pairs, train_cases, slots, *, serializer=compact_input):
     before = _state_digest(model.state_dict())
     rng = torch.get_rng_state().clone()
     lookup = defaultdict(Counter)
@@ -147,8 +147,8 @@ def measure_dev(path, model, tokenizer, cases, pairs, train_cases, slots):
         lookup[candidate_signature(ex)][canonical(ex.target.to_dict())] += 1
     rows, episodes, permutation_max_delta = [], [], 0.0
     for case in cases:
-        result = score(model, tokenizer, case["example"])
-        reverse = score(model, tokenizer, case["example"], reverse=True)
+        result = score(model, tokenizer, case["example"], serializer=serializer)
+        reverse = score(model, tokenizer, case["example"], reverse=True, serializer=serializer)
         delta = max(abs(a-b) for a,b in zip(result["scores"],reversed(reverse["scores"]),strict=True))
         permutation_max_delta = max(permutation_max_delta,delta)
         if delta > 1e-5 or result["selected"] != reverse["selected"]:
@@ -159,7 +159,7 @@ def measure_dev(path, model, tokenizer, cases, pairs, train_cases, slots):
                      "candidate_lookup_covered":bool(counter),
                      "candidate_lookup_correct":winner==canonical(case["example"].target.to_dict())})
         episodes.append(dict(case_id=case["case_id"], group=case["group"], variant=case["variant"],
-                             **rollout(model, tokenizer, case["example"])))
+                             **rollout(model, tokenizer, case["example"], serializer=serializer)))
     summary, pair_rows = summarize(rows, episodes, cases, pairs)
     # normal phase0 cases are exactly the 8 registered initial task variants.
     initial = [e for c,e in zip(cases, episodes, strict=True) if c["group"]=="normal" and c["factors"]["phase"]==0]

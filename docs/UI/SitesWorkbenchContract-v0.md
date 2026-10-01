@@ -127,3 +127,5 @@ UIでdiagnostic successを再計算せず、未提供の値を推測しない。
 2026-10-01混合preflight: 将来表示する生成検証の正本はreports/decision-mixed-v1-preflight-v0.json。176例の生成成立/候補coverage/衝突/長さはモデルscoreとは別に表示する。今回の研究CLIはService公開bundleではなく、model-scored=0・updates=0を保持。Web変更未実施。
 
 2026-10-01混合実測: reports/decision-mixed-v1-study-v0.jsonは研究CLI全6条件の正本。表示に用いる場合はfitとtrain正常32、未知dev、非重複主対照24組、初期episode各2、prefix継続、invalidを区別する。両arm共通有効開始数は117/119/121で同一128分母の成功率と混同しない。混合主対照4/2/2、数値初期0/0/1、prefix差-8/+7/+29を保持。API/Web公開・モデルpromotionは今回未実装。
+
+2026-10-01関係入力比較: 将来の表示ではserializer ID、外部化した関係抽出/履歴正規化、系列長/token量、表現別train重複と共通非重複の分母を保持する。関係入力の成功を生履歴読解能力へ帰属しない。今回の研究CLIはService/API/Webへ未接続。
