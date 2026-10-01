@@ -131,3 +131,5 @@ UIでdiagnostic successを再計算せず、未提供の値を推測しない。
 2026-10-01関係入力比較: 将来の表示ではserializer ID、外部化した関係抽出/履歴正規化、系列長/token量、表現別train重複と共通非重複の分母を保持する。関係入力の成功を生履歴読解能力へ帰属しない。今回の研究CLIはService/API/Webへ未接続。
 
 2026-10-01関係比較実測: 正本reports/decision-relations-study-v0.json。個別判断の改善と対照両方/自力完了の悪化を併記する。探索的なtrain-only関係lookup104/128はモデルscoreと混ぜない。共通非重複110判断、主対照24組、common-valid121/120/123、各表現dev重複14/18を保持。公開bundle/Web表示は未実装。
+
+2026-10-02行動種類診断: 将来表示では数値特徴モデル/文字列reader/candidate binderの責務と契約を区別し、外部抽出/引数供給、特徴train重複、結合失敗、範囲外Tool失敗を併記する。言語事前学習のlossとreaderの事実精度とepisode完了を別表示する。今回の研究CLIと後続設計は公開Service/Webへ未接続。
