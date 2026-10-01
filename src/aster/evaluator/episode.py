@@ -8,6 +8,7 @@ from pathlib import Path
 
 from aster.records.recorder import TrajectoryRecorder
 from aster.records.trajectory import Trajectory
+from aster.evaluator.goal_contract import EVER_GOAL_V0
 
 
 SCHEMA_VERSION = "aster-episode-evaluation-0"
@@ -123,11 +124,14 @@ def write_episode_evaluation(
     trajectory = TrajectoryRecorder.read_jsonl(trajectory_path)
     evaluation = evaluate_episode(trajectory)
     payload = {
-        "schema_version": SCHEMA_VERSION,
+        "schema_version": (SCHEMA_VERSION if trajectory.goal_contract == EVER_GOAL_V0
+                           else "aster-episode-evaluation-1"),
         "trajectory_file": _relative_path(path.parent, trajectory_path),
         "trajectory_sha256": _sha256_file(trajectory_path),
         "summary": evaluation.to_dict(),
     }
+    if trajectory.goal_contract != EVER_GOAL_V0:
+        payload["goal_contract"] = trajectory.goal_contract
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
         json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",

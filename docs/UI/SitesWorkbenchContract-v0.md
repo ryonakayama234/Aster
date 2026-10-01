@@ -13,6 +13,12 @@ Asterを操作・観測・育成する個人用Web作業場にする。ユーザ
 
 ## 所有と責務
 
+2026-10-01完了契約v1合意: 将来のAgent表示では契約IDを保ち、
+過去に達成したこと（goal_verified）と停止時点の成功（task_success）を分ける。
+新しいcurrent-state契約では誤上書き・同値再保存で取得確認が失効する。
+UIは履歴中のtrueから成功を再計算しない。正本はdocs/CurrentStateGoal-v1.md。
+v1はofflineで明示選択する実装であり、Service既定recipe・aster-web・公開版への接続は未実装。
+
 | 対象 | 正本・担当 |
 | --- | --- |
 | 原本、採用理由、変換、分割、学習実体 | Aster側。由来と版を保持 |

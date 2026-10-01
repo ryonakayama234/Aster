@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 from typing import TypeAlias
 
 from aster.evaluator.result import EvaluationResult
+from aster.evaluator.goal_contract import EVER_GOAL_V0, CURRENT_GOAL_V1
 
 JsonValue: TypeAlias = (
     bool | int | float | str | list["JsonValue"] | dict[str, "JsonValue"] | None
@@ -131,7 +132,8 @@ class Transition:
 
     def to_dict(self) -> dict:
         return {
-            "schema_version": "aster-transition-0",
+            "schema_version": ("aster-transition-0" if self.evaluation.goal_contract == EVER_GOAL_V0
+                               else "aster-transition-1"),
             "step": self.step,
             "state_before": deepcopy(self.state_before),
             "available_actions": list(self.available_actions),
@@ -143,8 +145,13 @@ class Transition:
 
     @classmethod
     def from_dict(cls, data: dict) -> "Transition":
-        if data.get("schema_version") != "aster-transition-0":
+        schema = data.get("schema_version")
+        if schema not in ("aster-transition-0", "aster-transition-1"):
             raise ValueError("Unsupported transition schema")
+        evaluation = EvaluationResult.from_dict(data["evaluation"])
+        expected_contract = EVER_GOAL_V0 if schema == "aster-transition-0" else CURRENT_GOAL_V1
+        if evaluation.goal_contract != expected_contract:
+            raise ValueError("Transition schema and goal contract disagree")
         return cls(
             step=int(data["step"]),
             state_before=data["state_before"],
@@ -152,5 +159,5 @@ class Transition:
             action=Action.from_dict(data["action"]),
             observation=Observation.from_dict(data["observation"]),
             state_after=data["state_after"],
-            evaluation=EvaluationResult.from_dict(data["evaluation"]),
+            evaluation=evaluation,
         )

@@ -2,6 +2,8 @@
 
 from dataclasses import dataclass
 
+from aster.evaluator.goal_contract import EVER_GOAL_V0, validate_goal_contract
+
 
 @dataclass(frozen=True, slots=True)
 class EvaluationResult:
@@ -12,6 +14,10 @@ class EvaluationResult:
     goal_satisfied: bool
     terminal: bool = False
     notes: tuple[str, ...] = ()
+    goal_contract: str = EVER_GOAL_V0
+
+    def __post_init__(self) -> None:
+        validate_goal_contract(self.goal_contract)
 
     @property
     def successful_terminal(self) -> bool:
@@ -23,13 +29,16 @@ class EvaluationResult:
         )
 
     def to_dict(self) -> dict:
-        return {
+        result = {
             "action_valid": self.action_valid,
             "execution_success": self.execution_success,
             "goal_satisfied": self.goal_satisfied,
             "terminal": self.terminal,
             "notes": list(self.notes),
         }
+        if self.goal_contract != EVER_GOAL_V0:
+            result["goal_contract"] = self.goal_contract
+        return result
 
     @classmethod
     def from_dict(cls, data: dict) -> "EvaluationResult":
@@ -39,4 +48,5 @@ class EvaluationResult:
             goal_satisfied=bool(data["goal_satisfied"]),
             terminal=bool(data.get("terminal", False)),
             notes=tuple(str(note) for note in data.get("notes", ())),
+            goal_contract=str(data.get("goal_contract", EVER_GOAL_V0)),
         )

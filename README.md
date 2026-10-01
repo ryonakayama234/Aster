@@ -101,6 +101,8 @@ Decision baselineはtestを自動開封しません。まずdevelopment runを�
 
 Aster Service / aster-webは任意shellやrepository-local pathを公開せず、Job / Run / Artifactを分離する方針を維持します。
 
+2026-10-01: [完了契約v1](docs/CurrentStateGoal-v1.md)に合意し、明示選択の教師・候補・評価器・Trace保存を追加。[検証結果](reports/current-state-goal-v1.md)。誤上書き後の修復と再取得を要求する。既存v0測定・既定recipeは保持し、モデル能力の新測定とService/Web導入は未実施。
+
 2026-10-01: PR #32のcompact/Byteを固定した[状態対照train比較](docs/DecisionStateTraining-v0.md)を研究ブランチに追加し、seed42/43/44を測定。
 [実測](reports/decision-state-training-v0.md)では正常経路の一部を誤保存prefixで置換した条件は改善せず、元課題保持も低下。train fitはbaseline3/3・state2/3seed。数値変更の自力完了は両条件全seed0/2。
 同じ候補集合で正解が変わる主対照、compact入力重複を除く診断、実Tool replayと全条件の証拠を残した。次は保存モデルを固定した正常経路/誤値/履歴長の切り分けを設計する。main/Service/Web/モデル採用には未導入。

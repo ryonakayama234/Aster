@@ -1,5 +1,14 @@
 # Sites Workbench 作業履歴
 
+## 2026-10-01: 停止時点の正保存・最終書込み後の取得確認に合意
+
+- PR #34の問い0にユーザーが合意。docs/CurrentStateGoal-v1.mdを正本とし、明示選択のv1を教師・候補・独立評価器・Trace/episode保存へ追加。
+- 対象キーputで達成を取消し、修復と再取得で再達成する。同値再保存も取得を要求し、他キーputでは確認を維持。
+- Traceに契約ID/schemaを保存し、v0記録を維持。UI将来契約へ過去達成と停止成功の区別を追記。
+- 全pytest154 passed、新規11件の最終再確認成功、Pyright0 errors/0 warnings。1,364実行経路・6,372途中判断を独立状態機械と照合。reports/current-state-goal-v1.mdに検証・限界を保存。
+- PR #34へ積むfeat/current-state-goal-v1のDraft。main/Service既定recipe/aster-web/Site公開版への導入、学習済みモデルの採点と再学習は未実施。
+- 次：保存済みモデルで誤値と履歴回数を分ける診断の条件を別protocolに固定。旧実測の契約を改名しない。
+
 ## 2026-10-01: 状態対照trainの全6条件測定
 
 - PR #32 head ee61711483dd876d35728a1999f6def6966b328f上で、compact/Byte/モデル/1600更新を固定し学習データ32slotのうち16を実Toolの誤保存prefixへ置換。正常教師の頻度8件ずつとseed内全初期重み・slot permutationを保持。
