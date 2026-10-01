@@ -108,3 +108,5 @@ UIでdiagnostic successを再計算せず、未提供の値を推測しない。
 
 2026-09-30データ介入研究メモ: 将来の比較表示はarm名だけでなく、提示回数/更新回数、unique判断数、元課題group数、同じTokenizer/初期weightの識別、train fit成立、元課題保持、dev probeの由来を表示する。
 反復slotの増加を新課題の増加と同一視しない。dev probeの親trainとの重なり、test scored_cases=0、reserved procedural prefixと独立task familyの違いをbundle正本から表示する。この研究CLIはService公開recipeではなく、UI接続は未実装。
+
+2026-10-01入力表現比較メモ: raw/compactのserializer IDをcheckpointと表示metadataへ保持する。teacher-prefix判断、対照組の両方正答、prefixからのmodel-only継続、最初からの自力episodeを別の値として表示する。訪問入力のcontext超過はinvalidとして件数と理由を示し、失敗率へ合算しない。比較の共通評価可能case数と全開始case数を併記する。今回の結果は研究CLIであり#29/aster-web#2への公開は未実装。
