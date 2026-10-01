@@ -1,0 +1,2842 @@
+{
+  "schema_version": "aster-decision-state-training-report-0",
+  "measurements": [
+    {
+      "run_id": "8fbcc7a89a2e4dd89808da4d6e1765b4",
+      "study": {
+        "arms": [
+          {
+            "arm": "baseline",
+            "fit": {
+              "arm_id": "baseline",
+              "case_ids": [
+                "numbers-and-keys/add/n0-k0/phase-0",
+                "numbers-and-keys/add/n0-k0/phase-1",
+                "numbers-and-keys/add/n0-k0/phase-2",
+                "numbers-and-keys/add/n0-k0/phase-3",
+                "numbers-and-keys/add/n0-k1/phase-0",
+                "numbers-and-keys/add/n0-k1/phase-1",
+                "numbers-and-keys/add/n0-k1/phase-2",
+                "numbers-and-keys/add/n0-k1/phase-3",
+                "numbers-and-keys/add/n1-k0/phase-0",
+                "numbers-and-keys/add/n1-k0/phase-1",
+                "numbers-and-keys/add/n1-k0/phase-2",
+                "numbers-and-keys/add/n1-k0/phase-3",
+                "numbers-and-keys/add/n1-k1/phase-0",
+                "numbers-and-keys/add/n1-k1/phase-1",
+                "numbers-and-keys/add/n1-k1/phase-2",
+                "numbers-and-keys/add/n1-k1/phase-3",
+                "numbers-and-keys/subtract/n0-k0/phase-0",
+                "numbers-and-keys/subtract/n0-k0/phase-1",
+                "numbers-and-keys/subtract/n0-k0/phase-2",
+                "numbers-and-keys/subtract/n0-k0/phase-3",
+                "numbers-and-keys/subtract/n0-k1/phase-0",
+                "numbers-and-keys/subtract/n0-k1/phase-1",
+                "numbers-and-keys/subtract/n0-k1/phase-2",
+                "numbers-and-keys/subtract/n0-k1/phase-3",
+                "numbers-and-keys/subtract/n1-k0/phase-0",
+                "numbers-and-keys/subtract/n1-k0/phase-1",
+                "numbers-and-keys/subtract/n1-k0/phase-2",
+                "numbers-and-keys/subtract/n1-k0/phase-3",
+                "numbers-and-keys/subtract/n1-k1/phase-0",
+                "numbers-and-keys/subtract/n1-k1/phase-1",
+                "numbers-and-keys/subtract/n1-k1/phase-2",
+                "numbers-and-keys/subtract/n1-k1/phase-3"
+              ],
+              "checkpoint": "checkpoint/manifest.json",
+              "checkpoint_id": "decision_fit:f52a62caec0530343be665b402d7282cb0f58c86e44883a01c1941c2351adecc",
+              "epoch_end_evaluation_wall_seconds": 6.553055446999792,
+              "epoch_order": "epoch-order.jsonl",
+              "epoch_predictions": "epoch-predictions.jsonl",
+              "epochs": 50,
+              "equivalent_epochs": 50.0,
+              "example_exposures": 1600,
+              "examples": 32,
+              "final": {
+                "accuracy": 1.0,
+                "all_target_margins_positive": true,
+                "correct": 32,
+                "examples": 32,
+                "min_target_margin": 6.006263732910156,
+                "nll": 0.0002859142172517908
+              },
+              "fit_target_met": true,
+              "initial": {
+                "accuracy": 0.1875,
+                "all_target_margins_positive": false,
+                "correct": 6,
+                "examples": 32,
+                "min_target_margin": -0.1442861109972,
+                "nll": 1.3768555841396053
+              },
+              "initial_evaluation_wall_seconds": 0.19117994199996247,
+              "initial_model_sha256": "15ba31d32a4da2ac80ae84bd699f54ff081a968eed333813ecd6c3e21531c60b",
+              "input_serializer_id": "aster-decision-compact-input-0",
+              "learning_curve": "learning-curve.jsonl",
+              "learning_rate": 0.001,
+              "mode": "shuffle",
+              "optimizer_updates": 1600,
+              "reload_checkpoint_id": "decision_fit:f52a62caec0530343be665b402d7282cb0f58c86e44883a01c1941c2351adecc",
+              "reload_evaluation_wall_seconds": 0.13949680400003217,
+              "reload_metrics_match": true,
+              "stability_window": 3,
+              "update_wall_seconds": 24.559193656999582
+            },
+            "new_dev": {
+              "initial_episodes": {
+                "joint": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "key": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 1
+                },
+                "numbers": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "seen": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 2
+                }
+              },
+              "old_dev": {
+                "accuracy": 0.7857142857142857,
+                "all_target_margins_positive": false,
+                "correct": 44,
+                "examples": 56,
+                "min_target_margin": -11.116519927978516,
+                "nll": 1.1092802066640315
+              },
+              "pairs": {
+                "same_step_different_target": {
+                  "both_correct": 6,
+                  "count": 16
+                },
+                "same_step_same_candidates_different_target": {
+                  "both_correct": 3,
+                  "count": 8
+                }
+              },
+              "prefix_episodes": {
+                "count": 32,
+                "invalid": 0,
+                "success": 22
+              },
+              "rng_unchanged": true,
+              "teacher_prefix": {
+                "accuracy": 0.625,
+                "all_target_margins_positive": false,
+                "correct": 20,
+                "examples": 32,
+                "min_target_margin": -11.151745796203613,
+                "nll": 1.9581850481047056
+              },
+              "test_scored_cases": 0,
+              "visited_input_collisions": 0,
+              "visited_teacher_coverage": true,
+              "weights_unchanged": true
+            },
+            "nonoverlap": {
+              "nonoverlap_decisions": {
+                "correct": 16,
+                "count": 28
+              },
+              "nonoverlap_prefix": {
+                "count": 28,
+                "invalid": 0,
+                "success": 18
+              },
+              "primary_pairs": {
+                "both_correct": 1,
+                "count": 6
+              },
+              "retention_cases": 4
+            },
+            "old_overlap_metrics": {
+              "nonoverlap_diagnostic": {
+                "correct": 12,
+                "count": 24
+              },
+              "retention": {
+                "correct": 32,
+                "count": 32
+              }
+            },
+            "original_dev": {
+              "initial_episodes": {
+                "joint": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "key": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 1
+                },
+                "numbers": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "seen": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 2
+                }
+              },
+              "old_dev": {
+                "accuracy": 0.7857142857142857,
+                "all_target_margins_positive": false,
+                "correct": 44,
+                "examples": 56,
+                "min_target_margin": -11.116519927978516,
+                "nll": 1.1092802066640315
+              },
+              "pairs": {
+                "same_step_different_target": {
+                  "both_correct": 21,
+                  "count": 32
+                },
+                "same_target_different_step": {
+                  "both_correct": 26,
+                  "count": 32
+                }
+              },
+              "prefix_episodes": {
+                "count": 48,
+                "invalid": 0,
+                "success": 36
+              },
+              "rng_unchanged": true,
+              "teacher_prefix": {
+                "accuracy": 0.8125,
+                "all_target_margins_positive": false,
+                "correct": 39,
+                "examples": 48,
+                "min_target_margin": -6.216081261634827,
+                "nll": 0.8002349429137433
+              },
+              "test_scored_cases": 0,
+              "visited_input_collisions": 0,
+              "visited_teacher_coverage": true,
+              "weights_unchanged": true
+            },
+            "original_overlap_metrics": {
+              "nonoverlap_diagnostic": {
+                "correct": 15,
+                "count": 24
+              },
+              "retention": {
+                "correct": 24,
+                "count": 24
+              }
+            },
+            "train_token_budget": {
+              "cases": 32,
+              "max_tokens": 812,
+              "padded_tokens_per_pass": 73158,
+              "semantic_tokens_per_pass": 71184,
+              "serialization_sha256": "485b2c481086d29c65b398710d81dce981bcbe7a650bed35111291e8edf05e24"
+            },
+            "training_padded_tokens": 3657900,
+            "training_semantic_tokens": 3559200,
+            "wall_seconds": 34.858590916000026
+          },
+          {
+            "arm": "state",
+            "fit": {
+              "arm_id": "state",
+              "case_ids": [
+                "numbers-and-keys/add/n0-k0/phase-0",
+                "numbers-and-keys/add/n0-k0/phase-1",
+                "numbers-and-keys/add/n0-k0/phase-2",
+                "numbers-and-keys/add/n0-k0/phase-3",
+                "numbers-and-keys/add/n0-k1/phase-0",
+                "numbers-and-keys/add/n0-k1/phase-1",
+                "numbers-and-keys/add/n0-k1/phase-2",
+                "numbers-and-keys/add/n0-k1/phase-3",
+                "numbers-and-keys/add/n1-k0/phase-0",
+                "numbers-and-keys/add/n1-k0/phase-1",
+                "numbers-and-keys/add/n1-k0/phase-2",
+                "numbers-and-keys/add/n1-k0/phase-3",
+                "numbers-and-keys/add/n1-k1/phase-0",
+                "numbers-and-keys/add/n1-k1/phase-1",
+                "numbers-and-keys/add/n1-k1/phase-2",
+                "numbers-and-keys/add/n1-k1/phase-3",
+                "numbers-and-keys/subtract/n0-k0/phase-0",
+                "numbers-and-keys/subtract/n0-k0/phase-1",
+                "numbers-and-keys/subtract/n0-k0/phase-2",
+                "numbers-and-keys/subtract/n0-k0/phase-3",
+                "numbers-and-keys/subtract/n0-k1/phase-0",
+                "numbers-and-keys/subtract/n0-k1/phase-1",
+                "numbers-and-keys/subtract/n0-k1/phase-2",
+                "numbers-and-keys/subtract/n0-k1/phase-3",
+                "numbers-and-keys/subtract/n1-k0/phase-0",
+                "numbers-and-keys/subtract/n1-k0/phase-1",
+                "numbers-and-keys/subtract/n1-k0/phase-2",
+                "numbers-and-keys/subtract/n1-k0/phase-3",
+                "numbers-and-keys/subtract/n1-k1/phase-0",
+                "numbers-and-keys/subtract/n1-k1/phase-1",
+                "numbers-and-keys/subtract/n1-k1/phase-2",
+                "numbers-and-keys/subtract/n1-k1/phase-3"
+              ],
+              "checkpoint": "checkpoint/manifest.json",
+              "checkpoint_id": "decision_fit:834ba52b1d5e792882a1997c2c9c507b4574d451d1f0fd476782be36ad38c56f",
+              "epoch_end_evaluation_wall_seconds": 7.847453423999582,
+              "epoch_order": "epoch-order.jsonl",
+              "epoch_predictions": "epoch-predictions.jsonl",
+              "epochs": 50,
+              "equivalent_epochs": 50.0,
+              "example_exposures": 1600,
+              "examples": 32,
+              "final": {
+                "accuracy": 1.0,
+                "all_target_margins_positive": true,
+                "correct": 32,
+                "examples": 32,
+                "min_target_margin": 5.476925373077393,
+                "nll": 0.0003193300808714885
+              },
+              "fit_target_met": true,
+              "initial": {
+                "accuracy": 0.28125,
+                "all_target_margins_positive": false,
+                "correct": 9,
+                "examples": 32,
+                "min_target_margin": -0.18683382868766785,
+                "nll": 1.3802339289821512
+              },
+              "initial_evaluation_wall_seconds": 0.18857989799994357,
+              "initial_model_sha256": "15ba31d32a4da2ac80ae84bd699f54ff081a968eed333813ecd6c3e21531c60b",
+              "input_serializer_id": "aster-decision-compact-input-0",
+              "learning_curve": "learning-curve.jsonl",
+              "learning_rate": 0.001,
+              "mode": "shuffle",
+              "optimizer_updates": 1600,
+              "reload_checkpoint_id": "decision_fit:834ba52b1d5e792882a1997c2c9c507b4574d451d1f0fd476782be36ad38c56f",
+              "reload_evaluation_wall_seconds": 0.1394103879999875,
+              "reload_metrics_match": true,
+              "stability_window": 3,
+              "update_wall_seconds": 30.397744045999957
+            },
+            "new_dev": {
+              "initial_episodes": {
+                "joint": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "key": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "numbers": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "seen": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 1
+                }
+              },
+              "old_dev": {
+                "accuracy": 0.5714285714285714,
+                "all_target_margins_positive": false,
+                "correct": 32,
+                "examples": 56,
+                "min_target_margin": -9.537541389465332,
+                "nll": 2.213053942074098
+              },
+              "pairs": {
+                "same_step_different_target": {
+                  "both_correct": 1,
+                  "count": 16
+                },
+                "same_step_same_candidates_different_target": {
+                  "both_correct": 2,
+                  "count": 8
+                }
+              },
+              "prefix_episodes": {
+                "count": 32,
+                "invalid": 0,
+                "success": 18
+              },
+              "rng_unchanged": true,
+              "teacher_prefix": {
+                "accuracy": 0.4375,
+                "all_target_margins_positive": false,
+                "correct": 14,
+                "examples": 32,
+                "min_target_margin": -9.793786525726318,
+                "nll": 2.6719293722702857
+              },
+              "test_scored_cases": 0,
+              "visited_input_collisions": 0,
+              "visited_teacher_coverage": true,
+              "weights_unchanged": true
+            },
+            "nonoverlap": {
+              "nonoverlap_decisions": {
+                "correct": 10,
+                "count": 28
+              },
+              "nonoverlap_prefix": {
+                "count": 28,
+                "invalid": 0,
+                "success": 14
+              },
+              "primary_pairs": {
+                "both_correct": 0,
+                "count": 6
+              },
+              "retention_cases": 4
+            },
+            "old_overlap_metrics": {
+              "nonoverlap_diagnostic": {
+                "correct": 8,
+                "count": 24
+              },
+              "retention": {
+                "correct": 24,
+                "count": 32
+              }
+            },
+            "original_dev": {
+              "initial_episodes": {
+                "joint": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "key": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "numbers": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "seen": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 1
+                }
+              },
+              "old_dev": {
+                "accuracy": 0.5714285714285714,
+                "all_target_margins_positive": false,
+                "correct": 32,
+                "examples": 56,
+                "min_target_margin": -9.537541389465332,
+                "nll": 2.213053942074098
+              },
+              "pairs": {
+                "same_step_different_target": {
+                  "both_correct": 13,
+                  "count": 32
+                },
+                "same_target_different_step": {
+                  "both_correct": 20,
+                  "count": 32
+                }
+              },
+              "prefix_episodes": {
+                "count": 48,
+                "invalid": 0,
+                "success": 27
+              },
+              "rng_unchanged": true,
+              "teacher_prefix": {
+                "accuracy": 0.625,
+                "all_target_margins_positive": false,
+                "correct": 30,
+                "examples": 48,
+                "min_target_margin": -9.537541389465332,
+                "nll": 1.9674560883476442
+              },
+              "test_scored_cases": 0,
+              "visited_input_collisions": 0,
+              "visited_teacher_coverage": true,
+              "weights_unchanged": true
+            },
+            "original_overlap_metrics": {
+              "nonoverlap_diagnostic": {
+                "correct": 12,
+                "count": 24
+              },
+              "retention": {
+                "correct": 18,
+                "count": 24
+              }
+            },
+            "train_token_budget": {
+              "cases": 32,
+              "max_tokens": 812,
+              "padded_tokens_per_pass": 82374,
+              "semantic_tokens_per_pass": 80400,
+              "serialization_sha256": "61e171077d69f7b0bfc0f7d57c4890ce72303c8a9f2f4e3508e553ac12d03424"
+            },
+            "training_padded_tokens": 4118700,
+            "training_semantic_tokens": 4020000,
+            "wall_seconds": 41.082577213000036
+          }
+        ],
+        "calibration": "not_run",
+        "config": {
+          "context_length": 2048,
+          "epochs": 50,
+          "heads": 2,
+          "layers": 1,
+          "learning_rate": 0.001,
+          "min_pair_frequency": 1,
+          "seed": 42,
+          "stability_window": 3,
+          "target_vocab_size": 512,
+          "train_backbone": true,
+          "width": 16
+        },
+        "deadline_seconds_per_arm": 1800,
+        "full_initial_weights_identical": true,
+        "independent_holdout": false,
+        "initial_model_sha256": "15ba31d32a4da2ac80ae84bd699f54ff081a968eed333813ecd6c3e21531c60b",
+        "input_serializer_id": "aster-decision-compact-input-0",
+        "parameter_count": 44353,
+        "parent_groups": 2,
+        "preflight": {
+          "ancestry": "two existing task parent groups; wrong-write family shared train/dev",
+          "changed_slots": [
+            "numbers-and-keys/add/n0-k0/phase-0",
+            "numbers-and-keys/add/n0-k0/phase-1",
+            "numbers-and-keys/add/n0-k1/phase-0",
+            "numbers-and-keys/add/n0-k1/phase-1",
+            "numbers-and-keys/add/n1-k0/phase-0",
+            "numbers-and-keys/add/n1-k0/phase-1",
+            "numbers-and-keys/add/n1-k1/phase-0",
+            "numbers-and-keys/add/n1-k1/phase-1",
+            "numbers-and-keys/subtract/n0-k0/phase-0",
+            "numbers-and-keys/subtract/n0-k0/phase-1",
+            "numbers-and-keys/subtract/n0-k1/phase-0",
+            "numbers-and-keys/subtract/n0-k1/phase-1",
+            "numbers-and-keys/subtract/n1-k0/phase-0",
+            "numbers-and-keys/subtract/n1-k0/phase-1",
+            "numbers-and-keys/subtract/n1-k1/phase-0",
+            "numbers-and-keys/subtract/n1-k1/phase-1"
+          ],
+          "first_candidate_new_dev_correct": 8,
+          "independent_holdout": false,
+          "input_collisions": 0,
+          "irrelevant_delay_is_input_alias": true,
+          "overlap": {
+            "new_dev": {
+              "add/joint/state-0": false,
+              "add/joint/state-1": false,
+              "add/joint/state-2": false,
+              "add/joint/state-3": false,
+              "add/key/state-0": false,
+              "add/key/state-1": false,
+              "add/key/state-2": false,
+              "add/key/state-3": false,
+              "add/numbers/state-0": false,
+              "add/numbers/state-1": false,
+              "add/numbers/state-2": false,
+              "add/numbers/state-3": false,
+              "add/seen/state-0": false,
+              "add/seen/state-1": false,
+              "add/seen/state-2": true,
+              "add/seen/state-3": true,
+              "subtract/joint/state-0": false,
+              "subtract/joint/state-1": false,
+              "subtract/joint/state-2": false,
+              "subtract/joint/state-3": false,
+              "subtract/key/state-0": false,
+              "subtract/key/state-1": false,
+              "subtract/key/state-2": false,
+              "subtract/key/state-3": false,
+              "subtract/numbers/state-0": false,
+              "subtract/numbers/state-1": false,
+              "subtract/numbers/state-2": false,
+              "subtract/numbers/state-3": false,
+              "subtract/seen/state-0": false,
+              "subtract/seen/state-1": false,
+              "subtract/seen/state-2": true,
+              "subtract/seen/state-3": true
+            },
+            "old_dev": {
+              "add/joint/phase-0": false,
+              "add/joint/phase-1": false,
+              "add/joint/phase-2": false,
+              "add/joint/phase-3": false,
+              "add/key/phase-0/delay-0": false,
+              "add/key/phase-1/delay-0": false,
+              "add/key/phase-2/delay-0": false,
+              "add/key/phase-3/delay-0": false,
+              "add/numbers/phase-0/delay-0": false,
+              "add/numbers/phase-1/delay-0": false,
+              "add/numbers/phase-2/delay-0": false,
+              "add/numbers/phase-3/delay-0": false,
+              "add/seen/phase-0/delay-0": true,
+              "add/seen/phase-0/delay-0/reverse": true,
+              "add/seen/phase-0/delay-1": true,
+              "add/seen/phase-0/delay-2": true,
+              "add/seen/phase-1/delay-0": true,
+              "add/seen/phase-1/delay-0/reverse": true,
+              "add/seen/phase-1/delay-1": true,
+              "add/seen/phase-1/delay-2": true,
+              "add/seen/phase-2/delay-0": true,
+              "add/seen/phase-2/delay-0/reverse": true,
+              "add/seen/phase-2/delay-1": true,
+              "add/seen/phase-2/delay-2": true,
+              "add/seen/phase-3/delay-0": true,
+              "add/seen/phase-3/delay-0/reverse": true,
+              "add/seen/phase-3/delay-1": true,
+              "add/seen/phase-3/delay-2": true,
+              "subtract/joint/phase-0": false,
+              "subtract/joint/phase-1": false,
+              "subtract/joint/phase-2": false,
+              "subtract/joint/phase-3": false,
+              "subtract/key/phase-0/delay-0": false,
+              "subtract/key/phase-1/delay-0": false,
+              "subtract/key/phase-2/delay-0": false,
+              "subtract/key/phase-3/delay-0": false,
+              "subtract/numbers/phase-0/delay-0": false,
+              "subtract/numbers/phase-1/delay-0": false,
+              "subtract/numbers/phase-2/delay-0": false,
+              "subtract/numbers/phase-3/delay-0": false,
+              "subtract/seen/phase-0/delay-0": true,
+              "subtract/seen/phase-0/delay-0/reverse": true,
+              "subtract/seen/phase-0/delay-1": true,
+              "subtract/seen/phase-0/delay-2": true,
+              "subtract/seen/phase-1/delay-0": true,
+              "subtract/seen/phase-1/delay-0/reverse": true,
+              "subtract/seen/phase-1/delay-1": true,
+              "subtract/seen/phase-1/delay-2": true,
+              "subtract/seen/phase-2/delay-0": true,
+              "subtract/seen/phase-2/delay-0/reverse": true,
+              "subtract/seen/phase-2/delay-1": true,
+              "subtract/seen/phase-2/delay-2": true,
+              "subtract/seen/phase-3/delay-0": true,
+              "subtract/seen/phase-3/delay-0/reverse": true,
+              "subtract/seen/phase-3/delay-1": true,
+              "subtract/seen/phase-3/delay-2": true
+            },
+            "original_dev": {
+              "add/anchor/phase-0/delay-0": true,
+              "add/anchor/phase-0/delay-1": true,
+              "add/anchor/phase-0/delay-2": true,
+              "add/anchor/phase-1/delay-0": true,
+              "add/anchor/phase-1/delay-1": true,
+              "add/anchor/phase-1/delay-2": true,
+              "add/anchor/phase-2/delay-0": true,
+              "add/anchor/phase-2/delay-1": true,
+              "add/anchor/phase-2/delay-2": true,
+              "add/anchor/phase-3/delay-0": true,
+              "add/anchor/phase-3/delay-1": true,
+              "add/anchor/phase-3/delay-2": true,
+              "add/joint/phase-0/delay-0": false,
+              "add/joint/phase-0/delay-1": false,
+              "add/joint/phase-0/delay-2": false,
+              "add/joint/phase-1/delay-0": false,
+              "add/joint/phase-1/delay-1": false,
+              "add/joint/phase-1/delay-2": false,
+              "add/joint/phase-2/delay-0": false,
+              "add/joint/phase-2/delay-1": false,
+              "add/joint/phase-2/delay-2": false,
+              "add/joint/phase-3/delay-0": false,
+              "add/joint/phase-3/delay-1": false,
+              "add/joint/phase-3/delay-2": false,
+              "subtract/anchor/phase-0/delay-0": true,
+              "subtract/anchor/phase-0/delay-1": true,
+              "subtract/anchor/phase-0/delay-2": true,
+              "subtract/anchor/phase-1/delay-0": true,
+              "subtract/anchor/phase-1/delay-1": true,
+              "subtract/anchor/phase-1/delay-2": true,
+              "subtract/anchor/phase-2/delay-0": true,
+              "subtract/anchor/phase-2/delay-1": true,
+              "subtract/anchor/phase-2/delay-2": true,
+              "subtract/anchor/phase-3/delay-0": true,
+              "subtract/anchor/phase-3/delay-1": true,
+              "subtract/anchor/phase-3/delay-2": true,
+              "subtract/joint/phase-0/delay-0": false,
+              "subtract/joint/phase-0/delay-1": false,
+              "subtract/joint/phase-0/delay-2": false,
+              "subtract/joint/phase-1/delay-0": false,
+              "subtract/joint/phase-1/delay-1": false,
+              "subtract/joint/phase-1/delay-2": false,
+              "subtract/joint/phase-2/delay-0": false,
+              "subtract/joint/phase-2/delay-1": false,
+              "subtract/joint/phase-2/delay-2": false,
+              "subtract/joint/phase-3/delay-0": false,
+              "subtract/joint/phase-3/delay-1": false,
+              "subtract/joint/phase-3/delay-2": false
+            }
+          },
+          "pairs": [
+            {
+              "eligible_nonoverlap": false,
+              "left": "add/seen/state-1",
+              "relation": "same_step_same_candidates_different_target",
+              "right": "add/seen/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/seen/state-0",
+              "relation": "same_step_different_target",
+              "right": "add/seen/state-1"
+            },
+            {
+              "eligible_nonoverlap": false,
+              "left": "add/seen/state-0",
+              "relation": "same_step_different_target",
+              "right": "add/seen/state-2"
+            },
+            {
+              "eligible_nonoverlap": false,
+              "left": "subtract/seen/state-1",
+              "relation": "same_step_same_candidates_different_target",
+              "right": "subtract/seen/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/seen/state-0",
+              "relation": "same_step_different_target",
+              "right": "subtract/seen/state-1"
+            },
+            {
+              "eligible_nonoverlap": false,
+              "left": "subtract/seen/state-0",
+              "relation": "same_step_different_target",
+              "right": "subtract/seen/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/numbers/state-1",
+              "relation": "same_step_same_candidates_different_target",
+              "right": "add/numbers/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/numbers/state-0",
+              "relation": "same_step_different_target",
+              "right": "add/numbers/state-1"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/numbers/state-0",
+              "relation": "same_step_different_target",
+              "right": "add/numbers/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/numbers/state-1",
+              "relation": "same_step_same_candidates_different_target",
+              "right": "subtract/numbers/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/numbers/state-0",
+              "relation": "same_step_different_target",
+              "right": "subtract/numbers/state-1"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/numbers/state-0",
+              "relation": "same_step_different_target",
+              "right": "subtract/numbers/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/key/state-1",
+              "relation": "same_step_same_candidates_different_target",
+              "right": "add/key/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/key/state-0",
+              "relation": "same_step_different_target",
+              "right": "add/key/state-1"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/key/state-0",
+              "relation": "same_step_different_target",
+              "right": "add/key/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/key/state-1",
+              "relation": "same_step_same_candidates_different_target",
+              "right": "subtract/key/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/key/state-0",
+              "relation": "same_step_different_target",
+              "right": "subtract/key/state-1"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/key/state-0",
+              "relation": "same_step_different_target",
+              "right": "subtract/key/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/joint/state-1",
+              "relation": "same_step_same_candidates_different_target",
+              "right": "add/joint/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/joint/state-0",
+              "relation": "same_step_different_target",
+              "right": "add/joint/state-1"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/joint/state-0",
+              "relation": "same_step_different_target",
+              "right": "add/joint/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/joint/state-1",
+              "relation": "same_step_same_candidates_different_target",
+              "right": "subtract/joint/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/joint/state-0",
+              "relation": "same_step_different_target",
+              "right": "subtract/joint/state-1"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/joint/state-0",
+              "relation": "same_step_different_target",
+              "right": "subtract/joint/state-2"
+            }
+          ],
+          "reserved_test_family": "redundant calculator prefixes untouched/not constructed/not scored",
+          "rule_verified_cases": 200,
+          "schema_version": "aster-decision-state-training-0",
+          "step_only_new_dev_correct": 16,
+          "target_counts": {
+            "baseline": {
+              "calculator": 8,
+              "memory.get": 8,
+              "memory.put": 8,
+              "stop": 8
+            },
+            "state": {
+              "calculator": 8,
+              "memory.get": 8,
+              "memory.put": 8,
+              "stop": 8
+            }
+          },
+          "test_scored_cases": 0
+        },
+        "preflight_sha256": "6988f95b52a93bca04524487260fecffcb0596fada222f8f4f64e972d5ada7f9",
+        "process_max_rss_kib": 375492,
+        "python": "3.12.14",
+        "rss_scope": "shared process maximum, not per-arm comparison",
+        "run_id": "8fbcc7a89a2e4dd89808da4d6e1765b4",
+        "same_epoch_orders": true,
+        "schema_version": "aster-decision-state-training-0",
+        "source_git_sha": "9b8f1ab97b7ed1f03e2a14ef4a3153a384a7eabf",
+        "source_provenance": {
+          "dirty": false,
+          "git_sha": "9b8f1ab97b7ed1f03e2a14ef4a3153a384a7eabf",
+          "protocol_sha256": "f3fc83c85a46122fa1680367cef5c91207d22aa8daf690e428c4371ef567cd43",
+          "python_snapshot_sha256": "0610c7867830a31989b165ecbfa1fa274c70b573b66226b54800feb268b7a327"
+        },
+        "status": "preregistered-measurement",
+        "suite_digests": {
+          "baseline": "9c5a61ca271065bf7775438144ca5f8f930072caed1f52329381bbb5731e5adc",
+          "new_dev": "a548e8605c90f08f7150341ab01d0b7fcdc83a344c5559dc3ad5ee3cfac9b148",
+          "old_dev": "ee7c237386bcf689329c44dd15982477a234ee2bb5e2dace878c8478ce400124",
+          "original_dev": "1ea62e13271ad7f163366736f789e69a4111566fa7483c634c172c3c2e4ea7db",
+          "state": "92c883da0f7e35431778609e77aa5bdc52b7bb65c800c6cd2e7c9f2e89b0b5cd"
+        },
+        "test": "sealed/not_constructed/not_scored",
+        "test_scored_cases": 0,
+        "threads": 2,
+        "torch": "2.14.0+cpu",
+        "wall_seconds": 75.99725268899999
+      },
+      "evidence_sha256": {
+        "arms/baseline/candidate-lookup.json": "6101d2d3291022897bddea3c4231e1ec85b3232202e3e22c211ef1a05245369b",
+        "arms/baseline/checkpoint/manifest.json": "7765005d02e1e0944851e52a2d998e96f356ff40814d59ead8036ae6966b50bc",
+        "arms/baseline/checkpoint/model.pt": "906abe0b68197942f2a48f6792f5f1d5ac056e5a563bcb047426ea524ce27c06",
+        "arms/baseline/checkpoint/tokenizer/manifest.json": "b9e3dd9ee093f2f5f6df7e4081fa84280df0fc6440bcf12f7230743d56aafdac",
+        "arms/baseline/checkpoint/tokenizer/merges.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "arms/baseline/checkpoint/tokenizer/special_tokens.json": "b484ab1aa82c5111b05b7cf10ff401894a3d806822c6642b3db4b8c81c8c364d",
+        "arms/baseline/checkpoint/tokenizer/vocab.json": "4a00a5b05a2f1641111144634551b05dfe9a73218b645d891a4b7a473dc4af8d",
+        "arms/baseline/dev-predictions.jsonl": "ee059b29a18e60cbfe25586bb1ce7cfe5e2e9aadddd50819c8ac03b08435ba17",
+        "arms/baseline/epoch-order.jsonl": "9aedbcc35601c1764f3c507433469641139cfa319b7179cf6939441d99acd013",
+        "arms/baseline/epoch-predictions.jsonl": "e19e55b1f98f958467552a57954bb068967944376c0d0a6e17f222a329b84e74",
+        "arms/baseline/initial-episodes.jsonl": "dd54558cff7c0d9359f182d249c404dbc0f5a0c4ecdfcb6e89c7100e38bda253",
+        "arms/baseline/learning-curve.jsonl": "e62105e74e892c0fafb618e80fca22dba93d0ad151c812d422374bc725134488",
+        "arms/baseline/nonoverlap.json": "ae1685bc34b853863a3e2523dd840a1084ea358dc367651f9e88b9ea54e7d1c0",
+        "arms/baseline/old-dev-predictions.jsonl": "69abd61aabb45793d97f16b2bb8d640a1964230813c83d1b2bafa615f1102e17",
+        "arms/baseline/original/dev-predictions.jsonl": "1a17a89d382d42c74e389c9118c4f21869ea1bb0ccd29c9a609ef0e2da031b3f",
+        "arms/baseline/original/initial-episodes.jsonl": "dd54558cff7c0d9359f182d249c404dbc0f5a0c4ecdfcb6e89c7100e38bda253",
+        "arms/baseline/original/old-dev-predictions.jsonl": "69abd61aabb45793d97f16b2bb8d640a1964230813c83d1b2bafa615f1102e17",
+        "arms/baseline/original/pair-predictions.jsonl": "ca37cc9396e2248c85291b797640840cd3ba65b8fd0eafe38e3163f785669332",
+        "arms/baseline/original/prefix-episodes.jsonl": "04f819f14be5fb0371e255c5e2498746515ec76d9f9fe1357969d18b51fad4f1",
+        "arms/baseline/pair-predictions.jsonl": "959106ec79af971427a58a3fd32d0ee18babc321a6f24748d46419713b98d61a",
+        "arms/baseline/prefix-episodes.jsonl": "20630f2a14a6c46fa9fb2cc9408614aafe953cdf9ae61129ac3d381ff2992c96",
+        "arms/baseline/result.json": "70d137adf281efcd8acea03a8180f75c3de287fe0100a472fef6a8b0afc7e265",
+        "arms/baseline/summary.json": "09c25fcbbc8f34d94bf7fcdc11daea2cdfe2526f1069dfc01061ff64ed558851",
+        "arms/state/candidate-lookup.json": "6101d2d3291022897bddea3c4231e1ec85b3232202e3e22c211ef1a05245369b",
+        "arms/state/checkpoint/manifest.json": "0ff07a4fa6d351d26da3b68acb168a6c245285812eaf925476c40e5d3f94eb42",
+        "arms/state/checkpoint/model.pt": "758b5b5ba984c4cceb6238dd0771d2d20996e3e03a6af64cc1804aedd592ac73",
+        "arms/state/checkpoint/tokenizer/manifest.json": "b9e3dd9ee093f2f5f6df7e4081fa84280df0fc6440bcf12f7230743d56aafdac",
+        "arms/state/checkpoint/tokenizer/merges.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "arms/state/checkpoint/tokenizer/special_tokens.json": "b484ab1aa82c5111b05b7cf10ff401894a3d806822c6642b3db4b8c81c8c364d",
+        "arms/state/checkpoint/tokenizer/vocab.json": "4a00a5b05a2f1641111144634551b05dfe9a73218b645d891a4b7a473dc4af8d",
+        "arms/state/dev-predictions.jsonl": "b7becd05f35ed2222d6650348d804281273c73ad48fcc03e2c7d80f8bb5ea45b",
+        "arms/state/epoch-order.jsonl": "9aedbcc35601c1764f3c507433469641139cfa319b7179cf6939441d99acd013",
+        "arms/state/epoch-predictions.jsonl": "162182a32842601351730e6e11d61a21a2968d8fca0e23579819c43b6ce4662e",
+        "arms/state/initial-episodes.jsonl": "3396b680d6f698ba4047b2c5aa451e4386f34ec662aa9b4009657d7291bc28fe",
+        "arms/state/learning-curve.jsonl": "3b0b6019aa3c54798ab2f142da0a87f6597ec4181333ef313645ba033da1ad89",
+        "arms/state/nonoverlap.json": "724f60af5819102f73a6f9d2fd5547a0c0f87cb5fb63cbbb64b38f75f7cfc7e4",
+        "arms/state/old-dev-predictions.jsonl": "07046832375f9006c3c603a7bce9118876b7f47b12618e2acab023eac9c69799",
+        "arms/state/original/dev-predictions.jsonl": "39d6ea7fecc821e994f3337ce5c5b6b88efab895576af36ef0048f0f825da6d8",
+        "arms/state/original/initial-episodes.jsonl": "3396b680d6f698ba4047b2c5aa451e4386f34ec662aa9b4009657d7291bc28fe",
+        "arms/state/original/old-dev-predictions.jsonl": "07046832375f9006c3c603a7bce9118876b7f47b12618e2acab023eac9c69799",
+        "arms/state/original/pair-predictions.jsonl": "ca4f6e00abc23f3812001503da7442ef71969567490eb723e950062b8d202755",
+        "arms/state/original/prefix-episodes.jsonl": "19c4471da8fea0ec27c8e1f15e841165c51725d1ee92087ba54a0abf7b82fc4a",
+        "arms/state/pair-predictions.jsonl": "dfef57326d3965741c4244e5d162d0e5becf62b7563814ca78b0fb4250be8826",
+        "arms/state/prefix-episodes.jsonl": "edfe199d92590c6c6c8aa246526b7cce8583b4d87a49a7f551efafb0f6301465",
+        "arms/state/result.json": "8d746a5baacd44623430f1c5dd7e18c20a718ff7c14450f75b22e8b20362e8f8",
+        "arms/state/summary.json": "cf6faaac1e620c8224284d800f15f3a8f3ce9036dfdd32cd112757c266b82759",
+        "baseline-inputs.jsonl": "7f3f42387d75150507882f8dde1854a59a80a11f3a06dcee266de3d59adbdf91",
+        "baseline-suite.json": "8899018c2388d0dc5b288535bddb47f7d0a8530e2e4a30cddaa2bc724bde192a",
+        "events.jsonl": "ae58bf01d49ce533107f6c5f11a2394784991a3b7bd8daae7a1e4cc6fd0490f1",
+        "new_dev-inputs.jsonl": "726bb17f70972deedcf61e2f305032207c4b87bb989b58f6df40c9848575445b",
+        "new_dev-suite.json": "67652325110b9cbc6626f4543473be193c74859f8b7270b1f29caf0535f72cb0",
+        "old_dev-inputs.jsonl": "d11e4e928d0ea1acf714e5f70eba37a34dda89e5ccae72903e02e5080769abbe",
+        "old_dev-suite.json": "2c25d421a585e42aff6fb67ba2040a1b1ab846aa8656b2faaa47ccc194911efd",
+        "original-preflight.json": "2aee56e6f802054a1d7115753fe11c10f007a0fb3c61aac788dbc6fae77f2c32",
+        "original_dev-inputs.jsonl": "d1a75351042c7531ec41667fdb8edfdb8ca3e32693d657a04297d361de5b5126",
+        "original_dev-suite.json": "7a874a6124e5c2404aafe379828d40f2724bb2eb959104374eee36bcab5cd79c",
+        "pairs.json": "2b4e4a883a02cd560a0e4b1d97d38d3bc34d9f004e4eb5fdaab875f8c666f11f",
+        "preflight.json": "cd0a3b414b15f147e0b68391658ad64ff8f2bd2bc4cd4b1ade770e09384344a4",
+        "protocol.json": "4184b1b79ed56bbcc5f1345d7e01aa8ef5d5a036b38e7eedc0fb9101133cc6ff",
+        "run.json": "28f86a3e33c37de4cdeda3ea8e9aee32fd1777cdaf85eb5b1722fd895cc3ad7a",
+        "state-inputs.jsonl": "a377703b42edad1dc9cda1f2d7002ec95c8503762b6cd61b6a2c3adcd1fee0ef",
+        "state-suite.json": "0b5987f52d457a41ad3f423962f2275d9bacc53eae94da5893e212f96237b5f9",
+        "study.json": "6a490ef9d3f9bcb4447f2bf0ca5861597316de2028ce7116e688e611c3a003e0"
+      }
+    },
+    {
+      "run_id": "95ff3b1d2dc647c5901ba92dd55f254a",
+      "study": {
+        "arms": [
+          {
+            "arm": "baseline",
+            "fit": {
+              "arm_id": "baseline",
+              "case_ids": [
+                "numbers-and-keys/add/n0-k0/phase-0",
+                "numbers-and-keys/add/n0-k0/phase-1",
+                "numbers-and-keys/add/n0-k0/phase-2",
+                "numbers-and-keys/add/n0-k0/phase-3",
+                "numbers-and-keys/add/n0-k1/phase-0",
+                "numbers-and-keys/add/n0-k1/phase-1",
+                "numbers-and-keys/add/n0-k1/phase-2",
+                "numbers-and-keys/add/n0-k1/phase-3",
+                "numbers-and-keys/add/n1-k0/phase-0",
+                "numbers-and-keys/add/n1-k0/phase-1",
+                "numbers-and-keys/add/n1-k0/phase-2",
+                "numbers-and-keys/add/n1-k0/phase-3",
+                "numbers-and-keys/add/n1-k1/phase-0",
+                "numbers-and-keys/add/n1-k1/phase-1",
+                "numbers-and-keys/add/n1-k1/phase-2",
+                "numbers-and-keys/add/n1-k1/phase-3",
+                "numbers-and-keys/subtract/n0-k0/phase-0",
+                "numbers-and-keys/subtract/n0-k0/phase-1",
+                "numbers-and-keys/subtract/n0-k0/phase-2",
+                "numbers-and-keys/subtract/n0-k0/phase-3",
+                "numbers-and-keys/subtract/n0-k1/phase-0",
+                "numbers-and-keys/subtract/n0-k1/phase-1",
+                "numbers-and-keys/subtract/n0-k1/phase-2",
+                "numbers-and-keys/subtract/n0-k1/phase-3",
+                "numbers-and-keys/subtract/n1-k0/phase-0",
+                "numbers-and-keys/subtract/n1-k0/phase-1",
+                "numbers-and-keys/subtract/n1-k0/phase-2",
+                "numbers-and-keys/subtract/n1-k0/phase-3",
+                "numbers-and-keys/subtract/n1-k1/phase-0",
+                "numbers-and-keys/subtract/n1-k1/phase-1",
+                "numbers-and-keys/subtract/n1-k1/phase-2",
+                "numbers-and-keys/subtract/n1-k1/phase-3"
+              ],
+              "checkpoint": "checkpoint/manifest.json",
+              "checkpoint_id": "decision_fit:c891fee08a0afb1920b260650c59f5e03775481862067a13549300679d2d45e4",
+              "epoch_end_evaluation_wall_seconds": 6.995967588000326,
+              "epoch_order": "epoch-order.jsonl",
+              "epoch_predictions": "epoch-predictions.jsonl",
+              "epochs": 50,
+              "equivalent_epochs": 50.0,
+              "example_exposures": 1600,
+              "examples": 32,
+              "final": {
+                "accuracy": 1.0,
+                "all_target_margins_positive": true,
+                "correct": 32,
+                "examples": 32,
+                "min_target_margin": 2.4970539808273315,
+                "nll": 0.0037693159726540026
+              },
+              "fit_target_met": true,
+              "initial": {
+                "accuracy": 0.09375,
+                "all_target_margins_positive": false,
+                "correct": 3,
+                "examples": 32,
+                "min_target_margin": -0.16477952897548676,
+                "nll": 1.380601149858114
+              },
+              "initial_evaluation_wall_seconds": 0.14881472599995504,
+              "initial_model_sha256": "a1972623787cdf7abe27cd1f261595d9368106dd9315ba8eebbf3630e764f860",
+              "input_serializer_id": "aster-decision-compact-input-0",
+              "learning_curve": "learning-curve.jsonl",
+              "learning_rate": 0.001,
+              "mode": "shuffle",
+              "optimizer_updates": 1600,
+              "reload_checkpoint_id": "decision_fit:c891fee08a0afb1920b260650c59f5e03775481862067a13549300679d2d45e4",
+              "reload_evaluation_wall_seconds": 0.12797107200003666,
+              "reload_metrics_match": true,
+              "stability_window": 3,
+              "update_wall_seconds": 26.338444878000132
+            },
+            "new_dev": {
+              "initial_episodes": {
+                "joint": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "key": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 1
+                },
+                "numbers": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "seen": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 2
+                }
+              },
+              "old_dev": {
+                "accuracy": 0.7857142857142857,
+                "all_target_margins_positive": false,
+                "correct": 44,
+                "examples": 56,
+                "min_target_margin": -11.261256694793701,
+                "nll": 0.9055966561962971
+              },
+              "pairs": {
+                "same_step_different_target": {
+                  "both_correct": 7,
+                  "count": 16
+                },
+                "same_step_same_candidates_different_target": {
+                  "both_correct": 2,
+                  "count": 8
+                }
+              },
+              "prefix_episodes": {
+                "count": 32,
+                "invalid": 0,
+                "success": 22
+              },
+              "rng_unchanged": true,
+              "teacher_prefix": {
+                "accuracy": 0.65625,
+                "all_target_margins_positive": false,
+                "correct": 21,
+                "examples": 32,
+                "min_target_margin": -11.390834331512451,
+                "nll": 1.7400427323729626
+              },
+              "test_scored_cases": 0,
+              "visited_input_collisions": 0,
+              "visited_teacher_coverage": true,
+              "weights_unchanged": true
+            },
+            "nonoverlap": {
+              "nonoverlap_decisions": {
+                "correct": 17,
+                "count": 28
+              },
+              "nonoverlap_prefix": {
+                "count": 28,
+                "invalid": 0,
+                "success": 18
+              },
+              "primary_pairs": {
+                "both_correct": 1,
+                "count": 6
+              },
+              "retention_cases": 4
+            },
+            "old_overlap_metrics": {
+              "nonoverlap_diagnostic": {
+                "correct": 12,
+                "count": 24
+              },
+              "retention": {
+                "correct": 32,
+                "count": 32
+              }
+            },
+            "original_dev": {
+              "initial_episodes": {
+                "joint": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "key": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 1
+                },
+                "numbers": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "seen": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 2
+                }
+              },
+              "old_dev": {
+                "accuracy": 0.7857142857142857,
+                "all_target_margins_positive": false,
+                "correct": 44,
+                "examples": 56,
+                "min_target_margin": -11.261256694793701,
+                "nll": 0.9055966561962971
+              },
+              "pairs": {
+                "same_step_different_target": {
+                  "both_correct": 19,
+                  "count": 32
+                },
+                "same_target_different_step": {
+                  "both_correct": 24,
+                  "count": 32
+                }
+              },
+              "prefix_episodes": {
+                "count": 48,
+                "invalid": 0,
+                "success": 36
+              },
+              "rng_unchanged": true,
+              "teacher_prefix": {
+                "accuracy": 0.75,
+                "all_target_margins_positive": false,
+                "correct": 36,
+                "examples": 48,
+                "min_target_margin": -7.320558190345764,
+                "nll": 0.9656137956386689
+              },
+              "test_scored_cases": 0,
+              "visited_input_collisions": 0,
+              "visited_teacher_coverage": true,
+              "weights_unchanged": true
+            },
+            "original_overlap_metrics": {
+              "nonoverlap_diagnostic": {
+                "correct": 12,
+                "count": 24
+              },
+              "retention": {
+                "correct": 24,
+                "count": 24
+              }
+            },
+            "train_token_budget": {
+              "cases": 32,
+              "max_tokens": 812,
+              "padded_tokens_per_pass": 73158,
+              "semantic_tokens_per_pass": 71184,
+              "serialization_sha256": "485b2c481086d29c65b398710d81dce981bcbe7a650bed35111291e8edf05e24"
+            },
+            "training_padded_tokens": 3657900,
+            "training_semantic_tokens": 3559200,
+            "wall_seconds": 37.357623932000024
+          },
+          {
+            "arm": "state",
+            "fit": {
+              "arm_id": "state",
+              "case_ids": [
+                "numbers-and-keys/add/n0-k0/phase-0",
+                "numbers-and-keys/add/n0-k0/phase-1",
+                "numbers-and-keys/add/n0-k0/phase-2",
+                "numbers-and-keys/add/n0-k0/phase-3",
+                "numbers-and-keys/add/n0-k1/phase-0",
+                "numbers-and-keys/add/n0-k1/phase-1",
+                "numbers-and-keys/add/n0-k1/phase-2",
+                "numbers-and-keys/add/n0-k1/phase-3",
+                "numbers-and-keys/add/n1-k0/phase-0",
+                "numbers-and-keys/add/n1-k0/phase-1",
+                "numbers-and-keys/add/n1-k0/phase-2",
+                "numbers-and-keys/add/n1-k0/phase-3",
+                "numbers-and-keys/add/n1-k1/phase-0",
+                "numbers-and-keys/add/n1-k1/phase-1",
+                "numbers-and-keys/add/n1-k1/phase-2",
+                "numbers-and-keys/add/n1-k1/phase-3",
+                "numbers-and-keys/subtract/n0-k0/phase-0",
+                "numbers-and-keys/subtract/n0-k0/phase-1",
+                "numbers-and-keys/subtract/n0-k0/phase-2",
+                "numbers-and-keys/subtract/n0-k0/phase-3",
+                "numbers-and-keys/subtract/n0-k1/phase-0",
+                "numbers-and-keys/subtract/n0-k1/phase-1",
+                "numbers-and-keys/subtract/n0-k1/phase-2",
+                "numbers-and-keys/subtract/n0-k1/phase-3",
+                "numbers-and-keys/subtract/n1-k0/phase-0",
+                "numbers-and-keys/subtract/n1-k0/phase-1",
+                "numbers-and-keys/subtract/n1-k0/phase-2",
+                "numbers-and-keys/subtract/n1-k0/phase-3",
+                "numbers-and-keys/subtract/n1-k1/phase-0",
+                "numbers-and-keys/subtract/n1-k1/phase-1",
+                "numbers-and-keys/subtract/n1-k1/phase-2",
+                "numbers-and-keys/subtract/n1-k1/phase-3"
+              ],
+              "checkpoint": "checkpoint/manifest.json",
+              "checkpoint_id": "decision_fit:fa87c80d78be2cc8c3529d2e4d8a030ca5917cf7f6def971c75d3ff6367b6c55",
+              "epoch_end_evaluation_wall_seconds": 7.335167834999652,
+              "epoch_order": "epoch-order.jsonl",
+              "epoch_predictions": "epoch-predictions.jsonl",
+              "epochs": 50,
+              "equivalent_epochs": 50.0,
+              "example_exposures": 1600,
+              "examples": 32,
+              "final": {
+                "accuracy": 0.96875,
+                "all_target_margins_positive": false,
+                "correct": 31,
+                "examples": 32,
+                "min_target_margin": -0.00017642974853515625,
+                "nll": 0.021906131215042333
+              },
+              "fit_target_met": false,
+              "initial": {
+                "accuracy": 0.03125,
+                "all_target_margins_positive": false,
+                "correct": 1,
+                "examples": 32,
+                "min_target_margin": -0.16477952897548676,
+                "nll": 1.3915896648329513
+              },
+              "initial_evaluation_wall_seconds": 0.17654128000003766,
+              "initial_model_sha256": "a1972623787cdf7abe27cd1f261595d9368106dd9315ba8eebbf3630e764f860",
+              "input_serializer_id": "aster-decision-compact-input-0",
+              "learning_curve": "learning-curve.jsonl",
+              "learning_rate": 0.001,
+              "mode": "shuffle",
+              "optimizer_updates": 1600,
+              "reload_checkpoint_id": "decision_fit:fa87c80d78be2cc8c3529d2e4d8a030ca5917cf7f6def971c75d3ff6367b6c55",
+              "reload_evaluation_wall_seconds": 0.13969499199993152,
+              "reload_metrics_match": true,
+              "stability_window": 3,
+              "update_wall_seconds": 27.762657784000112
+            },
+            "new_dev": {
+              "initial_episodes": {
+                "joint": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "key": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "numbers": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "seen": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                }
+              },
+              "old_dev": {
+                "accuracy": 0.5,
+                "all_target_margins_positive": false,
+                "correct": 28,
+                "examples": 56,
+                "min_target_margin": -10.889911651611328,
+                "nll": 1.7103625755074563
+              },
+              "pairs": {
+                "same_step_different_target": {
+                  "both_correct": 2,
+                  "count": 16
+                },
+                "same_step_same_candidates_different_target": {
+                  "both_correct": 2,
+                  "count": 8
+                }
+              },
+              "prefix_episodes": {
+                "count": 32,
+                "invalid": 0,
+                "success": 14
+              },
+              "rng_unchanged": true,
+              "teacher_prefix": {
+                "accuracy": 0.375,
+                "all_target_margins_positive": false,
+                "correct": 12,
+                "examples": 32,
+                "min_target_margin": -11.442941188812256,
+                "nll": 3.8414465787147085
+              },
+              "test_scored_cases": 0,
+              "visited_input_collisions": 0,
+              "visited_teacher_coverage": true,
+              "weights_unchanged": true
+            },
+            "nonoverlap": {
+              "nonoverlap_decisions": {
+                "correct": 8,
+                "count": 28
+              },
+              "nonoverlap_prefix": {
+                "count": 28,
+                "invalid": 0,
+                "success": 10
+              },
+              "primary_pairs": {
+                "both_correct": 0,
+                "count": 6
+              },
+              "retention_cases": 4
+            },
+            "old_overlap_metrics": {
+              "nonoverlap_diagnostic": {
+                "correct": 8,
+                "count": 24
+              },
+              "retention": {
+                "correct": 20,
+                "count": 32
+              }
+            },
+            "original_dev": {
+              "initial_episodes": {
+                "joint": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "key": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "numbers": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "seen": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                }
+              },
+              "old_dev": {
+                "accuracy": 0.5,
+                "all_target_margins_positive": false,
+                "correct": 28,
+                "examples": 56,
+                "min_target_margin": -10.889911651611328,
+                "nll": 1.7103625755074563
+              },
+              "pairs": {
+                "same_step_different_target": {
+                  "both_correct": 8,
+                  "count": 32
+                },
+                "same_target_different_step": {
+                  "both_correct": 16,
+                  "count": 32
+                }
+              },
+              "prefix_episodes": {
+                "count": 48,
+                "invalid": 0,
+                "success": 18
+              },
+              "rng_unchanged": true,
+              "teacher_prefix": {
+                "accuracy": 0.5,
+                "all_target_margins_positive": false,
+                "correct": 24,
+                "examples": 48,
+                "min_target_margin": -8.401702165603638,
+                "nll": 1.8082546329006197
+              },
+              "test_scored_cases": 0,
+              "visited_input_collisions": 0,
+              "visited_teacher_coverage": true,
+              "weights_unchanged": true
+            },
+            "original_overlap_metrics": {
+              "nonoverlap_diagnostic": {
+                "correct": 9,
+                "count": 24
+              },
+              "retention": {
+                "correct": 15,
+                "count": 24
+              }
+            },
+            "train_token_budget": {
+              "cases": 32,
+              "max_tokens": 812,
+              "padded_tokens_per_pass": 82374,
+              "semantic_tokens_per_pass": 80400,
+              "serialization_sha256": "61e171077d69f7b0bfc0f7d57c4890ce72303c8a9f2f4e3508e553ac12d03424"
+            },
+            "training_padded_tokens": 4118700,
+            "training_semantic_tokens": 4020000,
+            "wall_seconds": 38.102567750999924
+          }
+        ],
+        "calibration": "not_run",
+        "config": {
+          "context_length": 2048,
+          "epochs": 50,
+          "heads": 2,
+          "layers": 1,
+          "learning_rate": 0.001,
+          "min_pair_frequency": 1,
+          "seed": 43,
+          "stability_window": 3,
+          "target_vocab_size": 512,
+          "train_backbone": true,
+          "width": 16
+        },
+        "deadline_seconds_per_arm": 1800,
+        "full_initial_weights_identical": true,
+        "independent_holdout": false,
+        "initial_model_sha256": "a1972623787cdf7abe27cd1f261595d9368106dd9315ba8eebbf3630e764f860",
+        "input_serializer_id": "aster-decision-compact-input-0",
+        "parameter_count": 44353,
+        "parent_groups": 2,
+        "preflight": {
+          "ancestry": "two existing task parent groups; wrong-write family shared train/dev",
+          "changed_slots": [
+            "numbers-and-keys/add/n0-k0/phase-0",
+            "numbers-and-keys/add/n0-k0/phase-1",
+            "numbers-and-keys/add/n0-k1/phase-0",
+            "numbers-and-keys/add/n0-k1/phase-1",
+            "numbers-and-keys/add/n1-k0/phase-0",
+            "numbers-and-keys/add/n1-k0/phase-1",
+            "numbers-and-keys/add/n1-k1/phase-0",
+            "numbers-and-keys/add/n1-k1/phase-1",
+            "numbers-and-keys/subtract/n0-k0/phase-0",
+            "numbers-and-keys/subtract/n0-k0/phase-1",
+            "numbers-and-keys/subtract/n0-k1/phase-0",
+            "numbers-and-keys/subtract/n0-k1/phase-1",
+            "numbers-and-keys/subtract/n1-k0/phase-0",
+            "numbers-and-keys/subtract/n1-k0/phase-1",
+            "numbers-and-keys/subtract/n1-k1/phase-0",
+            "numbers-and-keys/subtract/n1-k1/phase-1"
+          ],
+          "first_candidate_new_dev_correct": 8,
+          "independent_holdout": false,
+          "input_collisions": 0,
+          "irrelevant_delay_is_input_alias": true,
+          "overlap": {
+            "new_dev": {
+              "add/joint/state-0": false,
+              "add/joint/state-1": false,
+              "add/joint/state-2": false,
+              "add/joint/state-3": false,
+              "add/key/state-0": false,
+              "add/key/state-1": false,
+              "add/key/state-2": false,
+              "add/key/state-3": false,
+              "add/numbers/state-0": false,
+              "add/numbers/state-1": false,
+              "add/numbers/state-2": false,
+              "add/numbers/state-3": false,
+              "add/seen/state-0": false,
+              "add/seen/state-1": false,
+              "add/seen/state-2": true,
+              "add/seen/state-3": true,
+              "subtract/joint/state-0": false,
+              "subtract/joint/state-1": false,
+              "subtract/joint/state-2": false,
+              "subtract/joint/state-3": false,
+              "subtract/key/state-0": false,
+              "subtract/key/state-1": false,
+              "subtract/key/state-2": false,
+              "subtract/key/state-3": false,
+              "subtract/numbers/state-0": false,
+              "subtract/numbers/state-1": false,
+              "subtract/numbers/state-2": false,
+              "subtract/numbers/state-3": false,
+              "subtract/seen/state-0": false,
+              "subtract/seen/state-1": false,
+              "subtract/seen/state-2": true,
+              "subtract/seen/state-3": true
+            },
+            "old_dev": {
+              "add/joint/phase-0": false,
+              "add/joint/phase-1": false,
+              "add/joint/phase-2": false,
+              "add/joint/phase-3": false,
+              "add/key/phase-0/delay-0": false,
+              "add/key/phase-1/delay-0": false,
+              "add/key/phase-2/delay-0": false,
+              "add/key/phase-3/delay-0": false,
+              "add/numbers/phase-0/delay-0": false,
+              "add/numbers/phase-1/delay-0": false,
+              "add/numbers/phase-2/delay-0": false,
+              "add/numbers/phase-3/delay-0": false,
+              "add/seen/phase-0/delay-0": true,
+              "add/seen/phase-0/delay-0/reverse": true,
+              "add/seen/phase-0/delay-1": true,
+              "add/seen/phase-0/delay-2": true,
+              "add/seen/phase-1/delay-0": true,
+              "add/seen/phase-1/delay-0/reverse": true,
+              "add/seen/phase-1/delay-1": true,
+              "add/seen/phase-1/delay-2": true,
+              "add/seen/phase-2/delay-0": true,
+              "add/seen/phase-2/delay-0/reverse": true,
+              "add/seen/phase-2/delay-1": true,
+              "add/seen/phase-2/delay-2": true,
+              "add/seen/phase-3/delay-0": true,
+              "add/seen/phase-3/delay-0/reverse": true,
+              "add/seen/phase-3/delay-1": true,
+              "add/seen/phase-3/delay-2": true,
+              "subtract/joint/phase-0": false,
+              "subtract/joint/phase-1": false,
+              "subtract/joint/phase-2": false,
+              "subtract/joint/phase-3": false,
+              "subtract/key/phase-0/delay-0": false,
+              "subtract/key/phase-1/delay-0": false,
+              "subtract/key/phase-2/delay-0": false,
+              "subtract/key/phase-3/delay-0": false,
+              "subtract/numbers/phase-0/delay-0": false,
+              "subtract/numbers/phase-1/delay-0": false,
+              "subtract/numbers/phase-2/delay-0": false,
+              "subtract/numbers/phase-3/delay-0": false,
+              "subtract/seen/phase-0/delay-0": true,
+              "subtract/seen/phase-0/delay-0/reverse": true,
+              "subtract/seen/phase-0/delay-1": true,
+              "subtract/seen/phase-0/delay-2": true,
+              "subtract/seen/phase-1/delay-0": true,
+              "subtract/seen/phase-1/delay-0/reverse": true,
+              "subtract/seen/phase-1/delay-1": true,
+              "subtract/seen/phase-1/delay-2": true,
+              "subtract/seen/phase-2/delay-0": true,
+              "subtract/seen/phase-2/delay-0/reverse": true,
+              "subtract/seen/phase-2/delay-1": true,
+              "subtract/seen/phase-2/delay-2": true,
+              "subtract/seen/phase-3/delay-0": true,
+              "subtract/seen/phase-3/delay-0/reverse": true,
+              "subtract/seen/phase-3/delay-1": true,
+              "subtract/seen/phase-3/delay-2": true
+            },
+            "original_dev": {
+              "add/anchor/phase-0/delay-0": true,
+              "add/anchor/phase-0/delay-1": true,
+              "add/anchor/phase-0/delay-2": true,
+              "add/anchor/phase-1/delay-0": true,
+              "add/anchor/phase-1/delay-1": true,
+              "add/anchor/phase-1/delay-2": true,
+              "add/anchor/phase-2/delay-0": true,
+              "add/anchor/phase-2/delay-1": true,
+              "add/anchor/phase-2/delay-2": true,
+              "add/anchor/phase-3/delay-0": true,
+              "add/anchor/phase-3/delay-1": true,
+              "add/anchor/phase-3/delay-2": true,
+              "add/joint/phase-0/delay-0": false,
+              "add/joint/phase-0/delay-1": false,
+              "add/joint/phase-0/delay-2": false,
+              "add/joint/phase-1/delay-0": false,
+              "add/joint/phase-1/delay-1": false,
+              "add/joint/phase-1/delay-2": false,
+              "add/joint/phase-2/delay-0": false,
+              "add/joint/phase-2/delay-1": false,
+              "add/joint/phase-2/delay-2": false,
+              "add/joint/phase-3/delay-0": false,
+              "add/joint/phase-3/delay-1": false,
+              "add/joint/phase-3/delay-2": false,
+              "subtract/anchor/phase-0/delay-0": true,
+              "subtract/anchor/phase-0/delay-1": true,
+              "subtract/anchor/phase-0/delay-2": true,
+              "subtract/anchor/phase-1/delay-0": true,
+              "subtract/anchor/phase-1/delay-1": true,
+              "subtract/anchor/phase-1/delay-2": true,
+              "subtract/anchor/phase-2/delay-0": true,
+              "subtract/anchor/phase-2/delay-1": true,
+              "subtract/anchor/phase-2/delay-2": true,
+              "subtract/anchor/phase-3/delay-0": true,
+              "subtract/anchor/phase-3/delay-1": true,
+              "subtract/anchor/phase-3/delay-2": true,
+              "subtract/joint/phase-0/delay-0": false,
+              "subtract/joint/phase-0/delay-1": false,
+              "subtract/joint/phase-0/delay-2": false,
+              "subtract/joint/phase-1/delay-0": false,
+              "subtract/joint/phase-1/delay-1": false,
+              "subtract/joint/phase-1/delay-2": false,
+              "subtract/joint/phase-2/delay-0": false,
+              "subtract/joint/phase-2/delay-1": false,
+              "subtract/joint/phase-2/delay-2": false,
+              "subtract/joint/phase-3/delay-0": false,
+              "subtract/joint/phase-3/delay-1": false,
+              "subtract/joint/phase-3/delay-2": false
+            }
+          },
+          "pairs": [
+            {
+              "eligible_nonoverlap": false,
+              "left": "add/seen/state-1",
+              "relation": "same_step_same_candidates_different_target",
+              "right": "add/seen/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/seen/state-0",
+              "relation": "same_step_different_target",
+              "right": "add/seen/state-1"
+            },
+            {
+              "eligible_nonoverlap": false,
+              "left": "add/seen/state-0",
+              "relation": "same_step_different_target",
+              "right": "add/seen/state-2"
+            },
+            {
+              "eligible_nonoverlap": false,
+              "left": "subtract/seen/state-1",
+              "relation": "same_step_same_candidates_different_target",
+              "right": "subtract/seen/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/seen/state-0",
+              "relation": "same_step_different_target",
+              "right": "subtract/seen/state-1"
+            },
+            {
+              "eligible_nonoverlap": false,
+              "left": "subtract/seen/state-0",
+              "relation": "same_step_different_target",
+              "right": "subtract/seen/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/numbers/state-1",
+              "relation": "same_step_same_candidates_different_target",
+              "right": "add/numbers/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/numbers/state-0",
+              "relation": "same_step_different_target",
+              "right": "add/numbers/state-1"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/numbers/state-0",
+              "relation": "same_step_different_target",
+              "right": "add/numbers/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/numbers/state-1",
+              "relation": "same_step_same_candidates_different_target",
+              "right": "subtract/numbers/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/numbers/state-0",
+              "relation": "same_step_different_target",
+              "right": "subtract/numbers/state-1"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/numbers/state-0",
+              "relation": "same_step_different_target",
+              "right": "subtract/numbers/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/key/state-1",
+              "relation": "same_step_same_candidates_different_target",
+              "right": "add/key/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/key/state-0",
+              "relation": "same_step_different_target",
+              "right": "add/key/state-1"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/key/state-0",
+              "relation": "same_step_different_target",
+              "right": "add/key/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/key/state-1",
+              "relation": "same_step_same_candidates_different_target",
+              "right": "subtract/key/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/key/state-0",
+              "relation": "same_step_different_target",
+              "right": "subtract/key/state-1"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/key/state-0",
+              "relation": "same_step_different_target",
+              "right": "subtract/key/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/joint/state-1",
+              "relation": "same_step_same_candidates_different_target",
+              "right": "add/joint/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/joint/state-0",
+              "relation": "same_step_different_target",
+              "right": "add/joint/state-1"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/joint/state-0",
+              "relation": "same_step_different_target",
+              "right": "add/joint/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/joint/state-1",
+              "relation": "same_step_same_candidates_different_target",
+              "right": "subtract/joint/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/joint/state-0",
+              "relation": "same_step_different_target",
+              "right": "subtract/joint/state-1"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/joint/state-0",
+              "relation": "same_step_different_target",
+              "right": "subtract/joint/state-2"
+            }
+          ],
+          "reserved_test_family": "redundant calculator prefixes untouched/not constructed/not scored",
+          "rule_verified_cases": 200,
+          "schema_version": "aster-decision-state-training-0",
+          "step_only_new_dev_correct": 16,
+          "target_counts": {
+            "baseline": {
+              "calculator": 8,
+              "memory.get": 8,
+              "memory.put": 8,
+              "stop": 8
+            },
+            "state": {
+              "calculator": 8,
+              "memory.get": 8,
+              "memory.put": 8,
+              "stop": 8
+            }
+          },
+          "test_scored_cases": 0
+        },
+        "preflight_sha256": "6988f95b52a93bca04524487260fecffcb0596fada222f8f4f64e972d5ada7f9",
+        "process_max_rss_kib": 376648,
+        "python": "3.12.14",
+        "rss_scope": "shared process maximum, not per-arm comparison",
+        "run_id": "95ff3b1d2dc647c5901ba92dd55f254a",
+        "same_epoch_orders": true,
+        "schema_version": "aster-decision-state-training-0",
+        "source_git_sha": "9b8f1ab97b7ed1f03e2a14ef4a3153a384a7eabf",
+        "source_provenance": {
+          "dirty": false,
+          "git_sha": "9b8f1ab97b7ed1f03e2a14ef4a3153a384a7eabf",
+          "protocol_sha256": "f3fc83c85a46122fa1680367cef5c91207d22aa8daf690e428c4371ef567cd43",
+          "python_snapshot_sha256": "0610c7867830a31989b165ecbfa1fa274c70b573b66226b54800feb268b7a327"
+        },
+        "status": "preregistered-measurement",
+        "suite_digests": {
+          "baseline": "9c5a61ca271065bf7775438144ca5f8f930072caed1f52329381bbb5731e5adc",
+          "new_dev": "a548e8605c90f08f7150341ab01d0b7fcdc83a344c5559dc3ad5ee3cfac9b148",
+          "old_dev": "ee7c237386bcf689329c44dd15982477a234ee2bb5e2dace878c8478ce400124",
+          "original_dev": "1ea62e13271ad7f163366736f789e69a4111566fa7483c634c172c3c2e4ea7db",
+          "state": "92c883da0f7e35431778609e77aa5bdc52b7bb65c800c6cd2e7c9f2e89b0b5cd"
+        },
+        "test": "sealed/not_constructed/not_scored",
+        "test_scored_cases": 0,
+        "threads": 2,
+        "torch": "2.14.0+cpu",
+        "wall_seconds": 75.51706886500006
+      },
+      "evidence_sha256": {
+        "arms/baseline/candidate-lookup.json": "6101d2d3291022897bddea3c4231e1ec85b3232202e3e22c211ef1a05245369b",
+        "arms/baseline/checkpoint/manifest.json": "7688f8a42e9654dde699bc4101b6b89059c141cf885d82eaad1d3b258cee16d9",
+        "arms/baseline/checkpoint/model.pt": "368c7127deafc61122ab8c2fe7afdcfeba93b01fd5a45bae308e6f1aa7529f07",
+        "arms/baseline/checkpoint/tokenizer/manifest.json": "b9e3dd9ee093f2f5f6df7e4081fa84280df0fc6440bcf12f7230743d56aafdac",
+        "arms/baseline/checkpoint/tokenizer/merges.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "arms/baseline/checkpoint/tokenizer/special_tokens.json": "b484ab1aa82c5111b05b7cf10ff401894a3d806822c6642b3db4b8c81c8c364d",
+        "arms/baseline/checkpoint/tokenizer/vocab.json": "4a00a5b05a2f1641111144634551b05dfe9a73218b645d891a4b7a473dc4af8d",
+        "arms/baseline/dev-predictions.jsonl": "6246f7cd3fd300778f9fe5a0bebc0b50f669ee1efdf98b3340d6156e1a1599e2",
+        "arms/baseline/epoch-order.jsonl": "b66b7b3e8a5620061d3aeedec0bf50ecba7d01dd5a06a00617d93f575a277473",
+        "arms/baseline/epoch-predictions.jsonl": "e3054c2927bafde9c882eced7f0f1432ff21875d8d145ef6146ee88585e29e91",
+        "arms/baseline/initial-episodes.jsonl": "7f6ff8650095e5ae3cb79e8642efbed8015069f8a409ef053e2f89255df76b7d",
+        "arms/baseline/learning-curve.jsonl": "0f7ad2a7a8686686f1783937941777b3fe8791c95e04027da6c6b36938afc84b",
+        "arms/baseline/nonoverlap.json": "bf877661edf3f8ab3db2a4f5d068d13ba4a57101c2ce4a4cbc40c335c349633b",
+        "arms/baseline/old-dev-predictions.jsonl": "a73893bc2aa23cc329013a605f06fbb6e809df32c8e16de15176a4daeb26f95d",
+        "arms/baseline/original/dev-predictions.jsonl": "485904015196aa5057352a57a2674c09fc702dc0296a0f38fcc066338a1c7543",
+        "arms/baseline/original/initial-episodes.jsonl": "7f6ff8650095e5ae3cb79e8642efbed8015069f8a409ef053e2f89255df76b7d",
+        "arms/baseline/original/old-dev-predictions.jsonl": "a73893bc2aa23cc329013a605f06fbb6e809df32c8e16de15176a4daeb26f95d",
+        "arms/baseline/original/pair-predictions.jsonl": "1e325417608e68e1c05b723e0ea146c889709e659e180a0adda87ea4b75c400b",
+        "arms/baseline/original/prefix-episodes.jsonl": "630e28bb3e5650dee8cb2398fe52d29a8279e840688b888ce46ac3d6e2fd0745",
+        "arms/baseline/pair-predictions.jsonl": "e0bab3d1db0f24672d7301dc53786912c70b9f2b0e1dcc0f39a3ad4af20d31b8",
+        "arms/baseline/prefix-episodes.jsonl": "731da6238b364fa694b6d11841aee463e034a2c3f0b195ce169983f3bba42123",
+        "arms/baseline/result.json": "d8cd003ecb9c05392c638fad58a5d450d7a912f90e5dccd1f43e0ba300b9abdb",
+        "arms/baseline/summary.json": "a240f03807593197ac1eec262ceff4f240bd887ac1f01b1814f69e3ad802aa1a",
+        "arms/state/candidate-lookup.json": "6101d2d3291022897bddea3c4231e1ec85b3232202e3e22c211ef1a05245369b",
+        "arms/state/checkpoint/manifest.json": "7f2b639214350e4fb986592adbd3a3c20ee66053f63acb52bf7fd77f9ae886f5",
+        "arms/state/checkpoint/model.pt": "394019089bdf4a3d2cdb2c1c330a6b8f122d1fe2b0939ea99c8e7d458e52cbb5",
+        "arms/state/checkpoint/tokenizer/manifest.json": "b9e3dd9ee093f2f5f6df7e4081fa84280df0fc6440bcf12f7230743d56aafdac",
+        "arms/state/checkpoint/tokenizer/merges.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "arms/state/checkpoint/tokenizer/special_tokens.json": "b484ab1aa82c5111b05b7cf10ff401894a3d806822c6642b3db4b8c81c8c364d",
+        "arms/state/checkpoint/tokenizer/vocab.json": "4a00a5b05a2f1641111144634551b05dfe9a73218b645d891a4b7a473dc4af8d",
+        "arms/state/dev-predictions.jsonl": "f998cbe0652ad59c8438863eedfa0779b1dbb828a3685f5685fbfa512a08b570",
+        "arms/state/epoch-order.jsonl": "b66b7b3e8a5620061d3aeedec0bf50ecba7d01dd5a06a00617d93f575a277473",
+        "arms/state/epoch-predictions.jsonl": "6a30fb7a8f1dec81c38d1cfc48a3c2487133564e5055da3c377f0a46f98c48ad",
+        "arms/state/initial-episodes.jsonl": "737df0baae45ed4975e88af17981b585c97b4eec0a39fca5b853601e22dc1b25",
+        "arms/state/learning-curve.jsonl": "c7bfbbc5956a3a3526d9eca9590955c45706561d805c328249a6057bd8157428",
+        "arms/state/nonoverlap.json": "1ec91098bcb50ddd7c62db782119907a1b3130049ba05a8f537208bee617f11b",
+        "arms/state/old-dev-predictions.jsonl": "015b76b07030bba79a52aa96c4095db442a8e94639e6b9afa127e3870cf8949c",
+        "arms/state/original/dev-predictions.jsonl": "eba634f816a54ca0fed0b782ff9752c3c7d0202c1228c09ef22d174bfff40b3b",
+        "arms/state/original/initial-episodes.jsonl": "737df0baae45ed4975e88af17981b585c97b4eec0a39fca5b853601e22dc1b25",
+        "arms/state/original/old-dev-predictions.jsonl": "015b76b07030bba79a52aa96c4095db442a8e94639e6b9afa127e3870cf8949c",
+        "arms/state/original/pair-predictions.jsonl": "33fc5764d45356b08265001df80931e638bac25322d8d9e928933196fd5883b3",
+        "arms/state/original/prefix-episodes.jsonl": "0c20b196338591c15049f2c36fcd6263929f9417531cbd863a2f62d5cc8152ed",
+        "arms/state/pair-predictions.jsonl": "310c88449b94ed9990769f037dacc50776c42c7cbf91e9a959eb9a09814362f4",
+        "arms/state/prefix-episodes.jsonl": "c3a42ed38464879c6754d33f9da2194f0330160cd02b480b31afff0a266e81ee",
+        "arms/state/result.json": "e9fbc350c2d2206f930e6b930a599129b7eeac5b3012bf879484ae64baf3d579",
+        "arms/state/summary.json": "03810f59b4980f87845ce3b927498168173e6d870c511c065051e011e2dcf16e",
+        "baseline-inputs.jsonl": "7f3f42387d75150507882f8dde1854a59a80a11f3a06dcee266de3d59adbdf91",
+        "baseline-suite.json": "8899018c2388d0dc5b288535bddb47f7d0a8530e2e4a30cddaa2bc724bde192a",
+        "events.jsonl": "23b4892a04794b64f35c4e5316a2f62c64bb67df5b6ec8f3adf2642150e8b5b4",
+        "new_dev-inputs.jsonl": "726bb17f70972deedcf61e2f305032207c4b87bb989b58f6df40c9848575445b",
+        "new_dev-suite.json": "67652325110b9cbc6626f4543473be193c74859f8b7270b1f29caf0535f72cb0",
+        "old_dev-inputs.jsonl": "d11e4e928d0ea1acf714e5f70eba37a34dda89e5ccae72903e02e5080769abbe",
+        "old_dev-suite.json": "2c25d421a585e42aff6fb67ba2040a1b1ab846aa8656b2faaa47ccc194911efd",
+        "original-preflight.json": "2aee56e6f802054a1d7115753fe11c10f007a0fb3c61aac788dbc6fae77f2c32",
+        "original_dev-inputs.jsonl": "d1a75351042c7531ec41667fdb8edfdb8ca3e32693d657a04297d361de5b5126",
+        "original_dev-suite.json": "7a874a6124e5c2404aafe379828d40f2724bb2eb959104374eee36bcab5cd79c",
+        "pairs.json": "2b4e4a883a02cd560a0e4b1d97d38d3bc34d9f004e4eb5fdaab875f8c666f11f",
+        "preflight.json": "cd0a3b414b15f147e0b68391658ad64ff8f2bd2bc4cd4b1ade770e09384344a4",
+        "protocol.json": "64216aad982b36e8f190f96fa372b781902477486de1608722b0a47e4708e540",
+        "run.json": "2b42df9cc2175cb8cbcdeb34f58e65607d47c1980443b1e3a16ce05f42b0add6",
+        "state-inputs.jsonl": "a377703b42edad1dc9cda1f2d7002ec95c8503762b6cd61b6a2c3adcd1fee0ef",
+        "state-suite.json": "0b5987f52d457a41ad3f423962f2275d9bacc53eae94da5893e212f96237b5f9",
+        "study.json": "37963e53727c402038ce6ed10cac599ff776f8ae98e9f4ee5959faea5b923131"
+      }
+    },
+    {
+      "run_id": "e23c8a5eb94748ef9d08cc8485b7c141",
+      "study": {
+        "arms": [
+          {
+            "arm": "baseline",
+            "fit": {
+              "arm_id": "baseline",
+              "case_ids": [
+                "numbers-and-keys/add/n0-k0/phase-0",
+                "numbers-and-keys/add/n0-k0/phase-1",
+                "numbers-and-keys/add/n0-k0/phase-2",
+                "numbers-and-keys/add/n0-k0/phase-3",
+                "numbers-and-keys/add/n0-k1/phase-0",
+                "numbers-and-keys/add/n0-k1/phase-1",
+                "numbers-and-keys/add/n0-k1/phase-2",
+                "numbers-and-keys/add/n0-k1/phase-3",
+                "numbers-and-keys/add/n1-k0/phase-0",
+                "numbers-and-keys/add/n1-k0/phase-1",
+                "numbers-and-keys/add/n1-k0/phase-2",
+                "numbers-and-keys/add/n1-k0/phase-3",
+                "numbers-and-keys/add/n1-k1/phase-0",
+                "numbers-and-keys/add/n1-k1/phase-1",
+                "numbers-and-keys/add/n1-k1/phase-2",
+                "numbers-and-keys/add/n1-k1/phase-3",
+                "numbers-and-keys/subtract/n0-k0/phase-0",
+                "numbers-and-keys/subtract/n0-k0/phase-1",
+                "numbers-and-keys/subtract/n0-k0/phase-2",
+                "numbers-and-keys/subtract/n0-k0/phase-3",
+                "numbers-and-keys/subtract/n0-k1/phase-0",
+                "numbers-and-keys/subtract/n0-k1/phase-1",
+                "numbers-and-keys/subtract/n0-k1/phase-2",
+                "numbers-and-keys/subtract/n0-k1/phase-3",
+                "numbers-and-keys/subtract/n1-k0/phase-0",
+                "numbers-and-keys/subtract/n1-k0/phase-1",
+                "numbers-and-keys/subtract/n1-k0/phase-2",
+                "numbers-and-keys/subtract/n1-k0/phase-3",
+                "numbers-and-keys/subtract/n1-k1/phase-0",
+                "numbers-and-keys/subtract/n1-k1/phase-1",
+                "numbers-and-keys/subtract/n1-k1/phase-2",
+                "numbers-and-keys/subtract/n1-k1/phase-3"
+              ],
+              "checkpoint": "checkpoint/manifest.json",
+              "checkpoint_id": "decision_fit:0e74cbab7da12b09fe8d9e4e75e6d514a63c43e1b8d06276d4a4ce274f7e1c28",
+              "epoch_end_evaluation_wall_seconds": 7.154022759000213,
+              "epoch_order": "epoch-order.jsonl",
+              "epoch_predictions": "epoch-predictions.jsonl",
+              "epochs": 50,
+              "equivalent_epochs": 50.0,
+              "example_exposures": 1600,
+              "examples": 32,
+              "final": {
+                "accuracy": 1.0,
+                "all_target_margins_positive": true,
+                "correct": 32,
+                "examples": 32,
+                "min_target_margin": 6.796018600463867,
+                "nll": 0.00027151382162296105
+              },
+              "fit_target_met": true,
+              "initial": {
+                "accuracy": 0.125,
+                "all_target_margins_positive": false,
+                "correct": 4,
+                "examples": 32,
+                "min_target_margin": -0.220751591026783,
+                "nll": 1.391249143804808
+              },
+              "initial_evaluation_wall_seconds": 0.17192078599998695,
+              "initial_model_sha256": "2bb1b15e952fb7a665b3717d001681df03411a2cdccc21b703c0adce47258aa5",
+              "input_serializer_id": "aster-decision-compact-input-0",
+              "learning_curve": "learning-curve.jsonl",
+              "learning_rate": 0.001,
+              "mode": "shuffle",
+              "optimizer_updates": 1600,
+              "reload_checkpoint_id": "decision_fit:0e74cbab7da12b09fe8d9e4e75e6d514a63c43e1b8d06276d4a4ce274f7e1c28",
+              "reload_evaluation_wall_seconds": 0.15396696000004795,
+              "reload_metrics_match": true,
+              "stability_window": 3,
+              "update_wall_seconds": 26.160920617999864
+            },
+            "new_dev": {
+              "initial_episodes": {
+                "joint": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "key": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "numbers": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "seen": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 2
+                }
+              },
+              "old_dev": {
+                "accuracy": 0.75,
+                "all_target_margins_positive": false,
+                "correct": 42,
+                "examples": 56,
+                "min_target_margin": -9.944230079650879,
+                "nll": 1.3908387850673287
+              },
+              "pairs": {
+                "same_step_different_target": {
+                  "both_correct": 3,
+                  "count": 16
+                },
+                "same_step_same_candidates_different_target": {
+                  "both_correct": 2,
+                  "count": 8
+                }
+              },
+              "prefix_episodes": {
+                "count": 32,
+                "invalid": 0,
+                "success": 21
+              },
+              "rng_unchanged": true,
+              "teacher_prefix": {
+                "accuracy": 0.53125,
+                "all_target_margins_positive": false,
+                "correct": 17,
+                "examples": 32,
+                "min_target_margin": -9.743695735931396,
+                "nll": 2.1076139469137574
+              },
+              "test_scored_cases": 0,
+              "visited_input_collisions": 0,
+              "visited_teacher_coverage": true,
+              "weights_unchanged": true
+            },
+            "nonoverlap": {
+              "nonoverlap_decisions": {
+                "correct": 13,
+                "count": 28
+              },
+              "nonoverlap_prefix": {
+                "count": 28,
+                "invalid": 0,
+                "success": 17
+              },
+              "primary_pairs": {
+                "both_correct": 0,
+                "count": 6
+              },
+              "retention_cases": 4
+            },
+            "old_overlap_metrics": {
+              "nonoverlap_diagnostic": {
+                "correct": 10,
+                "count": 24
+              },
+              "retention": {
+                "correct": 32,
+                "count": 32
+              }
+            },
+            "original_dev": {
+              "initial_episodes": {
+                "joint": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "key": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "numbers": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "seen": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 2
+                }
+              },
+              "old_dev": {
+                "accuracy": 0.75,
+                "all_target_margins_positive": false,
+                "correct": 42,
+                "examples": 56,
+                "min_target_margin": -9.944230079650879,
+                "nll": 1.3908387850673287
+              },
+              "pairs": {
+                "same_step_different_target": {
+                  "both_correct": 18,
+                  "count": 32
+                },
+                "same_target_different_step": {
+                  "both_correct": 22,
+                  "count": 32
+                }
+              },
+              "prefix_episodes": {
+                "count": 48,
+                "invalid": 0,
+                "success": 33
+              },
+              "rng_unchanged": true,
+              "teacher_prefix": {
+                "accuracy": 0.6875,
+                "all_target_margins_positive": false,
+                "correct": 33,
+                "examples": 48,
+                "min_target_margin": -8.658874034881592,
+                "nll": 1.733291368632649
+              },
+              "test_scored_cases": 0,
+              "visited_input_collisions": 0,
+              "visited_teacher_coverage": true,
+              "weights_unchanged": true
+            },
+            "original_overlap_metrics": {
+              "nonoverlap_diagnostic": {
+                "correct": 9,
+                "count": 24
+              },
+              "retention": {
+                "correct": 24,
+                "count": 24
+              }
+            },
+            "train_token_budget": {
+              "cases": 32,
+              "max_tokens": 812,
+              "padded_tokens_per_pass": 73158,
+              "semantic_tokens_per_pass": 71184,
+              "serialization_sha256": "485b2c481086d29c65b398710d81dce981bcbe7a650bed35111291e8edf05e24"
+            },
+            "training_padded_tokens": 3657900,
+            "training_semantic_tokens": 3559200,
+            "wall_seconds": 37.623467157999926
+          },
+          {
+            "arm": "state",
+            "fit": {
+              "arm_id": "state",
+              "case_ids": [
+                "numbers-and-keys/add/n0-k0/phase-0",
+                "numbers-and-keys/add/n0-k0/phase-1",
+                "numbers-and-keys/add/n0-k0/phase-2",
+                "numbers-and-keys/add/n0-k0/phase-3",
+                "numbers-and-keys/add/n0-k1/phase-0",
+                "numbers-and-keys/add/n0-k1/phase-1",
+                "numbers-and-keys/add/n0-k1/phase-2",
+                "numbers-and-keys/add/n0-k1/phase-3",
+                "numbers-and-keys/add/n1-k0/phase-0",
+                "numbers-and-keys/add/n1-k0/phase-1",
+                "numbers-and-keys/add/n1-k0/phase-2",
+                "numbers-and-keys/add/n1-k0/phase-3",
+                "numbers-and-keys/add/n1-k1/phase-0",
+                "numbers-and-keys/add/n1-k1/phase-1",
+                "numbers-and-keys/add/n1-k1/phase-2",
+                "numbers-and-keys/add/n1-k1/phase-3",
+                "numbers-and-keys/subtract/n0-k0/phase-0",
+                "numbers-and-keys/subtract/n0-k0/phase-1",
+                "numbers-and-keys/subtract/n0-k0/phase-2",
+                "numbers-and-keys/subtract/n0-k0/phase-3",
+                "numbers-and-keys/subtract/n0-k1/phase-0",
+                "numbers-and-keys/subtract/n0-k1/phase-1",
+                "numbers-and-keys/subtract/n0-k1/phase-2",
+                "numbers-and-keys/subtract/n0-k1/phase-3",
+                "numbers-and-keys/subtract/n1-k0/phase-0",
+                "numbers-and-keys/subtract/n1-k0/phase-1",
+                "numbers-and-keys/subtract/n1-k0/phase-2",
+                "numbers-and-keys/subtract/n1-k0/phase-3",
+                "numbers-and-keys/subtract/n1-k1/phase-0",
+                "numbers-and-keys/subtract/n1-k1/phase-1",
+                "numbers-and-keys/subtract/n1-k1/phase-2",
+                "numbers-and-keys/subtract/n1-k1/phase-3"
+              ],
+              "checkpoint": "checkpoint/manifest.json",
+              "checkpoint_id": "decision_fit:85e28854430c38b8fdbe8ca86dee0abb459b134c4616ad5aff97b564430d5650",
+              "epoch_end_evaluation_wall_seconds": 8.691896385000064,
+              "epoch_order": "epoch-order.jsonl",
+              "epoch_predictions": "epoch-predictions.jsonl",
+              "epochs": 50,
+              "equivalent_epochs": 50.0,
+              "example_exposures": 1600,
+              "examples": 32,
+              "final": {
+                "accuracy": 1.0,
+                "all_target_margins_positive": true,
+                "correct": 32,
+                "examples": 32,
+                "min_target_margin": 6.923819541931152,
+                "nll": 0.000223090523034526
+              },
+              "fit_target_met": true,
+              "initial": {
+                "accuracy": 0.3125,
+                "all_target_margins_positive": false,
+                "correct": 10,
+                "examples": 32,
+                "min_target_margin": -0.220751591026783,
+                "nll": 1.376935781606697
+              },
+              "initial_evaluation_wall_seconds": 0.1573220489999585,
+              "initial_model_sha256": "2bb1b15e952fb7a665b3717d001681df03411a2cdccc21b703c0adce47258aa5",
+              "input_serializer_id": "aster-decision-compact-input-0",
+              "learning_curve": "learning-curve.jsonl",
+              "learning_rate": 0.001,
+              "mode": "shuffle",
+              "optimizer_updates": 1600,
+              "reload_checkpoint_id": "decision_fit:85e28854430c38b8fdbe8ca86dee0abb459b134c4616ad5aff97b564430d5650",
+              "reload_evaluation_wall_seconds": 0.1745212050000191,
+              "reload_metrics_match": true,
+              "stability_window": 3,
+              "update_wall_seconds": 32.536915689999205
+            },
+            "new_dev": {
+              "initial_episodes": {
+                "joint": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "key": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "numbers": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "seen": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 1
+                }
+              },
+              "old_dev": {
+                "accuracy": 0.5892857142857143,
+                "all_target_margins_positive": false,
+                "correct": 33,
+                "examples": 56,
+                "min_target_margin": -9.286216735839844,
+                "nll": 1.7219712310978517
+              },
+              "pairs": {
+                "same_step_different_target": {
+                  "both_correct": 0,
+                  "count": 16
+                },
+                "same_step_same_candidates_different_target": {
+                  "both_correct": 2,
+                  "count": 8
+                }
+              },
+              "prefix_episodes": {
+                "count": 32,
+                "invalid": 0,
+                "success": 19
+              },
+              "rng_unchanged": true,
+              "teacher_prefix": {
+                "accuracy": 0.40625,
+                "all_target_margins_positive": false,
+                "correct": 13,
+                "examples": 32,
+                "min_target_margin": -10.796749591827393,
+                "nll": 4.03027005158903
+              },
+              "test_scored_cases": 0,
+              "visited_input_collisions": 0,
+              "visited_teacher_coverage": true,
+              "weights_unchanged": true
+            },
+            "nonoverlap": {
+              "nonoverlap_decisions": {
+                "correct": 9,
+                "count": 28
+              },
+              "nonoverlap_prefix": {
+                "count": 28,
+                "invalid": 0,
+                "success": 15
+              },
+              "primary_pairs": {
+                "both_correct": 0,
+                "count": 6
+              },
+              "retention_cases": 4
+            },
+            "old_overlap_metrics": {
+              "nonoverlap_diagnostic": {
+                "correct": 9,
+                "count": 24
+              },
+              "retention": {
+                "correct": 24,
+                "count": 32
+              }
+            },
+            "original_dev": {
+              "initial_episodes": {
+                "joint": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "key": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "numbers": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 0
+                },
+                "seen": {
+                  "count": 2,
+                  "invalid": 0,
+                  "success": 1
+                }
+              },
+              "old_dev": {
+                "accuracy": 0.5892857142857143,
+                "all_target_margins_positive": false,
+                "correct": 33,
+                "examples": 56,
+                "min_target_margin": -9.286216735839844,
+                "nll": 1.7219712310978517
+              },
+              "pairs": {
+                "same_step_different_target": {
+                  "both_correct": 13,
+                  "count": 32
+                },
+                "same_target_different_step": {
+                  "both_correct": 18,
+                  "count": 32
+                }
+              },
+              "prefix_episodes": {
+                "count": 48,
+                "invalid": 0,
+                "success": 24
+              },
+              "rng_unchanged": true,
+              "teacher_prefix": {
+                "accuracy": 0.5625,
+                "all_target_margins_positive": false,
+                "correct": 27,
+                "examples": 48,
+                "min_target_margin": -7.832295179367065,
+                "nll": 1.9639564834327723
+              },
+              "test_scored_cases": 0,
+              "visited_input_collisions": 0,
+              "visited_teacher_coverage": true,
+              "weights_unchanged": true
+            },
+            "original_overlap_metrics": {
+              "nonoverlap_diagnostic": {
+                "correct": 9,
+                "count": 24
+              },
+              "retention": {
+                "correct": 18,
+                "count": 24
+              }
+            },
+            "train_token_budget": {
+              "cases": 32,
+              "max_tokens": 812,
+              "padded_tokens_per_pass": 82374,
+              "semantic_tokens_per_pass": 80400,
+              "serialization_sha256": "61e171077d69f7b0bfc0f7d57c4890ce72303c8a9f2f4e3508e553ac12d03424"
+            },
+            "training_padded_tokens": 4118700,
+            "training_semantic_tokens": 4020000,
+            "wall_seconds": 45.43665754899996
+          }
+        ],
+        "calibration": "not_run",
+        "config": {
+          "context_length": 2048,
+          "epochs": 50,
+          "heads": 2,
+          "layers": 1,
+          "learning_rate": 0.001,
+          "min_pair_frequency": 1,
+          "seed": 44,
+          "stability_window": 3,
+          "target_vocab_size": 512,
+          "train_backbone": true,
+          "width": 16
+        },
+        "deadline_seconds_per_arm": 1800,
+        "full_initial_weights_identical": true,
+        "independent_holdout": false,
+        "initial_model_sha256": "2bb1b15e952fb7a665b3717d001681df03411a2cdccc21b703c0adce47258aa5",
+        "input_serializer_id": "aster-decision-compact-input-0",
+        "parameter_count": 44353,
+        "parent_groups": 2,
+        "preflight": {
+          "ancestry": "two existing task parent groups; wrong-write family shared train/dev",
+          "changed_slots": [
+            "numbers-and-keys/add/n0-k0/phase-0",
+            "numbers-and-keys/add/n0-k0/phase-1",
+            "numbers-and-keys/add/n0-k1/phase-0",
+            "numbers-and-keys/add/n0-k1/phase-1",
+            "numbers-and-keys/add/n1-k0/phase-0",
+            "numbers-and-keys/add/n1-k0/phase-1",
+            "numbers-and-keys/add/n1-k1/phase-0",
+            "numbers-and-keys/add/n1-k1/phase-1",
+            "numbers-and-keys/subtract/n0-k0/phase-0",
+            "numbers-and-keys/subtract/n0-k0/phase-1",
+            "numbers-and-keys/subtract/n0-k1/phase-0",
+            "numbers-and-keys/subtract/n0-k1/phase-1",
+            "numbers-and-keys/subtract/n1-k0/phase-0",
+            "numbers-and-keys/subtract/n1-k0/phase-1",
+            "numbers-and-keys/subtract/n1-k1/phase-0",
+            "numbers-and-keys/subtract/n1-k1/phase-1"
+          ],
+          "first_candidate_new_dev_correct": 8,
+          "independent_holdout": false,
+          "input_collisions": 0,
+          "irrelevant_delay_is_input_alias": true,
+          "overlap": {
+            "new_dev": {
+              "add/joint/state-0": false,
+              "add/joint/state-1": false,
+              "add/joint/state-2": false,
+              "add/joint/state-3": false,
+              "add/key/state-0": false,
+              "add/key/state-1": false,
+              "add/key/state-2": false,
+              "add/key/state-3": false,
+              "add/numbers/state-0": false,
+              "add/numbers/state-1": false,
+              "add/numbers/state-2": false,
+              "add/numbers/state-3": false,
+              "add/seen/state-0": false,
+              "add/seen/state-1": false,
+              "add/seen/state-2": true,
+              "add/seen/state-3": true,
+              "subtract/joint/state-0": false,
+              "subtract/joint/state-1": false,
+              "subtract/joint/state-2": false,
+              "subtract/joint/state-3": false,
+              "subtract/key/state-0": false,
+              "subtract/key/state-1": false,
+              "subtract/key/state-2": false,
+              "subtract/key/state-3": false,
+              "subtract/numbers/state-0": false,
+              "subtract/numbers/state-1": false,
+              "subtract/numbers/state-2": false,
+              "subtract/numbers/state-3": false,
+              "subtract/seen/state-0": false,
+              "subtract/seen/state-1": false,
+              "subtract/seen/state-2": true,
+              "subtract/seen/state-3": true
+            },
+            "old_dev": {
+              "add/joint/phase-0": false,
+              "add/joint/phase-1": false,
+              "add/joint/phase-2": false,
+              "add/joint/phase-3": false,
+              "add/key/phase-0/delay-0": false,
+              "add/key/phase-1/delay-0": false,
+              "add/key/phase-2/delay-0": false,
+              "add/key/phase-3/delay-0": false,
+              "add/numbers/phase-0/delay-0": false,
+              "add/numbers/phase-1/delay-0": false,
+              "add/numbers/phase-2/delay-0": false,
+              "add/numbers/phase-3/delay-0": false,
+              "add/seen/phase-0/delay-0": true,
+              "add/seen/phase-0/delay-0/reverse": true,
+              "add/seen/phase-0/delay-1": true,
+              "add/seen/phase-0/delay-2": true,
+              "add/seen/phase-1/delay-0": true,
+              "add/seen/phase-1/delay-0/reverse": true,
+              "add/seen/phase-1/delay-1": true,
+              "add/seen/phase-1/delay-2": true,
+              "add/seen/phase-2/delay-0": true,
+              "add/seen/phase-2/delay-0/reverse": true,
+              "add/seen/phase-2/delay-1": true,
+              "add/seen/phase-2/delay-2": true,
+              "add/seen/phase-3/delay-0": true,
+              "add/seen/phase-3/delay-0/reverse": true,
+              "add/seen/phase-3/delay-1": true,
+              "add/seen/phase-3/delay-2": true,
+              "subtract/joint/phase-0": false,
+              "subtract/joint/phase-1": false,
+              "subtract/joint/phase-2": false,
+              "subtract/joint/phase-3": false,
+              "subtract/key/phase-0/delay-0": false,
+              "subtract/key/phase-1/delay-0": false,
+              "subtract/key/phase-2/delay-0": false,
+              "subtract/key/phase-3/delay-0": false,
+              "subtract/numbers/phase-0/delay-0": false,
+              "subtract/numbers/phase-1/delay-0": false,
+              "subtract/numbers/phase-2/delay-0": false,
+              "subtract/numbers/phase-3/delay-0": false,
+              "subtract/seen/phase-0/delay-0": true,
+              "subtract/seen/phase-0/delay-0/reverse": true,
+              "subtract/seen/phase-0/delay-1": true,
+              "subtract/seen/phase-0/delay-2": true,
+              "subtract/seen/phase-1/delay-0": true,
+              "subtract/seen/phase-1/delay-0/reverse": true,
+              "subtract/seen/phase-1/delay-1": true,
+              "subtract/seen/phase-1/delay-2": true,
+              "subtract/seen/phase-2/delay-0": true,
+              "subtract/seen/phase-2/delay-0/reverse": true,
+              "subtract/seen/phase-2/delay-1": true,
+              "subtract/seen/phase-2/delay-2": true,
+              "subtract/seen/phase-3/delay-0": true,
+              "subtract/seen/phase-3/delay-0/reverse": true,
+              "subtract/seen/phase-3/delay-1": true,
+              "subtract/seen/phase-3/delay-2": true
+            },
+            "original_dev": {
+              "add/anchor/phase-0/delay-0": true,
+              "add/anchor/phase-0/delay-1": true,
+              "add/anchor/phase-0/delay-2": true,
+              "add/anchor/phase-1/delay-0": true,
+              "add/anchor/phase-1/delay-1": true,
+              "add/anchor/phase-1/delay-2": true,
+              "add/anchor/phase-2/delay-0": true,
+              "add/anchor/phase-2/delay-1": true,
+              "add/anchor/phase-2/delay-2": true,
+              "add/anchor/phase-3/delay-0": true,
+              "add/anchor/phase-3/delay-1": true,
+              "add/anchor/phase-3/delay-2": true,
+              "add/joint/phase-0/delay-0": false,
+              "add/joint/phase-0/delay-1": false,
+              "add/joint/phase-0/delay-2": false,
+              "add/joint/phase-1/delay-0": false,
+              "add/joint/phase-1/delay-1": false,
+              "add/joint/phase-1/delay-2": false,
+              "add/joint/phase-2/delay-0": false,
+              "add/joint/phase-2/delay-1": false,
+              "add/joint/phase-2/delay-2": false,
+              "add/joint/phase-3/delay-0": false,
+              "add/joint/phase-3/delay-1": false,
+              "add/joint/phase-3/delay-2": false,
+              "subtract/anchor/phase-0/delay-0": true,
+              "subtract/anchor/phase-0/delay-1": true,
+              "subtract/anchor/phase-0/delay-2": true,
+              "subtract/anchor/phase-1/delay-0": true,
+              "subtract/anchor/phase-1/delay-1": true,
+              "subtract/anchor/phase-1/delay-2": true,
+              "subtract/anchor/phase-2/delay-0": true,
+              "subtract/anchor/phase-2/delay-1": true,
+              "subtract/anchor/phase-2/delay-2": true,
+              "subtract/anchor/phase-3/delay-0": true,
+              "subtract/anchor/phase-3/delay-1": true,
+              "subtract/anchor/phase-3/delay-2": true,
+              "subtract/joint/phase-0/delay-0": false,
+              "subtract/joint/phase-0/delay-1": false,
+              "subtract/joint/phase-0/delay-2": false,
+              "subtract/joint/phase-1/delay-0": false,
+              "subtract/joint/phase-1/delay-1": false,
+              "subtract/joint/phase-1/delay-2": false,
+              "subtract/joint/phase-2/delay-0": false,
+              "subtract/joint/phase-2/delay-1": false,
+              "subtract/joint/phase-2/delay-2": false,
+              "subtract/joint/phase-3/delay-0": false,
+              "subtract/joint/phase-3/delay-1": false,
+              "subtract/joint/phase-3/delay-2": false
+            }
+          },
+          "pairs": [
+            {
+              "eligible_nonoverlap": false,
+              "left": "add/seen/state-1",
+              "relation": "same_step_same_candidates_different_target",
+              "right": "add/seen/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/seen/state-0",
+              "relation": "same_step_different_target",
+              "right": "add/seen/state-1"
+            },
+            {
+              "eligible_nonoverlap": false,
+              "left": "add/seen/state-0",
+              "relation": "same_step_different_target",
+              "right": "add/seen/state-2"
+            },
+            {
+              "eligible_nonoverlap": false,
+              "left": "subtract/seen/state-1",
+              "relation": "same_step_same_candidates_different_target",
+              "right": "subtract/seen/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/seen/state-0",
+              "relation": "same_step_different_target",
+              "right": "subtract/seen/state-1"
+            },
+            {
+              "eligible_nonoverlap": false,
+              "left": "subtract/seen/state-0",
+              "relation": "same_step_different_target",
+              "right": "subtract/seen/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/numbers/state-1",
+              "relation": "same_step_same_candidates_different_target",
+              "right": "add/numbers/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/numbers/state-0",
+              "relation": "same_step_different_target",
+              "right": "add/numbers/state-1"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/numbers/state-0",
+              "relation": "same_step_different_target",
+              "right": "add/numbers/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/numbers/state-1",
+              "relation": "same_step_same_candidates_different_target",
+              "right": "subtract/numbers/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/numbers/state-0",
+              "relation": "same_step_different_target",
+              "right": "subtract/numbers/state-1"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/numbers/state-0",
+              "relation": "same_step_different_target",
+              "right": "subtract/numbers/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/key/state-1",
+              "relation": "same_step_same_candidates_different_target",
+              "right": "add/key/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/key/state-0",
+              "relation": "same_step_different_target",
+              "right": "add/key/state-1"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/key/state-0",
+              "relation": "same_step_different_target",
+              "right": "add/key/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/key/state-1",
+              "relation": "same_step_same_candidates_different_target",
+              "right": "subtract/key/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/key/state-0",
+              "relation": "same_step_different_target",
+              "right": "subtract/key/state-1"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/key/state-0",
+              "relation": "same_step_different_target",
+              "right": "subtract/key/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/joint/state-1",
+              "relation": "same_step_same_candidates_different_target",
+              "right": "add/joint/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/joint/state-0",
+              "relation": "same_step_different_target",
+              "right": "add/joint/state-1"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "add/joint/state-0",
+              "relation": "same_step_different_target",
+              "right": "add/joint/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/joint/state-1",
+              "relation": "same_step_same_candidates_different_target",
+              "right": "subtract/joint/state-2"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/joint/state-0",
+              "relation": "same_step_different_target",
+              "right": "subtract/joint/state-1"
+            },
+            {
+              "eligible_nonoverlap": true,
+              "left": "subtract/joint/state-0",
+              "relation": "same_step_different_target",
+              "right": "subtract/joint/state-2"
+            }
+          ],
+          "reserved_test_family": "redundant calculator prefixes untouched/not constructed/not scored",
+          "rule_verified_cases": 200,
+          "schema_version": "aster-decision-state-training-0",
+          "step_only_new_dev_correct": 16,
+          "target_counts": {
+            "baseline": {
+              "calculator": 8,
+              "memory.get": 8,
+              "memory.put": 8,
+              "stop": 8
+            },
+            "state": {
+              "calculator": 8,
+              "memory.get": 8,
+              "memory.put": 8,
+              "stop": 8
+            }
+          },
+          "test_scored_cases": 0
+        },
+        "preflight_sha256": "6988f95b52a93bca04524487260fecffcb0596fada222f8f4f64e972d5ada7f9",
+        "process_max_rss_kib": 382436,
+        "python": "3.12.14",
+        "rss_scope": "shared process maximum, not per-arm comparison",
+        "run_id": "e23c8a5eb94748ef9d08cc8485b7c141",
+        "same_epoch_orders": true,
+        "schema_version": "aster-decision-state-training-0",
+        "source_git_sha": "9b8f1ab97b7ed1f03e2a14ef4a3153a384a7eabf",
+        "source_provenance": {
+          "dirty": false,
+          "git_sha": "9b8f1ab97b7ed1f03e2a14ef4a3153a384a7eabf",
+          "protocol_sha256": "f3fc83c85a46122fa1680367cef5c91207d22aa8daf690e428c4371ef567cd43",
+          "python_snapshot_sha256": "0610c7867830a31989b165ecbfa1fa274c70b573b66226b54800feb268b7a327"
+        },
+        "status": "preregistered-measurement",
+        "suite_digests": {
+          "baseline": "9c5a61ca271065bf7775438144ca5f8f930072caed1f52329381bbb5731e5adc",
+          "new_dev": "a548e8605c90f08f7150341ab01d0b7fcdc83a344c5559dc3ad5ee3cfac9b148",
+          "old_dev": "ee7c237386bcf689329c44dd15982477a234ee2bb5e2dace878c8478ce400124",
+          "original_dev": "1ea62e13271ad7f163366736f789e69a4111566fa7483c634c172c3c2e4ea7db",
+          "state": "92c883da0f7e35431778609e77aa5bdc52b7bb65c800c6cd2e7c9f2e89b0b5cd"
+        },
+        "test": "sealed/not_constructed/not_scored",
+        "test_scored_cases": 0,
+        "threads": 2,
+        "torch": "2.14.0+cpu",
+        "wall_seconds": 83.13373277400001
+      },
+      "evidence_sha256": {
+        "arms/baseline/candidate-lookup.json": "6101d2d3291022897bddea3c4231e1ec85b3232202e3e22c211ef1a05245369b",
+        "arms/baseline/checkpoint/manifest.json": "2ba64bd17255984b1c2c72de4206318938bba2633563b641719df7af7fc36903",
+        "arms/baseline/checkpoint/model.pt": "e5f90e14319a34e321e2e8835c178dc3283941017d588931468bda7e76e3c938",
+        "arms/baseline/checkpoint/tokenizer/manifest.json": "b9e3dd9ee093f2f5f6df7e4081fa84280df0fc6440bcf12f7230743d56aafdac",
+        "arms/baseline/checkpoint/tokenizer/merges.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "arms/baseline/checkpoint/tokenizer/special_tokens.json": "b484ab1aa82c5111b05b7cf10ff401894a3d806822c6642b3db4b8c81c8c364d",
+        "arms/baseline/checkpoint/tokenizer/vocab.json": "4a00a5b05a2f1641111144634551b05dfe9a73218b645d891a4b7a473dc4af8d",
+        "arms/baseline/dev-predictions.jsonl": "5cce12b3b8a2119bc5ae6cad5d569f349e9f56a9c7bb3ce2efb6c2d14ab94515",
+        "arms/baseline/epoch-order.jsonl": "b4b0dc1b25f04fad40aee8e08e375c968c1af7f2909f557bf98624959341f73b",
+        "arms/baseline/epoch-predictions.jsonl": "2ad1bc6189a984b655d73cc397b3a900d9199a3f14acd4d9712842019e98caa2",
+        "arms/baseline/initial-episodes.jsonl": "a2f26ba36e8b47ab07cc918a55537a570fcf0ca9d5c88b625e4795bd7d4efe3a",
+        "arms/baseline/learning-curve.jsonl": "f8f10790326980303f2a32b7abb338fd537360eb6acd305adecba82587a43e24",
+        "arms/baseline/nonoverlap.json": "1181ea6ec1f5ef4f9a967aa1ff7112ec07d2203cac310530af93069f1a3528ea",
+        "arms/baseline/old-dev-predictions.jsonl": "f1e6210a1be8cd3d6c391703a6aaa65a39d3174ea0567d31662118fbb75587c3",
+        "arms/baseline/original/dev-predictions.jsonl": "97280bba8f1861ab65ca20e6afa646cd0255fe4d29cdafc790b2392bd77e26b1",
+        "arms/baseline/original/initial-episodes.jsonl": "a2f26ba36e8b47ab07cc918a55537a570fcf0ca9d5c88b625e4795bd7d4efe3a",
+        "arms/baseline/original/old-dev-predictions.jsonl": "f1e6210a1be8cd3d6c391703a6aaa65a39d3174ea0567d31662118fbb75587c3",
+        "arms/baseline/original/pair-predictions.jsonl": "6d56d72deb2115e9a8da84d02d6a0bae63425fd1cd0efaa90a6d79b6485ff831",
+        "arms/baseline/original/prefix-episodes.jsonl": "ec3197d63dec73980c2b6319c4551683fadf5f4bdf1e5d71a7ff6581456ef819",
+        "arms/baseline/pair-predictions.jsonl": "a6bf34085b1619486496f5693c7ae2a3cbd3489332e5dfbb8ab9b3a39c319c56",
+        "arms/baseline/prefix-episodes.jsonl": "8bd9591907ef7073b14fd78278e14f75fce917297038b14f76432c3b9ccf888c",
+        "arms/baseline/result.json": "ab096a321c468efe2661400fa07a8cf136f510a0d7d00b58623594da7db56ac9",
+        "arms/baseline/summary.json": "e229265098f6cdbcc64fcb9a4b1af0acb8b66b45be854cdc8120dc43d0d26350",
+        "arms/state/candidate-lookup.json": "6101d2d3291022897bddea3c4231e1ec85b3232202e3e22c211ef1a05245369b",
+        "arms/state/checkpoint/manifest.json": "9d439716ad4de4d544f1adfeaf8d8ecf17f7eab6f06aac89c515abf6bf2e63cc",
+        "arms/state/checkpoint/model.pt": "06f4bbdc7ad1f3b5456bd796ffe9efc38b4445ad0afbe18e0090695d551fa92a",
+        "arms/state/checkpoint/tokenizer/manifest.json": "b9e3dd9ee093f2f5f6df7e4081fa84280df0fc6440bcf12f7230743d56aafdac",
+        "arms/state/checkpoint/tokenizer/merges.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "arms/state/checkpoint/tokenizer/special_tokens.json": "b484ab1aa82c5111b05b7cf10ff401894a3d806822c6642b3db4b8c81c8c364d",
+        "arms/state/checkpoint/tokenizer/vocab.json": "4a00a5b05a2f1641111144634551b05dfe9a73218b645d891a4b7a473dc4af8d",
+        "arms/state/dev-predictions.jsonl": "5793447ac2bf87fd141aad7a16a7f67cdc4ebbb0d3d733f84568202536e83d90",
+        "arms/state/epoch-order.jsonl": "b4b0dc1b25f04fad40aee8e08e375c968c1af7f2909f557bf98624959341f73b",
+        "arms/state/epoch-predictions.jsonl": "4d3a2dff4cdda023e3e4c955b65a30e627bea391b4d4e055f39b7a9d87ceeccb",
+        "arms/state/initial-episodes.jsonl": "cb35d98a08cab3e3c63b2f0a685e86004d1e1a8baa268a404362bb607e4f1cfc",
+        "arms/state/learning-curve.jsonl": "dfe8144f965bb1f2defdeeb89023acebd7db68616260ca645f1c553385ea0bb3",
+        "arms/state/nonoverlap.json": "72f75bc5bcf139e3eca71d48c949b77f1051703e69409c8b707a7b6e9b78d6a7",
+        "arms/state/old-dev-predictions.jsonl": "c0c35aa38a21d25ba1345e3af6d25af902fc7c52cd515facea0ca1ad8df13490",
+        "arms/state/original/dev-predictions.jsonl": "10ea4b9dfc51ed80d0a03b6995a7fc9553e8552ce0251b0f71630d53bd6cad45",
+        "arms/state/original/initial-episodes.jsonl": "cb35d98a08cab3e3c63b2f0a685e86004d1e1a8baa268a404362bb607e4f1cfc",
+        "arms/state/original/old-dev-predictions.jsonl": "c0c35aa38a21d25ba1345e3af6d25af902fc7c52cd515facea0ca1ad8df13490",
+        "arms/state/original/pair-predictions.jsonl": "735260491674a0abc832007857fea645b8a81bd1cdd59f84fcafb12d6e5ee1eb",
+        "arms/state/original/prefix-episodes.jsonl": "2e78ce387108bb3467669e9cf81ff873736a913243bf97f5ea960caa8c9d1cda",
+        "arms/state/pair-predictions.jsonl": "12f5ba9510ab8ed7f45213eb0ded6d78c6ffb02e78cde3a2f91b32b0b2ca832e",
+        "arms/state/prefix-episodes.jsonl": "24074b146200d7dc6a651b740b2e595ed13a51c44648d6b7daade341cd4e10ce",
+        "arms/state/result.json": "0b0d381782348a3923606a865123fe0f43f8bc9c87c1ff6ec5cbeed3de336558",
+        "arms/state/summary.json": "c6189d214482db7d6d3135aafa1a5e96663676c3a789c88432e26a8eebdf175e",
+        "baseline-inputs.jsonl": "7f3f42387d75150507882f8dde1854a59a80a11f3a06dcee266de3d59adbdf91",
+        "baseline-suite.json": "8899018c2388d0dc5b288535bddb47f7d0a8530e2e4a30cddaa2bc724bde192a",
+        "events.jsonl": "de61ddd4f13283a6fbf635544242b6aacfe97db76f68d76f474b65e75792dd13",
+        "new_dev-inputs.jsonl": "726bb17f70972deedcf61e2f305032207c4b87bb989b58f6df40c9848575445b",
+        "new_dev-suite.json": "67652325110b9cbc6626f4543473be193c74859f8b7270b1f29caf0535f72cb0",
+        "old_dev-inputs.jsonl": "d11e4e928d0ea1acf714e5f70eba37a34dda89e5ccae72903e02e5080769abbe",
+        "old_dev-suite.json": "2c25d421a585e42aff6fb67ba2040a1b1ab846aa8656b2faaa47ccc194911efd",
+        "original-preflight.json": "2aee56e6f802054a1d7115753fe11c10f007a0fb3c61aac788dbc6fae77f2c32",
+        "original_dev-inputs.jsonl": "d1a75351042c7531ec41667fdb8edfdb8ca3e32693d657a04297d361de5b5126",
+        "original_dev-suite.json": "7a874a6124e5c2404aafe379828d40f2724bb2eb959104374eee36bcab5cd79c",
+        "pairs.json": "2b4e4a883a02cd560a0e4b1d97d38d3bc34d9f004e4eb5fdaab875f8c666f11f",
+        "preflight.json": "cd0a3b414b15f147e0b68391658ad64ff8f2bd2bc4cd4b1ade770e09384344a4",
+        "protocol.json": "1c1f96db94a2e363fbe9e38dd71729842e0ef9abe240e4054e1d4631e66b1842",
+        "run.json": "d2374f6f694a008db3b372094e5babc2c4b2afd82eb2a833f0481f2ff495d852",
+        "state-inputs.jsonl": "a377703b42edad1dc9cda1f2d7002ec95c8503762b6cd61b6a2c3adcd1fee0ef",
+        "state-suite.json": "0b5987f52d457a41ad3f423962f2275d9bacc53eae94da5893e212f96237b5f9",
+        "study.json": "48d72b66aa12910c4d71d38588caa0db9cf47b3e08caf755a6ce7a9567756218"
+      }
+    }
+  ],
+  "validation": {
+    "train_predictions": 9792,
+    "dev_predictions": 1152,
+    "episodes": 576,
+    "arms": 6,
+    "runs": 3
+  },
+  "pytest": "143 passed",
+  "pyright": "0 errors / 0 warnings",
+  "independent_holdout": false,
+  "test_scored_cases": 0
+}

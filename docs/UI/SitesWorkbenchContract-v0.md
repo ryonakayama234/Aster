@@ -9,6 +9,8 @@ Asterを操作・観測・育成する個人用Web作業場にする。ユーザ
 完成像は素材の取込・採用から、前処理、Tokenizer、Pretrain、推論・対話、Agent実行、評価、再学習候補までを辿れる環境。
 全段階を実装済みに見せない。添付「Aster 計画.pdf」のTinyLM → Training → Inference → Message/Tool protocol → Agent Loop → Trace/Evaluatorという段階を尊重する。
 
+2026-10-01状態対照train比較: 将来の比較表示では、正常例の置換/保持、比較全armのtrain入力との重複、teacher-prefix/開始状態からの自力継続/最初からの自力完了を区別する。今回のCLI実測はreports/decision-state-training-v0.mdに保存。公開bundle/Service/Web表示は#29→aster-web#2の後続で未実装。UIは独自に重複判定や成功率を再採点せず、Asterのcanonical集計を表示する。
+
 ## 所有と責務
 
 | 対象 | 正本・担当 |
