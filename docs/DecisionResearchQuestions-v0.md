@@ -169,3 +169,8 @@ aster-webはそれらの実測とTraceを観測する側として捉え、
 ## 2026-10-01: 固定モデル診断の実測へ
 
 [固定v1診断report](../reports/decision-fixed-v1-diagnostics-v0.md)を追加。正常経路の低下と反復による選択変化が残り、この2誤値の違いだけで悪化を説明する説は弱まった。旧モデルのv1診断であり独立holdoutではない。次は正常例保持の混合学習を別protocolへ落とす。新仕様の未学習と表現/容量を混同しない。
+
+
+## 2026-10-01：次の問いをv1混合学習へ具体化
+
+[全体像と混合学習計画](DecisionMixedTraining-v0.md)を追加。正常例保持、正解Action頻度、総更新を揃える2条件を設計した。正常例の個別exposure差とv1未学習mutationを限界として明記。計画の保存のみで、生成preflight・runner・学習・能力測定は未実施。基準はPR #36 head 5291a377abb3140cbf4255ec094738cbf0b7c3aa。次は生成物・digestの正式登録後に測定する。
