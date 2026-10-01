@@ -165,3 +165,7 @@ epoch0を含むunique train評価はnormal32×26=832、mixed48×26=1,248判断/a
 実装時にはpreflight生成物/digest/測定sourceを正式登録し、その後に測定する。
 Web観測は#29→aster-web#2、言語pilotは#21、raw登録はaster-web#3へ継続。
 今回はAPI/UI/Site公開版を変更せず、追加プラグインやユーザーPC作業は必要ない。
+
+## 2026-10-01追記：生成preflight完了
+
+[実測report](../reports/decision-mixed-v1-preflight-v0.md)とJSONに固定生成物/digestを保存した。正常32＋復帰16unique、両64slot/Action各16、衝突0、dev128のunion重複14、非重複主対照24組。モデルscoring/更新0。上の未実施記述は計画作成時点の履歴で、runner実装・比較学習・新能力測定は引き続き未実施。次は保存digest一致を要求するrunner。

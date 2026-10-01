@@ -174,3 +174,7 @@ aster-webはそれらの実測とTraceを観測する側として捉え、
 ## 2026-10-01：次の問いをv1混合学習へ具体化
 
 [全体像と混合学習計画](DecisionMixedTraining-v0.md)を追加。正常例保持、正解Action頻度、総更新を揃える2条件を設計した。正常例の個別exposure差とv1未学習mutationを限界として明記。計画の保存のみで、生成preflight・runner・学習・能力測定は未実施。基準はPR #36 head 5291a377abb3140cbf4255ec094738cbf0b7c3aa。次は生成物・digestの正式登録後に測定する。
+
+## 2026-10-01：混合trainの生成が成立
+
+[preflight実測](../reports/decision-mixed-v1-preflight-v0.md)で48unique train＋128devの到達可能性・独立終状態・Byte長・衝突0を確認。新unionのdev重複14、非重複主対照24組。次は固定suite/slot/Tokenizer/serializer digest下での学習比較。モデル改善は未測定。

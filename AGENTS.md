@@ -74,3 +74,5 @@ Asterは、自作TinyLMを通してAI・Python・数学・コンピューター�
 2026-10-01固定v1診断補足: 旧v0モデルをv1へ診断する際は仕様変更による分布差を明記し、教師/候補/評価/再生をv1で揃える。候補集合が供給する情報を監査し、同候補・異targetの対照を報告する。候補1個のmarginは未定義とし、teacher Action一致と停止時のtask_successを分ける。
 
 2026-10-01混合計画補足: docs/DecisionMixedTraining-v0.mdを実装する際は、v1教師/候補/評価を揃え、正常例を全て含むことと個別exposure一致を区別する。新train unionとdev入力を再照合し、旧非重複件数を流用しない。計画保存・生成preflight・能力測定を別の達成として報告する。
+
+2026-10-01混合preflight補足: 生成正本はreports/decision-mixed-v1-preflight-v0.json、source/slot/suite/input/Tokenizer digestを次runner開始前に一致検査する。初期空履歴は既存Trajectory互換のv0識別になるため、v1 Session/Run契約を明示し非空履歴をv1へ揃える。preflight成功と学習能力を区別する。
