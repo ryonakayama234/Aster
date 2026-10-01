@@ -123,3 +123,5 @@ UIでdiagnostic successを再計算せず、未提供の値を推測しない。
 
 
 2026-10-01混合学習計画メモ：[DecisionMixedTraining-v0](../DecisionMixedTraining-v0.md)は未測定。将来の比較は学習/評価のgoal契約、unique判断数と提示slot数、Action頻度、正常例の個別exposure、union-train重複を示す。teacher-prefix、prefix継続、初期episodeを分離する。新trainとの照合で非重複件数は変わり得るため、旧reportの分母を流用しない。API/Web実装は#29→aster-web#2の後続。
+
+2026-10-01混合preflight: 将来表示する生成検証の正本はreports/decision-mixed-v1-preflight-v0.json。176例の生成成立/候補coverage/衝突/長さはモデルscoreとは別に表示する。今回の研究CLIはService公開bundleではなく、model-scored=0・updates=0を保持。Web変更未実施。

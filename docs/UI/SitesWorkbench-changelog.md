@@ -206,3 +206,12 @@
 - 文書・算術検証のみ。生成preflight、実装、学習、能力新測定、ユーザーWSL/ブラウザ確認は未実施。pytest/CI成功を今回の成果として主張しない。
 - branch docs/decision-mixed-v1-next-stepはPR #36 headを基準とする文書のみのDraft。API/Service/aster-web/Site公開/モデル採用は変更しない。
 - 次：同計画の実Tool生成preflightとdigest正式登録。観測#29→aster-web#2、言語#21、育成#20を別経路で維持。ユーザー側の追加作業不要。
+
+## 2026-10-01：v1混合学習前の実Tool生成・保存監査
+
+- 基準PR #37 ab7f817。正常32＋復帰16、dev128、64slotの両armを生成しv1教師/候補/実行/評価へ整合。
+- 176例/888transitionの独立停止時確認、衝突0、max1190/2048。train同候補異target8組、dev重複14・非重複主対照24組を再計算。
+- formal clean source f3fac1b66726649ed39f2e09006c2ecea14c1ebf、Run c565a9d6d6f449448c451ae9bf438d66、Python/torch/hashをreportsへ保存。LinuxCPUでユーザーWSL未測定。
+- 全pytest163、最終関連4、Pyright0/0。別saved監査で176例/128slotと分母・digestを照合、slot改変拒否。
+- モデル推論/学習更新/旧予約test構築採点0。今回の成果は生成配線で、能力改善ではない。
+- PR #37 baseのfeat/decision-mixed-v1-preflight。main/Service/API/aster-web/公開版/モデル採用は未変更。次は固定digestを検査する比較学習runner。ユーザー側作業不要。

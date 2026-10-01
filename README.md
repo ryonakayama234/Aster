@@ -119,3 +119,7 @@ Aster Service / aster-webは任意shellやrepository-local pathを公開せず�
 PR #36の診断を受け、v1で正常経路を残す2条件を、各1,600更新・各Action400提示へ揃える案。
 正常例の個別exposure差、旧v0からの仕様変更、同family devの限界を明記。
 今回の成果は調査と計画保存。生成preflight・学習runner・新しい能力実測・Service/aster-web公開は未実施。
+
+### 2026-10-01：v1混合比較の生成preflight成立
+
+[生成検証](docs/DecisionMixedPreflight-v0.md)と[実測](reports/decision-mixed-v1-preflight-v0.md)を研究ブランチへ追加。正常32＋復帰16unique、dev128を実Toolで検証、衝突0・非重複主対照24組・context内。モデル推論/学習は0で能力改善ではない。` .venv/bin/python scripts/run_decision_mixed_preflight.py --root . `で再生成し、`scripts/audit_decision_mixed_preflight.py runs/<Run ID>`で保存証拠を照合する。次は固定digestで比較学習runner。main/Service/Webへ未導入。
