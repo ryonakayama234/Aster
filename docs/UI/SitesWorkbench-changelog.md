@@ -215,3 +215,10 @@
 - 全pytest163、最終関連4、Pyright0/0。別saved監査で176例/128slotと分母・digestを照合、slot改変拒否。
 - モデル推論/学習更新/旧予約test構築採点0。今回の成果は生成配線で、能力改善ではない。
 - PR #37 baseのfeat/decision-mixed-v1-preflight。main/Service/API/aster-web/公開版/モデル採用は未変更。次は固定digestを検査する比較学習runner。ユーザー側作業不要。
+
+## 2026-10-01：v1混合学習の全6条件実測
+
+- PR #38をbaseとする研究runner、独立cached audit、全seed軽量reportを追加。正常32/復帰16の登録digestを実行前に検査。
+- 全6条件stable fitと既知正常保持、主対照の安定改善なし。prefixはseed依存改善、数値初期は混合seed44だけ1/2。
+- pytest165 passed、Pyright0 errors/0 warnings。768episode/5,441transitionを実Tool再実行で監査。正式271.082秒、9,600更新。ユーザーPC測定ではない。
+- 全checkpoint/予測/順序/経路を再現bundleへ保持。旧test未使用、Service/API/aster-web/公開recipe/promotionは変更なし。次の関係明示入力は未実装。ユーザー側追加作業不要。
