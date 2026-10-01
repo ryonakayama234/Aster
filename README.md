@@ -101,6 +101,10 @@ Decision baselineはtestを自動開封しません。まずdevelopment runを�
 
 Aster Service / aster-webは任意shellやrepository-local pathを公開せず、Job / Run / Artifactを分離する方針を維持します。
 
+2026-10-01: PR #32のcompact/Byteを固定した[状態対照train比較](docs/DecisionStateTraining-v0.md)を研究ブランチに追加し、seed42/43/44を測定。
+[実測](reports/decision-state-training-v0.md)では正常経路の一部を誤保存prefixで置換した条件は改善せず、元課題保持も低下。train fitはbaseline3/3・state2/3seed。数値変更の自力完了は両条件全seed0/2。
+同じ候補集合で正解が変わる主対照、compact入力重複を除く診断、実Tool replayと全条件の証拠を残した。次は保存モデルを固定した正常経路/誤値/履歴長の切り分けを設計する。main/Service/Web/モデル採用には未導入。
+
 ## Decision入力比較の実測（2026-09-30）
 
 [PR #30の条件による全6armの報告](reports/decision-tokenizer-comparison-v0.md)。Byteは3/3seedで32判断の最後3epoch fit成立、専用BPEは1/3seed。数値変更episodeは両方式全seedで0/2、キー変更はByte seed42の1/2のみ。Tokenizer置換だけで安定対応したとは扱わず、次は状態判断と短い構造化表現を比較する。反証可能な研究の継続契約をAGENTS.mdへ追加。PRはDraft、Service/Webへは未公開。

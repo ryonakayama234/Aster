@@ -1,0 +1,7 @@
+{
+  "train_predictions": 9792,
+  "dev_predictions": 1152,
+  "episodes": 576,
+  "arms": 6,
+  "runs": 3
+}

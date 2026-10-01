@@ -1,5 +1,15 @@
 # Sites Workbench 作業履歴
 
+## 2026-10-01: 状態対照trainの全6条件測定
+
+- PR #32 head ee61711483dd876d35728a1999f6def6966b328f上で、compact/Byte/モデル/1600更新を固定し学習データ32slotのうち16を実Toolの誤保存prefixへ置換。正常教師の頻度8件ずつとseed内全初期重み・slot permutationを保持。
+- 無関係なdelayはcompactで同じ入力になることを検査。冗長計算prefixの予約test familyは学習/devに使わず、旧/予約testは構築・採点0件。
+- 新dev32判断のうちunion-train同一入力4件を保持確認に分離。非重複28判断と同step/同候補主対照6組を指標にした。原48/旧56判断、初期自力8episodeも保存。
+- seed42/43/44のbaseline fitは3/3、stateは2/3。新状態判断はbaseline16/17/13対state10/8/9 (各28件)、元初期完了はbaseline各2/2対state1/2・0/2・1/2。主対照改善なし、数値初期完了全arm0/2。この置換方式を採用しない。
+- 事前protocolと実測MD/JSON・全evidence hashを保存。pytest143成功、Pyright0 errors/0 warnings。9,792train予測、1,152dev保存行（重複336行）、576episodeを監査。実測source clean local9b8f1ab、LinuxCPU/Python3.12.14/torch2.14.0+cpu/2threads。ユーザーWSL未測定。
+- 正常例を外した影響と誤値/履歴依存の切り分けを次の保存モデル固定診断案にする。次案は未実装・未測定。
+- PR #32をbaseとするDraftでmain/Service/API/公開bundle/aster-web/Site公開/モデルpromotionは未変更。観測接続は#29→aster-web#2へ継続。
+
 設計の正本: [SitesWorkbenchContract-v0.md](SitesWorkbenchContract-v0.md)。
 実装した事実、検証、公開状態、次の課題を追記する。過去の実測値を最新値で上書きしない。
 
