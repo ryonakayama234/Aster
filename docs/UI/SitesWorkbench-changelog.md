@@ -135,3 +135,37 @@
 - 検証: pytest115 passed、Pyright0 errors/0 warnings。実測はChatGPT Linux CPUで、ユーザーWSLでの新CLI実行は未確認。GitHub main向けCIをstacked PRで実行済みとは扱わない。
 - ServiceContract-v0/v1、public recipe/artifact catalog、aster-web、Site公開版は変更なし。UI接続/Job化/自動promotionは未実装。
 - 次: 実測のtrain fitと元課題保持を踏まえ、Tokenizer/入力表現を独立条件で比較する。Service/Web接続は固定recipeと公開bundleを定義してから別PRで進める。
+
+## 2026-09-30: Decision Tokenizer比較の配線（Issue #28 / PR #30）
+
+- PR #22/#26/#27をmainへ統合した後、同じ32 unique decisionで専用BPEとByteTokenizerだけを変える比較harnessをDraft PR #30へ追加。
+- 保存済みBPEは公開digestを既定で要求し、本測定時に再学習しない。Byte側は既存UTF-8 byte ID 0..255へBOS/EOSを加えたDecision artifactとして扱う。
+- shapeが共通のTransformer/Decision Head等と、意味が対応するraw-byte/BOS/EOS行だけを共有初期化し、全weight同一とは記録しない。
+- token ID・UTF-8 byte range・系列長・padding込みtoken量、parameter数、learning curve、reload、56 dev decision、model-only episodeの最初の誤答をAster Runへ保存する実装。
+- reserved testはsuite/digestだけを保存し、Tokenizer長さ確認にもscoreにも使わない。old testも封印を維持。
+- GitHub標準CPU runnerの1-epoch debug wiringでは119 pytestが成功し、Pyrightも成功。これはIssue #28のseed42/43/44実測には数えない。
+- Service/API/aster-web/Site公開版はこのPRで変更しない。将来Issue #29 → aster-web #2で比較bundleを公開するときも、UIはAsterが保存したscore/success/token境界を再計算しない。
+
+## 2026-09-30: Decision入力比較の全6arm測定と研究契約
+
+- PR #30の初期化条件でseed42/43/44×BPE/Byteを50epoch測定。監査に保存logits/選択Action/数値指標の照合を追加し、各arm30分のdeadlineを強制した。
+- Byte train fitは3/3seed、BPEは1/3seed。数値変更episodeは両方式全seed0/2。キー変更の安定改善なし。次は#24の到達可能な状態と短い構造化入力の比較を事前設計する。
+- 関連回帰64test、deadline検査を含む比較5test成功。9,792 train predictionと336 dev行を独立照合。Linux CPUの測定、ユーザーWSL測定は未実施。旧test/予約test未評価。過去の元cached auditログの再照合は未実施。
+- reports/decision-tokenizer-comparison-v0.md/.jsonへ全条件と証拠を保存。devは親trainの2groupを共有し独立holdoutではない。
+- 公開bundle (#29)、aster-web #2、Service recipe/UI/Site公開版は未変更。今回の計測値をUIに導入済みとは扱わない。
+
+## 2026-10-01: raw/compact比較の実装・測定準備
+
+- PR #30とPR #31の研究実装を統合し、#24の原入力/短縮入力比較runnerを追加。事前条件はdocs/DecisionRepresentationComparison-v0.md。
+- 既存32train・Byte・全初期weight/提示順/候補順を固定。48状態devと既存56dev・8初期episode、prefixからのmodel-only継続を別記録する。
+- checkpointのserializer不一致を拒否。候補のみ対照はtrain頻度lookupでありニューラル対照ではないと本測定前に定義。
+- 全pytest139成功、Pyright0 errors/0 warnings。短いdebugは改善実測へ算入しない。本測定は次に開始する。
+- Service/API/aster-web/Site公開版は変更なし。保存結果は#29→aster-web#2へ渡す予定で、比較画面へ接続済みとは扱わない。
+
+## 2026-10-01: raw/compact全6arm測定完了
+
+- 固定した条件でseed42/43/44を完了。compactはtrain fit3/3、raw1/3。48状態判断はraw22/21/17、compact39/36/33。
+- 数値変更の最初からの自力完了は全arm0/2。prefix継続のinvalid（raw3/2/2、compact0/0/0）は失敗へ混ぜず、共通評価可能prefixで比較した。
+- reports/decision-representation-comparison-v0.md/.jsonへ全条件・曲線・Run/source/protocol/evidence hash・次の反証可能な状態train比較案を保存。旧/予約testは構築も採点もしない。
+- 保存9,792train予測と624dev予測を再照合し、実trajectory/UTF-8 byte列/選択/evaluation/reload/weights/RNG不変を検査。実測はLinux CPU/torch2.14.1でユーザーWSL測定ではない。
+- #31をbaseとする後続Draft PRへ提出。#30の前提コードも統合した。ServiceContract、公開recipe、aster-web、Site公開版、モデル採用は変更なし。

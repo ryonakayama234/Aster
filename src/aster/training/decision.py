@@ -9,7 +9,7 @@ from torch.nn import functional as F
 from aster.agent.candidates import CandidateBuilder, CalculateAndStoreCandidates
 from aster.inference.decide import score_candidates
 from aster.model.decision_head import DecisionModel
-from aster.records.decision import DecisionExample
+from aster.records.decision import DecisionExample, DecisionSerializer, serialize_decision_input
 from aster.records.trajectory import Trajectory
 from aster.records.transition import JsonValue
 from aster.runtime.state import RuntimeState
@@ -85,6 +85,8 @@ def decision_loss(
     model: DecisionModel,
     tokenizer: AsterTokenizer,
     example: DecisionExample,
+    *,
+    serializer: DecisionSerializer = serialize_decision_input,
 ) -> torch.Tensor:
     scores = score_candidates(
         model,
@@ -92,6 +94,7 @@ def decision_loss(
         example.state,
         example.trajectory,
         example.candidates,
+        serializer=serializer,
     )
     target = torch.tensor([example.target_index], dtype=torch.long, device=scores.device)
     return F.cross_entropy(scores.unsqueeze(0), target)

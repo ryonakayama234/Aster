@@ -24,7 +24,7 @@ from aster.corpus.pipeline import digest, json_bytes
 from aster.inference.decide import score_candidates
 from aster.model.decision_head import DecisionModel
 from aster.model.tiny_lm import ModelConfig, TinyLM
-from aster.records.decision import serialize_decision_input
+from aster.records.decision import DecisionSerializer, serialize_decision_input
 from aster.records.runlog import RunLog
 from aster.tokenizer.artifact import (
     AsterTokenizer,
@@ -261,6 +261,8 @@ def _run_arm(
     config: DecisionFitStudyConfig,
     *,
     source_git_sha: str | None,
+    serializer: DecisionSerializer = serialize_decision_input,
+    input_serializer_id: str = "aster-decision-input-0",
 ) -> dict[str, object]:
     arm_path = run_path / "arms" / arm.arm_id
     arm_path.mkdir(parents=True)
@@ -289,7 +291,7 @@ def _run_arm(
         example_exposures = 0
 
         initial_eval_start = time.perf_counter()
-        initial_predictions = _predict_cases(model, tokenizer, cases)
+        initial_predictions = _predict_cases(model, tokenizer, cases, serializer=serializer)
         initial_metrics = _fit_metrics(initial_predictions)
         initial_evaluation_wall_seconds = time.perf_counter() - initial_eval_start
         history.append(
@@ -314,7 +316,7 @@ def _run_arm(
             if arm.mode == "full_batch":
                 order = list(range(len(examples)))
                 optimizer.zero_grad(set_to_none=True)
-                losses = [decision_loss(model, tokenizer, example) for example in examples]
+                losses = [decision_loss(model, tokenizer, example, serializer=serializer) for example in examples]
                 loss = torch.stack(losses).mean()
                 loss.backward()
                 optimizer.step()
@@ -328,7 +330,7 @@ def _run_arm(
                     order = list(range(len(examples)))
                 for index in order:
                     optimizer.zero_grad(set_to_none=True)
-                    loss = decision_loss(model, tokenizer, examples[index])
+                    loss = decision_loss(model, tokenizer, examples[index], serializer=serializer)
                     loss.backward()
                     optimizer.step()
                     update_losses.append(float(loss.detach().item()))
@@ -344,7 +346,7 @@ def _run_arm(
                 }
             )
             evaluation_start = time.perf_counter()
-            predictions = _predict_cases(model, tokenizer, cases)
+            predictions = _predict_cases(model, tokenizer, cases, serializer=serializer)
             metrics = _fit_metrics(predictions)
             evaluation_wall_seconds += time.perf_counter() - evaluation_start
             history.append(
@@ -380,17 +382,19 @@ def _run_arm(
         config=config,
         initial_model_sha256=initial_model_sha256,
         source_git_sha=source_git_sha,
+        input_serializer_id=input_serializer_id,
     )
     reload_start = time.perf_counter()
     reload_model, reload_tokenizer, reload_manifest = load_decision_fit_checkpoint(
-        checkpoint_path
+        checkpoint_path, expected_input_serializer_id=input_serializer_id
     )
-    reload_predictions = _predict_cases(reload_model, reload_tokenizer, cases)
+    reload_predictions = _predict_cases(reload_model, reload_tokenizer, cases, serializer=serializer)
     reload_metrics = _fit_metrics(reload_predictions)
     reload_wall_seconds = time.perf_counter() - reload_start
     reload_match = reload_metrics == final_metrics
 
     summary = {
+        "input_serializer_id": input_serializer_id,
         "arm_id": arm.arm_id,
         "mode": arm.mode,
         "case_ids": list(arm.case_ids),
@@ -423,6 +427,8 @@ def _run_arm(
 
 def load_decision_fit_checkpoint(
     input_dir: str | Path,
+    *,
+    expected_input_serializer_id: str = "aster-decision-input-0",
 ) -> tuple[DecisionModel, AsterTokenizer, dict[str, object]]:
     input_path = Path(input_dir)
     manifest = json.loads((input_path / "manifest.json").read_text(encoding="utf-8"))
@@ -432,6 +438,9 @@ def load_decision_fit_checkpoint(
     identity = {key: value for key, value in manifest.items() if key != "checkpoint_id"}
     if expected != f"decision_fit:{digest(json_bytes(identity))}":
         raise ValueError("Decision fit checkpoint identity mismatch")
+
+    if manifest.get("input_serializer_id", "aster-decision-input-0") != expected_input_serializer_id:
+        raise ValueError("Decision fit input serializer mismatch")
 
     model_path = input_path / "model.pt"
     if _sha256_file(model_path) != manifest.get("model_state_sha256"):
@@ -469,6 +478,7 @@ def _save_fit_checkpoint(
     config: DecisionFitStudyConfig,
     initial_model_sha256: str,
     source_git_sha: str | None,
+    input_serializer_id: str = "aster-decision-input-0",
 ) -> dict[str, object]:
     output_dir.mkdir(parents=True, exist_ok=False)
     state = {
@@ -479,6 +489,7 @@ def _save_fit_checkpoint(
     save_tokenizer(tokenizer, output_dir / "tokenizer")
     manifest: dict[str, object] = {
         "schema_version": FIT_CHECKPOINT_SCHEMA,
+        "input_serializer_id": input_serializer_id,
         "suite_id": suite.suite_id,
         "suite_sha256": suite_sha256,
         "arm": asdict(arm),
@@ -520,6 +531,8 @@ def _predict_cases(
     model: DecisionModel,
     tokenizer: AsterTokenizer,
     cases: Sequence[BenchmarkCase],
+    *,
+    serializer: DecisionSerializer = serialize_decision_input,
 ) -> tuple[DecisionPrediction, ...]:
     was_training = model.training
     model.eval()
@@ -532,6 +545,7 @@ def _predict_cases(
                 case.example.state,
                 case.example.trajectory,
                 case.example.candidates,
+                serializer=serializer,
             )
             logits = tuple(float(value) for value in scores.detach().cpu().tolist())
             probabilities = probabilities_from_logits(logits)
@@ -559,6 +573,8 @@ def _fit_metrics(predictions: Sequence[DecisionPrediction]) -> dict[str, object]
     nll = 0.0
     correct = 0
     for prediction in predictions:
+        if any(not math.isfinite(score) for score in prediction.logits):
+            raise ValueError("Nonfinite decision logits")
         alternatives = [
             score
             for index, score in enumerate(prediction.logits)

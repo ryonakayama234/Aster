@@ -4,7 +4,7 @@ import torch
 
 from aster.agent.candidates import CandidateBuilder, CalculateAndStoreCandidates
 from aster.model.decision_head import DecisionModel
-from aster.records.decision import DecisionTrace, serialize_decision_input
+from aster.records.decision import DecisionSerializer, DecisionTrace, serialize_decision_input
 from aster.records.trajectory import Trajectory
 from aster.records.transition import Action
 from aster.runtime.state import RuntimeState
@@ -17,6 +17,8 @@ def encode_candidate_batch(
     state: RuntimeState,
     trajectory: Trajectory,
     candidates: tuple[Action, ...],
+    *,
+    serializer: DecisionSerializer = serialize_decision_input,
 ) -> tuple[torch.Tensor, torch.Tensor]:
     """Serialize and tokenize candidates independently, then right-pad one scoring batch."""
     if not candidates:
@@ -24,7 +26,7 @@ def encode_candidate_batch(
 
     encoded = [
         tokenizer.encode(
-            serialize_decision_input(state, trajectory, candidate),
+            serializer(state, trajectory, candidate),
             add_bos=True,
             add_eos=True,
         )
@@ -57,9 +59,11 @@ def score_candidates(
     state: RuntimeState,
     trajectory: Trajectory,
     candidates: tuple[Action, ...],
+    *,
+    serializer: DecisionSerializer = serialize_decision_input,
 ) -> torch.Tensor:
     """Return one differentiable scalar score per candidate in the same order."""
-    token_ids, lengths = encode_candidate_batch(model, tokenizer, state, trajectory, candidates)
+    token_ids, lengths = encode_candidate_batch(model, tokenizer, state, trajectory, candidates, serializer=serializer)
     return model(token_ids, lengths)
 
 

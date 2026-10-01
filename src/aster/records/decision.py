@@ -1,5 +1,6 @@
 """Records for supervised candidate decisions and model-side decision traces."""
 
+from collections.abc import Callable
 from dataclasses import dataclass
 from json import dumps
 
@@ -7,6 +8,8 @@ from aster.records.trajectory import Trajectory
 from aster.records.transition import Action, Transition
 from aster.runtime.state import RuntimeState
 
+
+DecisionSerializer = Callable[[RuntimeState, Trajectory, Action], str]
 
 @dataclass(frozen=True, slots=True)
 class DecisionExample:

@@ -43,11 +43,11 @@ def test_fit_study_shares_initial_weights_and_records_update_accounting(
     seen_splits = []
     original_predict = fit._predict_cases
 
-    def guarded_predict(model, tokenizer, cases):
+    def guarded_predict(model, tokenizer, cases, **kwargs):
         assert cases
         assert all(case.split == "train" for case in cases)
         seen_splits.extend(case.split for case in cases)
-        return original_predict(model, tokenizer, cases)
+        return original_predict(model, tokenizer, cases, **kwargs)
 
     monkeypatch.setattr(fit, "_predict_cases", guarded_predict)
     arms = (
