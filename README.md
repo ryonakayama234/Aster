@@ -123,3 +123,9 @@ PR #36の診断を受け、v1で正常経路を残す2条件を、各1,600更新
 ### 2026-10-01：v1混合比較の生成preflight成立
 
 [生成検証](docs/DecisionMixedPreflight-v0.md)と[実測](reports/decision-mixed-v1-preflight-v0.md)を研究ブランチへ追加。正常32＋復帰16unique、dev128を実Toolで検証、衝突0・非重複主対照24組・context内。モデル推論/学習は0で能力改善ではない。` .venv/bin/python scripts/run_decision_mixed_preflight.py --root . `で再生成し、`scripts/audit_decision_mixed_preflight.py runs/<Run ID>`で保存証拠を照合する。次は固定digestで比較学習runner。main/Service/Webへ未導入。
+
+### 2026-10-01：v1混合学習の全6条件実測
+
+[事前登録](docs/DecisionMixedMeasurement-v0.md)と[実測](reports/decision-mixed-v1-study-v0.md)。正常例を保持する両条件で全3seed stable fit、共通正常32/32、既知初期2/2。非重複主対照24組は対照4/4/4、混合4/2/2で安定改善なし。共通有効prefix成功差は-8/+7/+29、未知数値初期完了は混合seed44だけ1/2。他5条件0/2。次は観測事実の関係を明示する入力との対照を事前登録する（未実装）。研究CLIのみ、main/Service/Web/公開モデルへ未導入。
+
+実行：`.venv/bin/python scripts/run_decision_mixed_v1.py --root .`。保存監査：`.venv/bin/python scripts/audit_decision_mixed_v1.py runs/<Run ID>`。旧testは未使用。

@@ -169,3 +169,7 @@ Web観測は#29→aster-web#2、言語pilotは#21、raw登録はaster-web#3へ�
 ## 2026-10-01追記：生成preflight完了
 
 [実測report](../reports/decision-mixed-v1-preflight-v0.md)とJSONに固定生成物/digestを保存した。正常32＋復帰16unique、両64slot/Action各16、衝突0、dev128のunion重複14、非重複主対照24組。モデルscoring/更新0。上の未実施記述は計画作成時点の履歴で、runner実装・比較学習・新能力測定は引き続き未実施。次は保存digest一致を要求するrunner。
+
+## 2026-10-01追記：固定条件の比較学習完了
+
+上の未実施記述は登録時の履歴。[正式protocol](DecisionMixedMeasurement-v0.md)をclean sourceへ保存後、全6条件を測定した。[実測](../reports/decision-mixed-v1-study-v0.md)では両条件全seed stable fitと正常保持が成立、主対照は対照4/4/4対混合4/2/2。prefixのseed依存改善と混合seed44の数値初期1/2は保持するが、汎化の安定改善や採用成立とは扱わない。次は関係明示serializerによる診断を別登録する。

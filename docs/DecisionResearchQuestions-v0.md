@@ -178,3 +178,11 @@ aster-webはそれらの実測とTraceを観測する側として捉え、
 ## 2026-10-01：混合trainの生成が成立
 
 [preflight実測](../reports/decision-mixed-v1-preflight-v0.md)で48unique train＋128devの到達可能性・独立終状態・Byte長・衝突0を確認。新unionのdev重複14、非重複主対照24組。次は固定suite/slot/Tokenizer/serializer digest下での学習比較。モデル改善は未測定。
+
+## 2026-10-01：fit成立後の問いを関係抽出へ絞る
+
+[全6条件実測](../reports/decision-mixed-v1-study-v0.md)で両arm全seedのstable fit・共通正常32/32・既知初期2/2が成立。主対照24組は対照4/4/4、混合4/2/2で安定改善なし。prefix成功はseed依存で、混合seed44のみ数値初期1/2。train未fitだけを原因とする説明は弱まるが、容量不足は断定できない。
+
+次の問い：**現在の計算結果・保存値・取得順の関係を入力から読むことが難しいのか、関係が分かってもActionを選べないのか？** 同じ混合train/Byte/model/予算でcompactと関係明示入力を比較する案。未実装・未測定で、開始前に別protocolを登録する。
+
+関係は観測された成功calculator出力との対応、対象memoryの存在と観測出力との一致、最後の対象putに対するgetの時系列、最後Toolのstatusからのみ導出する。教師Action、Evaluator goal、未観測の期待解、task段階、正解候補フラグを入力に入れない。外部抽出を追加する診断であり、元モデルが関係抽出能力を獲得したとは扱わない。意味が変わらない誤put反復と、get後putでfreshnessが取消される反復を区別し、preflightでtarget衝突を検査する。データ・モデルも同時変更しない。
