@@ -5,6 +5,8 @@ from typing import Protocol
 from aster.records.trajectory import Trajectory
 from aster.records.transition import Action, JsonValue
 from aster.runtime.state import RuntimeState
+from aster.agent.policy import current_calculation, has_current_confirmation, MissingCalculation
+from aster.evaluator.goal_contract import EVER_GOAL_V0, CURRENT_GOAL_V1, validate_goal_contract
 
 
 class CandidateBuilder(Protocol):
@@ -18,6 +20,10 @@ class CandidateBuilder(Protocol):
 
 class CalculateAndStoreCandidates:
     """Candidate generator for the Agent Kernel v0 calculate-and-store task."""
+
+    def __init__(self, *, goal_contract: str = EVER_GOAL_V0) -> None:
+        validate_goal_contract(goal_contract)
+        self.goal_contract = goal_contract
 
     def build(
         self,
@@ -50,8 +56,10 @@ class CalculateAndStoreCandidates:
                 )
             )
 
-        calculation = _successful_output(trajectory, "calculator")
-        if not isinstance(calculation, _Missing) and "memory.put" in available_actions:
+        calculation = (current_calculation(state, trajectory)
+                       if self.goal_contract == CURRENT_GOAL_V1
+                       else _successful_output(trajectory, "calculator"))
+        if not isinstance(calculation, (_Missing, MissingCalculation)) and "memory.put" in available_actions:
             candidates.append(Action.tool("memory.put", key=key, value=calculation))
 
         if "memory.get" in available_actions:
@@ -59,7 +67,14 @@ class CalculateAndStoreCandidates:
 
         if "stop" in available_actions:
             candidates.append(Action.stop("policy_stop"))
-            if not isinstance(calculation, _Missing) and _successful_get(trajectory, key, calculation):
+            confirmed = False
+            if not isinstance(calculation, (_Missing, MissingCalculation)):
+                confirmed = ((key in state.memory and not isinstance(state.memory[key], bool)
+                              and state.memory[key] == calculation
+                              and has_current_confirmation(trajectory, key, calculation))
+                             if self.goal_contract == CURRENT_GOAL_V1
+                             else _successful_get(trajectory, key, calculation))
+            if confirmed:
                 candidates.append(Action.stop("goal_verified"))
 
         if not candidates:
