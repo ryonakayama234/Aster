@@ -129,3 +129,5 @@ UIでdiagnostic successを再計算せず、未提供の値を推測しない。
 2026-10-01混合実測: reports/decision-mixed-v1-study-v0.jsonは研究CLI全6条件の正本。表示に用いる場合はfitとtrain正常32、未知dev、非重複主対照24組、初期episode各2、prefix継続、invalidを区別する。両arm共通有効開始数は117/119/121で同一128分母の成功率と混同しない。混合主対照4/2/2、数値初期0/0/1、prefix差-8/+7/+29を保持。API/Web公開・モデルpromotionは今回未実装。
 
 2026-10-01関係入力比較: 将来の表示ではserializer ID、外部化した関係抽出/履歴正規化、系列長/token量、表現別train重複と共通非重複の分母を保持する。関係入力の成功を生履歴読解能力へ帰属しない。今回の研究CLIはService/API/Webへ未接続。
+
+2026-10-01関係比較実測: 正本reports/decision-relations-study-v0.json。個別判断の改善と対照両方/自力完了の悪化を併記する。探索的なtrain-only関係lookup104/128はモデルscoreと混ぜない。共通非重複110判断、主対照24組、common-valid121/120/123、各表現dev重複14/18を保持。公開bundle/Web表示は未実装。

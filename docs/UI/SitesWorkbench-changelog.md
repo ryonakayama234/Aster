@@ -230,3 +230,14 @@
 - 登録preflight衝突0、最大1190/519tokens、共通非重複主対照24組。正式能力測定は未実施。
 - checkpoint serializer guard、reload、候補逆順、weights/RNG不変、独立実Tool再生監査を継承。検証と正式結果は後続追記。
 - Service/API/aster-web/公開版/モデル採用は変更なし。ユーザー側の追加作業不要。
+
+## 2026-10-01：観測関係比較の全6条件測定と負の結果保存
+
+- clean local3538a25、同treeのAPI source18c4e2d。Run7d4660729cf74cf3a4aab123ff23d05c、正式259.895秒。
+- 両入力fit/正常保持。共通非重複24主対照は4/2/2→0/0/0、共通prefixは51/58/69→37/39/39。
+  個別判断110分母ではrelationsが増えたことも保持。dev重複14/18と共通除外18を区別。
+- pytest170/型0 errors/0 warnings、独立監査train7488/dev768/episode768/transition6071/訪問4199。
+  再読込/順序/weights/RNGと全実Tool再生を確認。ユーザーWSL未測定。
+- 測定後train-only boolean関係パターン表は104/128をカバーし全正答。外部抽出/非ニューラルの探索と明記。
+  次のAction種類/引数分離は未実装。全modelを保持し自動採用しない。
+- reports/decision-relations-study-v0.md/.json、全記録bundleへ保存。旧/予約test0。Service/API/aster-web/公開版は未変更。

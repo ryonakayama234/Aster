@@ -136,3 +136,8 @@ PR #39の正常例保持混合trainを固定し、compact入力と観測関係�
 [事前条件](docs/DecisionRelationsComparison-v0.md)。登録preflightでは48train/128devの衝突0、
 共通非重複主対照24組、最大系列長compact1190/relations519を確認。これは学習前検証であり能力改善ではない。
 Service/aster-web/公開モデルへ未導入。正式学習結果は測定完了後にreportsへ記録する。
+
+2026-10-01正式比較完了: [全6条件report](reports/decision-relations-study-v0.md)。両方式全seed stable fit/正常保持。
+共通非重複24対照組はcompact4/2/2→relations0/0/0、共通prefix完了も低下。関係入力を採用しない。
+測定後のtrain-only関係パターン表はdev104/128をカバーし全て正答したが、非ニューラル/外部抽出の探索対照。
+次はAction種類の選択と候補引数の結び付けを分ける診断案。未実装。公開モデル/Service/Webは未変更。
