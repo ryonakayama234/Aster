@@ -118,3 +118,5 @@ UIでdiagnostic successを再計算せず、未提供の値を推測しない。
 反復slotの増加を新課題の増加と同一視しない。dev probeの親trainとの重なり、test scored_cases=0、reserved procedural prefixと独立task familyの違いをbundle正本から表示する。この研究CLIはService公開recipeではなく、UI接続は未実装。
 
 2026-10-01入力表現比較メモ: raw/compactのserializer IDをcheckpointと表示metadataへ保持する。teacher-prefix判断、対照組の両方正答、prefixからのmodel-only継続、最初からの自力episodeを別の値として表示する。訪問入力のcontext超過はinvalidとして件数と理由を示し、失敗率へ合算しない。比較の共通評価可能case数と全開始case数を併記する。今回の結果は研究CLIであり#29/aster-web#2への公開は未実装。
+
+2026-10-01固定v1診断: 将来の比較画面では学習契約v0と評価契約v1、候補のみ対照、train重複、教師Action一致と停止時成功、context超過invalidを分離する。実測正本はreports/decision-fixed-v1-diagnostics-v0.md/.json。今回のCLI診断はService公開bundle/Webへ未接続。

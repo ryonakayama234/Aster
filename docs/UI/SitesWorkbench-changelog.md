@@ -188,3 +188,11 @@
 - reports/decision-representation-comparison-v0.md/.jsonへ全条件・曲線・Run/source/protocol/evidence hash・次の反証可能な状態train比較案を保存。旧/予約testは構築も採点もしない。
 - 保存9,792train予測と624dev予測を再照合し、実trajectory/UTF-8 byte列/選択/evaluation/reload/weights/RNG不変を検査。実測はLinux CPU/torch2.14.1でユーザーWSL測定ではない。
 - #31をbaseとする後続Draft PRへ提出。#30の前提コードも統合した。ServiceContract、公開recipe、aster-web、Site公開版、モデル採用は変更なし。
+
+## 2026-10-01: 固定6モデルのcurrent-state v1診断
+
+- PR #35をbaseとして、旧v0学習の6checkpointを更新0で診断。考え方・固定条件・停止条件をdocs/DecisionFixedV1Diagnostics-v0.mdへ事前登録。測定source dc05bb7とPython/protocol hashをRunへ保存。
+- 128ケース/modelを実Toolで生成・v1再生。正常保持、誤値×反復、完了取消、同候補・異target対照を分離。全6modelのscore/token ID/自力768episodeを保存。
+- baselineは既知正常8/8、置換モデル5〜6/8。誤値変更によるAction変化0〜2/32組に対し、反復回数変更9〜28/32組。実測・限界・次の正常例保持案をreportsへ保存。
+- 失敗配線Runも保持。独立cached auditで768固定予測・192対照・3,247訪問予測・5,119transition・768episodeの停止時正しさを照合。全pytest159 passed、Pyright0 errors/0 warnings。Linux CPU実測でユーザーWSLは未測定。
+- Service/API/Web/公開recipe/モデルpromotionは変更なし。契約違い・candidate情報・invalidの将来表示契約だけ更新。保存結果の観測は#29→aster-web#2。次の混合学習は未実装・未測定。
