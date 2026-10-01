@@ -249,3 +249,12 @@
 - 5関連test成功、Pyright0 errors/0 warnings。debugは正式実測へ加算しない。全test/正式測定は後続追記。
 - docs/LanguageToActionRoadmap-v0.mdへ依頼/Tool観測→事実/Task読解の接続を設計。自由会話/コード生成/言語学習は未実施。
 - Service/API/aster-web/公開版/モデルpromotionは変更なし。ユーザー側追加作業不要。
+
+## 2026-10-02：16parameterの行動種類学習・全3seed成立
+
+- clean local0817a1d/API同tree d6f4bc6、Run212b32fd029640ce8efc89930b5c4403、正式4.464秒（全pytest併走で速度benchではない）。
+- 全seed fit48/48、種類/結合128/128、対照32/32、prefix128/128、各初期variant2/2、新task4/4。特徴空間は全てtrain重複と明示。
+- pytest175/新規5、型0/0、独立監査train3744/dev384/episode396/transition2088/訪問1152。reload・weights/RNG不変・source不変を確認。
+- 学習器はC/M/Fから種類を選ぶ。事実抽出/引数供給は外部実装。一般的なTool失敗復帰・生履歴読解/コード生成は未確認。
+- 後続言語設計は事前学習+課題用reader学習、ランダム/事前学習初期化比較。実素材/Tokenizer/context互換性の確認が次。言語学習未実施。
+- reportsへ正本保存、全weights/証拠bundle保持。main/Service/API/aster-web/公開版/自動promotion未変更。ユーザー側追加作業不要。

@@ -148,3 +148,7 @@ Service/aster-web/公開モデルへ未導入。正式学習結果は測定完�
 引数は既存candidateへ結合。生履歴読解と引数生成は外部実装へ残す。preflightでtrain特徴4種、dev128/128・新初期4/4の特徴重複を確認。
 従って未知特徴の汎化とは呼ばない。正式結果は測定後にreportsへ保存する。
 [言語読解への接続設計](docs/LanguageToActionRoadmap-v0.md)も追加。次token事前学習と課題用の事実抽出学習を分け、ランダム/事前学習初期化を同条件で比較する案。言語学習は未実施。
+
+2026-10-02正式診断完了: [全3seed結果](reports/decision-action-types-study-v0.md)。train fit、128判断/128prefix、対照32組、追加4初期taskが全seed成立。
+外部抽出C/M/Fの4既知特徴パターンとcandidate結合を使う成果で、生履歴読解/引数生成/未知規則の汎化ではない。
+次は文字列→事実/Task readerの同条件ランダム/事前学習初期化比較を準備。言語事前学習は今回未実施。main/Service/Web/モデル自動採用は未変更。
