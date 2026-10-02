@@ -251,3 +251,14 @@ Webはscore、task success、Gateを再計算しない。
 - ACT-Capability: 事前固定taskをmodel-onlyで `task_success=true` かつ `goal_verified=true` ならPASS。
 
 初版ではfallback、rule intervention、自由task、任意tool、threshold変更、model update、sealed test開封を含めない。
+
+
+### ACT v0: fit checkpoint promotion補足（2026-10-03）
+
+既存研究の `decision_fit:<digest>` checkpointはServiceの `decision_model:<digest>` と同一ではない。
+ローカルpromotion CLIだけがfit checkpoint pathを受け、検証後に正式DecisionModel Artifactへ変換・catalog登録する。
+Service request自体は引き続きlogical `decision_model:<digest>` のみを受ける。
+
+fit checkpointはcalibration/routing未実行のため、promotion artifactは
+`calibration.status=not_run` / `routing.status=not_configured` を保持する。
+ACT v0 model-only実行ではこの未設定を許可するが、SelectivePolicyへ流用するときは別途calibration/routingを要求する。
