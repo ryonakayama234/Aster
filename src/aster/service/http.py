@@ -13,6 +13,7 @@ import time
 from urllib.parse import urlsplit
 
 from aster.service.contracts import JobSpec
+from aster.service.experiments import EXPERIMENT_INDEX_SCHEMA
 from aster.service.jobs import JobBusyError, JobManager
 
 SITES_ORIGIN = "https://aster-learning-lab-zhong.rynaka0112.chatgpt.site"
@@ -89,6 +90,13 @@ def make_server(jobs: JobManager, token: str, port: int) -> ThreadingHTTPServer:
                     data = {"schema_version": "aster-recipes-0", "recipes": jobs.recipes.list()}
                 elif path == "/artifacts":
                     data = {"schema_version": "aster-artifacts-0", "artifacts": jobs.catalog.all()}
+                elif path == "/experiments":
+                    data = {
+                        "schema_version": EXPERIMENT_INDEX_SCHEMA,
+                        "experiments": jobs.experiments.list(),
+                    }
+                elif path.startswith("/experiments/"):
+                    data = jobs.experiments.read(path.removeprefix("/experiments/"))
                 elif path.startswith("/jobs/"):
                     data = jobs.read(path.removeprefix("/jobs/"))
                 else:
