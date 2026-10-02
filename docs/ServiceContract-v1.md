@@ -128,7 +128,7 @@ Job IDとcanonical Run IDを同一視しない。同時実行は引き続き1 co
 
 ## HTTP / local development
 
-endpointはv0から変更しない。
+v0/v1の既存endpointは維持し、Research Observatory用のread-only endpointを追加する。
 
 ```text
 GET  /status
