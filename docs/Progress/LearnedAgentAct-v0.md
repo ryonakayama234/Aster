@@ -95,3 +95,23 @@ Status: CI passed; user WSL2 run pending
 - pytest: success。
 - これでコード/型/自動テストGateは通過。
 - Capability成功はまだ主張しない。次はユーザーWSL2の既存DecisionModel Artifactをcatalogへ登録し、Service JobとしてACT Runを実測する。
+
+
+## Session 4 — 2026-10-03
+
+Task: ユーザー実機でformal DecisionModel Artifactが見つからない問題を修正する。
+
+### 判明した前提ミス
+
+- ユーザーPC実測としてGitに残っている主な証拠は `decision_fit:<digest>` checkpointのsummary/hash。
+- `find runs -path '*/model-artifact/manifest.json'` でformal `aster-decision-model-artifact-0` が見つかる前提は誤りだった。
+- committed reportはweights本体を含まないため、reportだけからformal artifactを再構成できない。
+
+### 修正
+
+- fit checkpoint → formal DecisionModel Artifactの明示的promotionを追加。
+- promotionは元checkpointをload検証し、scoreを変えずweights/Tokenizer/lineageを保持。
+- fit checkpointにはcalibrationが無いため、promotion artifactは `calibration.status=not_run` / `routing.status=not_configured`。
+- `source_checkpoint_id` と `serializer_id=aster-decision-input-0` をlineageへ追加。
+- 架空のtemperature/routing thresholdは作らない。
+- checkpoint本体がlocalに無い場合は、元archiveを復元するかfit studyを再実行する必要がある。
