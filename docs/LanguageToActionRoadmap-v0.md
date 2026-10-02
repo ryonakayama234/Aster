@@ -77,3 +77,5 @@ configs/tinylm-pilot-v0.jsonはwidth64/layers2/heads4/context128/batch8/200step�
 2026-10-02順序学習介入: [結果](../reports/history-reader-order-study-v0.md)では一部seedの既知fit改善を確認、安定関係転用なし。一般Corpus事前学習の必要性は未確定。Fだけの課題縮小を先に検討し、事前学習と課題用学習を分ける。
 
 2026-10-02: [最小F読解](HistoryFreshnessMinimal-v0.md)を先に登録。同raw/Byte/backboneの課題教師だけを比較する。一般Corpus事前学習は未実施。F-only成功を値一致・Task読解・一般言語へ外挿しない。
+
+最小Fの[実測](../reports/history-freshness-study-v0.md)は全3seed未fit・未知shape両側0。一般Corpus事前学習の必要性は未確定。次はイベント表現の対照を別登録する候補。F単独成功をAgent完了へ外挿する以前の学習課題が残る。

@@ -1,0 +1,1270 @@
+{
+  "baselines": {
+    "last_tool": {
+      "cohorts": {
+        "shape_dev": {
+          "correct": 20,
+          "count": 24
+        },
+        "shape_train": {
+          "correct": 40,
+          "count": 48
+        },
+        "train": {
+          "correct": 32,
+          "count": 48
+        },
+        "unknown_dev": {
+          "correct": 4,
+          "count": 8
+        }
+      },
+      "pairs": {
+        "shape_dev": {
+          "both_correct": 8,
+          "count": 12
+        },
+        "shape_train": {
+          "both_correct": 16,
+          "count": 24
+        },
+        "train": {
+          "both_correct": 8,
+          "count": 16
+        }
+      }
+    },
+    "majority": {
+      "cohorts": {
+        "shape_dev": {
+          "correct": 12,
+          "count": 24
+        },
+        "shape_train": {
+          "correct": 24,
+          "count": 48
+        },
+        "train": {
+          "correct": 16,
+          "count": 48
+        },
+        "unknown_dev": {
+          "correct": 0,
+          "count": 8
+        }
+      },
+      "pairs": {
+        "shape_dev": {
+          "both_correct": 0,
+          "count": 12
+        },
+        "shape_train": {
+          "both_correct": 0,
+          "count": 24
+        },
+        "train": {
+          "both_correct": 0,
+          "count": 16
+        }
+      }
+    }
+  },
+  "config": {
+    "context_length": 2048,
+    "heads": 2,
+    "layers": 1,
+    "vocab_size": 258,
+    "width": 16
+  },
+  "debug": false,
+  "episode_scored": 0,
+  "epochs": 50,
+  "independent_holdout": false,
+  "lr": 0.001,
+  "models": [
+    {
+      "arm": "cmf",
+      "cohorts": {
+        "shape_dev": {
+          "confusion": [
+            [
+              0,
+              12,
+              0
+            ],
+            [
+              0,
+              12,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "correct": 12,
+          "count": 24,
+          "min_margin": -0.10306334495544434,
+          "nll": 0.6957297050008663
+        },
+        "shape_train": {
+          "confusion": [
+            [
+              0,
+              24,
+              0
+            ],
+            [
+              0,
+              24,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "correct": 24,
+          "count": 48,
+          "min_margin": -0.10336804389953613,
+          "nll": 0.6959609325526256
+        },
+        "train": {
+          "confusion": [
+            [
+              0,
+              16,
+              0
+            ],
+            [
+              0,
+              16,
+              0
+            ],
+            [
+              0,
+              0,
+              16
+            ]
+          ],
+          "correct": 32,
+          "count": 48,
+          "min_margin": -0.10235774517059326,
+          "nll": 0.4643716794506967
+        },
+        "unknown_dev": {
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              8
+            ]
+          ],
+          "correct": 8,
+          "count": 8,
+          "min_margin": 3.22817724943161,
+          "nll": 0.023466122588620242
+        }
+      },
+      "initial_sha256": "9a89c82c0f9f57ea17d413ef152d202374be7c14a00ddce7df44d0ee74740631",
+      "input_tokens": 1695900,
+      "model_sha256": "cfc674daae4e412cab383a67831fb1b4dedd6db431522512cdee76d8645566c6",
+      "order_sha256": "d50a92e6dee51e9c1057a323a650268abb893c8052ab645f7b95caa618ee9ff2",
+      "pairs": {
+        "shape_dev": {
+          "both_correct": 0,
+          "count": 12
+        },
+        "shape_train": {
+          "both_correct": 0,
+          "count": 24
+        },
+        "train": {
+          "both_correct": 0,
+          "count": 16
+        }
+      },
+      "parameters": 44489,
+      "seed": 42,
+      "shape_pairs": {
+        "shape_dev/middle_put": {
+          "both_correct": 0,
+          "count": 4
+        },
+        "shape_dev/repeat_get": {
+          "both_correct": 0,
+          "count": 4
+        },
+        "shape_dev/tail_get": {
+          "both_correct": 0,
+          "count": 4
+        },
+        "shape_train/middle_put": {
+          "both_correct": 0,
+          "count": 8
+        },
+        "shape_train/repeat_get": {
+          "both_correct": 0,
+          "count": 8
+        },
+        "shape_train/tail_get": {
+          "both_correct": 0,
+          "count": 8
+        },
+        "train/plain": {
+          "both_correct": 0,
+          "count": 8
+        },
+        "train/tail_put": {
+          "both_correct": 0,
+          "count": 8
+        }
+      },
+      "stable_fit": false,
+      "trainable_parameters": 40361,
+      "updates": 2400,
+      "wall_seconds": 16.1430488470005,
+      "weights_rng_unchanged": true
+    },
+    {
+      "arm": "f_only",
+      "cohorts": {
+        "shape_dev": {
+          "confusion": [
+            [
+              0,
+              12,
+              0
+            ],
+            [
+              0,
+              12,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "correct": 12,
+          "count": 24,
+          "min_margin": -0.04825925827026367,
+          "nll": 0.6944277162680579
+        },
+        "shape_train": {
+          "confusion": [
+            [
+              0,
+              24,
+              0
+            ],
+            [
+              0,
+              23,
+              1
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "correct": 23,
+          "count": 48,
+          "min_margin": -3.7690787315368652,
+          "nll": 0.7617211916647317
+        },
+        "train": {
+          "confusion": [
+            [
+              0,
+              16,
+              0
+            ],
+            [
+              0,
+              16,
+              0
+            ],
+            [
+              0,
+              0,
+              16
+            ]
+          ],
+          "correct": 32,
+          "count": 48,
+          "min_margin": -0.04758882522583008,
+          "nll": 0.46304002080558376
+        },
+        "unknown_dev": {
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              8
+            ]
+          ],
+          "correct": 8,
+          "count": 8,
+          "min_margin": 8.42615795135498,
+          "nll": 0.0004194369297465528
+        }
+      },
+      "initial_sha256": "9a89c82c0f9f57ea17d413ef152d202374be7c14a00ddce7df44d0ee74740631",
+      "input_tokens": 1695900,
+      "model_sha256": "852b867dbebc862b2c92e9507ad33c173991fb961ded6757ccd97597be966b7a",
+      "order_sha256": "d50a92e6dee51e9c1057a323a650268abb893c8052ab645f7b95caa618ee9ff2",
+      "pairs": {
+        "shape_dev": {
+          "both_correct": 0,
+          "count": 12
+        },
+        "shape_train": {
+          "both_correct": 0,
+          "count": 24
+        },
+        "train": {
+          "both_correct": 0,
+          "count": 16
+        }
+      },
+      "parameters": 44489,
+      "seed": 42,
+      "shape_pairs": {
+        "shape_dev/middle_put": {
+          "both_correct": 0,
+          "count": 4
+        },
+        "shape_dev/repeat_get": {
+          "both_correct": 0,
+          "count": 4
+        },
+        "shape_dev/tail_get": {
+          "both_correct": 0,
+          "count": 4
+        },
+        "shape_train/middle_put": {
+          "both_correct": 0,
+          "count": 8
+        },
+        "shape_train/repeat_get": {
+          "both_correct": 0,
+          "count": 8
+        },
+        "shape_train/tail_get": {
+          "both_correct": 0,
+          "count": 8
+        },
+        "train/plain": {
+          "both_correct": 0,
+          "count": 8
+        },
+        "train/tail_put": {
+          "both_correct": 0,
+          "count": 8
+        }
+      },
+      "stable_fit": false,
+      "trainable_parameters": 40361,
+      "updates": 2400,
+      "wall_seconds": 15.918957014000625,
+      "weights_rng_unchanged": true
+    },
+    {
+      "arm": "cmf",
+      "cohorts": {
+        "shape_dev": {
+          "confusion": [
+            [
+              12,
+              0,
+              0
+            ],
+            [
+              12,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "correct": 12,
+          "count": 24,
+          "min_margin": -0.019513845443725586,
+          "nll": 0.6942071187296609
+        },
+        "shape_train": {
+          "confusion": [
+            [
+              24,
+              0,
+              0
+            ],
+            [
+              24,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "correct": 24,
+          "count": 48,
+          "min_margin": -0.0186346173286438,
+          "nll": 0.6942791028425618
+        },
+        "train": {
+          "confusion": [
+            [
+              16,
+              0,
+              0
+            ],
+            [
+              16,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              16
+            ]
+          ],
+          "correct": 32,
+          "count": 48,
+          "min_margin": -0.017252206802368164,
+          "nll": 0.46335109193222257
+        },
+        "unknown_dev": {
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              8
+            ]
+          ],
+          "correct": 8,
+          "count": 8,
+          "min_margin": 3.5075058937072754,
+          "nll": 0.019181058587527444
+        }
+      },
+      "initial_sha256": "aff1868de43e685d9b66921d597b64d21f6e904ec832350a91b648bec0d2882c",
+      "input_tokens": 1695900,
+      "model_sha256": "4aa075cf0c97db542c9385c69ab88bf8aba29b76b9f265b237687d0bd05b56c3",
+      "order_sha256": "be55f63f56f1d2f4e3e49d7e6739136b43081a65740401d1f8754879a1c49fb4",
+      "pairs": {
+        "shape_dev": {
+          "both_correct": 0,
+          "count": 12
+        },
+        "shape_train": {
+          "both_correct": 0,
+          "count": 24
+        },
+        "train": {
+          "both_correct": 0,
+          "count": 16
+        }
+      },
+      "parameters": 44489,
+      "seed": 43,
+      "shape_pairs": {
+        "shape_dev/middle_put": {
+          "both_correct": 0,
+          "count": 4
+        },
+        "shape_dev/repeat_get": {
+          "both_correct": 0,
+          "count": 4
+        },
+        "shape_dev/tail_get": {
+          "both_correct": 0,
+          "count": 4
+        },
+        "shape_train/middle_put": {
+          "both_correct": 0,
+          "count": 8
+        },
+        "shape_train/repeat_get": {
+          "both_correct": 0,
+          "count": 8
+        },
+        "shape_train/tail_get": {
+          "both_correct": 0,
+          "count": 8
+        },
+        "train/plain": {
+          "both_correct": 0,
+          "count": 8
+        },
+        "train/tail_put": {
+          "both_correct": 0,
+          "count": 8
+        }
+      },
+      "stable_fit": false,
+      "trainable_parameters": 40361,
+      "updates": 2400,
+      "wall_seconds": 15.226432264999858,
+      "weights_rng_unchanged": true
+    },
+    {
+      "arm": "f_only",
+      "cohorts": {
+        "shape_dev": {
+          "confusion": [
+            [
+              2,
+              10,
+              0
+            ],
+            [
+              2,
+              10,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "correct": 12,
+          "count": 24,
+          "min_margin": -0.0014967918395996094,
+          "nll": 0.6942130103623877
+        },
+        "shape_train": {
+          "confusion": [
+            [
+              6,
+              18,
+              0
+            ],
+            [
+              6,
+              18,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "correct": 24,
+          "count": 48,
+          "min_margin": -0.004387617111206055,
+          "nll": 0.6942129594041192
+        },
+        "train": {
+          "confusion": [
+            [
+              8,
+              8,
+              0
+            ],
+            [
+              7,
+              9,
+              0
+            ],
+            [
+              0,
+              0,
+              16
+            ]
+          ],
+          "correct": 33,
+          "count": 48,
+          "min_margin": -0.0007485151290893555,
+          "nll": 0.46291923343562597
+        },
+        "unknown_dev": {
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              8
+            ]
+          ],
+          "correct": 8,
+          "count": 8,
+          "min_margin": 8.49352502822876,
+          "nll": 0.00038946887471691394
+        }
+      },
+      "initial_sha256": "aff1868de43e685d9b66921d597b64d21f6e904ec832350a91b648bec0d2882c",
+      "input_tokens": 1695900,
+      "model_sha256": "1bd8c251d677d9b184d6bf11e7c69a96316ceb99e161eff7bb7d1dfc5243a160",
+      "order_sha256": "be55f63f56f1d2f4e3e49d7e6739136b43081a65740401d1f8754879a1c49fb4",
+      "pairs": {
+        "shape_dev": {
+          "both_correct": 0,
+          "count": 12
+        },
+        "shape_train": {
+          "both_correct": 0,
+          "count": 24
+        },
+        "train": {
+          "both_correct": 1,
+          "count": 16
+        }
+      },
+      "parameters": 44489,
+      "seed": 43,
+      "shape_pairs": {
+        "shape_dev/middle_put": {
+          "both_correct": 0,
+          "count": 4
+        },
+        "shape_dev/repeat_get": {
+          "both_correct": 0,
+          "count": 4
+        },
+        "shape_dev/tail_get": {
+          "both_correct": 0,
+          "count": 4
+        },
+        "shape_train/middle_put": {
+          "both_correct": 0,
+          "count": 8
+        },
+        "shape_train/repeat_get": {
+          "both_correct": 0,
+          "count": 8
+        },
+        "shape_train/tail_get": {
+          "both_correct": 0,
+          "count": 8
+        },
+        "train/plain": {
+          "both_correct": 0,
+          "count": 8
+        },
+        "train/tail_put": {
+          "both_correct": 1,
+          "count": 8
+        }
+      },
+      "stable_fit": false,
+      "trainable_parameters": 40361,
+      "updates": 2400,
+      "wall_seconds": 14.308899118000227,
+      "weights_rng_unchanged": true
+    },
+    {
+      "arm": "cmf",
+      "cohorts": {
+        "shape_dev": {
+          "confusion": [
+            [
+              12,
+              0,
+              0
+            ],
+            [
+              12,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "correct": 12,
+          "count": 24,
+          "min_margin": -0.07064342498779297,
+          "nll": 0.694781073111509
+        },
+        "shape_train": {
+          "confusion": [
+            [
+              24,
+              0,
+              0
+            ],
+            [
+              24,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "correct": 24,
+          "count": 48,
+          "min_margin": -0.07015401124954224,
+          "nll": 0.6949102157166123
+        },
+        "train": {
+          "confusion": [
+            [
+              16,
+              0,
+              0
+            ],
+            [
+              16,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              16
+            ]
+          ],
+          "correct": 32,
+          "count": 48,
+          "min_margin": -0.06808185577392578,
+          "nll": 0.46371320393651777
+        },
+        "unknown_dev": {
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              8
+            ]
+          ],
+          "correct": 8,
+          "count": 8,
+          "min_margin": 2.888028383255005,
+          "nll": 0.028827261318602138
+        }
+      },
+      "initial_sha256": "147849f04e70b03cf53bd8442954415953e01aa9fafea4f4953010c5d24c535f",
+      "input_tokens": 1695900,
+      "model_sha256": "022c0d150fc120c5e40bb29e05012abf39d1f66270166e867398d41091a8e718",
+      "order_sha256": "5f6d1549237a8184931a42e150764ff328a324566ed55f9a7d1cb6b2fba228cc",
+      "pairs": {
+        "shape_dev": {
+          "both_correct": 0,
+          "count": 12
+        },
+        "shape_train": {
+          "both_correct": 0,
+          "count": 24
+        },
+        "train": {
+          "both_correct": 0,
+          "count": 16
+        }
+      },
+      "parameters": 44489,
+      "seed": 44,
+      "shape_pairs": {
+        "shape_dev/middle_put": {
+          "both_correct": 0,
+          "count": 4
+        },
+        "shape_dev/repeat_get": {
+          "both_correct": 0,
+          "count": 4
+        },
+        "shape_dev/tail_get": {
+          "both_correct": 0,
+          "count": 4
+        },
+        "shape_train/middle_put": {
+          "both_correct": 0,
+          "count": 8
+        },
+        "shape_train/repeat_get": {
+          "both_correct": 0,
+          "count": 8
+        },
+        "shape_train/tail_get": {
+          "both_correct": 0,
+          "count": 8
+        },
+        "train/plain": {
+          "both_correct": 0,
+          "count": 8
+        },
+        "train/tail_put": {
+          "both_correct": 0,
+          "count": 8
+        }
+      },
+      "stable_fit": false,
+      "trainable_parameters": 40361,
+      "updates": 2400,
+      "wall_seconds": 14.100750714000242,
+      "weights_rng_unchanged": true
+    },
+    {
+      "arm": "f_only",
+      "cohorts": {
+        "shape_dev": {
+          "confusion": [
+            [
+              12,
+              0,
+              0
+            ],
+            [
+              12,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "correct": 12,
+          "count": 24,
+          "min_margin": -0.06136763095855713,
+          "nll": 0.6945997165409894
+        },
+        "shape_train": {
+          "confusion": [
+            [
+              24,
+              0,
+              0
+            ],
+            [
+              24,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "correct": 24,
+          "count": 48,
+          "min_margin": -0.06142854690551758,
+          "nll": 0.6946046037815962
+        },
+        "train": {
+          "confusion": [
+            [
+              16,
+              0,
+              0
+            ],
+            [
+              16,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              16
+            ]
+          ],
+          "correct": 32,
+          "count": 48,
+          "min_margin": -0.061403512954711914,
+          "nll": 0.4632032088587194
+        },
+        "unknown_dev": {
+          "confusion": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              8
+            ]
+          ],
+          "correct": 8,
+          "count": 8,
+          "min_margin": 8.2707200050354,
+          "nll": 0.00044447341985076605
+        }
+      },
+      "initial_sha256": "147849f04e70b03cf53bd8442954415953e01aa9fafea4f4953010c5d24c535f",
+      "input_tokens": 1695900,
+      "model_sha256": "ebeacf236ce5cd3f01cdbabe3f5e26df1051cd56a599ce81192859cd2db53ee7",
+      "order_sha256": "5f6d1549237a8184931a42e150764ff328a324566ed55f9a7d1cb6b2fba228cc",
+      "pairs": {
+        "shape_dev": {
+          "both_correct": 0,
+          "count": 12
+        },
+        "shape_train": {
+          "both_correct": 0,
+          "count": 24
+        },
+        "train": {
+          "both_correct": 0,
+          "count": 16
+        }
+      },
+      "parameters": 44489,
+      "seed": 44,
+      "shape_pairs": {
+        "shape_dev/middle_put": {
+          "both_correct": 0,
+          "count": 4
+        },
+        "shape_dev/repeat_get": {
+          "both_correct": 0,
+          "count": 4
+        },
+        "shape_dev/tail_get": {
+          "both_correct": 0,
+          "count": 4
+        },
+        "shape_train/middle_put": {
+          "both_correct": 0,
+          "count": 8
+        },
+        "shape_train/repeat_get": {
+          "both_correct": 0,
+          "count": 8
+        },
+        "shape_train/tail_get": {
+          "both_correct": 0,
+          "count": 8
+        },
+        "train/plain": {
+          "both_correct": 0,
+          "count": 8
+        },
+        "train/tail_put": {
+          "both_correct": 0,
+          "count": 8
+        }
+      },
+      "stable_fit": false,
+      "trainable_parameters": 40361,
+      "updates": 2400,
+      "wall_seconds": 14.113218040999527,
+      "weights_rng_unchanged": true
+    }
+  ],
+  "objectives": [
+    "cmf",
+    "f_only"
+  ],
+  "python": "3.12.14",
+  "registration_sha256": "d9968e56c689f736ae1f48210970b37c7704b9163f09ec495d0d6060b7e57da8",
+  "run_id": "3d187a759c3246a8aa4b4ec828b80e7a",
+  "schema_version": "aster-history-freshness-study-0",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "source": {
+    "dirty": false,
+    "git_sha": "c027ca626deb56b38ab94b13730456112fa222f5",
+    "git_tree": "f003b78c62da8e038a33009981934a85039010e2",
+    "protocol_sha256": "41c897dae8735067718a0b1ab4177de44a71d65933318655c1e608a91fd59d89",
+    "python_file_sha256": {
+      "aster_bridge.py": "e83ac99aa2c4154c2bba081dc53df8d77bd1fa8577a75c4abcba6aa4ba66b83d",
+      "data/samples/python.py": "f2da2153616c6be0115167155286c4eaae512d100b60d893b72c4676dbc4a66f",
+      "data/tokenizer/eval/code/001.py": "a361808b26f498a81822aba6911a15a2c2883f5039709ddd9646015dcdab8656",
+      "data/tokenizer/train/code/001.py": "e6f92e2981edf80e99f27388c0290d9cbbfd57dc0eb537fde06085ca9b257125",
+      "script/array.py": "78aa1743b6cd0ae9e751f9ab4058a35398f1f36d823641ce73ee774486eaed8d",
+      "script/calculation.py": "aa3fdb087da2a7b7edd0fd0fcd14c93d5ae9f64c8ec6a8ee1a7350013e7a7e3a",
+      "script/classification.py": "7745c51d6f821c3f68650aedd4b007fea3dcf0d78ba810a14f754c78670814fb",
+      "script/equal.py": "41e9fbfc378fe9605892b8f4d21fb4fde51d414e29cb24d31435132de1c5cc29",
+      "script/hello.py": "66d73231fc9dd65f1b7fb4962203a5b8cda7f8e1540c75f4d9cd9afc41fd8897",
+      "script/input.py": "443224d9fd183d42bec37d0365615f8255fa39bf38ecc3dc65024abb3d223d76",
+      "script/inspect_byte_tokenizer.py": "79c556a3c5d04a171960c546058f4680178a1b26b8fc61859a2cde5e41de0e4b",
+      "script/loop.py": "54ad15dfa2e398a7fd3467b2cd2de3b760467bff444f95f6558b35377472d827",
+      "script/train_bpe.py": "7dc6cd122b72a1cccd91892b8bb4411119d7847a584ad5b5611ee6d478f2ad57",
+      "script/type.py": "de1524f95d16fce3a6a1f752ff70d48e849b17860d7dae48e41bc6cf5a55b028",
+      "scripts/analyze_decision_relation_support.py": "6e5d96689599c7d2a0911d96e201debd5068a746c1dc93e7820ec5973de72abe",
+      "scripts/audit_decision_action_types.py": "4b58e621a55561b3b2c6dd39a8cfa61e102f288a5e0ca362c952296efe2402de",
+      "scripts/audit_decision_failures.py": "5d087129dab74feeb9362c385b77e39e59d4bde31433a65d6e822613e268a03a",
+      "scripts/audit_decision_mixed_preflight.py": "7cb90a97ec7787b082160778e228fb617f065b50fcc120e0c66691c287585106",
+      "scripts/audit_decision_mixed_v1.py": "ac5eb1eeec31328900ee7a02bb5f04427040a1e76fd9d12f5c5806dcb55b2e62",
+      "scripts/audit_decision_relations.py": "9c26e78b5dec9b018f1c71a8eb70f010f3fd13cedac68cc3ad413837f90942ad",
+      "scripts/audit_fixed_v1_diagnostics.py": "0deceb9c10cb0c666326d026eccc662be16b08509154dca1081f8e0c113f8f81",
+      "scripts/audit_history_reader_contrasts.py": "ebd813822be9ad9e8c05fa1c812ec8f1a8f6183937a6e41b4d349bdab81c4c25",
+      "scripts/audit_history_reader_order.py": "dca906299956f50b99c492be79d8996e0f9bf0d6b718c0bc9494aca064129937",
+      "scripts/audit_history_reader_training.py": "a233467af1e6b83c59175788fd30f39ac3f909e6e40773fc0ddef87904d9893e",
+      "scripts/build_canonical.py": "27221ff4b9dcadc59db7f586046c79306109a3653f040f6739f171cf4e0aad32",
+      "scripts/build_training.py": "25db50ed48599fb2f08b1950633542cb1471a79ceda9571a2e1351639c9382c9",
+      "scripts/check_workbench.py": "5f7194f9717fb398262e9db88b02beb5fabee1ffa64f683f17d37a995b0f1fd5",
+      "scripts/fetch_external_seed.py": "98aab4ccfd8c70dabba816c6a725c6b8c2f9aa6c56139af69df9b4793e1ed54d",
+      "scripts/inventory_corpus.py": "4ff6e9eabdd7ceaf3838410751465f15cbcb2ef197a440d1cc2e854b8373e537",
+      "scripts/prepare_workbench.py": "8875667c43a7b7e2f05742885122ba294d7e9efba78d0c3b0a2c6d251787fd7d",
+      "scripts/run_decision_action_types.py": "0494df605e428ada677ef73d2cd899dc53952081b768bd8125b5f363d0ff27ef",
+      "scripts/run_decision_baseline.py": "f268809553838f75ab837f73c9ff0b92ab66537af59b5a633c9b7fbb0d0e18f1",
+      "scripts/run_decision_data_intervention.py": "24b687b6e2e0d0d39c99ddcc020b10ba37060b6068e94282dee4cece218d49c1",
+      "scripts/run_decision_fit.py": "94c520b156851ee1665174abc756466c2c9de7ffa9ae8fdb6cdfd6ccc01944e3",
+      "scripts/run_decision_fixed_v1_diagnostics.py": "6e948e27f765bddd1f9da778f82dc0938519ef46a25e582c1c049a70179dc60f",
+      "scripts/run_decision_mixed_preflight.py": "64e1ecac3dfddb8ad07fc5a572732028bfd5b51e1da4dbaa68aefe0b7add3b4b",
+      "scripts/run_decision_mixed_v1.py": "5798b65dfcfa5175af7b4454921e1d3f54fb5070902c7955833f48d6b10c6e6a",
+      "scripts/run_decision_relations.py": "23ceb4bdb007b900bc793d5df1bd56268b556505c2ecc5184f4908e8107ea2ac",
+      "scripts/run_decision_representation_comparison.py": "c018228d7421cc043f0d2433e768fb90bda575cbeb6778a9b8b4e3d90792a1f8",
+      "scripts/run_decision_state_diagnostics.py": "aabc11450ff03d7c0e7a507ae096c4e58242dac9b7f483b5479f4657a1167404",
+      "scripts/run_decision_state_training.py": "ab726d991c5327a48e35587fb5f0fd510d120b9ea81013a4813512f2d7e72d2d",
+      "scripts/run_decision_tokenizer_comparison.py": "cc0c9faba91452f1fdd4cc37eb0adca158461aa34e346ea25660f7385371a017",
+      "scripts/run_history_freshness.py": "7c50bf6c0fac17be10b707fa1d2afc5f7e1bc3235434e5954fd3a1dcb45b776a",
+      "scripts/run_history_reader_contrasts.py": "33d3222d270de35c72bfc6dada45337354a6e5973cba11f2b9ecf821fc4296bb",
+      "scripts/run_history_reader_order.py": "6d1c6cb151a1783e6d31505b96deee1d6ae6943cde4e4e558f49a7f5a490bbea",
+      "scripts/run_history_reader_preflight.py": "9c52dded51b0574a7b68c83fac6c7e50877cdedd85134eb50510121eaee5d600",
+      "scripts/run_history_reader_training.py": "eea0fe1456964863ded3395d2ebb9d9cfaebe8904c0ff3d7c2e1ce372505d9e4",
+      "scripts/run_state_representation_preflight.py": "0a379943ce4e19d5a11559c36fb3d4d6df170a201fcca152888e33af518cc687",
+      "scripts/train_tinylm.py": "99d3e23e16d2946d7669b1f4927efb153a0ba7b2447fbd973c3d81b724fca46c",
+      "src/aster/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/agent/agent.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/agent/candidates.py": "e98b89bdb9f73d8c4de79989306ca1a7925c36a3f7a47e3a53e1c4f15957dd91",
+      "src/aster/agent/intervention.py": "2203b8e179aef9c67d04863a3132322cdec0bcacd7b8746d413e9d21d09911a1",
+      "src/aster/agent/planner.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/agent/policy.py": "2ac32a3b7c413e1127e6688cfa4d09ab20d5e222384135ca9e2ce264389798ec",
+      "src/aster/agent/selective.py": "12c40b9fb82a16316d1c9c00d2b25071b1370bcef8459dc27270bafe55fb4e35",
+      "src/aster/benchmark/__init__.py": "26eefdea13b7a9242ec0f37d4e09b77a39a01c0f8f7d110940af6a3a153c9f17",
+      "src/aster/benchmark/case.py": "d3b9afe0d3321f0728423c109596c6d0ec88faf604b4b4ac36e96d0b238b9625",
+      "src/aster/benchmark/decision_failure.py": "5e337560e347a9654a42a90a504cc092cbcd8de3a4a4aa5113760dd980933b80",
+      "src/aster/benchmark/fixed_v1_diagnostics.py": "38475772b95ae06a651e955df43a7f74018c602c96acfae47c2cbdb0d218ad6c",
+      "src/aster/benchmark/history_contrasts.py": "8c0ffb626732605bd26698ce74ff417a4d668c2edb93f96c9b4acb4860a72930",
+      "src/aster/benchmark/history_freshness.py": "2b5a2b41bdab2442b23acc51587452e3c08e0da6033781349c0bbd1603b345bf",
+      "src/aster/benchmark/history_order.py": "62016e77d0c447498cd29e99282dfba19d69e87c0f126ff200d7ff8d7dc7e7e7",
+      "src/aster/benchmark/history_reader.py": "91823be0828ae15cd91717f50e417b7edb6bb8c915256b6941524e4c0b152860",
+      "src/aster/benchmark/metrics.py": "e851c7f2ef788e85d3a9417faab53975b49927fb02ec31636c01933638ba3d59",
+      "src/aster/benchmark/mixed_v1_preflight.py": "98b82efee51c76f8bd09557836d6ed8eaba152c66f6224f747bbd19fc0c8ed59",
+      "src/aster/benchmark/runner.py": "44d0210ed2739bd117594e9bb5286e8411321188a2ce1887ff0f17c58cc9cdd4",
+      "src/aster/benchmark/state_diagnostics.py": "78fb66e432cc44c63c8ee7164c90d2d53c62e293f6ec14e22f2d69d0c3e7813b",
+      "src/aster/benchmark/state_representation.py": "d1ab2d2a618fe46325213f932dacd4d58b721211cabcb76e9386a4a3fa478302",
+      "src/aster/benchmark/suite.py": "98784b5d28dfead42176fe180a6b6e4b743e949ebf414393c3759e6e93387573",
+      "src/aster/cli.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/coding/ast_snapshot.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/coding/edits.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/coding/verifier.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/corpus/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/corpus/canonicalize.py": "ff4f4daf7fc0e054b7dce60510885bce34daaaa81fbab78807c9a5433ff1ee24",
+      "src/aster/corpus/dedup.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/corpus/filter.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/corpus/ingest.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/corpus/loader.py": "59855b3998e6b0c289de0cd0d77652fb6ec09f3480a21fdadc0d216bc1589454",
+      "src/aster/corpus/manifest.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/corpus/normalize.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/corpus/pipeline.py": "f69dd6fda1d6d8bd7e93b616f12d52d2d4d9d2542dbdc12dc67e6dd11e6cf02c",
+      "src/aster/corpus/schema.py": "732dbb8daec2bc88ecee2bb0883b06c6131b09ad18446ad240e6ee0e7670e746",
+      "src/aster/corpus/split.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/evaluator/episode.py": "874da6c8c784c0287966f320623ef9448b8d3fb46f0fe7f57570c5d1c936a671",
+      "src/aster/evaluator/goal_contract.py": "75dfe67d50d782f470d1f1bac8e1fa5904fe48f5bae3905b1efb26b305c5243b",
+      "src/aster/evaluator/metrics.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/evaluator/protocol.py": "9624bbf37d019e1b07fe5ab44c8e92f8f690274aa032fc7c6add9f2c62ca728c",
+      "src/aster/evaluator/result.py": "ea93ebb624ce44c0b95783d52f08568ac710bb987d972d720b10aba3b84e96bd",
+      "src/aster/evaluator/scoring.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/evaluator/verifier.py": "ac92a67bcd687228ee66f2e589b1830f2119a84c8f012bd1a6d582bf94bd902e",
+      "src/aster/inference/decide.py": "d34a50cae1305f3d14173b76e22573ef781325dc4bf40f170b50b0183d484953",
+      "src/aster/inference/forward.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/inference/generate.py": "8d1b1f28c5e74d2877b4cd3357d2a69fa8e86136b9ef579b06285deda00a7e00",
+      "src/aster/inference/sampling.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/model/checkpoint.py": "9f77bffd0b349fa932fffa87204e4f6e5b6229327793a666a5911d307bc7c893",
+      "src/aster/model/decision_artifact.py": "abf45d47b6bdb9b6ca91e41e075c540229f44451e57f76846444fc01c8bd9bd1",
+      "src/aster/model/decision_head.py": "22af4f7ded1b475461fa86a5aab591c7217e7f81f94bd766e1f2c856eb611cd3",
+      "src/aster/model/lm_head.py": "f2999511e80ccbc0c21ad593a503c717f6c719b398c84bd8746b4e191513dfea",
+      "src/aster/model/tiny_lm.py": "a254a9bb735596d8c0d85e881994a340e66326a73ffb143a9560e420eee64aeb",
+      "src/aster/model/transformer.py": "aaf5889f57f2679fefe2c7ffd274aca55657fe97e78ad2239e7c058c49f1744c",
+      "src/aster/records/decision.py": "8e100445690f50236a90a3e3f426c4d878673c215d8e73e051115e45c5fdbaa5",
+      "src/aster/records/decision_relations.py": "d9490c74317bfbfc903803a7369e0c7a44a20b1ea14c1e2a801fc47880a06c4d",
+      "src/aster/records/intervention.py": "3855ab14911c9fe061f8e72707cf3dfeee914d9476f9901132d84ff02c65ddd8",
+      "src/aster/records/recorder.py": "8cf7987a1a276956fe5c5dfc3bcb7e3ebaad296ec09ab5e6b6fde1931b94c33a",
+      "src/aster/records/routing.py": "99336cf8cefe2336161a23d268e93a3e20261d61443ebcfb4cc0141954f302a3",
+      "src/aster/records/runlog.py": "f9d203be127789d37e034580f5aec8b72a6766bea843ae8dbbf27044f0950751",
+      "src/aster/records/schema.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/records/trajectory.py": "85e28f86ecc384b40124a61be1220a99a0922b166afa55c7161a7e40622d4681",
+      "src/aster/records/transition.py": "f7e77b9455053e88e0740de47c631234b97be5d80890289daed93625ba0726fd",
+      "src/aster/reward/__init__.py": "59a103235d1cd16cf296abb0d25e2258d7b85048adfe8f9f922cf1d121140c82",
+      "src/aster/reward/contract.py": "ec2ea66e27dbbdee28fac3b8df7d9af639dad33d635f64379597651ca4509507",
+      "src/aster/runtime/context.py": "c0fde742335e564aaa02a5bd3daf366f118412935224c0fb5276856378e5d131",
+      "src/aster/runtime/executor.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/runtime/learning.py": "f6b1f2f2eeafc1e8b260c2e67fe327bc72440c861f8fbb976fdcf08c9ebb4367",
+      "src/aster/runtime/loop.py": "e2f70ea9e84938200eae1f22175b6735c47e80bd55c549b23d2f705e1cfe8b94",
+      "src/aster/runtime/selective.py": "ce84bdeb9e146bf7f7bafeb98f58775365c55de850e88ddc38b34caacc9871c2",
+      "src/aster/runtime/service_agent.py": "1684d5e2a01db521997f568a76a5a451b3b1a0ffa98501a0265466b647246fcb",
+      "src/aster/runtime/state.py": "b5e7a5ae75201285d93364b087fb51ee05b972540aca14c2e2a4ed0f62865a9f",
+      "src/aster/service/__init__.py": "44ac24069787e8d1da4bc737fc25be93d7cd8a30f8c65c2752f9c293929f6963",
+      "src/aster/service/artifacts.py": "dcf86b26ba89464934f71fe4a50bea8441b99aa379da26c52de709c80e05b8ac",
+      "src/aster/service/contracts.py": "5f0984410b6f498be531118b3628708bfe75fd3de19ae112b0bdd081bb81eab7",
+      "src/aster/service/http.py": "65e4af451d9952bd7312ec83e1f3c5e4f4540016267f0ead90872fe199012fdf",
+      "src/aster/service/jobs.py": "03bc7a20a3b52f3e2796b3f03397ef478bf6344b9f2bda8191b2f84f711134cf",
+      "src/aster/service/recipes.py": "988bd640c93e871094d18232965b5554f1568ae8d15806212599247afd38d27c",
+      "src/aster/tokenizer/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/tokenizer/artifact.py": "005f53bd3b851ed8d7db97036137744e1928f75ffd3a63a128d22a32b80a5d7e",
+      "src/aster/tokenizer/bpe.py": "802bce7518ecd3041825a4b0ff0c6d1e885117d9b2580252d02f2a1441e6628d",
+      "src/aster/tokenizer/build.py": "67df11a1b0b8dd0940efe82b887e09685587c1f14e62a6ac33bc7cd1b82625b7",
+      "src/aster/tokenizer/byte.py": "0ed110751235f1df681a1157d346aa9bc2fa3e33550d4fe060461fe2c3526ce4",
+      "src/aster/tokenizer/cli.py": "b62999ac89b8214aa93d8a6f8dfe2597dccfbbc1b3b14bb4766bc1c942be34bf",
+      "src/aster/tokenizer/codec.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/tokenizer/metrics.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/tokenizer/trainer.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/tools/builtin/calculator.py": "356c0be5e6d3eeb50e9b9696958476f8f3a6b86eff59baf94979c96c2853b1b4",
+      "src/aster/tools/builtin/filesystem.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/tools/builtin/memory.py": "9c76b7fb37d411dd20730a8adff26e5afc60f79cc5e4902eb6318adc576e6c15",
+      "src/aster/tools/builtin/python.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/tools/builtin/shell.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/tools/executor.py": "6ab0c8cdba2035def9d43bdfed78230775c8a15b881623827d2f7b4886fb34a6",
+      "src/aster/tools/registry.py": "8b07831d772866e54647e37eeab01d7461607fd4b3427ce7fb2eafaf29f787b3",
+      "src/aster/tools/schema.py": "8e9e29421cfbff38b86b84299e430f6a413ae41436f0a970df357d7127e9f364",
+      "src/aster/training/dataset.py": "6de01c499c45f8e1165a83f01b1328ef3ec74670cb6743df3c0659a42144a129",
+      "src/aster/training/decision.py": "d0d214ac09ba9a5b87f8a5d0fa41da31c8cb72629d7456360f6aa36a573684a9",
+      "src/aster/training/decision_action_types.py": "f07e22aa0d5ac7d09050fe1543691db8989acdb261e0963a3f09e1eb97d1f0bd",
+      "src/aster/training/decision_baseline.py": "1a3338759df46730722fb4e0e01668dfa1236ddde59ad4ee991d72dff0c0a81c",
+      "src/aster/training/decision_data.py": "38503fff3731a7ab7290924a336ad3733a67a6633adb77c0672c1811a9da59c8",
+      "src/aster/training/decision_fit.py": "11441da221938ba2204ef30d3cf98b5a7b1c2ced20a9be93da7a6ac8f896b237",
+      "src/aster/training/decision_mixed_v1.py": "ea041c2269a9e83286a39f4b543b8c1b25b156f16d82a9cfca63497ea6e21256",
+      "src/aster/training/decision_relations.py": "7b9fa5f9e54b8e0e2b4dc93cfde7b38fe423703d658a1d302c781abcdc01c01e",
+      "src/aster/training/decision_representation.py": "8b819fecf7f7d3c5b117f3db7c25266af3bdc3ef232aa5f5632a34610b3d40da",
+      "src/aster/training/decision_state_training.py": "dcff5090f6c289ec2fb139732c589adbf18e2c42ccbdfc997c2892959a51c5c7",
+      "src/aster/training/decision_tokenizer.py": "99e02c9c1022817af19319494dd5b3e187df1028bad0cd572b52fe457f2d9bbe",
+      "src/aster/training/experiment.py": "134676b2133e878ab03a3c3b0fd98c7aa315947357192ecfa3e58f1e5b959ae8",
+      "src/aster/training/extract.py": "b2ec95615017882228eb8b4a4b154cd6b7f82e2551b6209c9e835a4b0d671b44",
+      "src/aster/training/history_contrasts.py": "b6e827b9a0b59b8d55745b9cc5ff8c9d5a148cee6b71d03cc55d7f1a990b028a",
+      "src/aster/training/history_freshness.py": "4af94ae7f3f31d47edd5c42acaf697aa10dfdb10cd8b1e8f1dadeefd46bc7f7c",
+      "src/aster/training/history_order.py": "c8d104cffc15d4316220f4616bab07ef54fd6dcb5a341728fa5209048896ee20",
+      "src/aster/training/history_reader.py": "72674c7d3f9d3f5a40923514c58c28c6719c7bec68f1fa94dce23eb127cae15a",
+      "src/aster/training/intervention.py": "c151224cd8a35bdcef3bd411af32b5d38797156783d024a81392900bba308e8e",
+      "src/aster/training/pretrain.py": "0d677e88c9a61d93a9bf7426d0c87809acc2a171a684d0f5aeda927892d08e2d",
+      "src/aster/training/sft.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/training/tokenizer_run.py": "d3e5cae3609339dd944df47cc45278d96afb9ee75af843a17929a4bc3018b37e",
+      "src/aster/training/view.py": "7f691e2de75aecc5ac80fbd07f1d3118eb6273a1c57189282ce3c54cff7a74c8",
+      "tests/benchmark/test_decision_baseline.py": "8455b8f7e73ad92ff8ae479eeea806fd8e7142a6047977886c748ceabdc13834",
+      "tests/benchmark/test_decision_benchmark.py": "8b3484d1b17c84e8c730217402e7210219be3374fb5b850b4a445705b623fc76",
+      "tests/benchmark/test_decision_data.py": "25b96eaffdcd1abcfd228d699089436adc4b1b5909cc8131d0d27bf8e5c20d54",
+      "tests/benchmark/test_decision_failure.py": "2594b2b40fd098a27553028f4c0a6a495541a4feee7c0165efc4467976468dc6",
+      "tests/benchmark/test_decision_fit.py": "730e924ff7b7fd382ac6fe3e11f4607c27662c7b534a2351e3a4b2f3038b5ad1",
+      "tests/benchmark/test_decision_representation.py": "f729ebf1de92e7f957a9f24652a768948722bbe918702d2476db2aa07f286670",
+      "tests/benchmark/test_decision_state_training.py": "f734edaeab5d3f6f540e39463bd30ce653621d88e526225896f908fda6e609fb",
+      "tests/benchmark/test_decision_tokenizer.py": "9272caf0d1631fae822cdb4517b72399f2d144a4a08f48ea6a659176dccdb10f",
+      "tests/benchmark/test_fixed_v1_diagnostics.py": "c912719b69b79c9447d29d7777344d7cfd29175e79df1f490d9f8a48c070f4cd",
+      "tests/benchmark/test_history_contrasts.py": "541b0f817dbb705f20b0e4ebfd272e9f85d69715d64058b3abf563b3f80a8f06",
+      "tests/benchmark/test_history_reader.py": "9c675ea8a6e4b2eeea5f2232fa269ca75dae336bf3c9fe0b5c82e4841f19f56e",
+      "tests/benchmark/test_mixed_v1_preflight.py": "9ed9a3594305623a6b3be30a20d304feee4c5266f6da8f16941de689018efab2",
+      "tests/benchmark/test_state_diagnostics.py": "89f186fd70e9c5905577857c082cef3241da92e6b1ce99669149a215b5f4a110",
+      "tests/benchmark/test_state_representation.py": "7e3f6f04b70446aa6743860f174267afe15a716be6104a44e9834f273a35134a",
+      "tests/benchmark/test_train_diagnostics.py": "f3c80318b634632420cdd60dd505f4e0ce9d1b7bb06dc974064d66c08a3cbccd",
+      "tests/corpus/test_canonicalize.py": "fc6ee574752f9771398801d5e9b9b9ff33b19871ec2994b53d79f9f71266c220",
+      "tests/corpus/test_pipeline.py": "8c118abe6b85e11a0e17342f775a126cd3c358b8138efd295beeb4d83b85e04b",
+      "tests/corpus/test_training_view.py": "72ed27ad640cf74b56ae4ae099393e87ce4a1fc48e53126fffb6e27e5e89fd5d",
+      "tests/evaluator/test_current_state_goal.py": "bac642465df276bde0066b013a691e0f9078da7b1cd7696b57e06a7e891915c3",
+      "tests/evaluator/test_episode.py": "1548f9799daa7bbe62b859b4837c0d5ae3650a0c8901e71baf7afeee0bf05644",
+      "tests/model/test_decision.py": "0e8c87670326575d486b485659bf599b141d238547534efc5ccb88fd0c6ab689",
+      "tests/model/test_decision_artifact.py": "0a2697e4778657ba16655a57225dbc2f23199bae27a61239693ce3eefd7fc991",
+      "tests/model/test_tinylm.py": "a6e5b5bdd5c4c27fe61ecafbdb39798464434987212c0474d9a5f2d27868e017",
+      "tests/reward/test_contract.py": "5beb2ed3967abd33620cd1ab7dd37c99a269760c203c65bbbfd3543dafadc830",
+      "tests/reward/test_runtime.py": "a5bc2bc3dd6a7c3605822c3033b874c73bf3dcca5603c0a719a864eb8820263e",
+      "tests/runtime/test_agent_kernel.py": "46083d2d74e2264a0678005afdb9621f1a79f8eda40e4ab664f28c839c09f7f3",
+      "tests/runtime/test_intervention_experiment.py": "a9692688529bb8bc558f916f007fbb183adde93624611540e9f12767cdbb255b",
+      "tests/runtime/test_intervention_learning.py": "9127fcc462500dd24e48532ac2086be9c1d77157d4030ac18adee4b3b44f68a2",
+      "tests/runtime/test_selective_runtime.py": "2751ddd5554198bc6d60e1d6d033ac1a6f8fb28437d6cb685f8399d76aa81a9e",
+      "tests/runtime/test_service_agent.py": "85190f34e04381e53835d358545c3b3041e1db8cff8afc67e9c4e6ab0229f765",
+      "tests/service/test_agent_service.py": "7e3e30d697bf645ce37ea41d4e8ca1cded8a4bd36a51e43448f9eaedf7f9d5bc",
+      "tests/service/test_service.py": "ed6a28f70a9849db3329865b730fc21fb28375913179231a95562df7dbb4971c",
+      "tests/test_history_freshness.py": "a94860c74ba24f6dc96074b365de01897b9f38d1ee553c59cfda4b8cc5977421",
+      "tests/test_history_order.py": "6e46a794d1412f2de26b0506df937757ddc8f4d43f72b4a20409d1b04427143a",
+      "tests/tokenizer/test_artifact.py": "32dc2063238e8379b7d01edf7ae9bb70a443efe79bc2c1b027a4319e2ce8c3c4",
+      "tests/tokenizer/test_bpe.py": "fa40156179772289b55a32240c2ff3c92f156f5e32aca1220ab677bf157275e9",
+      "tests/tokenizer/test_build.py": "7aff1468a361cbf190ee8454b97fdc58fa62c92113def192070b7592bd40a8e0",
+      "tests/tokenizer/test_byte.py": "d432acf60d9c240fc380c2f4ed75f0a2eac01fa0a85c6583786461f16b4ac597",
+      "tests/training/test_decision_action_types.py": "0d976de2eb5788c068d74244267e9d00e716f4cdfa1f234e47b317dfa73eab50",
+      "tests/training/test_decision_mixed_v1.py": "1f67ffa7e8905634ebeddec9413750d50e7d42028f603f38f4b7d7dae6e371cb",
+      "tests/training/test_decision_relations.py": "b790915f7adc15884c8cd0a8793923779625abd030a1435b119a2d6ebefc8a99",
+      "tests/training/test_history_reader_training.py": "88a18977512f1a29a0a432acfb440654bc5c41f8f38985a6679af73372b7cf4c"
+    }
+  },
+  "test_constructed": 0,
+  "test_scored": 0,
+  "threads": 2,
+  "torch": "2.14.1+cpu",
+  "wall_seconds": 89.89230143500026,
+  "independent_saved_audit": {
+    "reloaded_predictions": 768,
+    "independently_scored_train_predictions": 2304,
+    "executed_prefixes": 128,
+    "paired_models": 6,
+    "passed": true
+  },
+  "github_same_source_tree_commit": "f409004e59f78941d2067c2b64303de6ab3c1a9c",
+  "validation": {
+    "pytest_passed": 197,
+    "pyright_errors": 0,
+    "pyright_warnings": 0,
+    "debug_run": "9d0565277c1d4a959ce5aa4845ff89ee",
+    "debug_tampered_logits_rejected": true
+  }
+}

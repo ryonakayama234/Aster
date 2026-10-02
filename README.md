@@ -179,3 +179,5 @@ PYTHONPATH=src python scripts/run_history_reader_preflight.py --root .
 
 [事前登録](docs/HistoryFreshnessMinimal-v0.md)で、raw履歴・同初期weight・同提示順のF単独教師とC/M/F同時教師を比較する。train48/既知未学習shape48/dev32、unknown保持。
 CLI: `PYTHONPATH=src python scripts/run_history_freshness.py preflight`、`measure`、`audit --run runs/<Run ID>`。正式結果は後続report。PR #45依存、main/Service/Web未導入。
+
+2026-10-02最小Fの[正式結果](reports/history-freshness-study-v0.md): F-only全seed未fit32/33/32（/48）、学習順序両側0/1/0（/16）、未知shape両側全0。unknown devは全8/8。CMF対照も未fit。次はraw/イベント表現の比較設計候補、未実装。

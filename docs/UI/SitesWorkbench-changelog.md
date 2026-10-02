@@ -313,3 +313,10 @@
 - PR #45 head751d42aを基準に、F単独対CMFの同raw入力/全初期weight/提示順/更新量/token量比較を実装。
 - 実Tool生成128unique/12task/52対照、train48/未知shape48/dev32、unknown保持、入力重複0。正式測定前の独立再生と試運転監査を確認。
 - 正式測定/全検証は後続追記。main/Service/API/aster-web/公開版/promotion変更なし、ユーザー追加作業不要。
+
+### 最小Fの正式測定と保存監査完了
+
+- Run3d187a759c3246a8aa4b4ec828b80e7a、clean sourcec027ca6/treef003b78、GitHub同treef409004。全6arm、50epoch/2400更新、同token1695900。
+- F-only train32/33/32、両側0/1/0、未知shape全0、unknown全8/8。CMF対照も未fit。条件後付け変更なし。
+- pytest197/Pyright0/0、768予測別process reload完全一致、2304train保存予測独立採点、128prefix実Tool再生、評価weights/RNG/測定source hash不変。正式89.892秒、ユーザーWSL未測定。
+- 次はraw/event表現比較の設計候補、未実装。main/Service/API/aster-web/公開モデル/promotion変更なし。ユーザー追加作業不要。

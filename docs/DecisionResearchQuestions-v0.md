@@ -230,3 +230,5 @@ PR #43でtrain fitと未知/復帰読解が分離した。次は[固定対照pro
 ## 2026-10-02: Fのみの最小読解を事前登録
 
 [HistoryFreshnessMinimal-v0](HistoryFreshnessMinimal-v0.md)で同raw入力・同初期weightのF単独/CMF教師を比較。48train、48既知未学習shape、32dev、unknown保持。正式測定は後続記録。未fitなら多目的学習だけの説明を支持せず、fit/転用を分離する。
+
+最小F[正式結果](../reports/history-freshness-study-v0.md): F-only/CMF両方でfit未成立。取得なしの識別と保存/取得順序の選び分けを分離できた。多目的教師だけを原因とする説明は支持しない。次はJSON構文を除去し全イベント/キー/値/順序を残す表現比較の設計候補、未実装。容量・位置・読出し・最適化も未確定。
