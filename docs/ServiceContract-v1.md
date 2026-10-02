@@ -188,3 +188,66 @@ v1が実機ブラウザまで成立した後に、順に検討する。
 7. model promotionは評価・ロールバック契約を決めた後だけ追加。
 
 自由task入力や任意tool実行を、Web UIを作る都合だけで先に追加しない。
+
+
+## Learned Agent ACT v0
+
+Issue #48の初版は、登録済みDecisionModel Artifactを固定development taskの実Tool実行へ接続する。
+
+### DecisionModel Artifact
+
+Service catalogへ新しいartifact kindを追加する。
+
+```text
+decision_model:<sha256>
+```
+
+登録はローカルCLIがsource pathを受け、`load_decision_artifact` でmodel/Tokenizer/artifact identityを検証した後、
+`artifacts/decision_models/<digest>/` へimmutable copyする。Service/Web requestからfilesystem pathを受けない。
+
+`GET /artifacts` の `decision_models` はlogical IDと公開可能なlineage metadataだけを返す。
+source pathは返さない。
+
+### recipe
+
+```text
+agent-decision-model-v0
+kind: agent
+inputs:
+  decision_model
+parameters: none
+policy_mode: model_only
+task: act-calculate-store-dev-v0
+tools: calculator, memory.put, memory.get
+candidate_builder: calculate-and-store-v0
+serializer: aster-decision-input-0
+```
+
+固定task:
+
+```json
+{"task_id":"act-calculate-store-dev-v0","kind":"calculate_and_store","operation":"add","left":23,"right":19,"store_as":"answer"}
+```
+
+これは実装前に固定したfresh development probeであり、sealed testや独立task-family holdoutではない。
+
+### evidence
+
+通常の `trajectory.jsonl` / `evaluation.json` に加え、`decision-traces.jsonl` を保存する。
+agent bundleの `decision` fieldはmodel artifact ID、model ID、candidate builder、serializer、DecisionTrace列、
+weights unchanged、Wiring Gate、Capability Gateを保持する。
+
+model-onlyでは各stepで次を要求する。
+
+```text
+DecisionTrace.selected == Transition.action
+```
+
+Webはscore、task success、Gateを再計算しない。
+
+### Gate
+
+- ACT-Wiring: artifact load → candidate → score → selected Action → real Tool → Observation → State → Evaluator → persisted evidence が一周すればPASS。task failureでもPASS可。
+- ACT-Capability: 事前固定taskをmodel-onlyで `task_success=true` かつ `goal_verified=true` ならPASS。
+
+初版ではfallback、rule intervention、自由task、任意tool、threshold変更、model update、sealed test開封を含めない。
