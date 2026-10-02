@@ -265,3 +265,16 @@
 - 独立JSON oracleと既存observable_relations/v1教師の一致、保存再実行、停止時memoryと最終put後get、入力衝突/跨split重複、Byte長を確認する。
 - 今回は生成・保存監査でモデル能力未測定。詳細の実測と検証範囲をreports/history-reader-preflight-v0.md/.jsonへ保存。旧/予約testは触れない。
 - main/Service/API/aster-web/公開モデル/promotion変更なし。次は固定readerの課題用学習と予測事実からの実行。言語事前学習比較は素材/architecture/context監査後。ユーザー追加作業不要。
+
+## 2026-10-02: 固定履歴readerの学習・自力実行診断
+
+- PR #42の80train/40devとschema/suite digestを固定。TinyLM width16/1layer/Byte/context2048、C/M/F各3クラス、seed42/43/44・50epoch・LR0.001を正式測定前に登録。
+- PR #41正式seed42分類器の保存weightを復元しhash照合。全reader seedで同じ分類器を固定し、oracle/予測事実を既存candidateへ結合。
+- unknownと矛盾abstainを区別。全curve/score/順序/保存reload/訪問入力/実Tool経路/誤停止/invalidを記録し、独立保存監査を追加。正式結果/限界/検証はreports/history-reader-study-v0.md/.jsonへ記録。
+- debugとtrain-only速度確認は正式結果に算入しない。一般Corpus事前学習、Task reader、main/Service/API/aster-web公開、promotionは変更なし。ユーザー追加作業不要。
+
+### 固定readerの正式3seed測定完了
+
+- clean source3584053、Run1cc57fcd7b6e41819bdd95d35c272003。全seedfit80/80、dev同時21/24/20、prefix6/12/3、初期0/1/0。既知prefix50/48/41と通常初期8/8を分ける。
+- 全pytest184/型0/0、cached audittrain12240/final360/episode360/transition2543/訪問1656、oracle120実Tool再生、測定Python変更0。正式89.799秒、ユーザーWSL未測定。
+- F=trueとM=falseの取りこぼし、model提案由来Tool失敗invalid、未知訪問履歴を保存。モデル採用せず、次は更新0の関係診断。Web/API公開なし。
