@@ -6,7 +6,7 @@ from dataclasses import dataclass
 import math
 
 SCHEMA_JOB_SPEC = "aster-job-spec-0"
-ARTIFACT_KINDS = frozenset({"training_view", "tokenizer"})
+ARTIFACT_KINDS = frozenset({"training_view", "tokenizer", "decision_model"})
 JOB_KINDS = frozenset({"tokenizer", "pretrain", "agent"})
 
 
