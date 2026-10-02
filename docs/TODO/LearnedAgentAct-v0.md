@@ -18,7 +18,7 @@ Issue #48。各項目は実装・検証・実測を分けて更新する。
 - [x] `agent-decision-model-v0` Service recipeをallowlist
 - [x] Service requestはlogical DecisionModel IDだけを受ける
 - [x] Service contract / AGENTS / changelog / development statusを同期
-- [ ] pytest / Pyright
+- [x] pytest / Pyright
 - [ ] ユーザーWSL2でDecision artifactを登録
 - [ ] ユーザーWSL2でACT Runを実行
 - [ ] Wiring PASS/FAILを記録
