@@ -149,3 +149,17 @@
 - 検証: repository unit testとAster GitHub ActionsをPR作成後に確認する。aster-webはCI workflowがないため、remote編集だけではnpm test/build未実行として残す。
 - 未検証: ユーザーWSL2でのAster Service起動→実ブラウザ表示。新規learned DecisionModel実行も今回の範囲外。
 - 次: 観測系が成立したらsaved DecisionModel + typed stateでlearned Agent end-to-endへ進み、その後Aster #20の親→訂正→candidate比較へ接続する。
+
+
+## 2026-10-02: Research Observatory実機Gate完了 → Learned Agent ACT v0開始
+
+- ユーザーWSL2実機ブラウザでResearch Observatoryを確認。shared case `subtract/numbers/phase-0/delay-0` を
+  `seed-42--eight-fixed`（persisted false）と `seed-42--eight-shuffle`（persisted true）で左右比較できた。
+- scoreはcommit済みevidenceに無いため `unavailable_from_committed_evidence` のまま表示され、Web再計算なしを確認。
+- 既存fixed Agent Runも同実機で calculator → memory.put → memory.get → stop、task_success=trueを確認。
+- Aster PR #47へ実機結果を追記しReady for reviewへ変更。aster-web PR #4はmerge済み。
+- 次GateとしてIssue #48 / branch `feat/learned-agent-act-v0` を開始。
+- Spec/TODO/Progressを追加し、ACT-WiringとACT-Capabilityを分離。
+- `decision_model` Artifact kind、検証登録CLI、model-only ACT runner、`decision-traces.jsonl`、logical Artifact入力のService recipeを実装中。
+- aster-webのACT表示はAster側canonical evidence契約とCIが固まった後に接続する。
+- 現時点でACTコードのGitHub CIとユーザーWSL2実測は未確認。能力成功を主張しない。
