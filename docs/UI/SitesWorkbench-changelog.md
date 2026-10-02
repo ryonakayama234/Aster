@@ -300,3 +300,10 @@
 - 全pytest190、Pyright0/0。独立監査baseline360/予測120/組72/episode120/transition1114/訪問682/oracle40。元weight・評価weights/RNG・測定時Python hash不変。同一process reload完全一致。
 - 元環境score最大差約1.91e-6、class変更0。正式前に許容1e-5を固定し完全一致とは報告しない。全原score/新score/trajectoryを保持。
 - 次は正常保持＋順序対照train介入を単一軸として設計する候補。追加学習/事前学習/公開モデル採用は未実施。main/Service/API/aster-web/公開版変更なし、ユーザー追加作業不要。
+
+## 2026-10-02: 順序学習の更新量・ラベル頻度対照
+
+- protocolを測定前に登録、clean source2fa3840（GitHub同tree07f08ad）、Run41954b36546245649d40e810683261a9。
+- 264評価slot/236unique/12task、未学習72入力のtrain union重複0。3seed×3arm、追加対照両側16/15/0（/16）、元80例保持、dev未学習shape0/1/0（/12）。
+- 元dev完了order5/17/4対repeat13/10/12、混合結果を併記。全193test/型0/0、予測2376/reload2376/episode2376/transition20652/visit11957/oracle264監査。
+- 次はFだけの最小課題候補、未実装。main/Service/API/aster-web/公開モデル/promotion変更なし。ユーザー追加作業不要。
