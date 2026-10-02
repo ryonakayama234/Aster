@@ -214,3 +214,7 @@ aster-webはそれらの実測とTraceを観測する側として捉え、
 [固定学習protocol](HistoryFactReaderTraining-v0.md)で事実の3クラス完全一致、状態対照、予測事実からの実行を分離。train未fitを汎化のみの失敗と呼ばない。保存済み行動分類器は固定し、外部candidate/binderの責務を保持する。正式3seed結果はreports/history-reader-study-v0.md/.json。
 
 2026-10-02 readerの新しい境界: 全seed trainfit/通常既知初期完了は成立。一方、未知task事実と既知taskの復帰後未学習履歴で誤読。F=true再現は0/3/1（/8）、M=falseは全seed1/8。次に値/キー対応と時系列を固定モデルで分離する。能力・限界・全結果はreports/history-reader-study-v0.md/.json。
+
+## 2026-10-02: 固定readerの関係診断
+
+PR #43でtrain fitと未知/復帰読解が分離した。次は[固定対照protocol](HistoryReaderFrozenContrasts-v0.md)に従い、同長の全対象キー改名・値一致・最終put/get順を更新0で診断する。24組/40unique、元trainと前回devの重複を保持。順序組はmemoryとイベントmultisetが同じ。診断結果を原因確定や改善学習と同一視しない。正式結果は後続reportへ追記。

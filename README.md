@@ -168,3 +168,5 @@ PYTHONPATH=src python scripts/run_history_reader_preflight.py --root .
 [固定学習protocol](docs/HistoryFactReaderTraining-v0.md)を追加。Byte/TinyLM width16/context2048のreaderでC/M/Fを読み、PR #41の保存済み16parameter分類器へ渡すCLI `scripts/run_history_reader_training.py` と保存監査 `scripts/audit_history_reader_training.py` を実装。正式3seedの結果は `reports/history-reader-study-v0.md/.json` へ記録する。一般Corpus事前学習・依頼文→Task・Service/Web公開はこの診断に含めない。
 
 2026-10-02 reader実測: 全3seed train80/80安定fit・既知初期8/8。dev事実同時21/24/20（/40）、devprefix完了6/12/3（/40）、dev初期0/1/0（/4）。既知taskの途中prefix完了も50/48/41（/80）で、fitと訪問履歴の読解を分離。正本[実測報告](reports/history-reader-study-v0.md)。モデル採用せず、次は保存モデル更新0で値/対象/取得順の診断。
+
+2026-10-02: 次の固定reader診断を[HistoryReaderFrozenContrasts-v0](docs/HistoryReaderFrozenContrasts-v0.md)へ登録。名前・値一致・取得順の24組/40uniqueを実Toolで生成・監査し、保存済み3readerを更新0で測定する。生成成功は読解能力を意味しない。正式実測は後続reportへ記録。PR #43依存の研究ブランチで、main/Service/Web未導入。

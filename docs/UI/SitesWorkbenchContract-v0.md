@@ -139,3 +139,5 @@ UIでdiagnostic successを再計算せず、未提供の値を推測しない。
 2026-10-02履歴reader preflight: 将来の表示は入力schema/task identity split/shared template、C/M/Fのunknown、外部oracleと学習reader、oracle事実と予測事実による自力実行を区別する。正本reports/history-reader-preflight-v0.md/.json。現時点はCLI生成監査のみで、Service/API/aster-web公開bundle/画面は後続。
 
 2026-10-02reader学習診断: oracle事実/reader予測事実、teacher-prefix/訪問履歴、unknown/abstain/invalid、誤停止、学習3seedと課題件数を分離して将来表示する。readerと固定行動分類器の各model hashを保持。研究Runの正本はreports/history-reader-study-v0.md/.json。Service/Web公開は後続。
+
+2026-10-02固定reader対照: 将来表示ではrename/value/order、期待する事実不変/変化、両側事実正答/Action正答/予測不変、24組/48参照/40unique/8task、旧train/前回dev重複を区別する。更新0/元cached logits照合とmodel hashを表示に保持。正本はresearch Runとreports/history-reader-contrasts-study-v0.md/.json（正式測定後）。CLI診断はService/API/Webへ未接続。

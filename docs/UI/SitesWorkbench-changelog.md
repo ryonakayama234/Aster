@@ -278,3 +278,17 @@
 - clean source3584053、Run1cc57fcd7b6e41819bdd95d35c272003。全seedfit80/80、dev同時21/24/20、prefix6/12/3、初期0/1/0。既知prefix50/48/41と通常初期8/8を分ける。
 - 全pytest184/型0/0、cached audittrain12240/final360/episode360/transition2543/訪問1656、oracle120実Tool再生、測定Python変更0。正式89.799秒、ユーザーWSL未測定。
 - F=trueとM=falseの取りこぼし、model提案由来Tool失敗invalid、未知訪問履歴を保存。モデル採用せず、次は更新0の関係診断。Web/API公開なし。
+
+## 2026-10-02: 固定履歴readerの名前・一致・順序対照を登録
+
+- 基準PR #43 head e30a7c1。元Run1cc57f…の3readerと固定分類器を再利用し、更新0の診断を実装。
+- 8task×3軸24組/48参照slot/40unique。実Tool生成・独立oracle/既存抽出/教師・同長・順序multiset・保存再生を確認。最大832Byte token、旧train重複8/前回dev重複8。
+- preflight Run534b295237e945b0aa704886012d86c9。登録正本reports/history-reader-contrasts-preflight-v0.json。正式能力測定は後続記録。
+- 名前依存/一致/順序の反例を分け、保存予測と全実行を独立監査するCLIを追加。ユーザー追加作業不要。
+- main/Service/API/aster-web/公開版/promotion変更なし。将来の観測#29→aster-web#2へ記録を渡す。
+
+### 正式測定前の復元・数値再現確認
+
+- 元120入力×3seedでweight/model digest一致、事実class変更0。環境間logit最大差約1.91e-6。
+- 新対照採点前にprotocol revision1で絶対許容1e-5/相対0・class変更0を登録。同一process reloadは完全一致要求。
+- 全pytest189 passed（この後に数値許容guard testを追加）、最終関連6test/Pyrightと正式測定は後続確認。
