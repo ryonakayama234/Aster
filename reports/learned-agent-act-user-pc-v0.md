@@ -109,7 +109,7 @@ step 0は3候補でselected probability 0.33378、step 1以降は4候補でselec
 このepisodeは **calculator failure / memory failure / candidate coverage failure ではなく、保存済みstateからverificationへ遷移するaction ranking / state-conditioned policy failure** と分類するのが妥当。
 
 ただし1 Runだけから、その根本原因を「state reader」「history reader」「position」「optimization」「training coverage」のどれかへ確定しない。
-`one-fixed` は極端に限定したfit armなので、広いAgent能力の失敗/成功ともみなさない。
+`one-fixed` は現行 `default_fit_arms()` で `train-add-small/step-0` 1件だけを学習するarm。したがってstep 0でcalculatorを選べたことと、その後の状態依存シーケンスを完遂できなかったことは分けて読む。広いAgent能力の失敗/成功ともみなさない。
 
 ## 次の比較
 
