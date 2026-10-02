@@ -292,3 +292,11 @@
 - 元120入力×3seedでweight/model digest一致、事実class変更0。環境間logit最大差約1.91e-6。
 - 新対照採点前にprotocol revision1で絶対許容1e-5/相対0・class変更0を登録。同一process reloadは完全一致要求。
 - 全pytest189 passed（この後に数値許容guard testを追加）、最終関連6test/Pyrightと正式測定は後続確認。
+
+### 固定reader対照の正式測定・保存監査完了
+
+- clean sourcec47af593、Runb631e0d1dee643ac85abd66f893ec99a、正式3.198秒（学習なし、速度benchではない）。
+- 既知改名両側4/4を全3seedで保持。一致/取得順は既知・devとも両側0/4。予測不変を成功としない。devprefix6/7/2（各20件）を旧40件suiteと改善率比較しない。
+- 全pytest190、Pyright0/0。独立監査baseline360/予測120/組72/episode120/transition1114/訪問682/oracle40。元weight・評価weights/RNG・測定時Python hash不変。同一process reload完全一致。
+- 元環境score最大差約1.91e-6、class変更0。正式前に許容1e-5を固定し完全一致とは報告しない。全原score/新score/trajectoryを保持。
+- 次は正常保持＋順序対照train介入を単一軸として設計する候補。追加学習/事前学習/公開モデル採用は未実施。main/Service/API/aster-web/公開版変更なし、ユーザー追加作業不要。
