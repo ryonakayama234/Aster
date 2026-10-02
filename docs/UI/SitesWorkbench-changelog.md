@@ -135,3 +135,17 @@
 - 検証: pytest115 passed、Pyright0 errors/0 warnings。実測はChatGPT Linux CPUで、ユーザーWSLでの新CLI実行は未確認。GitHub main向けCIをstacked PRで実行済みとは扱わない。
 - ServiceContract-v0/v1、public recipe/artifact catalog、aster-web、Site公開版は変更なし。UI接続/Job化/自動promotionは未実装。
 - 次: 実測のtrain fitと元課題保持を踏まえ、Tokenizer/入力表現を独立条件で比較する。Service/Web接続は固定recipeと公開bundleを定義してから別PRで進める。
+
+
+## 2026-10-02: Research Observatory v0（Aster #29 / aster-web #2）
+
+- 目的: 新しいDecision実験を増やす前に、既存研究結果をAster Service→aster-webで調査できる最小vertical sliceを作る。
+- Aster branch: `feat/research-observatory-v0`。main `098a009c35b6a023de2877e12ce6fab2e71f36a4` から分岐。
+- `research.observe` capability、`GET /experiments`、`GET /experiments/{experiment_id}` を追加。
+- 初版論理IDは `decision-failure-audit-v0`。保存済み `reports/decision-failure-audit-v0.json` をread-only projectionし、source SHA-256、arm/seed、checkpoint/suite/Tokenizer、phase-zero caseのtarget/selected Action、正誤、target candidate tokenizationを返す。
+- reportに存在しないlearning curve/candidate scoreは `unavailable_from_committed_evidence` として欠損のまま返す。testはsealed。
+- arbitrary path、任意report、private corpus、生ログ公開、評価のWeb再計算は追加しない。
+- aster-web側は同branch名でExperiment/2 arm/shared case比較UIを追加。既存fixed Agent consoleは維持。
+- 検証: repository unit testとAster GitHub ActionsをPR作成後に確認する。aster-webはCI workflowがないため、remote編集だけではnpm test/build未実行として残す。
+- 未検証: ユーザーWSL2でのAster Service起動→実ブラウザ表示。新規learned DecisionModel実行も今回の範囲外。
+- 次: 観測系が成立したらsaved DecisionModel + typed stateでlearned Agent end-to-endへ進み、その後Aster #20の親→訂正→candidate比較へ接続する。

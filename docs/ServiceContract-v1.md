@@ -28,6 +28,7 @@ v1で公開するcapability:
 tokenizer.train
 model.pretrain
 agent.run
+research.observe
 ```
 
 `agent.run` が任意tool実行を意味するわけではない。Serviceが明示的に登録したAgent recipeだけを開始できる。
@@ -98,6 +99,21 @@ Agent Jobの`GET /jobs/{job_id}`は既存Job bundleへ実測Agent outputを追�
 
 `evaluation.json`は既存Evaluator Contractどおりpersist済みtrajectoryから決定論的に導出し、trajectory SHA-256を保持する。Web側でtask successやgoal verificationを再計算しない。
 
+## 保存済み研究観測
+
+2026-10-02のResearch Observatory縦切りでは、計算Jobを開始せず、Gitへ保存済みの研究証拠をread-onlyで公開する。
+capabilityは `research.observe`。初版の論理IDは `decision-failure-audit-v0` のみで、requestからreport pathや任意ファイル名を渡さない。
+
+`GET /experiments` は `aster-experiment-index-0`、`GET /experiments/{experiment_id}` は
+`aster-experiment-bundle-0` を返す。初版bundleは `reports/decision-failure-audit-v0.json` の公開projectionであり、
+source report SHA-256、arm/seed/checkpoint/suite/Tokenizer、phase-zero caseの保存済み正誤・target Action・selected Action、
+target candidate serializationとtoken分割を含む。
+
+committed reportにない学習曲線とcandidate scoreは `null` と
+`unavailable_from_committed_evidence` を返す。ServiceやWebで推測・再計算して埋めない。
+tokenizationは全候補ではなくtarget candidate serializationの証拠であることを明示する。
+testはsealedのまま公開し、repository-local path・private corpus・任意生ログをbundleへ出さない。
+
 ## Job / Run state
 
 v0と同じ。
@@ -112,13 +128,15 @@ Job IDとcanonical Run IDを同一視しない。同時実行は引き続き1 co
 
 ## HTTP / local development
 
-endpointはv0から変更しない。
+v0/v1の既存endpointは維持し、Research Observatory用のread-only endpointを追加する。
 
 ```text
 GET  /status
 GET  /capabilities
 GET  /recipes
 GET  /artifacts
+GET  /experiments
+GET  /experiments/{experiment_id}
 POST /jobs
 GET  /jobs/{job_id}
 ```
