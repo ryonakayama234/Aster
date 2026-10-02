@@ -208,3 +208,9 @@ aster-webはそれらの実測とTraceを観測する側として捉え、
 ## 2026-10-02: 読解の測定対象を固定
 
 次の問いは対象Taskに該当する計算観測、現在memoryとの一致、最終対象put後getの関係を文字列から取り出せるか。[HistoryFactReader-v0](HistoryFactReader-v0.md)で候補/教師/evaluationを入力から除外し、未知/falseを分ける。今回の生成preflightは非学習oracleの検証であり、reader能力の測定ではない。
+
+## 履歴reader学習の問い
+
+[固定学習protocol](HistoryFactReaderTraining-v0.md)で事実の3クラス完全一致、状態対照、予測事実からの実行を分離。train未fitを汎化のみの失敗と呼ばない。保存済み行動分類器は固定し、外部candidate/binderの責務を保持する。正式3seed結果はreports/history-reader-study-v0.md/.json。
+
+2026-10-02 readerの新しい境界: 全seed trainfit/通常既知初期完了は成立。一方、未知task事実と既知taskの復帰後未学習履歴で誤読。F=true再現は0/3/1（/8）、M=falseは全seed1/8。次に値/キー対応と時系列を固定モデルで分離する。能力・限界・全結果はreports/history-reader-study-v0.md/.json。

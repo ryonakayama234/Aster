@@ -63,3 +63,9 @@ configs/tinylm-pilot-v0.jsonはwidth64/layers2/heads4/context128/batch8/200step�
 ## 2026-10-02: reader学習前検証へ
 
 [HistoryFactReader-v0](HistoryFactReader-v0.md)へ固定120件の実Tool生成・候補非依存入力・unknownラベル・独立JSON oracle・whole-task splitを登録。事前学習素材を待たず実行履歴で準備する。shared templateのparameter-transfer診断で、独立構造holdoutではない。モデル学習/推論とrandom/pretrained比較は後続。
+
+## readerの課題用学習protocol
+
+[HistoryFactReaderTraining-v0](HistoryFactReaderTraining-v0.md)で既存80train/40devを固定。random initializationのreaderと保存済み行動分類器を組み合わせ、oracle事実/予測事実の実行を比較する。一般Corpus事前学習との比較は今回未実施。結果はreports/history-reader-study-v0.md/.jsonへ別記録。
+
+2026-10-02実測: random reader全3seed fit、dev/復帰履歴の汎化未成立。[報告](../reports/history-reader-study-v0.md)。次は固定モデルで対応付け/一致/時系列を切り分ける。事前学習初期化の効果は未測定で、今回の結果だけで必要性・十分性を断定しない。

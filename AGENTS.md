@@ -84,3 +84,5 @@ Asterは、自作TinyLMを通してAI・Python・数学・コンピューター�
 2026-10-02行動種類診断補足: docs/DecisionActionTypes-v0.mdに従い、特徴train重複を必ず記録する。C/M/F直接入力と既存candidate結合を使う成功を、生履歴読解/算術/引数生成/未知特徴への汎化へ帰属しない。種別候補欠落は結合失敗として記録しrule fallbackしない。言語後続はdocs/LanguageToActionRoadmap-v0.mdで次token事前学習と事実抽出課題学習を区別する。
 
 2026-10-02履歴reader補足: docs/HistoryFactReader-v0.mdに従い、入力へcandidate/teacher/evaluation/stepを混入させない。unknownとfalseを区別し、固定行動分類器への写像と事実読解を別測定にする。task単位分割と共有templateを併記し、実Tool生成/独立oracle検証をモデル能力と呼ばない。
+
+2026-10-02reader学習補足: docs/HistoryFactReaderTraining-v0.mdを正式測定前に固定。未知観測unknownと予測矛盾abstainを区別し、保存済みseed42分類器を全reader seedで固定する。予測事実を真値へ差し替えず、誤停止/abstain/invalidを保存し、train fitとdev読解と自力完了を別報告。
