@@ -174,3 +174,10 @@ PYTHONPATH=src python scripts/run_history_reader_preflight.py --root .
 固定reader対照の[正式結果](reports/history-reader-contrasts-study-v0.md)：名前の既知task4/4を全3seedで保持。一致/取得順の両側正答は既知・既存devとも各0/4。取得確認済みでも同じgetを繰り返す反例を実測。全190test/型検査/独立監査成功。次は順序対照だけをtrainへ追加する更新量対照の設計候補で、追加学習は未実施。
 
 2026-10-02順序学習介入: [protocol](docs/HistoryReaderOrderIntervention-v0.md)と[正式結果](reports/history-reader-order-study-v0.md)。同更新量/同ラベル頻度の元例反復に対し追加対照両側16/15/0（/16）、元80例保持。未学習shape転用と3seed安定fitは未成立。モデル採用せず、次はFだけの最小読解課題が候補。
+
+## 取得確認Fだけの最小読解（研究ブランチ）
+
+[事前登録](docs/HistoryFreshnessMinimal-v0.md)で、raw履歴・同初期weight・同提示順のF単独教師とC/M/F同時教師を比較する。train48/既知未学習shape48/dev32、unknown保持。
+CLI: `PYTHONPATH=src python scripts/run_history_freshness.py preflight`、`measure`、`audit --run runs/<Run ID>`。正式結果は後続report。PR #45依存、main/Service/Web未導入。
+
+2026-10-02最小Fの[正式結果](reports/history-freshness-study-v0.md): F-only全seed未fit32/33/32（/48）、学習順序両側0/1/0（/16）、未知shape両側全0。unknown devは全8/8。CMF対照も未fit。次はraw/イベント表現の比較設計候補、未実装。

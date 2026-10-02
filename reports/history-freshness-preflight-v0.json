@@ -1,0 +1,795 @@
+{
+  "schema_version": "aster-history-freshness-0",
+  "suite_sha256": "6f3adbc345f5f44259e6eaf8271d2839213d613fcdee734c1868bc370b493d10",
+  "pairs_sha256": "4a9c5c69542600492f51276e67b0b895fb2ed65d96e674d5efaf2403b0cfe5c5",
+  "manifest_sha256": "c459b5fd8fabd166f41f39988cea9cdda1ab68569bf617adc4fa401289de6d64",
+  "manifest": [
+    {
+      "case_id": "train/task0/plain/0",
+      "input_sha256": "588c00d2cbca4cd84c4b2fa25f313940a0f7adfe10b86f4d852d91fc5048234d",
+      "byte_tokens": 740,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task0/plain/1",
+      "input_sha256": "c0a2cf24b8d524d5de15ea00b30d88bdd7702c1f9c330f623419b8a6f79ef219",
+      "byte_tokens": 740,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task0/tail_put/0",
+      "input_sha256": "b1e08c2dfd026f1c58e4f4058338f0a758b4c7240e3517c22960d56984fb4880",
+      "byte_tokens": 925,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task0/tail_put/1",
+      "input_sha256": "8f127c26d8f4341f36aa8ebbc92e7941810f18765cfcd4973108aa8512ee0dc2",
+      "byte_tokens": 925,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task0/middle_put/0",
+      "input_sha256": "200371fffa99970c4c9efaa24370f639ccd17f65edcddcb4686be9b31689e884",
+      "byte_tokens": 925,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task0/middle_put/1",
+      "input_sha256": "7dec855951af3b1a88f0126d3cb431675f24e0c3ad122ac6f51a648809d0d558",
+      "byte_tokens": 925,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task0/tail_get/0",
+      "input_sha256": "8b410e9ab6a01de102e0bd24571b0d5e7cc50e56f6d91c32e5b0be81dfef1cab",
+      "byte_tokens": 1077,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task0/tail_get/1",
+      "input_sha256": "89963b5ba9a6437f4029962db868191a668f4fa74f2c14e62f8cf44350787390",
+      "byte_tokens": 1077,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task0/repeat_get/0",
+      "input_sha256": "a4e4755573b0098b27a42a38454a11b07d39d8f3371088417e50da1ebc859754",
+      "byte_tokens": 876,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task0/repeat_get/1",
+      "input_sha256": "40297f4205455c9c3842b8406f84a787f3a5b760486c692dabc3c6f17add0839",
+      "byte_tokens": 876,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task1/plain/0",
+      "input_sha256": "bd517d555cd45f14f57f397743b27adb8858918d77146d76fe821d06dd1664e9",
+      "byte_tokens": 769,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task1/plain/1",
+      "input_sha256": "3daf967abf74be64f1757d6dbc9b1881979ebb26fd4a20511d15614a3d697715",
+      "byte_tokens": 769,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task1/tail_put/0",
+      "input_sha256": "2c7f8a64a9c9465db5e376f12dd35297fbb5fa40a63918bd11ec8e333f0c2ace",
+      "byte_tokens": 954,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task1/tail_put/1",
+      "input_sha256": "f35f1d781daf081e70585a8002313cf34530837cb2de7ad1ecde0a3ccdd0f62a",
+      "byte_tokens": 954,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task1/middle_put/0",
+      "input_sha256": "24469f52d9613d1208f2923056159f80cbbdf1d5ccede703fec174f23b08305f",
+      "byte_tokens": 954,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task1/middle_put/1",
+      "input_sha256": "8c3b1c537e8e8a255f947d7dda3429f182a7f5f742a8cc00aaf0ac6f50d53160",
+      "byte_tokens": 954,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task1/tail_get/0",
+      "input_sha256": "5bfee331851a0e99df317b6ec5960c7b329e05addcb8924137c0cf4e1b7384d7",
+      "byte_tokens": 1106,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task1/tail_get/1",
+      "input_sha256": "8d19f08ff130fbeb668ce60b71a21c27e2916f708df07631e8cfe2dd43266b47",
+      "byte_tokens": 1106,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task1/repeat_get/0",
+      "input_sha256": "c225e74c1c8e373fa9d17be00908598054b237beaec8a7193ad4963b61f9fa8a",
+      "byte_tokens": 912,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task1/repeat_get/1",
+      "input_sha256": "5e80012d59c93fe1b8ab81bc259f2a55bcf1f9f58ee453edfc27f5d6b76c47b9",
+      "byte_tokens": 912,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task2/plain/0",
+      "input_sha256": "3ddd7450f9063854cd30b075a525bdeff32f3e432b3789ddb3c006e16fa39106",
+      "byte_tokens": 758,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task2/plain/1",
+      "input_sha256": "a106caee4bd1f358a0dcd109ffe172639c03342daf22763884ebd2dfe8f385a2",
+      "byte_tokens": 758,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task2/tail_put/0",
+      "input_sha256": "27aa57bb1c977aa0d6dfe89d5ea69f22bff3249f44751d0a263dc884ee9b66e6",
+      "byte_tokens": 943,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task2/tail_put/1",
+      "input_sha256": "c513c7349d6751d8a20cc8b1ae302ff8a652d1d5fec73eb84d8d44ac3de436a5",
+      "byte_tokens": 943,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task2/middle_put/0",
+      "input_sha256": "03b33b6ab4a3389bb53db4a4142382ee94e15ec6b0a13bd0b25d0bcd2ca74231",
+      "byte_tokens": 943,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task2/middle_put/1",
+      "input_sha256": "74e8e4c1bcf47b9d6bba3a601dcb77a07a149024e03d9efc6fe0d8ae393af217",
+      "byte_tokens": 943,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task2/tail_get/0",
+      "input_sha256": "7b24648292238c30abde5a3e4409cb257d686b22ec0c1f42787c411acbaf8c36",
+      "byte_tokens": 1095,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task2/tail_get/1",
+      "input_sha256": "c13fd4c638b5307ebc4a3315f5aa0b059b59b02be4cea23111e6a9925b425fef",
+      "byte_tokens": 1095,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task2/repeat_get/0",
+      "input_sha256": "653021ef097ee2c3949ba677c423c5ffba6602ce12193b0031634d3236d63c4d",
+      "byte_tokens": 898,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task2/repeat_get/1",
+      "input_sha256": "2d4d4441bcb3ec64a5179d62fc7f4e04133103a7cf32a40a6f9d549f87fff608",
+      "byte_tokens": 898,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task3/plain/0",
+      "input_sha256": "0985bcee324d56b1bdc05b9b087d3907f096db67e39d3a47701543105a593312",
+      "byte_tokens": 764,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task3/plain/1",
+      "input_sha256": "d335108a00097d3fd836278bbd7594bac45e53745fe52f096147cd3d49046e40",
+      "byte_tokens": 764,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task3/tail_put/0",
+      "input_sha256": "95fa28fd75964dd2057c33c3c84a54274665007d18479932efa42ef483085744",
+      "byte_tokens": 949,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task3/tail_put/1",
+      "input_sha256": "9930db61423212726bdd0aed3053de492a123630b808a94259673a5b6f846a7c",
+      "byte_tokens": 949,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task3/middle_put/0",
+      "input_sha256": "6898b6333a240c0ef8ef484b50ede26b566439dc16b5a3a550fcbffe1ab26b8f",
+      "byte_tokens": 949,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task3/middle_put/1",
+      "input_sha256": "c32d82e924429424df8d18ca769e63f7f6855403352746b70d69aa0af0623a53",
+      "byte_tokens": 949,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task3/tail_get/0",
+      "input_sha256": "2aeebd58d418519f067a2c509dace851728d7c4dea9838d3d3abf3eec2e16122",
+      "byte_tokens": 1101,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task3/tail_get/1",
+      "input_sha256": "4c65f3565af3c232d728fb3f926f4fa5574254c53df6d9c315fa53e42b56e138",
+      "byte_tokens": 1101,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task3/repeat_get/0",
+      "input_sha256": "3f77b2bd34f93b7d1809aa6e30395263730920afd9124f6ab9e67a4ab6996cf1",
+      "byte_tokens": 906,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task3/repeat_get/1",
+      "input_sha256": "5af19760c13f64c11e19c288e470a1d4ab8a167300eb785d27ad5057b28effd0",
+      "byte_tokens": 906,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task4/plain/0",
+      "input_sha256": "799b278b0d01d813a4b247ae7cf41f6b8f6b9d919b9392ef51f234359e200c49",
+      "byte_tokens": 758,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task4/plain/1",
+      "input_sha256": "e27eb0a04122e42b3c14562c048805aaff521bb8973e9b809e69dcdce3e50c09",
+      "byte_tokens": 758,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task4/tail_put/0",
+      "input_sha256": "1b2df2a2a5ed0a401cac82befce1add86c0670f201e0235cdb8ff2dfbbd5d179",
+      "byte_tokens": 943,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task4/tail_put/1",
+      "input_sha256": "c0cc85816da9a223e4f82b8a0fa14bfc468223b4f79b0c2b5872a8671257308b",
+      "byte_tokens": 943,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task4/middle_put/0",
+      "input_sha256": "3722602c289631c0fc32e7bb8e5b52236565b2bec61fb651f02c44666101bf56",
+      "byte_tokens": 943,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task4/middle_put/1",
+      "input_sha256": "9741c6583c09c08a869461150ce8496a43cc0491fd974b5342b63492b2553907",
+      "byte_tokens": 943,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task4/tail_get/0",
+      "input_sha256": "5c79ba692b2227cef5ea559530f729af7a3c4808ab6db7de5219f3e75a5c7da2",
+      "byte_tokens": 1095,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task4/tail_get/1",
+      "input_sha256": "a0f2bc56d98b2722de7bb79d8d503fdeebc87cf7d8746486abc47a0d8c16cbb3",
+      "byte_tokens": 1095,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task4/repeat_get/0",
+      "input_sha256": "9eff10e127b13dda5099d6072e2f68887ce86016d31edac74064f6229c700d32",
+      "byte_tokens": 896,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task4/repeat_get/1",
+      "input_sha256": "a58a116f168ff69aa7124804feb8e303a05da0dc70855e67978278361d61b02c",
+      "byte_tokens": 896,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task5/plain/0",
+      "input_sha256": "997b54c304faab9483d87946f09395d101661fdaae2d781e0b290a06f9b47860",
+      "byte_tokens": 832,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task5/plain/1",
+      "input_sha256": "6682da29e1ef35ff8c80e421c1705898e6fd938d2842f3372f86a6979c51cd80",
+      "byte_tokens": 832,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task5/tail_put/0",
+      "input_sha256": "7cb63748aff80ef9e859001be6fa948b8fbfdc8990786b0294b7e24607f3cdc9",
+      "byte_tokens": 1017,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task5/tail_put/1",
+      "input_sha256": "a0d6f13f55f6441660c9764495e755cc2c7d73418d3ae6cfac61ca2aba662239",
+      "byte_tokens": 1017,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task5/middle_put/0",
+      "input_sha256": "cb3661d75176d0d025c3f326ee5b782a94cf79ec094b2494b2e61ef26c88fffb",
+      "byte_tokens": 1017,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task5/middle_put/1",
+      "input_sha256": "6259a4e92c8b7275d2a806a55d7ec6613a2c40815319dcb0c0fd199a300c7aa2",
+      "byte_tokens": 1017,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task5/tail_get/0",
+      "input_sha256": "d8831a482e43a3b41ae8067fca1c00c4ed965196198d6e36868be9a07799f4f9",
+      "byte_tokens": 1169,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task5/tail_get/1",
+      "input_sha256": "d99eb2b3a364c916edf7d254f2904a791809fd8d0fcc68ed7629f4bf919308f8",
+      "byte_tokens": 1169,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task5/repeat_get/0",
+      "input_sha256": "154f2b0083f84a0f00e445f1406a870125547a7f2c63d3b597de2491bb64b434",
+      "byte_tokens": 988,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task5/repeat_get/1",
+      "input_sha256": "332f7628f78a595c6a6600b58b1e35ed1ad7aa37600239c48c56168c456b98ac",
+      "byte_tokens": 988,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task6/plain/0",
+      "input_sha256": "7b080d32eb392e598603c4e5e54fd965eb3b1c91fb940d92ecc72beffbe3e934",
+      "byte_tokens": 781,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task6/plain/1",
+      "input_sha256": "dad17259a5dc8396453e5731ead52a5f493fcfa6d62ffa0fe0c3a52b021e68df",
+      "byte_tokens": 781,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task6/tail_put/0",
+      "input_sha256": "876d8e43aaeff74d184097ade6266c44c1688d904a86bfe344f8456f104c75dc",
+      "byte_tokens": 966,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task6/tail_put/1",
+      "input_sha256": "f11742fb72c29b935dca0744d18496cde4674e0fbf84704ab16c1904bee15d59",
+      "byte_tokens": 966,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task6/middle_put/0",
+      "input_sha256": "0cd8b00d4b24577b35274d47f398f2b429bc11ead3783803b67301cc10fb3cb8",
+      "byte_tokens": 966,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task6/middle_put/1",
+      "input_sha256": "051a302d3c2fab858129f480f99468600b8da932341627abe518bc68eaef740d",
+      "byte_tokens": 966,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task6/tail_get/0",
+      "input_sha256": "62acc0c353f4e40db2275b52b3924669b0680214f7e7dd70e16f0d28e56c560b",
+      "byte_tokens": 1118,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task6/tail_get/1",
+      "input_sha256": "b9be0d1047fe26c39ce3a52e6505c7439343184b8f3309fa424e927fd04d2f0a",
+      "byte_tokens": 1118,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task6/repeat_get/0",
+      "input_sha256": "7501cab7d860528aa7e5b19d3a2190f4dd3a9a354e8fb8ff1c348f154e0a4f27",
+      "byte_tokens": 924,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task6/repeat_get/1",
+      "input_sha256": "12378dd984daba2eed3ec20fdcc695248507dc456c1b2c9561b9f99c4647d00d",
+      "byte_tokens": 924,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task7/plain/0",
+      "input_sha256": "7bf0ffab25e30d2a029c38d4437efae121075373f9e64cf7f1e7ba62472219e9",
+      "byte_tokens": 782,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task7/plain/1",
+      "input_sha256": "c95ae993862518c61587c92651401fafdf787786a36072cb205c3b6d5f8add44",
+      "byte_tokens": 782,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task7/tail_put/0",
+      "input_sha256": "2f7febe8bc807bac8c59a43a0070507611a200257a5db0225e6081fb37435b17",
+      "byte_tokens": 967,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task7/tail_put/1",
+      "input_sha256": "dae8a05e4bc8a0625cc8b22ca6deb83778ed782bd0c484857815d0c8a529d03a",
+      "byte_tokens": 967,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task7/middle_put/0",
+      "input_sha256": "a1103f965a1b31afc461712be37b7cc030ce915003f0a35f1ea47f1aae1230b6",
+      "byte_tokens": 967,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task7/middle_put/1",
+      "input_sha256": "ec6f7b3175f49b4f03d42bf4ca538c17ce613e80a4b71d2514f70f38a90dbe91",
+      "byte_tokens": 967,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task7/tail_get/0",
+      "input_sha256": "48643a75285294f4df39776ba7e269cefee4cfb89ab84b12f68fa188f4025a62",
+      "byte_tokens": 1119,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task7/tail_get/1",
+      "input_sha256": "636ad50e69579f212feedb1f9a51a20f7c12990c481c0d6c7b37a080e27f3b16",
+      "byte_tokens": 1119,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task7/repeat_get/0",
+      "input_sha256": "bbb68f18f5a1d54fadd7272df4a62909b6a5fbb9bf98a21a3ddbc9ca5e980636",
+      "byte_tokens": 926,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "train/task7/repeat_get/1",
+      "input_sha256": "d069a1b7d3356afd128ba8db4db7882482c2f761ff7e3524d6153130509bfd4e",
+      "byte_tokens": 926,
+      "cohort": "shape_train"
+    },
+    {
+      "case_id": "dev/task0/middle_put/0",
+      "input_sha256": "3e2d8c966b72c331ba14dd4ba049b1ce94c8a163db55f30212b7c3567cb5415e",
+      "byte_tokens": 990,
+      "cohort": "shape_dev"
+    },
+    {
+      "case_id": "dev/task0/middle_put/1",
+      "input_sha256": "4ae7c689f4bdf7c15d1f3f62a92ff5f5e0ba08d460d92f80c836b800ccad518d",
+      "byte_tokens": 990,
+      "cohort": "shape_dev"
+    },
+    {
+      "case_id": "dev/task0/tail_get/0",
+      "input_sha256": "eff7dcb946b8071f1efcb537082df3c36946566c7df62d7f45edb41bf55bfbfb",
+      "byte_tokens": 1142,
+      "cohort": "shape_dev"
+    },
+    {
+      "case_id": "dev/task0/tail_get/1",
+      "input_sha256": "b69e7b614092e032f9fc40e5dd05e2703975e52f3c5f5e8c7e39b8cac31e00ba",
+      "byte_tokens": 1142,
+      "cohort": "shape_dev"
+    },
+    {
+      "case_id": "dev/task0/repeat_get/0",
+      "input_sha256": "cd11bd67daa586098c9acf2feb196c753150ac2ef64dd7ef36096bb05a1db9a5",
+      "byte_tokens": 956,
+      "cohort": "shape_dev"
+    },
+    {
+      "case_id": "dev/task0/repeat_get/1",
+      "input_sha256": "0b6d8dbc5bdceeb19260035260a593edaa99f0e9c3e92cf1dbe65232f6e2cb2f",
+      "byte_tokens": 956,
+      "cohort": "shape_dev"
+    },
+    {
+      "case_id": "dev/task1/middle_put/0",
+      "input_sha256": "25739f956aedc01e7b8a552fb632aa7789bbf477a7bdb07e7daae221bbd47aa6",
+      "byte_tokens": 995,
+      "cohort": "shape_dev"
+    },
+    {
+      "case_id": "dev/task1/middle_put/1",
+      "input_sha256": "87f913ee928d03840877add31969c4c9e9929dea9eb5836dff7df86d32f2bcb8",
+      "byte_tokens": 995,
+      "cohort": "shape_dev"
+    },
+    {
+      "case_id": "dev/task1/tail_get/0",
+      "input_sha256": "9e4df3ff58f5951570e033cd4e7ae495ea575f024371bba27a6ea084e1c1512d",
+      "byte_tokens": 1147,
+      "cohort": "shape_dev"
+    },
+    {
+      "case_id": "dev/task1/tail_get/1",
+      "input_sha256": "9fec4cfd2068f8cf8027e0f8326a4b050782e6ba405e9a1a2dc3ebfca4faa5d5",
+      "byte_tokens": 1147,
+      "cohort": "shape_dev"
+    },
+    {
+      "case_id": "dev/task1/repeat_get/0",
+      "input_sha256": "078fd28c0afec9f1a3034b691ce5b8775d502912959af64062a88b52a259c607",
+      "byte_tokens": 962,
+      "cohort": "shape_dev"
+    },
+    {
+      "case_id": "dev/task1/repeat_get/1",
+      "input_sha256": "7e9853b43f8c1ba2effcb946f36ed9275ab0b97d827c6e2a1aae1d65662b9b7c",
+      "byte_tokens": 962,
+      "cohort": "shape_dev"
+    },
+    {
+      "case_id": "dev/task2/middle_put/0",
+      "input_sha256": "e830b1452d52601dc205b03b1bc828c5a71afefe5b5c406a4a7b846ba13c9e0d",
+      "byte_tokens": 1000,
+      "cohort": "shape_dev"
+    },
+    {
+      "case_id": "dev/task2/middle_put/1",
+      "input_sha256": "1496dc823055fd02f6995fe2228afaef04dc5200b5c0218ff98ae1e7d16d043d",
+      "byte_tokens": 1000,
+      "cohort": "shape_dev"
+    },
+    {
+      "case_id": "dev/task2/tail_get/0",
+      "input_sha256": "b9902e1fa723013899dd77cd28f83ba5105a0a56057ec80ec05e33f03be6d98d",
+      "byte_tokens": 1152,
+      "cohort": "shape_dev"
+    },
+    {
+      "case_id": "dev/task2/tail_get/1",
+      "input_sha256": "c75cf94159754f4c9bc5875b61262b0c63e95072cea8341b313d09b5a1687962",
+      "byte_tokens": 1152,
+      "cohort": "shape_dev"
+    },
+    {
+      "case_id": "dev/task2/repeat_get/0",
+      "input_sha256": "ed2a78d108e5765b1e8ee01d17b5094f66ef741e6acc7a1ede085a383b4cd28f",
+      "byte_tokens": 966,
+      "cohort": "shape_dev"
+    },
+    {
+      "case_id": "dev/task2/repeat_get/1",
+      "input_sha256": "48c206edd6c7f43a79f584f44153ef6949ec0967ca127882eefe64b729756852",
+      "byte_tokens": 966,
+      "cohort": "shape_dev"
+    },
+    {
+      "case_id": "dev/task3/middle_put/0",
+      "input_sha256": "6f125adbeb30cb48c0e6d32eb5c4da01deae8bccb7e0c4367b2d87051254c046",
+      "byte_tokens": 1002,
+      "cohort": "shape_dev"
+    },
+    {
+      "case_id": "dev/task3/middle_put/1",
+      "input_sha256": "3b40efcaddd43348ae5086adac36ef337c99a4ce82c6519e2a90cfb748fa6abd",
+      "byte_tokens": 1002,
+      "cohort": "shape_dev"
+    },
+    {
+      "case_id": "dev/task3/tail_get/0",
+      "input_sha256": "3611aa23cf7c465d6a879dc60adc35e18ac312bdc258a5a983b944efdd6dad9b",
+      "byte_tokens": 1154,
+      "cohort": "shape_dev"
+    },
+    {
+      "case_id": "dev/task3/tail_get/1",
+      "input_sha256": "7fa647b3ba39bad3c3e789f3c53c62b994d91b6a81841f4212cad8355e185ada",
+      "byte_tokens": 1154,
+      "cohort": "shape_dev"
+    },
+    {
+      "case_id": "dev/task3/repeat_get/0",
+      "input_sha256": "ac21c883c4df29bf33ad75cbd21435585d44edca3a6c396919d8a432892f03fb",
+      "byte_tokens": 968,
+      "cohort": "shape_dev"
+    },
+    {
+      "case_id": "dev/task3/repeat_get/1",
+      "input_sha256": "f21c975b6e947cfd973da29639fc76ee94c5934d343ad1106ba6f10abfc2aaa7",
+      "byte_tokens": 968,
+      "cohort": "shape_dev"
+    },
+    {
+      "case_id": "train/task0/normal1",
+      "input_sha256": "f77a2a543e9d60bd263284062b004bec2b858037fba9a842d05fc5afa4956310",
+      "byte_tokens": 295,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task0/normal2",
+      "input_sha256": "7eeec06c19edca7a7697832643fe9a5d0f3082b90dfcff5a5e2928e2e91ae3e1",
+      "byte_tokens": 454,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task1/normal1",
+      "input_sha256": "2c5b097c44d088f8f06293e6a1d7b3589b71c31ea18a503541786280e2100a84",
+      "byte_tokens": 299,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task1/normal2",
+      "input_sha256": "0d9ba6f2bc060305285ea746111e8212d55782f3322635549e2bb43cbe57573a",
+      "byte_tokens": 469,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task2/normal1",
+      "input_sha256": "9eebda53d537bb3f0e464538785bc374964337f3a85dd1b1e55e357ae444e50e",
+      "byte_tokens": 299,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task2/normal2",
+      "input_sha256": "53cf1cc0acb65d2047d59892bd0b3eb53cb01276eb76a6514a486efcbecaaa44",
+      "byte_tokens": 464,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task3/normal1",
+      "input_sha256": "df594395ad1c99cc35358d1fc524bc12efecf1b2f8a20ebfcb00a65e66215556",
+      "byte_tokens": 298,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task3/normal2",
+      "input_sha256": "2ae3f93a8ea9ff16b469dd20be1a7361adea29bdd2dba94c8444cdef7316d0fd",
+      "byte_tokens": 466,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task4/normal1",
+      "input_sha256": "656c293f29d14ef63a7f049c842ce3422f83881210a8656aa9209821ab645bc3",
+      "byte_tokens": 306,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task4/normal2",
+      "input_sha256": "cb30b802227ba2e1dee8497d1091816e21c6ee0d27360be17db95bd6dae81e35",
+      "byte_tokens": 468,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task5/normal1",
+      "input_sha256": "2a9db847a22e048e734d7768df41f0657c5579bace9ca6229739f83f40a5832e",
+      "byte_tokens": 317,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task5/normal2",
+      "input_sha256": "ecad79c6947ed2065e6f0143a1f6d2e4b2a27799e82641970b5c977a98d6fbc7",
+      "byte_tokens": 506,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task6/normal1",
+      "input_sha256": "d74380cda13292523380acad0a02064ea54fe6fa15e7a0b61d8411f01aef6643",
+      "byte_tokens": 311,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task6/normal2",
+      "input_sha256": "0a6f5634d058f685177d5db96fe6c3dfb367612e04310c6c7168fc95bbe4daa1",
+      "byte_tokens": 481,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task7/normal1",
+      "input_sha256": "6c466c7e7fef42bc43a0d4c36d62d09beb7f4cf67e4389715318da79f2056d55",
+      "byte_tokens": 309,
+      "cohort": "train"
+    },
+    {
+      "case_id": "train/task7/normal2",
+      "input_sha256": "a1af8d73b3e99b2be739529f17546ac4458a4c94ae1e3c49b911b64987860195",
+      "byte_tokens": 480,
+      "cohort": "train"
+    },
+    {
+      "case_id": "dev/task0/normal1",
+      "input_sha256": "939a2f478baf284aefea5ab527cff22f2291e9519835f5e19e33b2825b7f7515",
+      "byte_tokens": 307,
+      "cohort": "unknown_dev"
+    },
+    {
+      "case_id": "dev/task0/normal2",
+      "input_sha256": "ed644e8f16ec823382e9fa5832f9d929808a781fbf6037b0d0b01a5d36e6742f",
+      "byte_tokens": 489,
+      "cohort": "unknown_dev"
+    },
+    {
+      "case_id": "dev/task1/normal1",
+      "input_sha256": "a52e8ab0d2dbfa7d135d3bc243f10d8707ea311344472a17ea9e26d17caddf13",
+      "byte_tokens": 308,
+      "cohort": "unknown_dev"
+    },
+    {
+      "case_id": "dev/task1/normal2",
+      "input_sha256": "5998616d84748108380c110b6e378d0f3e52be624161b592193a30c8cb03ccc7",
+      "byte_tokens": 492,
+      "cohort": "unknown_dev"
+    },
+    {
+      "case_id": "dev/task2/normal1",
+      "input_sha256": "e5dbd7b34a5b9f45b8bb10e4261f8e418cd4b8138ad0e4ec7198129e4d248e53",
+      "byte_tokens": 317,
+      "cohort": "unknown_dev"
+    },
+    {
+      "case_id": "dev/task2/normal2",
+      "input_sha256": "1a9f29717cc8e74e46897744e1b6186aac7e2601c7848341cf2b3f6a9eac7172",
+      "byte_tokens": 499,
+      "cohort": "unknown_dev"
+    },
+    {
+      "case_id": "dev/task3/normal1",
+      "input_sha256": "a0f1ee0ce0997461f3788d4924c6dd956aaaff49f794c70f1db9deec1c05eb4f",
+      "byte_tokens": 319,
+      "cohort": "unknown_dev"
+    },
+    {
+      "case_id": "dev/task3/normal2",
+      "input_sha256": "d25741fb1e8cb06c5ca55dbc755bb308e7137962df885a685a0f6eaf87b22fa5",
+      "byte_tokens": 501,
+      "cohort": "unknown_dev"
+    }
+  ],
+  "counts": {
+    "train": 48,
+    "shape_train": 48,
+    "shape_dev": 24,
+    "unknown_dev": 8
+  },
+  "unique_inputs": 128,
+  "task_groups": 12,
+  "train_labels": {
+    "False": 16,
+    "True": 16,
+    "None": 16
+  },
+  "max_byte_tokens": 1169,
+  "train_eval_overlap": 0,
+  "all_prefixes_replayed": true,
+  "test_constructed": 0,
+  "test_scored": 0,
+  "independent_holdout": false
+}
