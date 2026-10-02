@@ -75,3 +75,10 @@ Status: implementation complete, CI/user run pending
 2. CI failureを修正。
 3. ユーザーWSL2でartifact登録 → Service ACT Run。
 4. 実測Runを基準にaster-webを接続。
+
+
+### PR / CI
+
+- Draft PR #49を作成。
+- Research Observatory PR #47を実機確認・既存CI成功後にmainへmerge。
+- PR #49をmainへretarget。main向けActionsを起動するため、この進捗更新をsynchronize commitとして追加。
