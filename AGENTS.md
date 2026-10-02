@@ -82,3 +82,5 @@ Asterは、自作TinyLMを通してAI・Python・数学・コンピューター�
 2026-10-01関係入力比較補足: compact/relationsの比較はdocs/DecisionRelationsComparison-v0.mdと登録preflight digestへ従う。関係抽出・履歴正規化・系列長の複合介入を純粋な特徴効果と呼ばない。各表現のtrain重複を再計算し、共通非重複の主対照を使う。抽出はraw観測から独立scanし、外部化した関係判断をモデル能力に算入しない。新serializerのcheckpointをcompact既定で読み込ませない。
 
 2026-10-02行動種類診断補足: docs/DecisionActionTypes-v0.mdに従い、特徴train重複を必ず記録する。C/M/F直接入力と既存candidate結合を使う成功を、生履歴読解/算術/引数生成/未知特徴への汎化へ帰属しない。種別候補欠落は結合失敗として記録しrule fallbackしない。言語後続はdocs/LanguageToActionRoadmap-v0.mdで次token事前学習と事実抽出課題学習を区別する。
+
+2026-10-02履歴reader補足: docs/HistoryFactReader-v0.mdに従い、入力へcandidate/teacher/evaluation/stepを混入させない。unknownとfalseを区別し、固定行動分類器への写像と事実読解を別測定にする。task単位分割と共有templateを併記し、実Tool生成/独立oracle検証をモデル能力と呼ばない。

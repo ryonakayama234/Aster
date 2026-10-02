@@ -204,3 +204,7 @@ aster-webはそれらの実測とTraceを観測する側として捉え、
 4種類の学習済みC/M/Fへ全評価が写るので、新規則の汎化とは扱わない。外部抽出と候補引数結合を残して行動選択を学ぶ足場は得られた。
 次は[文字列→事実/Task読解の設計](LanguageToActionRoadmap-v0.md)。事前学習初期化とランダム初期化を同じreader/課題学習で比べる案。
 一般Corpusで次tokenを学ぶことと、履歴の事実抽出を課題用に学ぶことを分ける。言語追加学習は未実施。
+
+## 2026-10-02: 読解の測定対象を固定
+
+次の問いは対象Taskに該当する計算観測、現在memoryとの一致、最終対象put後getの関係を文字列から取り出せるか。[HistoryFactReader-v0](HistoryFactReader-v0.md)で候補/教師/evaluationを入力から除外し、未知/falseを分ける。今回の生成preflightは非学習oracleの検証であり、reader能力の測定ではない。

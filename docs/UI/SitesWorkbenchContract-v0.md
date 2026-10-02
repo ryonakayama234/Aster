@@ -135,3 +135,5 @@ UIでdiagnostic successを再計算せず、未提供の値を推測しない。
 2026-10-02行動種類診断: 将来表示では数値特徴モデル/文字列reader/candidate binderの責務と契約を区別し、外部抽出/引数供給、特徴train重複、結合失敗、範囲外Tool失敗を併記する。言語事前学習のlossとreaderの事実精度とepisode完了を別表示する。今回の研究CLIと後続設計は公開Service/Webへ未接続。
 
 2026-10-02行動種類実測: 正本reports/decision-action-types-study-v0.json。16parameter学習モデルと外部抽出/binderの境界、特徴train重複128/128と新初期4/4を表示に保持する。次token学習/事実reader/Action選択のscoreを混ぜない。診断モデルは公開Service/Webへ未接続。
+
+2026-10-02履歴reader preflight: 将来の表示は入力schema/task identity split/shared template、C/M/Fのunknown、外部oracleと学習reader、oracle事実と予測事実による自力実行を区別する。正本reports/history-reader-preflight-v0.md/.json。現時点はCLI生成監査のみで、Service/API/aster-web公開bundle/画面は後続。
