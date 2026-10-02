@@ -131,7 +131,7 @@ class JobManager:
         return {
             "schema_version": "aster-service-status-0",
             "version": "aster-service-0.2",
-            "capabilities": ["tokenizer.train", "model.pretrain", "agent.run"],
+            "capabilities": ["tokenizer.train", "model.pretrain", "agent.run", "research.observe"],
             "recipes": self.recipes.list(),
             "artifacts": artifacts,
             "jobs": self.summaries(),
