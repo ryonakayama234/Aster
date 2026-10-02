@@ -1,0 +1,1881 @@
+{
+  "schema_version": "aster-history-order-intervention-0",
+  "suite_sha256": "e87dc39d9613b196c9c551722cd505cf2e15a7a965b6993434373379c8c26cb0",
+  "pairs_sha256": "bb93bb3de94af6ed984245022566fce4b2d93f6f05f2ef12d2ce0d8852d2d8cf",
+  "manifest": [
+    {
+      "case_id": "old/train/task0/normal0",
+      "input_sha256": "8fdcaa5548e72ebe908259c7b1ae162b7e6f5176e2c79dbe8e2fc1f27de46689",
+      "byte_tokens": 161,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task0/normal1",
+      "input_sha256": "f77a2a543e9d60bd263284062b004bec2b858037fba9a842d05fc5afa4956310",
+      "byte_tokens": 295,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task0/normal2",
+      "input_sha256": "7eeec06c19edca7a7697832643fe9a5d0f3082b90dfcff5a5e2928e2e91ae3e1",
+      "byte_tokens": 454,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task0/normal3",
+      "input_sha256": "630d3cedb101fb93a620cb4460aa6fe6b70a45e98b76ae59623230c97156611c",
+      "byte_tokens": 590,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task0/wrong_overwrite",
+      "input_sha256": "f17ff62113044968b80a57fdb9285759dcbbaeceea2e0336978410d52e2bc5ce",
+      "byte_tokens": 746,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task0/same_write",
+      "input_sha256": "588c00d2cbca4cd84c4b2fa25f313940a0f7adfe10b86f4d852d91fc5048234d",
+      "byte_tokens": 740,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task0/unrelated_write",
+      "input_sha256": "9d7499f1aa06bfc38c76a27193a877f4aad28b65bd6fff2bff396c4e2cf1bf9e",
+      "byte_tokens": 775,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task0/repair_unconfirmed",
+      "input_sha256": "087c7700392bae9b9aa546a3a8b63194aa43a63d5950f6a759754e598917f902",
+      "byte_tokens": 893,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task0/other_calculation",
+      "input_sha256": "18af322b498426b947cd92d099392169567489b2e092637c343753f3a2a2b27a",
+      "byte_tokens": 301,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task0/wrong_before_calculation",
+      "input_sha256": "a391bdce40f3cebc9bf4b1a68976180a72b0daf00914808d7b016b4d4f3aa44b",
+      "byte_tokens": 325,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task1/normal0",
+      "input_sha256": "e943b3ebdd17757e757f0db12bd718c7653dcafea2dedc291df01fee86152c5f",
+      "byte_tokens": 164,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task1/normal1",
+      "input_sha256": "2c5b097c44d088f8f06293e6a1d7b3589b71c31ea18a503541786280e2100a84",
+      "byte_tokens": 299,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task1/normal2",
+      "input_sha256": "0d9ba6f2bc060305285ea746111e8212d55782f3322635549e2bb43cbe57573a",
+      "byte_tokens": 469,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task1/normal3",
+      "input_sha256": "b6095e809a386c337853828ec75e2658089be5d96637f9813b2759bcb5fba7aa",
+      "byte_tokens": 612,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task1/wrong_overwrite",
+      "input_sha256": "b90dcc750fc3313ce501e93d7e5029536fc348f1687f40cf4b80418d05e413f5",
+      "byte_tokens": 773,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task1/same_write",
+      "input_sha256": "bd517d555cd45f14f57f397743b27adb8858918d77146d76fe821d06dd1664e9",
+      "byte_tokens": 769,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task1/unrelated_write",
+      "input_sha256": "612e60af3729c3f82c90d3429271a2034ceb9451b4549d3dc24a13d7c8e3f013",
+      "byte_tokens": 797,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task1/repair_unconfirmed",
+      "input_sha256": "9797bf2c778ac492baba023f5b59ab1a60bd19ace3cd46eb7b1debe507238fe7",
+      "byte_tokens": 928,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task1/other_calculation",
+      "input_sha256": "fe95b82051c5268836bba6d9369d0ddb7a0075a7d4706836dc63f2b9898dd500",
+      "byte_tokens": 304,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task1/wrong_before_calculation",
+      "input_sha256": "7988564b5983dfeefdc757035697eb0ebbd0dd35b99ed361f948e5d6ad6aaaa7",
+      "byte_tokens": 337,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task2/normal0",
+      "input_sha256": "31c9ab154487e2612765c84cdba5d9e7ffdfc852016763cfb31ac0051e9ed66a",
+      "byte_tokens": 164,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task2/normal1",
+      "input_sha256": "9eebda53d537bb3f0e464538785bc374964337f3a85dd1b1e55e357ae444e50e",
+      "byte_tokens": 299,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task2/normal2",
+      "input_sha256": "53cf1cc0acb65d2047d59892bd0b3eb53cb01276eb76a6514a486efcbecaaa44",
+      "byte_tokens": 464,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task2/normal3",
+      "input_sha256": "164b309b60bbabdc479b2a5e93e161d2dff34d85104290d512bcec473dceea6c",
+      "byte_tokens": 604,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task2/wrong_overwrite",
+      "input_sha256": "c559f98777fc7aa78923e657d1a1ab47b421a4fa49f7a17400cfc178843e8948",
+      "byte_tokens": 764,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task2/same_write",
+      "input_sha256": "3ddd7450f9063854cd30b075a525bdeff32f3e432b3789ddb3c006e16fa39106",
+      "byte_tokens": 758,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task2/unrelated_write",
+      "input_sha256": "8b0efdf77c733954cdb611494179919ceaaa545e52b1ff9da3c26ebf4a7b3512",
+      "byte_tokens": 789,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task2/repair_unconfirmed",
+      "input_sha256": "e7b8caf31eb3cf4d5f0855566e17adec965228b90a65871a0617e96015581298",
+      "byte_tokens": 915,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task2/other_calculation",
+      "input_sha256": "4dd4a425a9db7ba5fbac2e198fbd8b747f785700e25447a3ef1f740cde8b4882",
+      "byte_tokens": 306,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task2/wrong_before_calculation",
+      "input_sha256": "6394e204b3ec8e403d7f7e7535ea8e20138a9c901a3e21a4f152db8ffb045dc7",
+      "byte_tokens": 334,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task3/normal0",
+      "input_sha256": "861f636db02332f304fc10c2836dd9da83fc3881b197d74223a97a44293f6ed5",
+      "byte_tokens": 164,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task3/normal1",
+      "input_sha256": "df594395ad1c99cc35358d1fc524bc12efecf1b2f8a20ebfcb00a65e66215556",
+      "byte_tokens": 298,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task3/normal2",
+      "input_sha256": "2ae3f93a8ea9ff16b469dd20be1a7361adea29bdd2dba94c8444cdef7316d0fd",
+      "byte_tokens": 466,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task3/normal3",
+      "input_sha256": "60d9af4a8d6379766782b706b4c24f5d13d56c7adc1cfc55104381dada1af973",
+      "byte_tokens": 608,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task3/wrong_overwrite",
+      "input_sha256": "e644adb79b3152efefbf597008a26e4d037639f3ff7cac43cd86139f28dcd3c0",
+      "byte_tokens": 770,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task3/same_write",
+      "input_sha256": "0985bcee324d56b1bdc05b9b087d3907f096db67e39d3a47701543105a593312",
+      "byte_tokens": 764,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task3/unrelated_write",
+      "input_sha256": "5e993a947b32f19f3c01c68ce76f432666ef82db80a7454f3fd3e06b56522580",
+      "byte_tokens": 793,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task3/repair_unconfirmed",
+      "input_sha256": "2f2602d91a667ed9fceda9b893eab9f17641c5dead73d09943899fb21aef10c3",
+      "byte_tokens": 923,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task3/other_calculation",
+      "input_sha256": "eb0b757afef237d5c0e771fd5372fa7689c9cdd71257ce22c83126cebf826454",
+      "byte_tokens": 304,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task3/wrong_before_calculation",
+      "input_sha256": "6fc2c62abbe8a22d7d7655209a6acd473f297d2c0b63c366d9aec80645f7e187",
+      "byte_tokens": 337,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task4/normal0",
+      "input_sha256": "af6b4fc05d23aa4b208167893fc995a06db928ebeef454a7cf0423edc1d27dea",
+      "byte_tokens": 167,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task4/normal1",
+      "input_sha256": "656c293f29d14ef63a7f049c842ce3422f83881210a8656aa9209821ab645bc3",
+      "byte_tokens": 306,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task4/normal2",
+      "input_sha256": "cb30b802227ba2e1dee8497d1091816e21c6ee0d27360be17db95bd6dae81e35",
+      "byte_tokens": 468,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task4/normal3",
+      "input_sha256": "1240c5c821b7c36cb899398e6484336e3a1cf8e6a61db21f41a00186ef7a842f",
+      "byte_tokens": 606,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task4/wrong_overwrite",
+      "input_sha256": "1d02172c20b0e85730b7ca8dd062ec737197eea1b70b9dd2958ede17f92e207b",
+      "byte_tokens": 764,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task4/same_write",
+      "input_sha256": "799b278b0d01d813a4b247ae7cf41f6b8f6b9d919b9392ef51f234359e200c49",
+      "byte_tokens": 758,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task4/unrelated_write",
+      "input_sha256": "89d887485684cc71381616407e00889248a1c278e92614e678bcae42adfc18be",
+      "byte_tokens": 791,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task4/repair_unconfirmed",
+      "input_sha256": "e830307ed23715b8fb5c520551299ab01756f742a89a7f071d4db2fff972a84a",
+      "byte_tokens": 913,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task4/other_calculation",
+      "input_sha256": "70af7848f48c20584b2168c5f3eb4cd16eec6c19152c869c3fc72bd8dffde9c4",
+      "byte_tokens": 302,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task4/wrong_before_calculation",
+      "input_sha256": "afe2ddd06f431b586c9f784b0d109bbd2d066dfcc4784bd0d4dee1cc0fa03ce2",
+      "byte_tokens": 334,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task5/normal0",
+      "input_sha256": "2101cf6264bae8bde80b497ccb44b3e0bfbd89fd15c41d2719edc75f201a394a",
+      "byte_tokens": 177,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task5/normal1",
+      "input_sha256": "2a9db847a22e048e734d7768df41f0657c5579bace9ca6229739f83f40a5832e",
+      "byte_tokens": 317,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task5/normal2",
+      "input_sha256": "ecad79c6947ed2065e6f0143a1f6d2e4b2a27799e82641970b5c977a98d6fbc7",
+      "byte_tokens": 506,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task5/normal3",
+      "input_sha256": "23574c52fec9d397d400eb64f3e272aa976375b6aa0d0c168f4421b69e8096ef",
+      "byte_tokens": 662,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task5/wrong_overwrite",
+      "input_sha256": "c71fc01992f06722b911490c73adc15efb4b11359252b6660916bbe3bb965d3c",
+      "byte_tokens": 838,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task5/same_write",
+      "input_sha256": "997b54c304faab9483d87946f09395d101661fdaae2d781e0b290a06f9b47860",
+      "byte_tokens": 832,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task5/unrelated_write",
+      "input_sha256": "c0f98ab3f620ba4bcc103b2729d86a5821a3dec843c86dcb2be52489e4994d49",
+      "byte_tokens": 847,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task5/repair_unconfirmed",
+      "input_sha256": "31c87064cf6a35d919c081a94776b030a6ef18c028080b7d716e5faf27d62388",
+      "byte_tokens": 1005,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task5/other_calculation",
+      "input_sha256": "c8f6dd5ad4225046d96d5867fcf74ce677e4a9f55f4faf16b0860dc3ef82736d",
+      "byte_tokens": 313,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task5/wrong_before_calculation",
+      "input_sha256": "c1b6c63f458f228668e9e4ef5b49b8f4fdea39089c48c75e9b43c1d72001fbae",
+      "byte_tokens": 371,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task6/normal0",
+      "input_sha256": "e1a71ebdc6c07dcfbd7dcc093956183bdc85495f4be88823f3936ffb40bfec38",
+      "byte_tokens": 170,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task6/normal1",
+      "input_sha256": "d74380cda13292523380acad0a02064ea54fe6fa15e7a0b61d8411f01aef6643",
+      "byte_tokens": 311,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task6/normal2",
+      "input_sha256": "0a6f5634d058f685177d5db96fe6c3dfb367612e04310c6c7168fc95bbe4daa1",
+      "byte_tokens": 481,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task6/normal3",
+      "input_sha256": "58be33687dede5c232acc89718b94ee1ce9b024a87ec810c9439455c11e4c4f6",
+      "byte_tokens": 624,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task6/wrong_overwrite",
+      "input_sha256": "1714d9df79ffad3b30259c8a0c3df12fe33aac468cfc9c343ef4f188291a4be7",
+      "byte_tokens": 785,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task6/same_write",
+      "input_sha256": "7b080d32eb392e598603c4e5e54fd965eb3b1c91fb940d92ecc72beffbe3e934",
+      "byte_tokens": 781,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task6/unrelated_write",
+      "input_sha256": "8b50d4563ca4f2b58e746f8b99e9d19987486130ed07880f182d8da18ac7044c",
+      "byte_tokens": 809,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task6/repair_unconfirmed",
+      "input_sha256": "332cf72681e2ae9d426882ed8bcdbb78a7f94f9a4a2e01faddb3a4b6a0d94e7e",
+      "byte_tokens": 940,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task6/other_calculation",
+      "input_sha256": "39a0169846b001231286e2c51496f7966690c6bb0fa22a6616e91906ef92c0bb",
+      "byte_tokens": 305,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task6/wrong_before_calculation",
+      "input_sha256": "c81740a8cc1ad8a1794c49850dd361a9157c8ce91b8b3bc00621cfa5615d33b3",
+      "byte_tokens": 343,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task7/normal0",
+      "input_sha256": "a9a7bc3bf830817af4c7368472c44cf7a01a0134bf2d43ea2ef32dc9efa14ee9",
+      "byte_tokens": 170,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task7/normal1",
+      "input_sha256": "6c466c7e7fef42bc43a0d4c36d62d09beb7f4cf67e4389715318da79f2056d55",
+      "byte_tokens": 309,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task7/normal2",
+      "input_sha256": "a1af8d73b3e99b2be739529f17546ac4458a4c94ae1e3c49b911b64987860195",
+      "byte_tokens": 480,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task7/normal3",
+      "input_sha256": "dac4bc640276854605c4282a84d9f9c6c0ec63d59444a6f290a70ffcbeef47d6",
+      "byte_tokens": 624,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task7/wrong_overwrite",
+      "input_sha256": "7df06feaa5228e7e13679be4c18f84641eb5239d9f37b952618f48c09bffc223",
+      "byte_tokens": 788,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task7/same_write",
+      "input_sha256": "7bf0ffab25e30d2a029c38d4437efae121075373f9e64cf7f1e7ba62472219e9",
+      "byte_tokens": 782,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task7/unrelated_write",
+      "input_sha256": "2011549ca2caa745d411d0753aa31028219d750548c2e168bf4e137fff611f69",
+      "byte_tokens": 809,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task7/repair_unconfirmed",
+      "input_sha256": "d67d4c57f169dbea6c50044a75c39ff09e2ce0a6add8aba8848fa0221727b8c5",
+      "byte_tokens": 943,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task7/other_calculation",
+      "input_sha256": "86f36d11627856f63a38a78e02e29baef746dea029f7f776780eed1ef6f8796b",
+      "byte_tokens": 304,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/train/task7/wrong_before_calculation",
+      "input_sha256": "537b2ff90370eef25efef52ced026456e75d9e51e65531257eced488eb6c85f4",
+      "byte_tokens": 346,
+      "cohort": "old_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "old/dev/task0/normal0",
+      "input_sha256": "6a3d759e67bb55724b147c459511e3c98110db72a59d3e4cf68d1cafe99d41b6",
+      "byte_tokens": 170,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task0/normal1",
+      "input_sha256": "939a2f478baf284aefea5ab527cff22f2291e9519835f5e19e33b2825b7f7515",
+      "byte_tokens": 307,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task0/normal2",
+      "input_sha256": "ed644e8f16ec823382e9fa5832f9d929808a781fbf6037b0d0b01a5d36e6742f",
+      "byte_tokens": 489,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task0/normal3",
+      "input_sha256": "bfbaa7abfeb0d12c3279f59c2fed2f60479a71984817b19f5d96befb006748a5",
+      "byte_tokens": 640,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task0/wrong_overwrite",
+      "input_sha256": "fa7cfb589ab9cae8c46080d01ee6c07e9258da42854538ca04d5184fbcf4a335",
+      "byte_tokens": 809,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task0/same_write",
+      "input_sha256": "94438117df18c873ecb355bfd03463280c14f866f9e8bb4fde021bc6571bc300",
+      "byte_tokens": 805,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task0/unrelated_write",
+      "input_sha256": "ac513772ae8630b028b29d81ce417065119cd50447a0e1fd676352f5777590eb",
+      "byte_tokens": 825,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task0/repair_unconfirmed",
+      "input_sha256": "d7dddaf37414c8f61c4c96e8e01427662eeb111da50741139ecfbb1399c854eb",
+      "byte_tokens": 972,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task0/other_calculation",
+      "input_sha256": "e0183b1cc9e3f444b94f20e8c1b073942657e25ae1ac375249f8232f86ceb4ab",
+      "byte_tokens": 312,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task0/wrong_before_calculation",
+      "input_sha256": "8f5250cca56aab3aa8ce9097bfb3685db80b3f1d066d2e7b8dc4dfeebffe1d88",
+      "byte_tokens": 355,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task1/normal0",
+      "input_sha256": "32e2730d033783fc818a43ee997244a4d0d7ee6d10690da10aaf929783a8fd13",
+      "byte_tokens": 170,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task1/normal1",
+      "input_sha256": "a52e8ab0d2dbfa7d135d3bc243f10d8707ea311344472a17ea9e26d17caddf13",
+      "byte_tokens": 308,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task1/normal2",
+      "input_sha256": "5998616d84748108380c110b6e378d0f3e52be624161b592193a30c8cb03ccc7",
+      "byte_tokens": 492,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task1/normal3",
+      "input_sha256": "e106f8cbf5729cce8e2f9d1e7fad4f2b2079553c5dc9f90afe0cc08abb063af5",
+      "byte_tokens": 644,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task1/wrong_overwrite",
+      "input_sha256": "b2686ff7eddf0efbffd949015dbf2baea5a1486e7aed3e80a8535a486c3bcca1",
+      "byte_tokens": 812,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task1/same_write",
+      "input_sha256": "ec69dfde5d425696ddcfd288fe1a0ba1be543e10743bd1f2a7ad59f89b6a77ca",
+      "byte_tokens": 810,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task1/unrelated_write",
+      "input_sha256": "27fcdef44d3fec698c12e2aa973a3b9d3057ebc3299b9da85c46efa43c4b7c37",
+      "byte_tokens": 829,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task1/repair_unconfirmed",
+      "input_sha256": "13141edb9ff113fde61a979421b26add70ed58ba19495fc100e13a08e0a32c7b",
+      "byte_tokens": 977,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task1/other_calculation",
+      "input_sha256": "730655464774b851da910474d2795238abc00202f46da4f80ce9cc9a6fb356e1",
+      "byte_tokens": 313,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task1/wrong_before_calculation",
+      "input_sha256": "2a15dbdea77ff995676a0254e3536d55e7f1df9be0612f8501f1b98f339adedc",
+      "byte_tokens": 355,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task2/normal0",
+      "input_sha256": "dc71a85e12f407520a172d97aa7450e5125fb2cf9d8c7a413b3a4437cdc8b555",
+      "byte_tokens": 175,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task2/normal1",
+      "input_sha256": "e5dbd7b34a5b9f45b8bb10e4261f8e418cd4b8138ad0e4ec7198129e4d248e53",
+      "byte_tokens": 317,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task2/normal2",
+      "input_sha256": "1a9f29717cc8e74e46897744e1b6186aac7e2601c7848341cf2b3f6a9eac7172",
+      "byte_tokens": 499,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task2/normal3",
+      "input_sha256": "ad748ea7b0b1512b2b113ca9f878ddf80a6d98beb36c9ea500c3476f73c11523",
+      "byte_tokens": 650,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task2/wrong_overwrite",
+      "input_sha256": "cf5cc9b9deba0ba392f13413ebea2ce2da71b10c8d6c03d5fc8cdd8c8e60d28d",
+      "byte_tokens": 819,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task2/same_write",
+      "input_sha256": "661f44782d62474f3f7254d8faf6e25133e246223aae67b8fba6d27c5e28505f",
+      "byte_tokens": 815,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task2/unrelated_write",
+      "input_sha256": "3905d29151fef403e48abc5a80f8dcce44b50c8e3e5f76b38150fb2497c7a663",
+      "byte_tokens": 835,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task2/repair_unconfirmed",
+      "input_sha256": "29a50eb68ae3371e43b7c072f687d704d720ff1fd1cf25e156441ea0f5f6b508",
+      "byte_tokens": 982,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task2/other_calculation",
+      "input_sha256": "301e39e4f7fbd0571f3643e8c7081e1023f30224cc63d38ee807af7062009af1",
+      "byte_tokens": 312,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task2/wrong_before_calculation",
+      "input_sha256": "10f2d565ce1bd6ce5aacd93190e8d28e8a207b8ad28706a8a2b8f28ce825f49c",
+      "byte_tokens": 360,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task3/normal0",
+      "input_sha256": "1c80582fc5c0ae37396d18aa9cd29e0dbf3b3d362e7f8dc17579d7f5ebc250dc",
+      "byte_tokens": 176,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task3/normal1",
+      "input_sha256": "a0f1ee0ce0997461f3788d4924c6dd956aaaff49f794c70f1db9deec1c05eb4f",
+      "byte_tokens": 319,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task3/normal2",
+      "input_sha256": "d25741fb1e8cb06c5ca55dbc755bb308e7137962df885a685a0f6eaf87b22fa5",
+      "byte_tokens": 501,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task3/normal3",
+      "input_sha256": "b0c3e4fe9f7a197ab10a61b82c45b25eb583f92ebb7a170146c9800ff459273a",
+      "byte_tokens": 652,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task3/wrong_overwrite",
+      "input_sha256": "1bf62d3939eca7e1251b0ae40e52fe07f5b43cb1f7aba51b61323ca2fdca3230",
+      "byte_tokens": 821,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task3/same_write",
+      "input_sha256": "e2cbbe6cc899317904e981d60b945d69f2dcb501a7ec72b002702abbd4d8c467",
+      "byte_tokens": 817,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task3/unrelated_write",
+      "input_sha256": "c52871fc5f1f5cd84ffd2945a52dbd4865e04cb0fb14597228fdb143f348c920",
+      "byte_tokens": 837,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task3/repair_unconfirmed",
+      "input_sha256": "20f4f5815a34ae75801834a9c3f2be4b94583cf1b92f782dfdf3b9093bd90515",
+      "byte_tokens": 984,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task3/other_calculation",
+      "input_sha256": "7a5d1ca68b845f5de0b2768fa47f86fa81c11fd5608bd2e923f103bafda07a0d",
+      "byte_tokens": 315,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "old/dev/task3/wrong_before_calculation",
+      "input_sha256": "ba59327334fc1dd0a6aeff3ce548608e02a9f28a25b307296a346a52c6847dbe",
+      "byte_tokens": 361,
+      "cohort": "old_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task0/plain/0",
+      "input_sha256": "588c00d2cbca4cd84c4b2fa25f313940a0f7adfe10b86f4d852d91fc5048234d",
+      "byte_tokens": 740,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task0/plain/1",
+      "input_sha256": "c0a2cf24b8d524d5de15ea00b30d88bdd7702c1f9c330f623419b8a6f79ef219",
+      "byte_tokens": 740,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task0/tail_put/0",
+      "input_sha256": "b1e08c2dfd026f1c58e4f4058338f0a758b4c7240e3517c22960d56984fb4880",
+      "byte_tokens": 925,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task0/tail_put/1",
+      "input_sha256": "8f127c26d8f4341f36aa8ebbc92e7941810f18765cfcd4973108aa8512ee0dc2",
+      "byte_tokens": 925,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task0/middle_put/0",
+      "input_sha256": "200371fffa99970c4c9efaa24370f639ccd17f65edcddcb4686be9b31689e884",
+      "byte_tokens": 925,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task0/middle_put/1",
+      "input_sha256": "7dec855951af3b1a88f0126d3cb431675f24e0c3ad122ac6f51a648809d0d558",
+      "byte_tokens": 925,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task0/tail_get/0",
+      "input_sha256": "8b410e9ab6a01de102e0bd24571b0d5e7cc50e56f6d91c32e5b0be81dfef1cab",
+      "byte_tokens": 1077,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task0/tail_get/1",
+      "input_sha256": "89963b5ba9a6437f4029962db868191a668f4fa74f2c14e62f8cf44350787390",
+      "byte_tokens": 1077,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task0/repeat_get/0",
+      "input_sha256": "a4e4755573b0098b27a42a38454a11b07d39d8f3371088417e50da1ebc859754",
+      "byte_tokens": 876,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task0/repeat_get/1",
+      "input_sha256": "40297f4205455c9c3842b8406f84a787f3a5b760486c692dabc3c6f17add0839",
+      "byte_tokens": 876,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task1/plain/0",
+      "input_sha256": "bd517d555cd45f14f57f397743b27adb8858918d77146d76fe821d06dd1664e9",
+      "byte_tokens": 769,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task1/plain/1",
+      "input_sha256": "3daf967abf74be64f1757d6dbc9b1881979ebb26fd4a20511d15614a3d697715",
+      "byte_tokens": 769,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task1/tail_put/0",
+      "input_sha256": "2c7f8a64a9c9465db5e376f12dd35297fbb5fa40a63918bd11ec8e333f0c2ace",
+      "byte_tokens": 954,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task1/tail_put/1",
+      "input_sha256": "f35f1d781daf081e70585a8002313cf34530837cb2de7ad1ecde0a3ccdd0f62a",
+      "byte_tokens": 954,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task1/middle_put/0",
+      "input_sha256": "24469f52d9613d1208f2923056159f80cbbdf1d5ccede703fec174f23b08305f",
+      "byte_tokens": 954,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task1/middle_put/1",
+      "input_sha256": "8c3b1c537e8e8a255f947d7dda3429f182a7f5f742a8cc00aaf0ac6f50d53160",
+      "byte_tokens": 954,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task1/tail_get/0",
+      "input_sha256": "5bfee331851a0e99df317b6ec5960c7b329e05addcb8924137c0cf4e1b7384d7",
+      "byte_tokens": 1106,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task1/tail_get/1",
+      "input_sha256": "8d19f08ff130fbeb668ce60b71a21c27e2916f708df07631e8cfe2dd43266b47",
+      "byte_tokens": 1106,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task1/repeat_get/0",
+      "input_sha256": "c225e74c1c8e373fa9d17be00908598054b237beaec8a7193ad4963b61f9fa8a",
+      "byte_tokens": 912,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task1/repeat_get/1",
+      "input_sha256": "5e80012d59c93fe1b8ab81bc259f2a55bcf1f9f58ee453edfc27f5d6b76c47b9",
+      "byte_tokens": 912,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task2/plain/0",
+      "input_sha256": "3ddd7450f9063854cd30b075a525bdeff32f3e432b3789ddb3c006e16fa39106",
+      "byte_tokens": 758,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task2/plain/1",
+      "input_sha256": "a106caee4bd1f358a0dcd109ffe172639c03342daf22763884ebd2dfe8f385a2",
+      "byte_tokens": 758,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task2/tail_put/0",
+      "input_sha256": "27aa57bb1c977aa0d6dfe89d5ea69f22bff3249f44751d0a263dc884ee9b66e6",
+      "byte_tokens": 943,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task2/tail_put/1",
+      "input_sha256": "c513c7349d6751d8a20cc8b1ae302ff8a652d1d5fec73eb84d8d44ac3de436a5",
+      "byte_tokens": 943,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task2/middle_put/0",
+      "input_sha256": "03b33b6ab4a3389bb53db4a4142382ee94e15ec6b0a13bd0b25d0bcd2ca74231",
+      "byte_tokens": 943,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task2/middle_put/1",
+      "input_sha256": "74e8e4c1bcf47b9d6bba3a601dcb77a07a149024e03d9efc6fe0d8ae393af217",
+      "byte_tokens": 943,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task2/tail_get/0",
+      "input_sha256": "7b24648292238c30abde5a3e4409cb257d686b22ec0c1f42787c411acbaf8c36",
+      "byte_tokens": 1095,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task2/tail_get/1",
+      "input_sha256": "c13fd4c638b5307ebc4a3315f5aa0b059b59b02be4cea23111e6a9925b425fef",
+      "byte_tokens": 1095,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task2/repeat_get/0",
+      "input_sha256": "653021ef097ee2c3949ba677c423c5ffba6602ce12193b0031634d3236d63c4d",
+      "byte_tokens": 898,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task2/repeat_get/1",
+      "input_sha256": "2d4d4441bcb3ec64a5179d62fc7f4e04133103a7cf32a40a6f9d549f87fff608",
+      "byte_tokens": 898,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task3/plain/0",
+      "input_sha256": "0985bcee324d56b1bdc05b9b087d3907f096db67e39d3a47701543105a593312",
+      "byte_tokens": 764,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task3/plain/1",
+      "input_sha256": "d335108a00097d3fd836278bbd7594bac45e53745fe52f096147cd3d49046e40",
+      "byte_tokens": 764,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task3/tail_put/0",
+      "input_sha256": "95fa28fd75964dd2057c33c3c84a54274665007d18479932efa42ef483085744",
+      "byte_tokens": 949,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task3/tail_put/1",
+      "input_sha256": "9930db61423212726bdd0aed3053de492a123630b808a94259673a5b6f846a7c",
+      "byte_tokens": 949,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task3/middle_put/0",
+      "input_sha256": "6898b6333a240c0ef8ef484b50ede26b566439dc16b5a3a550fcbffe1ab26b8f",
+      "byte_tokens": 949,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task3/middle_put/1",
+      "input_sha256": "c32d82e924429424df8d18ca769e63f7f6855403352746b70d69aa0af0623a53",
+      "byte_tokens": 949,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task3/tail_get/0",
+      "input_sha256": "2aeebd58d418519f067a2c509dace851728d7c4dea9838d3d3abf3eec2e16122",
+      "byte_tokens": 1101,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task3/tail_get/1",
+      "input_sha256": "4c65f3565af3c232d728fb3f926f4fa5574254c53df6d9c315fa53e42b56e138",
+      "byte_tokens": 1101,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task3/repeat_get/0",
+      "input_sha256": "3f77b2bd34f93b7d1809aa6e30395263730920afd9124f6ab9e67a4ab6996cf1",
+      "byte_tokens": 906,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task3/repeat_get/1",
+      "input_sha256": "5af19760c13f64c11e19c288e470a1d4ab8a167300eb785d27ad5057b28effd0",
+      "byte_tokens": 906,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task4/plain/0",
+      "input_sha256": "799b278b0d01d813a4b247ae7cf41f6b8f6b9d919b9392ef51f234359e200c49",
+      "byte_tokens": 758,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task4/plain/1",
+      "input_sha256": "e27eb0a04122e42b3c14562c048805aaff521bb8973e9b809e69dcdce3e50c09",
+      "byte_tokens": 758,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task4/tail_put/0",
+      "input_sha256": "1b2df2a2a5ed0a401cac82befce1add86c0670f201e0235cdb8ff2dfbbd5d179",
+      "byte_tokens": 943,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task4/tail_put/1",
+      "input_sha256": "c0cc85816da9a223e4f82b8a0fa14bfc468223b4f79b0c2b5872a8671257308b",
+      "byte_tokens": 943,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task4/middle_put/0",
+      "input_sha256": "3722602c289631c0fc32e7bb8e5b52236565b2bec61fb651f02c44666101bf56",
+      "byte_tokens": 943,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task4/middle_put/1",
+      "input_sha256": "9741c6583c09c08a869461150ce8496a43cc0491fd974b5342b63492b2553907",
+      "byte_tokens": 943,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task4/tail_get/0",
+      "input_sha256": "5c79ba692b2227cef5ea559530f729af7a3c4808ab6db7de5219f3e75a5c7da2",
+      "byte_tokens": 1095,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task4/tail_get/1",
+      "input_sha256": "a0f2bc56d98b2722de7bb79d8d503fdeebc87cf7d8746486abc47a0d8c16cbb3",
+      "byte_tokens": 1095,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task4/repeat_get/0",
+      "input_sha256": "9eff10e127b13dda5099d6072e2f68887ce86016d31edac74064f6229c700d32",
+      "byte_tokens": 896,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task4/repeat_get/1",
+      "input_sha256": "a58a116f168ff69aa7124804feb8e303a05da0dc70855e67978278361d61b02c",
+      "byte_tokens": 896,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task5/plain/0",
+      "input_sha256": "997b54c304faab9483d87946f09395d101661fdaae2d781e0b290a06f9b47860",
+      "byte_tokens": 832,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task5/plain/1",
+      "input_sha256": "6682da29e1ef35ff8c80e421c1705898e6fd938d2842f3372f86a6979c51cd80",
+      "byte_tokens": 832,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task5/tail_put/0",
+      "input_sha256": "7cb63748aff80ef9e859001be6fa948b8fbfdc8990786b0294b7e24607f3cdc9",
+      "byte_tokens": 1017,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task5/tail_put/1",
+      "input_sha256": "a0d6f13f55f6441660c9764495e755cc2c7d73418d3ae6cfac61ca2aba662239",
+      "byte_tokens": 1017,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task5/middle_put/0",
+      "input_sha256": "cb3661d75176d0d025c3f326ee5b782a94cf79ec094b2494b2e61ef26c88fffb",
+      "byte_tokens": 1017,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task5/middle_put/1",
+      "input_sha256": "6259a4e92c8b7275d2a806a55d7ec6613a2c40815319dcb0c0fd199a300c7aa2",
+      "byte_tokens": 1017,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task5/tail_get/0",
+      "input_sha256": "d8831a482e43a3b41ae8067fca1c00c4ed965196198d6e36868be9a07799f4f9",
+      "byte_tokens": 1169,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task5/tail_get/1",
+      "input_sha256": "d99eb2b3a364c916edf7d254f2904a791809fd8d0fcc68ed7629f4bf919308f8",
+      "byte_tokens": 1169,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task5/repeat_get/0",
+      "input_sha256": "154f2b0083f84a0f00e445f1406a870125547a7f2c63d3b597de2491bb64b434",
+      "byte_tokens": 988,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task5/repeat_get/1",
+      "input_sha256": "332f7628f78a595c6a6600b58b1e35ed1ad7aa37600239c48c56168c456b98ac",
+      "byte_tokens": 988,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task6/plain/0",
+      "input_sha256": "7b080d32eb392e598603c4e5e54fd965eb3b1c91fb940d92ecc72beffbe3e934",
+      "byte_tokens": 781,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task6/plain/1",
+      "input_sha256": "dad17259a5dc8396453e5731ead52a5f493fcfa6d62ffa0fe0c3a52b021e68df",
+      "byte_tokens": 781,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task6/tail_put/0",
+      "input_sha256": "876d8e43aaeff74d184097ade6266c44c1688d904a86bfe344f8456f104c75dc",
+      "byte_tokens": 966,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task6/tail_put/1",
+      "input_sha256": "f11742fb72c29b935dca0744d18496cde4674e0fbf84704ab16c1904bee15d59",
+      "byte_tokens": 966,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task6/middle_put/0",
+      "input_sha256": "0cd8b00d4b24577b35274d47f398f2b429bc11ead3783803b67301cc10fb3cb8",
+      "byte_tokens": 966,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task6/middle_put/1",
+      "input_sha256": "051a302d3c2fab858129f480f99468600b8da932341627abe518bc68eaef740d",
+      "byte_tokens": 966,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task6/tail_get/0",
+      "input_sha256": "62acc0c353f4e40db2275b52b3924669b0680214f7e7dd70e16f0d28e56c560b",
+      "byte_tokens": 1118,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task6/tail_get/1",
+      "input_sha256": "b9be0d1047fe26c39ce3a52e6505c7439343184b8f3309fa424e927fd04d2f0a",
+      "byte_tokens": 1118,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task6/repeat_get/0",
+      "input_sha256": "7501cab7d860528aa7e5b19d3a2190f4dd3a9a354e8fb8ff1c348f154e0a4f27",
+      "byte_tokens": 924,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task6/repeat_get/1",
+      "input_sha256": "12378dd984daba2eed3ec20fdcc695248507dc456c1b2c9561b9f99c4647d00d",
+      "byte_tokens": 924,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task7/plain/0",
+      "input_sha256": "7bf0ffab25e30d2a029c38d4437efae121075373f9e64cf7f1e7ba62472219e9",
+      "byte_tokens": 782,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task7/plain/1",
+      "input_sha256": "c95ae993862518c61587c92651401fafdf787786a36072cb205c3b6d5f8add44",
+      "byte_tokens": 782,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task7/tail_put/0",
+      "input_sha256": "2f7febe8bc807bac8c59a43a0070507611a200257a5db0225e6081fb37435b17",
+      "byte_tokens": 967,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task7/tail_put/1",
+      "input_sha256": "dae8a05e4bc8a0625cc8b22ca6deb83778ed782bd0c484857815d0c8a529d03a",
+      "byte_tokens": 967,
+      "cohort": "added_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "order/train/task7/middle_put/0",
+      "input_sha256": "a1103f965a1b31afc461712be37b7cc030ce915003f0a35f1ea47f1aae1230b6",
+      "byte_tokens": 967,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task7/middle_put/1",
+      "input_sha256": "ec6f7b3175f49b4f03d42bf4ca538c17ce613e80a4b71d2514f70f38a90dbe91",
+      "byte_tokens": 967,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task7/tail_get/0",
+      "input_sha256": "48643a75285294f4df39776ba7e269cefee4cfb89ab84b12f68fa188f4025a62",
+      "byte_tokens": 1119,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task7/tail_get/1",
+      "input_sha256": "636ad50e69579f212feedb1f9a51a20f7c12990c481c0d6c7b37a080e27f3b16",
+      "byte_tokens": 1119,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task7/repeat_get/0",
+      "input_sha256": "bbb68f18f5a1d54fadd7272df4a62909b6a5fbb9bf98a21a3ddbc9ca5e980636",
+      "byte_tokens": 926,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/train/task7/repeat_get/1",
+      "input_sha256": "d069a1b7d3356afd128ba8db4db7882482c2f761ff7e3524d6153130509bfd4e",
+      "byte_tokens": 926,
+      "cohort": "shape_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/dev/task0/middle_put/0",
+      "input_sha256": "3e2d8c966b72c331ba14dd4ba049b1ce94c8a163db55f30212b7c3567cb5415e",
+      "byte_tokens": 990,
+      "cohort": "shape_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/dev/task0/middle_put/1",
+      "input_sha256": "4ae7c689f4bdf7c15d1f3f62a92ff5f5e0ba08d460d92f80c836b800ccad518d",
+      "byte_tokens": 990,
+      "cohort": "shape_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/dev/task0/tail_get/0",
+      "input_sha256": "eff7dcb946b8071f1efcb537082df3c36946566c7df62d7f45edb41bf55bfbfb",
+      "byte_tokens": 1142,
+      "cohort": "shape_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/dev/task0/tail_get/1",
+      "input_sha256": "b69e7b614092e032f9fc40e5dd05e2703975e52f3c5f5e8c7e39b8cac31e00ba",
+      "byte_tokens": 1142,
+      "cohort": "shape_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/dev/task0/repeat_get/0",
+      "input_sha256": "cd11bd67daa586098c9acf2feb196c753150ac2ef64dd7ef36096bb05a1db9a5",
+      "byte_tokens": 956,
+      "cohort": "shape_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/dev/task0/repeat_get/1",
+      "input_sha256": "0b6d8dbc5bdceeb19260035260a593edaa99f0e9c3e92cf1dbe65232f6e2cb2f",
+      "byte_tokens": 956,
+      "cohort": "shape_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/dev/task1/middle_put/0",
+      "input_sha256": "25739f956aedc01e7b8a552fb632aa7789bbf477a7bdb07e7daae221bbd47aa6",
+      "byte_tokens": 995,
+      "cohort": "shape_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/dev/task1/middle_put/1",
+      "input_sha256": "87f913ee928d03840877add31969c4c9e9929dea9eb5836dff7df86d32f2bcb8",
+      "byte_tokens": 995,
+      "cohort": "shape_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/dev/task1/tail_get/0",
+      "input_sha256": "9e4df3ff58f5951570e033cd4e7ae495ea575f024371bba27a6ea084e1c1512d",
+      "byte_tokens": 1147,
+      "cohort": "shape_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/dev/task1/tail_get/1",
+      "input_sha256": "9fec4cfd2068f8cf8027e0f8326a4b050782e6ba405e9a1a2dc3ebfca4faa5d5",
+      "byte_tokens": 1147,
+      "cohort": "shape_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/dev/task1/repeat_get/0",
+      "input_sha256": "078fd28c0afec9f1a3034b691ce5b8775d502912959af64062a88b52a259c607",
+      "byte_tokens": 962,
+      "cohort": "shape_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/dev/task1/repeat_get/1",
+      "input_sha256": "7e9853b43f8c1ba2effcb946f36ed9275ab0b97d827c6e2a1aae1d65662b9b7c",
+      "byte_tokens": 962,
+      "cohort": "shape_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/dev/task2/middle_put/0",
+      "input_sha256": "e830b1452d52601dc205b03b1bc828c5a71afefe5b5c406a4a7b846ba13c9e0d",
+      "byte_tokens": 1000,
+      "cohort": "shape_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/dev/task2/middle_put/1",
+      "input_sha256": "1496dc823055fd02f6995fe2228afaef04dc5200b5c0218ff98ae1e7d16d043d",
+      "byte_tokens": 1000,
+      "cohort": "shape_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/dev/task2/tail_get/0",
+      "input_sha256": "b9902e1fa723013899dd77cd28f83ba5105a0a56057ec80ec05e33f03be6d98d",
+      "byte_tokens": 1152,
+      "cohort": "shape_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/dev/task2/tail_get/1",
+      "input_sha256": "c75cf94159754f4c9bc5875b61262b0c63e95072cea8341b313d09b5a1687962",
+      "byte_tokens": 1152,
+      "cohort": "shape_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/dev/task2/repeat_get/0",
+      "input_sha256": "ed2a78d108e5765b1e8ee01d17b5094f66ef741e6acc7a1ede085a383b4cd28f",
+      "byte_tokens": 966,
+      "cohort": "shape_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/dev/task2/repeat_get/1",
+      "input_sha256": "48c206edd6c7f43a79f584f44153ef6949ec0967ca127882eefe64b729756852",
+      "byte_tokens": 966,
+      "cohort": "shape_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/dev/task3/middle_put/0",
+      "input_sha256": "6f125adbeb30cb48c0e6d32eb5c4da01deae8bccb7e0c4367b2d87051254c046",
+      "byte_tokens": 1002,
+      "cohort": "shape_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/dev/task3/middle_put/1",
+      "input_sha256": "3b40efcaddd43348ae5086adac36ef337c99a4ce82c6519e2a90cfb748fa6abd",
+      "byte_tokens": 1002,
+      "cohort": "shape_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/dev/task3/tail_get/0",
+      "input_sha256": "3611aa23cf7c465d6a879dc60adc35e18ac312bdc258a5a983b944efdd6dad9b",
+      "byte_tokens": 1154,
+      "cohort": "shape_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/dev/task3/tail_get/1",
+      "input_sha256": "7fa647b3ba39bad3c3e789f3c53c62b994d91b6a81841f4212cad8355e185ada",
+      "byte_tokens": 1154,
+      "cohort": "shape_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/dev/task3/repeat_get/0",
+      "input_sha256": "ac21c883c4df29bf33ad75cbd21435585d44edca3a6c396919d8a432892f03fb",
+      "byte_tokens": 968,
+      "cohort": "shape_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "order/dev/task3/repeat_get/1",
+      "input_sha256": "f21c975b6e947cfd973da29639fc76ee94c5934d343ad1106ba6f10abfc2aaa7",
+      "byte_tokens": 968,
+      "cohort": "shape_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "contrast/train/task0/normal",
+      "input_sha256": "630d3cedb101fb93a620cb4460aa6fe6b70a45e98b76ae59623230c97156611c",
+      "byte_tokens": 590,
+      "cohort": "contrast_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "contrast/train/task0/renamed",
+      "input_sha256": "267aef9e01f1f2f9ab4f113d93129c012f668b7810f1f6b9ab2c7bcbb2f97f64",
+      "byte_tokens": 590,
+      "cohort": "contrast_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "contrast/train/task0/same",
+      "input_sha256": "588c00d2cbca4cd84c4b2fa25f313940a0f7adfe10b86f4d852d91fc5048234d",
+      "byte_tokens": 740,
+      "cohort": "contrast_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "contrast/train/task0/wrong",
+      "input_sha256": "53899993df50bb9a3c4f80adbb4178a9cded95a977665c55be94671e01b0f571",
+      "byte_tokens": 740,
+      "cohort": "contrast_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "contrast/train/task0/fresh",
+      "input_sha256": "c0a2cf24b8d524d5de15ea00b30d88bdd7702c1f9c330f623419b8a6f79ef219",
+      "byte_tokens": 740,
+      "cohort": "contrast_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "contrast/train/task1/normal",
+      "input_sha256": "b6095e809a386c337853828ec75e2658089be5d96637f9813b2759bcb5fba7aa",
+      "byte_tokens": 612,
+      "cohort": "contrast_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "contrast/train/task1/renamed",
+      "input_sha256": "e202ff142ba8cd27313bb8d56bd58a88096bffd6ddf9c79b9eb412f69925ee85",
+      "byte_tokens": 612,
+      "cohort": "contrast_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "contrast/train/task1/same",
+      "input_sha256": "bd517d555cd45f14f57f397743b27adb8858918d77146d76fe821d06dd1664e9",
+      "byte_tokens": 769,
+      "cohort": "contrast_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "contrast/train/task1/wrong",
+      "input_sha256": "711e354956ee7ecc30d4f12d84ee1df0fba2be1c26076b2bd32275be65e50c3a",
+      "byte_tokens": 769,
+      "cohort": "contrast_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "contrast/train/task1/fresh",
+      "input_sha256": "3daf967abf74be64f1757d6dbc9b1881979ebb26fd4a20511d15614a3d697715",
+      "byte_tokens": 769,
+      "cohort": "contrast_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "contrast/train/task4/normal",
+      "input_sha256": "1240c5c821b7c36cb899398e6484336e3a1cf8e6a61db21f41a00186ef7a842f",
+      "byte_tokens": 606,
+      "cohort": "contrast_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "contrast/train/task4/renamed",
+      "input_sha256": "8140222139c07608705deef1f5d50efb70b3c3bab9a6b8413e2673721d16a83c",
+      "byte_tokens": 606,
+      "cohort": "contrast_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "contrast/train/task4/same",
+      "input_sha256": "799b278b0d01d813a4b247ae7cf41f6b8f6b9d919b9392ef51f234359e200c49",
+      "byte_tokens": 758,
+      "cohort": "contrast_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "contrast/train/task4/wrong",
+      "input_sha256": "12c9413bc68dbf3edd9df4880cf0cf346ee7197eb262470f9823a5e52e3631d4",
+      "byte_tokens": 758,
+      "cohort": "contrast_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "contrast/train/task4/fresh",
+      "input_sha256": "e27eb0a04122e42b3c14562c048805aaff521bb8973e9b809e69dcdce3e50c09",
+      "byte_tokens": 758,
+      "cohort": "contrast_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "contrast/train/task5/normal",
+      "input_sha256": "23574c52fec9d397d400eb64f3e272aa976375b6aa0d0c168f4421b69e8096ef",
+      "byte_tokens": 662,
+      "cohort": "contrast_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "contrast/train/task5/renamed",
+      "input_sha256": "2a737680b3c4b85f85529875ce79bc2650e81c6c2502a714346fcb4ced6167d0",
+      "byte_tokens": 662,
+      "cohort": "contrast_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "contrast/train/task5/same",
+      "input_sha256": "997b54c304faab9483d87946f09395d101661fdaae2d781e0b290a06f9b47860",
+      "byte_tokens": 832,
+      "cohort": "contrast_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "contrast/train/task5/wrong",
+      "input_sha256": "8d77e4a4172b3fdf3ddeafdd391af325ca5a8cd16d0cede520033be778e464b2",
+      "byte_tokens": 832,
+      "cohort": "contrast_train",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "contrast/train/task5/fresh",
+      "input_sha256": "6682da29e1ef35ff8c80e421c1705898e6fd938d2842f3372f86a6979c51cd80",
+      "byte_tokens": 832,
+      "cohort": "contrast_train",
+      "train_union_overlap": true
+    },
+    {
+      "case_id": "contrast/dev/task0/normal",
+      "input_sha256": "bfbaa7abfeb0d12c3279f59c2fed2f60479a71984817b19f5d96befb006748a5",
+      "byte_tokens": 640,
+      "cohort": "contrast_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "contrast/dev/task0/renamed",
+      "input_sha256": "8c4a3539f514b5a8a42ace9e5cb898f85414fad580eb6c768de6e7ff24fd05ad",
+      "byte_tokens": 640,
+      "cohort": "contrast_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "contrast/dev/task0/same",
+      "input_sha256": "94438117df18c873ecb355bfd03463280c14f866f9e8bb4fde021bc6571bc300",
+      "byte_tokens": 805,
+      "cohort": "contrast_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "contrast/dev/task0/wrong",
+      "input_sha256": "e6b190175287d717f6b8c7afb6ed963ae953fc758cee638917ab52f16a161364",
+      "byte_tokens": 805,
+      "cohort": "contrast_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "contrast/dev/task0/fresh",
+      "input_sha256": "094b6895db8b1a1e5336f897f446364e1912a8aa8cef3935a13da3c6e0e73362",
+      "byte_tokens": 805,
+      "cohort": "contrast_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "contrast/dev/task1/normal",
+      "input_sha256": "e106f8cbf5729cce8e2f9d1e7fad4f2b2079553c5dc9f90afe0cc08abb063af5",
+      "byte_tokens": 644,
+      "cohort": "contrast_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "contrast/dev/task1/renamed",
+      "input_sha256": "c5c758396989c4969cece647f3ed67b0f75d9a08f9f4988a3b11acdaeaa73b05",
+      "byte_tokens": 644,
+      "cohort": "contrast_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "contrast/dev/task1/same",
+      "input_sha256": "ec69dfde5d425696ddcfd288fe1a0ba1be543e10743bd1f2a7ad59f89b6a77ca",
+      "byte_tokens": 810,
+      "cohort": "contrast_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "contrast/dev/task1/wrong",
+      "input_sha256": "735696aaf1b175effb4e8fe7b26670865272900de0c696eb970737c8e8acdbc0",
+      "byte_tokens": 810,
+      "cohort": "contrast_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "contrast/dev/task1/fresh",
+      "input_sha256": "c6596cd9adfb0222e999b91f58a5e6ab8c554107da85206da7d353d6b85f7948",
+      "byte_tokens": 810,
+      "cohort": "contrast_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "contrast/dev/task2/normal",
+      "input_sha256": "ad748ea7b0b1512b2b113ca9f878ddf80a6d98beb36c9ea500c3476f73c11523",
+      "byte_tokens": 650,
+      "cohort": "contrast_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "contrast/dev/task2/renamed",
+      "input_sha256": "8eb034e211db5ee74d88051732cfe8ddb13aac227b57c9a432920a090c206f83",
+      "byte_tokens": 650,
+      "cohort": "contrast_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "contrast/dev/task2/same",
+      "input_sha256": "661f44782d62474f3f7254d8faf6e25133e246223aae67b8fba6d27c5e28505f",
+      "byte_tokens": 815,
+      "cohort": "contrast_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "contrast/dev/task2/wrong",
+      "input_sha256": "c4f8edf46615062339f660efbcc4a9fe784f6675bb7c21467f00f482674deb74",
+      "byte_tokens": 815,
+      "cohort": "contrast_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "contrast/dev/task2/fresh",
+      "input_sha256": "cfc1ca91747484bba5e07ed6baff80e1ec67805262a5171fe8ddf6fc4dba01b1",
+      "byte_tokens": 815,
+      "cohort": "contrast_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "contrast/dev/task3/normal",
+      "input_sha256": "b0c3e4fe9f7a197ab10a61b82c45b25eb583f92ebb7a170146c9800ff459273a",
+      "byte_tokens": 652,
+      "cohort": "contrast_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "contrast/dev/task3/renamed",
+      "input_sha256": "3a9cad29c4626e7f9b1d7ce01ece4ea1b9ff3b9c555f75d45d99f58527c55d40",
+      "byte_tokens": 652,
+      "cohort": "contrast_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "contrast/dev/task3/same",
+      "input_sha256": "e2cbbe6cc899317904e981d60b945d69f2dcb501a7ec72b002702abbd4d8c467",
+      "byte_tokens": 817,
+      "cohort": "contrast_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "contrast/dev/task3/wrong",
+      "input_sha256": "9dfeb9a84943c19c55d3eae18da705966641a5bbe3f5009bfedf696f010c621c",
+      "byte_tokens": 817,
+      "cohort": "contrast_dev",
+      "train_union_overlap": false
+    },
+    {
+      "case_id": "contrast/dev/task3/fresh",
+      "input_sha256": "cf8426c448342aa83f90eb7a582e43899d283cebd6c365bdf4f5a70b6fee184c",
+      "byte_tokens": 817,
+      "cohort": "contrast_dev",
+      "train_union_overlap": false
+    }
+  ],
+  "manifest_sha256": "cb04d16476f97f4deb8c831669b1b283caed34ddfaf2c477012e5de929905232",
+  "rows": 264,
+  "pairs": 76,
+  "unique_inputs": 236,
+  "counts": {
+    "old_train": 80,
+    "old_dev": 40,
+    "added_train": 32,
+    "shape_train": 48,
+    "shape_dev": 24,
+    "contrast_train": 20,
+    "contrast_dev": 20
+  },
+  "max_byte_tokens": 1169,
+  "epochs": 40,
+  "slots_sha256": {
+    "repeat": "fd3a4124dad24181da562986e92eeca27ccce479937c1c12c1d283bdaec2c8fe",
+    "order": "d4ed545f9fa22001a152bc99ac7ce5ed935ce97a905843538f82e20604978c52"
+  },
+  "slots_per_epoch": 112,
+  "updates_per_arm": 4480,
+  "oracle_completions": 264,
+  "shape_overlap": 0,
+  "test_constructed": 0,
+  "test_scored": 0,
+  "independent_holdout": false
+}
