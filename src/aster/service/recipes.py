@@ -61,6 +61,16 @@ class RecipeRegistry:
                 parameter_names=(),
                 description="Run the fixed 40 + 2 calculate-and-store Agent episode with calculator and memory tools.",
             ),
+            "agent-decision-model-v0": RecipeInfo(
+                recipe_id="agent-decision-model-v0",
+                kind="agent",
+                input_names=("decision_model",),
+                parameter_names=(),
+                description=(
+                    "Run the fixed ACT-v0 development episode with a registered "
+                    "DecisionModel in model-only mode."
+                ),
+            ),
         }
 
     def list(self) -> list[dict[str, object]]:
@@ -76,13 +86,29 @@ class RecipeRegistry:
             raise ValueError("Recipe parameters do not match the contract")
 
         if spec.kind == "agent":
+            if spec.recipe_id == "agent-calculate-store-v0":
+                return PreparedJob(
+                    command=[
+                        self.python,
+                        "-m",
+                        "aster.runtime.service_agent",
+                        "--root",
+                        str(job_root),
+                    ],
+                    timeout_seconds=60,
+                )
+            decision_model = self.catalog.resolve(
+                spec.inputs["decision_model"], "decision_model"
+            )
             return PreparedJob(
                 command=[
                     self.python,
                     "-m",
-                    "aster.runtime.service_agent",
+                    "aster.runtime.service_learned_agent",
                     "--root",
                     str(job_root),
+                    "--artifact",
+                    str(decision_model),
                 ],
                 timeout_seconds=60,
             )

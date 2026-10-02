@@ -120,3 +120,23 @@ UIでdiagnostic successを再計算せず、未提供の値を推測しない。
 - source reportに存在しないcandidate scoreや学習曲線は未取得と表示し、UIで推測・再計算しない。
 - 初版は `decision-failure-audit-v0` のphase-zero evidenceに限定し、test本文・private corpus・repository-local pathを公開しない。
 - これは学習済みDecisionModelを新規実行する経路ではない。保存再生の観測系を先に閉じ、その後にlearned Agent end-to-endへ進む。
+
+
+## 2026-10-02 Learned Agent ACT v0
+
+ACT v0では、Web/Sitesがmodel pathや任意taskを渡すのではなく、Aster Serviceが列挙する
+`decision_model:<digest>` と固定 `agent-decision-model-v0` recipeだけを使う。
+
+Aster側がcanonicalに保持するもの:
+
+- model artifact / model ID / candidate builder / serializer lineage
+- candidate Action列、score、selected indexを含むDecisionTrace
+- 実際に実行されたTransition / Observation / State
+- episode evaluation
+- ACT-Wiring Gate / ACT-Capability Gate
+
+UIはこれらを表示・比較するが、score、selected Action、task success、Gateを再計算しない。
+model-onlyでは「モデルが選んだAction」と「実際に実行されたAction」を同じstepで表示できるようにする。
+将来fallbackを追加するときはmodel Action / final Action / routeを分離し、fallback成功をmodel-only能力に算入しない。
+
+ACT v0のAster側Runが実測されるまで、aster-webへ架空のlearned Run fixtureを完成状態として追加しない。

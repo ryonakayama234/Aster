@@ -3,6 +3,8 @@ from pathlib import Path
 import subprocess
 import time
 
+import pytest
+
 from aster.service.contracts import JobSpec
 from aster.service.jobs import JobManager
 from aster.service.recipes import RecipeRegistry
@@ -125,3 +127,47 @@ def test_job_manager_exposes_agent_bundle_without_local_paths(tmp_path):
     assert bundle["outputs"]["agent"] == bundle["agent"]
     assert str(tmp_path) not in json.dumps(bundle)
     assert "agent.run" in manager.status()["capabilities"]
+
+
+def test_learned_agent_recipe_accepts_only_registered_decision_model(tmp_path):
+    digest = "a" * 64
+    model_root = tmp_path / "artifacts" / "decision_models" / digest
+    tokenizer_root = model_root / "tokenizer"
+    tokenizer_root.mkdir(parents=True)
+    (model_root / "manifest.json").write_text(
+        json.dumps(
+            {
+                "artifact_id": f"decision_model:{digest}",
+                "candidate_builder_id": "calculate-and-store-v0",
+            }
+        ),
+        encoding="utf-8",
+    )
+    (model_root / "model.pt").write_bytes(b"placeholder")
+    for name in ("manifest.json", "vocab.json", "merges.json", "special_tokens.json"):
+        (tokenizer_root / name).write_text("{}", encoding="utf-8")
+
+    registry = RecipeRegistry(tmp_path, python="python-test")
+    spec = JobSpec(
+        "agent",
+        "agent-decision-model-v0",
+        {"decision_model": f"decision_model:{digest}"},
+        {},
+    )
+    prepared = registry.prepare(spec, tmp_path / "job")
+
+    assert prepared.command[:3] == [
+        "python-test",
+        "-m",
+        "aster.runtime.service_learned_agent",
+    ]
+    assert prepared.command[3:5] == ["--root", str(tmp_path / "job")]
+    assert prepared.command[5] == "--artifact"
+    assert prepared.command[6] == str(model_root)
+    assert prepared.timeout_seconds == 60
+
+    with pytest.raises(ValueError, match="inputs"):
+        registry.prepare(
+            JobSpec("agent", "agent-decision-model-v0", {"model_path": "/tmp/x"}, {}),
+            tmp_path / "bad-job",
+        )

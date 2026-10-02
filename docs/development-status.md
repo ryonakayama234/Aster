@@ -113,3 +113,28 @@ aster-webで同じcaseを2 arm並べて確認する。candidate scoreやlearning
 
 この作業はDecision能力改善、学習済みpolicyのService実行、Intervention Learningを意味しない。
 次のGateは、観測系の実ブラウザ確認後に learned DecisionModel → typed Runtime state → real Tool → Evaluator を通すend-to-end run。
+
+
+## 2026-10-02追記: SEE実機成立 / ACT v0実装中
+
+Research ObservatoryはユーザーWSL2実ブラウザでarm/case比較まで成立した。
+Aster PR #47は実機確認を記録してReady for review、aster-web PR #4はmerge済み。
+
+次のIssue #48では新しいDecision学習ではなく、既存の保存済みDecisionModelを実行系へ接続する。
+
+```text
+decision_model:<digest>
+→ load_decision_artifact
+→ ModelPolicy
+→ CalculateAndStoreCandidates
+→ real ToolExecutor
+→ Observation / RuntimeState
+→ TaskEvaluator
+→ DecisionTrace + Trajectory
+```
+
+branch `feat/learned-agent-act-v0` では、現時点でSpec/TODO/Progress、DecisionModel catalog登録、
+model-only ACT runner、DecisionTrace永続化、Service recipeを実装中。
+GitHub CIとユーザーPC実測前なので、実装済みと能力成立を区別する。
+
+ACT-WiringとACT-Capabilityは別Gate。task失敗でもartifact→model→tool→evidenceの配線が正しければWiringはPASSになり得る。
