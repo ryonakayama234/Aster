@@ -258,3 +258,10 @@
 - 学習器はC/M/Fから種類を選ぶ。事実抽出/引数供給は外部実装。一般的なTool失敗復帰・生履歴読解/コード生成は未確認。
 - 後続言語設計は事前学習+課題用reader学習、ランダム/事前学習初期化比較。実素材/Tokenizer/context互換性の確認が次。言語学習未実施。
 - reportsへ正本保存、全weights/証拠bundle保持。main/Service/API/aster-web/公開版/自動promotion未変更。ユーザー側追加作業不要。
+
+## 2026-10-02: 実Tool履歴→事実 readerの学習前登録
+
+- 基準PR #41 / 5f3cfde。task/memory/Action/ObservationだけのJSON文字列を作るtorch不要CLIを追加。8train/4dev task×10prefixを固定し、候補/教師/goal/evaluation/stepを除外。
+- 独立JSON oracleと既存observable_relations/v1教師の一致、保存再実行、停止時memoryと最終put後get、入力衝突/跨split重複、Byte長を確認する。
+- 今回は生成・保存監査でモデル能力未測定。詳細の実測と検証範囲をreports/history-reader-preflight-v0.md/.jsonへ保存。旧/予約testは触れない。
+- main/Service/API/aster-web/公開モデル/promotion変更なし。次は固定readerの課題用学習と予測事実からの実行。言語事前学習比較は素材/architecture/context監査後。ユーザー追加作業不要。

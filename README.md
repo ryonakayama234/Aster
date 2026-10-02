@@ -152,3 +152,13 @@ Service/aster-web/公開モデルへ未導入。正式学習結果は測定完�
 2026-10-02正式診断完了: [全3seed結果](reports/decision-action-types-study-v0.md)。train fit、128判断/128prefix、対照32組、追加4初期taskが全seed成立。
 外部抽出C/M/Fの4既知特徴パターンとcandidate結合を使う成果で、生履歴読解/引数生成/未知規則の汎化ではない。
 次は文字列→事実/Task readerの同条件ランダム/事前学習初期化比較を準備。言語事前学習は今回未実施。main/Service/Web/モデル自動採用は未変更。
+
+## 2026-10-02: 次の文字列読解課題
+
+[HistoryFactReader-v0](docs/HistoryFactReader-v0.md)と `scripts/run_history_reader_preflight.py` に、実Tool履歴→C/M/Fの学習前検証を追加。task/current memory/Action/Observationのみを入力にし、教師/候補/評価フラグを除外します。8 train taskと4 dev task、各10prefix。モデル学習・推論、事前学習比較、Service/Web公開は未実施。PR #41に依存する研究ブランチです。
+
+```bash
+PYTHONPATH=src python scripts/run_history_reader_preflight.py --root .
+```
+
+正本は [学習前検証report](reports/history-reader-preflight-v0.md)。生成成立と読解モデルの能力を分けて報告します。

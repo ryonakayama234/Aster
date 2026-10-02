@@ -1,0 +1,2103 @@
+{
+  "collisions": 0,
+  "context_length": 2048,
+  "counts": {
+    "dev": 40,
+    "train": 80
+  },
+  "cross_split_overlap": 0,
+  "fact_counts": {
+    "dev": {
+      "{\"C\":false,\"F\":null,\"M\":null}": 12,
+      "{\"C\":true,\"F\":false,\"M\":false}": 4,
+      "{\"C\":true,\"F\":false,\"M\":true}": 8,
+      "{\"C\":true,\"F\":null,\"M\":false}": 4,
+      "{\"C\":true,\"F\":null,\"M\":true}": 4,
+      "{\"C\":true,\"F\":true,\"M\":true}": 8
+    },
+    "train": {
+      "{\"C\":false,\"F\":null,\"M\":null}": 24,
+      "{\"C\":true,\"F\":false,\"M\":false}": 8,
+      "{\"C\":true,\"F\":false,\"M\":true}": 16,
+      "{\"C\":true,\"F\":null,\"M\":false}": 8,
+      "{\"C\":true,\"F\":null,\"M\":true}": 8,
+      "{\"C\":true,\"F\":true,\"M\":true}": 16
+    }
+  },
+  "families": 10,
+  "goal_contract": "calculate-and-store-current-v1",
+  "independent_checks": 120,
+  "input_id": "aster-history-reader-input-0",
+  "manifest": [
+    {
+      "byte_tokens": 161,
+      "case_id": "train/task0/normal0",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "normal0",
+      "group": "train/task0",
+      "input_sha256": "8fdcaa5548e72ebe908259c7b1ae162b7e6f5176e2c79dbe8e2fc1f27de46689",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 295,
+      "case_id": "train/task0/normal1",
+      "facts": {
+        "C": true,
+        "F": null,
+        "M": false
+      },
+      "family": "normal1",
+      "group": "train/task0",
+      "input_sha256": "f77a2a543e9d60bd263284062b004bec2b858037fba9a842d05fc5afa4956310",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 454,
+      "case_id": "train/task0/normal2",
+      "facts": {
+        "C": true,
+        "F": null,
+        "M": true
+      },
+      "family": "normal2",
+      "group": "train/task0",
+      "input_sha256": "7eeec06c19edca7a7697832643fe9a5d0f3082b90dfcff5a5e2928e2e91ae3e1",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 590,
+      "case_id": "train/task0/normal3",
+      "facts": {
+        "C": true,
+        "F": true,
+        "M": true
+      },
+      "family": "normal3",
+      "group": "train/task0",
+      "input_sha256": "630d3cedb101fb93a620cb4460aa6fe6b70a45e98b76ae59623230c97156611c",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 746,
+      "case_id": "train/task0/wrong_overwrite",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": false
+      },
+      "family": "wrong_overwrite",
+      "group": "train/task0",
+      "input_sha256": "f17ff62113044968b80a57fdb9285759dcbbaeceea2e0336978410d52e2bc5ce",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 740,
+      "case_id": "train/task0/same_write",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": true
+      },
+      "family": "same_write",
+      "group": "train/task0",
+      "input_sha256": "588c00d2cbca4cd84c4b2fa25f313940a0f7adfe10b86f4d852d91fc5048234d",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 775,
+      "case_id": "train/task0/unrelated_write",
+      "facts": {
+        "C": true,
+        "F": true,
+        "M": true
+      },
+      "family": "unrelated_write",
+      "group": "train/task0",
+      "input_sha256": "9d7499f1aa06bfc38c76a27193a877f4aad28b65bd6fff2bff396c4e2cf1bf9e",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 893,
+      "case_id": "train/task0/repair_unconfirmed",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": true
+      },
+      "family": "repair_unconfirmed",
+      "group": "train/task0",
+      "input_sha256": "087c7700392bae9b9aa546a3a8b63194aa43a63d5950f6a759754e598917f902",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 301,
+      "case_id": "train/task0/other_calculation",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "other_calculation",
+      "group": "train/task0",
+      "input_sha256": "18af322b498426b947cd92d099392169567489b2e092637c343753f3a2a2b27a",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 325,
+      "case_id": "train/task0/wrong_before_calculation",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "wrong_before_calculation",
+      "group": "train/task0",
+      "input_sha256": "a391bdce40f3cebc9bf4b1a68976180a72b0daf00914808d7b016b4d4f3aa44b",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 164,
+      "case_id": "train/task1/normal0",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "normal0",
+      "group": "train/task1",
+      "input_sha256": "e943b3ebdd17757e757f0db12bd718c7653dcafea2dedc291df01fee86152c5f",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 299,
+      "case_id": "train/task1/normal1",
+      "facts": {
+        "C": true,
+        "F": null,
+        "M": false
+      },
+      "family": "normal1",
+      "group": "train/task1",
+      "input_sha256": "2c5b097c44d088f8f06293e6a1d7b3589b71c31ea18a503541786280e2100a84",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 469,
+      "case_id": "train/task1/normal2",
+      "facts": {
+        "C": true,
+        "F": null,
+        "M": true
+      },
+      "family": "normal2",
+      "group": "train/task1",
+      "input_sha256": "0d9ba6f2bc060305285ea746111e8212d55782f3322635549e2bb43cbe57573a",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 612,
+      "case_id": "train/task1/normal3",
+      "facts": {
+        "C": true,
+        "F": true,
+        "M": true
+      },
+      "family": "normal3",
+      "group": "train/task1",
+      "input_sha256": "b6095e809a386c337853828ec75e2658089be5d96637f9813b2759bcb5fba7aa",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 773,
+      "case_id": "train/task1/wrong_overwrite",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": false
+      },
+      "family": "wrong_overwrite",
+      "group": "train/task1",
+      "input_sha256": "b90dcc750fc3313ce501e93d7e5029536fc348f1687f40cf4b80418d05e413f5",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 769,
+      "case_id": "train/task1/same_write",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": true
+      },
+      "family": "same_write",
+      "group": "train/task1",
+      "input_sha256": "bd517d555cd45f14f57f397743b27adb8858918d77146d76fe821d06dd1664e9",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 797,
+      "case_id": "train/task1/unrelated_write",
+      "facts": {
+        "C": true,
+        "F": true,
+        "M": true
+      },
+      "family": "unrelated_write",
+      "group": "train/task1",
+      "input_sha256": "612e60af3729c3f82c90d3429271a2034ceb9451b4549d3dc24a13d7c8e3f013",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 928,
+      "case_id": "train/task1/repair_unconfirmed",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": true
+      },
+      "family": "repair_unconfirmed",
+      "group": "train/task1",
+      "input_sha256": "9797bf2c778ac492baba023f5b59ab1a60bd19ace3cd46eb7b1debe507238fe7",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 304,
+      "case_id": "train/task1/other_calculation",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "other_calculation",
+      "group": "train/task1",
+      "input_sha256": "fe95b82051c5268836bba6d9369d0ddb7a0075a7d4706836dc63f2b9898dd500",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 337,
+      "case_id": "train/task1/wrong_before_calculation",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "wrong_before_calculation",
+      "group": "train/task1",
+      "input_sha256": "7988564b5983dfeefdc757035697eb0ebbd0dd35b99ed361f948e5d6ad6aaaa7",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 164,
+      "case_id": "train/task2/normal0",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "normal0",
+      "group": "train/task2",
+      "input_sha256": "31c9ab154487e2612765c84cdba5d9e7ffdfc852016763cfb31ac0051e9ed66a",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 299,
+      "case_id": "train/task2/normal1",
+      "facts": {
+        "C": true,
+        "F": null,
+        "M": false
+      },
+      "family": "normal1",
+      "group": "train/task2",
+      "input_sha256": "9eebda53d537bb3f0e464538785bc374964337f3a85dd1b1e55e357ae444e50e",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 464,
+      "case_id": "train/task2/normal2",
+      "facts": {
+        "C": true,
+        "F": null,
+        "M": true
+      },
+      "family": "normal2",
+      "group": "train/task2",
+      "input_sha256": "53cf1cc0acb65d2047d59892bd0b3eb53cb01276eb76a6514a486efcbecaaa44",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 604,
+      "case_id": "train/task2/normal3",
+      "facts": {
+        "C": true,
+        "F": true,
+        "M": true
+      },
+      "family": "normal3",
+      "group": "train/task2",
+      "input_sha256": "164b309b60bbabdc479b2a5e93e161d2dff34d85104290d512bcec473dceea6c",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 764,
+      "case_id": "train/task2/wrong_overwrite",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": false
+      },
+      "family": "wrong_overwrite",
+      "group": "train/task2",
+      "input_sha256": "c559f98777fc7aa78923e657d1a1ab47b421a4fa49f7a17400cfc178843e8948",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 758,
+      "case_id": "train/task2/same_write",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": true
+      },
+      "family": "same_write",
+      "group": "train/task2",
+      "input_sha256": "3ddd7450f9063854cd30b075a525bdeff32f3e432b3789ddb3c006e16fa39106",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 789,
+      "case_id": "train/task2/unrelated_write",
+      "facts": {
+        "C": true,
+        "F": true,
+        "M": true
+      },
+      "family": "unrelated_write",
+      "group": "train/task2",
+      "input_sha256": "8b0efdf77c733954cdb611494179919ceaaa545e52b1ff9da3c26ebf4a7b3512",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 915,
+      "case_id": "train/task2/repair_unconfirmed",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": true
+      },
+      "family": "repair_unconfirmed",
+      "group": "train/task2",
+      "input_sha256": "e7b8caf31eb3cf4d5f0855566e17adec965228b90a65871a0617e96015581298",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 306,
+      "case_id": "train/task2/other_calculation",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "other_calculation",
+      "group": "train/task2",
+      "input_sha256": "4dd4a425a9db7ba5fbac2e198fbd8b747f785700e25447a3ef1f740cde8b4882",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 334,
+      "case_id": "train/task2/wrong_before_calculation",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "wrong_before_calculation",
+      "group": "train/task2",
+      "input_sha256": "6394e204b3ec8e403d7f7e7535ea8e20138a9c901a3e21a4f152db8ffb045dc7",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 164,
+      "case_id": "train/task3/normal0",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "normal0",
+      "group": "train/task3",
+      "input_sha256": "861f636db02332f304fc10c2836dd9da83fc3881b197d74223a97a44293f6ed5",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 298,
+      "case_id": "train/task3/normal1",
+      "facts": {
+        "C": true,
+        "F": null,
+        "M": false
+      },
+      "family": "normal1",
+      "group": "train/task3",
+      "input_sha256": "df594395ad1c99cc35358d1fc524bc12efecf1b2f8a20ebfcb00a65e66215556",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 466,
+      "case_id": "train/task3/normal2",
+      "facts": {
+        "C": true,
+        "F": null,
+        "M": true
+      },
+      "family": "normal2",
+      "group": "train/task3",
+      "input_sha256": "2ae3f93a8ea9ff16b469dd20be1a7361adea29bdd2dba94c8444cdef7316d0fd",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 608,
+      "case_id": "train/task3/normal3",
+      "facts": {
+        "C": true,
+        "F": true,
+        "M": true
+      },
+      "family": "normal3",
+      "group": "train/task3",
+      "input_sha256": "60d9af4a8d6379766782b706b4c24f5d13d56c7adc1cfc55104381dada1af973",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 770,
+      "case_id": "train/task3/wrong_overwrite",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": false
+      },
+      "family": "wrong_overwrite",
+      "group": "train/task3",
+      "input_sha256": "e644adb79b3152efefbf597008a26e4d037639f3ff7cac43cd86139f28dcd3c0",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 764,
+      "case_id": "train/task3/same_write",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": true
+      },
+      "family": "same_write",
+      "group": "train/task3",
+      "input_sha256": "0985bcee324d56b1bdc05b9b087d3907f096db67e39d3a47701543105a593312",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 793,
+      "case_id": "train/task3/unrelated_write",
+      "facts": {
+        "C": true,
+        "F": true,
+        "M": true
+      },
+      "family": "unrelated_write",
+      "group": "train/task3",
+      "input_sha256": "5e993a947b32f19f3c01c68ce76f432666ef82db80a7454f3fd3e06b56522580",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 923,
+      "case_id": "train/task3/repair_unconfirmed",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": true
+      },
+      "family": "repair_unconfirmed",
+      "group": "train/task3",
+      "input_sha256": "2f2602d91a667ed9fceda9b893eab9f17641c5dead73d09943899fb21aef10c3",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 304,
+      "case_id": "train/task3/other_calculation",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "other_calculation",
+      "group": "train/task3",
+      "input_sha256": "eb0b757afef237d5c0e771fd5372fa7689c9cdd71257ce22c83126cebf826454",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 337,
+      "case_id": "train/task3/wrong_before_calculation",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "wrong_before_calculation",
+      "group": "train/task3",
+      "input_sha256": "6fc2c62abbe8a22d7d7655209a6acd473f297d2c0b63c366d9aec80645f7e187",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 167,
+      "case_id": "train/task4/normal0",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "normal0",
+      "group": "train/task4",
+      "input_sha256": "af6b4fc05d23aa4b208167893fc995a06db928ebeef454a7cf0423edc1d27dea",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 306,
+      "case_id": "train/task4/normal1",
+      "facts": {
+        "C": true,
+        "F": null,
+        "M": false
+      },
+      "family": "normal1",
+      "group": "train/task4",
+      "input_sha256": "656c293f29d14ef63a7f049c842ce3422f83881210a8656aa9209821ab645bc3",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 468,
+      "case_id": "train/task4/normal2",
+      "facts": {
+        "C": true,
+        "F": null,
+        "M": true
+      },
+      "family": "normal2",
+      "group": "train/task4",
+      "input_sha256": "cb30b802227ba2e1dee8497d1091816e21c6ee0d27360be17db95bd6dae81e35",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 606,
+      "case_id": "train/task4/normal3",
+      "facts": {
+        "C": true,
+        "F": true,
+        "M": true
+      },
+      "family": "normal3",
+      "group": "train/task4",
+      "input_sha256": "1240c5c821b7c36cb899398e6484336e3a1cf8e6a61db21f41a00186ef7a842f",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 764,
+      "case_id": "train/task4/wrong_overwrite",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": false
+      },
+      "family": "wrong_overwrite",
+      "group": "train/task4",
+      "input_sha256": "1d02172c20b0e85730b7ca8dd062ec737197eea1b70b9dd2958ede17f92e207b",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 758,
+      "case_id": "train/task4/same_write",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": true
+      },
+      "family": "same_write",
+      "group": "train/task4",
+      "input_sha256": "799b278b0d01d813a4b247ae7cf41f6b8f6b9d919b9392ef51f234359e200c49",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 791,
+      "case_id": "train/task4/unrelated_write",
+      "facts": {
+        "C": true,
+        "F": true,
+        "M": true
+      },
+      "family": "unrelated_write",
+      "group": "train/task4",
+      "input_sha256": "89d887485684cc71381616407e00889248a1c278e92614e678bcae42adfc18be",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 913,
+      "case_id": "train/task4/repair_unconfirmed",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": true
+      },
+      "family": "repair_unconfirmed",
+      "group": "train/task4",
+      "input_sha256": "e830307ed23715b8fb5c520551299ab01756f742a89a7f071d4db2fff972a84a",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 302,
+      "case_id": "train/task4/other_calculation",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "other_calculation",
+      "group": "train/task4",
+      "input_sha256": "70af7848f48c20584b2168c5f3eb4cd16eec6c19152c869c3fc72bd8dffde9c4",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 334,
+      "case_id": "train/task4/wrong_before_calculation",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "wrong_before_calculation",
+      "group": "train/task4",
+      "input_sha256": "afe2ddd06f431b586c9f784b0d109bbd2d066dfcc4784bd0d4dee1cc0fa03ce2",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 177,
+      "case_id": "train/task5/normal0",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "normal0",
+      "group": "train/task5",
+      "input_sha256": "2101cf6264bae8bde80b497ccb44b3e0bfbd89fd15c41d2719edc75f201a394a",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 317,
+      "case_id": "train/task5/normal1",
+      "facts": {
+        "C": true,
+        "F": null,
+        "M": false
+      },
+      "family": "normal1",
+      "group": "train/task5",
+      "input_sha256": "2a9db847a22e048e734d7768df41f0657c5579bace9ca6229739f83f40a5832e",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 506,
+      "case_id": "train/task5/normal2",
+      "facts": {
+        "C": true,
+        "F": null,
+        "M": true
+      },
+      "family": "normal2",
+      "group": "train/task5",
+      "input_sha256": "ecad79c6947ed2065e6f0143a1f6d2e4b2a27799e82641970b5c977a98d6fbc7",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 662,
+      "case_id": "train/task5/normal3",
+      "facts": {
+        "C": true,
+        "F": true,
+        "M": true
+      },
+      "family": "normal3",
+      "group": "train/task5",
+      "input_sha256": "23574c52fec9d397d400eb64f3e272aa976375b6aa0d0c168f4421b69e8096ef",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 838,
+      "case_id": "train/task5/wrong_overwrite",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": false
+      },
+      "family": "wrong_overwrite",
+      "group": "train/task5",
+      "input_sha256": "c71fc01992f06722b911490c73adc15efb4b11359252b6660916bbe3bb965d3c",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 832,
+      "case_id": "train/task5/same_write",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": true
+      },
+      "family": "same_write",
+      "group": "train/task5",
+      "input_sha256": "997b54c304faab9483d87946f09395d101661fdaae2d781e0b290a06f9b47860",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 847,
+      "case_id": "train/task5/unrelated_write",
+      "facts": {
+        "C": true,
+        "F": true,
+        "M": true
+      },
+      "family": "unrelated_write",
+      "group": "train/task5",
+      "input_sha256": "c0f98ab3f620ba4bcc103b2729d86a5821a3dec843c86dcb2be52489e4994d49",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 1005,
+      "case_id": "train/task5/repair_unconfirmed",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": true
+      },
+      "family": "repair_unconfirmed",
+      "group": "train/task5",
+      "input_sha256": "31c87064cf6a35d919c081a94776b030a6ef18c028080b7d716e5faf27d62388",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 313,
+      "case_id": "train/task5/other_calculation",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "other_calculation",
+      "group": "train/task5",
+      "input_sha256": "c8f6dd5ad4225046d96d5867fcf74ce677e4a9f55f4faf16b0860dc3ef82736d",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 371,
+      "case_id": "train/task5/wrong_before_calculation",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "wrong_before_calculation",
+      "group": "train/task5",
+      "input_sha256": "c1b6c63f458f228668e9e4ef5b49b8f4fdea39089c48c75e9b43c1d72001fbae",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 170,
+      "case_id": "train/task6/normal0",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "normal0",
+      "group": "train/task6",
+      "input_sha256": "e1a71ebdc6c07dcfbd7dcc093956183bdc85495f4be88823f3936ffb40bfec38",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 311,
+      "case_id": "train/task6/normal1",
+      "facts": {
+        "C": true,
+        "F": null,
+        "M": false
+      },
+      "family": "normal1",
+      "group": "train/task6",
+      "input_sha256": "d74380cda13292523380acad0a02064ea54fe6fa15e7a0b61d8411f01aef6643",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 481,
+      "case_id": "train/task6/normal2",
+      "facts": {
+        "C": true,
+        "F": null,
+        "M": true
+      },
+      "family": "normal2",
+      "group": "train/task6",
+      "input_sha256": "0a6f5634d058f685177d5db96fe6c3dfb367612e04310c6c7168fc95bbe4daa1",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 624,
+      "case_id": "train/task6/normal3",
+      "facts": {
+        "C": true,
+        "F": true,
+        "M": true
+      },
+      "family": "normal3",
+      "group": "train/task6",
+      "input_sha256": "58be33687dede5c232acc89718b94ee1ce9b024a87ec810c9439455c11e4c4f6",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 785,
+      "case_id": "train/task6/wrong_overwrite",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": false
+      },
+      "family": "wrong_overwrite",
+      "group": "train/task6",
+      "input_sha256": "1714d9df79ffad3b30259c8a0c3df12fe33aac468cfc9c343ef4f188291a4be7",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 781,
+      "case_id": "train/task6/same_write",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": true
+      },
+      "family": "same_write",
+      "group": "train/task6",
+      "input_sha256": "7b080d32eb392e598603c4e5e54fd965eb3b1c91fb940d92ecc72beffbe3e934",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 809,
+      "case_id": "train/task6/unrelated_write",
+      "facts": {
+        "C": true,
+        "F": true,
+        "M": true
+      },
+      "family": "unrelated_write",
+      "group": "train/task6",
+      "input_sha256": "8b50d4563ca4f2b58e746f8b99e9d19987486130ed07880f182d8da18ac7044c",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 940,
+      "case_id": "train/task6/repair_unconfirmed",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": true
+      },
+      "family": "repair_unconfirmed",
+      "group": "train/task6",
+      "input_sha256": "332cf72681e2ae9d426882ed8bcdbb78a7f94f9a4a2e01faddb3a4b6a0d94e7e",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 305,
+      "case_id": "train/task6/other_calculation",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "other_calculation",
+      "group": "train/task6",
+      "input_sha256": "39a0169846b001231286e2c51496f7966690c6bb0fa22a6616e91906ef92c0bb",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 343,
+      "case_id": "train/task6/wrong_before_calculation",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "wrong_before_calculation",
+      "group": "train/task6",
+      "input_sha256": "c81740a8cc1ad8a1794c49850dd361a9157c8ce91b8b3bc00621cfa5615d33b3",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 170,
+      "case_id": "train/task7/normal0",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "normal0",
+      "group": "train/task7",
+      "input_sha256": "a9a7bc3bf830817af4c7368472c44cf7a01a0134bf2d43ea2ef32dc9efa14ee9",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 309,
+      "case_id": "train/task7/normal1",
+      "facts": {
+        "C": true,
+        "F": null,
+        "M": false
+      },
+      "family": "normal1",
+      "group": "train/task7",
+      "input_sha256": "6c466c7e7fef42bc43a0d4c36d62d09beb7f4cf67e4389715318da79f2056d55",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 480,
+      "case_id": "train/task7/normal2",
+      "facts": {
+        "C": true,
+        "F": null,
+        "M": true
+      },
+      "family": "normal2",
+      "group": "train/task7",
+      "input_sha256": "a1af8d73b3e99b2be739529f17546ac4458a4c94ae1e3c49b911b64987860195",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 624,
+      "case_id": "train/task7/normal3",
+      "facts": {
+        "C": true,
+        "F": true,
+        "M": true
+      },
+      "family": "normal3",
+      "group": "train/task7",
+      "input_sha256": "dac4bc640276854605c4282a84d9f9c6c0ec63d59444a6f290a70ffcbeef47d6",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 788,
+      "case_id": "train/task7/wrong_overwrite",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": false
+      },
+      "family": "wrong_overwrite",
+      "group": "train/task7",
+      "input_sha256": "7df06feaa5228e7e13679be4c18f84641eb5239d9f37b952618f48c09bffc223",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 782,
+      "case_id": "train/task7/same_write",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": true
+      },
+      "family": "same_write",
+      "group": "train/task7",
+      "input_sha256": "7bf0ffab25e30d2a029c38d4437efae121075373f9e64cf7f1e7ba62472219e9",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 809,
+      "case_id": "train/task7/unrelated_write",
+      "facts": {
+        "C": true,
+        "F": true,
+        "M": true
+      },
+      "family": "unrelated_write",
+      "group": "train/task7",
+      "input_sha256": "2011549ca2caa745d411d0753aa31028219d750548c2e168bf4e137fff611f69",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 943,
+      "case_id": "train/task7/repair_unconfirmed",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": true
+      },
+      "family": "repair_unconfirmed",
+      "group": "train/task7",
+      "input_sha256": "d67d4c57f169dbea6c50044a75c39ff09e2ce0a6add8aba8848fa0221727b8c5",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 304,
+      "case_id": "train/task7/other_calculation",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "other_calculation",
+      "group": "train/task7",
+      "input_sha256": "86f36d11627856f63a38a78e02e29baef746dea029f7f776780eed1ef6f8796b",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 346,
+      "case_id": "train/task7/wrong_before_calculation",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "wrong_before_calculation",
+      "group": "train/task7",
+      "input_sha256": "537b2ff90370eef25efef52ced026456e75d9e51e65531257eced488eb6c85f4",
+      "split": "train"
+    },
+    {
+      "byte_tokens": 170,
+      "case_id": "dev/task0/normal0",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "normal0",
+      "group": "dev/task0",
+      "input_sha256": "6a3d759e67bb55724b147c459511e3c98110db72a59d3e4cf68d1cafe99d41b6",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 307,
+      "case_id": "dev/task0/normal1",
+      "facts": {
+        "C": true,
+        "F": null,
+        "M": false
+      },
+      "family": "normal1",
+      "group": "dev/task0",
+      "input_sha256": "939a2f478baf284aefea5ab527cff22f2291e9519835f5e19e33b2825b7f7515",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 489,
+      "case_id": "dev/task0/normal2",
+      "facts": {
+        "C": true,
+        "F": null,
+        "M": true
+      },
+      "family": "normal2",
+      "group": "dev/task0",
+      "input_sha256": "ed644e8f16ec823382e9fa5832f9d929808a781fbf6037b0d0b01a5d36e6742f",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 640,
+      "case_id": "dev/task0/normal3",
+      "facts": {
+        "C": true,
+        "F": true,
+        "M": true
+      },
+      "family": "normal3",
+      "group": "dev/task0",
+      "input_sha256": "bfbaa7abfeb0d12c3279f59c2fed2f60479a71984817b19f5d96befb006748a5",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 809,
+      "case_id": "dev/task0/wrong_overwrite",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": false
+      },
+      "family": "wrong_overwrite",
+      "group": "dev/task0",
+      "input_sha256": "fa7cfb589ab9cae8c46080d01ee6c07e9258da42854538ca04d5184fbcf4a335",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 805,
+      "case_id": "dev/task0/same_write",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": true
+      },
+      "family": "same_write",
+      "group": "dev/task0",
+      "input_sha256": "94438117df18c873ecb355bfd03463280c14f866f9e8bb4fde021bc6571bc300",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 825,
+      "case_id": "dev/task0/unrelated_write",
+      "facts": {
+        "C": true,
+        "F": true,
+        "M": true
+      },
+      "family": "unrelated_write",
+      "group": "dev/task0",
+      "input_sha256": "ac513772ae8630b028b29d81ce417065119cd50447a0e1fd676352f5777590eb",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 972,
+      "case_id": "dev/task0/repair_unconfirmed",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": true
+      },
+      "family": "repair_unconfirmed",
+      "group": "dev/task0",
+      "input_sha256": "d7dddaf37414c8f61c4c96e8e01427662eeb111da50741139ecfbb1399c854eb",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 312,
+      "case_id": "dev/task0/other_calculation",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "other_calculation",
+      "group": "dev/task0",
+      "input_sha256": "e0183b1cc9e3f444b94f20e8c1b073942657e25ae1ac375249f8232f86ceb4ab",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 355,
+      "case_id": "dev/task0/wrong_before_calculation",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "wrong_before_calculation",
+      "group": "dev/task0",
+      "input_sha256": "8f5250cca56aab3aa8ce9097bfb3685db80b3f1d066d2e7b8dc4dfeebffe1d88",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 170,
+      "case_id": "dev/task1/normal0",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "normal0",
+      "group": "dev/task1",
+      "input_sha256": "32e2730d033783fc818a43ee997244a4d0d7ee6d10690da10aaf929783a8fd13",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 308,
+      "case_id": "dev/task1/normal1",
+      "facts": {
+        "C": true,
+        "F": null,
+        "M": false
+      },
+      "family": "normal1",
+      "group": "dev/task1",
+      "input_sha256": "a52e8ab0d2dbfa7d135d3bc243f10d8707ea311344472a17ea9e26d17caddf13",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 492,
+      "case_id": "dev/task1/normal2",
+      "facts": {
+        "C": true,
+        "F": null,
+        "M": true
+      },
+      "family": "normal2",
+      "group": "dev/task1",
+      "input_sha256": "5998616d84748108380c110b6e378d0f3e52be624161b592193a30c8cb03ccc7",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 644,
+      "case_id": "dev/task1/normal3",
+      "facts": {
+        "C": true,
+        "F": true,
+        "M": true
+      },
+      "family": "normal3",
+      "group": "dev/task1",
+      "input_sha256": "e106f8cbf5729cce8e2f9d1e7fad4f2b2079553c5dc9f90afe0cc08abb063af5",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 812,
+      "case_id": "dev/task1/wrong_overwrite",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": false
+      },
+      "family": "wrong_overwrite",
+      "group": "dev/task1",
+      "input_sha256": "b2686ff7eddf0efbffd949015dbf2baea5a1486e7aed3e80a8535a486c3bcca1",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 810,
+      "case_id": "dev/task1/same_write",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": true
+      },
+      "family": "same_write",
+      "group": "dev/task1",
+      "input_sha256": "ec69dfde5d425696ddcfd288fe1a0ba1be543e10743bd1f2a7ad59f89b6a77ca",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 829,
+      "case_id": "dev/task1/unrelated_write",
+      "facts": {
+        "C": true,
+        "F": true,
+        "M": true
+      },
+      "family": "unrelated_write",
+      "group": "dev/task1",
+      "input_sha256": "27fcdef44d3fec698c12e2aa973a3b9d3057ebc3299b9da85c46efa43c4b7c37",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 977,
+      "case_id": "dev/task1/repair_unconfirmed",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": true
+      },
+      "family": "repair_unconfirmed",
+      "group": "dev/task1",
+      "input_sha256": "13141edb9ff113fde61a979421b26add70ed58ba19495fc100e13a08e0a32c7b",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 313,
+      "case_id": "dev/task1/other_calculation",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "other_calculation",
+      "group": "dev/task1",
+      "input_sha256": "730655464774b851da910474d2795238abc00202f46da4f80ce9cc9a6fb356e1",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 355,
+      "case_id": "dev/task1/wrong_before_calculation",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "wrong_before_calculation",
+      "group": "dev/task1",
+      "input_sha256": "2a15dbdea77ff995676a0254e3536d55e7f1df9be0612f8501f1b98f339adedc",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 175,
+      "case_id": "dev/task2/normal0",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "normal0",
+      "group": "dev/task2",
+      "input_sha256": "dc71a85e12f407520a172d97aa7450e5125fb2cf9d8c7a413b3a4437cdc8b555",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 317,
+      "case_id": "dev/task2/normal1",
+      "facts": {
+        "C": true,
+        "F": null,
+        "M": false
+      },
+      "family": "normal1",
+      "group": "dev/task2",
+      "input_sha256": "e5dbd7b34a5b9f45b8bb10e4261f8e418cd4b8138ad0e4ec7198129e4d248e53",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 499,
+      "case_id": "dev/task2/normal2",
+      "facts": {
+        "C": true,
+        "F": null,
+        "M": true
+      },
+      "family": "normal2",
+      "group": "dev/task2",
+      "input_sha256": "1a9f29717cc8e74e46897744e1b6186aac7e2601c7848341cf2b3f6a9eac7172",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 650,
+      "case_id": "dev/task2/normal3",
+      "facts": {
+        "C": true,
+        "F": true,
+        "M": true
+      },
+      "family": "normal3",
+      "group": "dev/task2",
+      "input_sha256": "ad748ea7b0b1512b2b113ca9f878ddf80a6d98beb36c9ea500c3476f73c11523",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 819,
+      "case_id": "dev/task2/wrong_overwrite",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": false
+      },
+      "family": "wrong_overwrite",
+      "group": "dev/task2",
+      "input_sha256": "cf5cc9b9deba0ba392f13413ebea2ce2da71b10c8d6c03d5fc8cdd8c8e60d28d",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 815,
+      "case_id": "dev/task2/same_write",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": true
+      },
+      "family": "same_write",
+      "group": "dev/task2",
+      "input_sha256": "661f44782d62474f3f7254d8faf6e25133e246223aae67b8fba6d27c5e28505f",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 835,
+      "case_id": "dev/task2/unrelated_write",
+      "facts": {
+        "C": true,
+        "F": true,
+        "M": true
+      },
+      "family": "unrelated_write",
+      "group": "dev/task2",
+      "input_sha256": "3905d29151fef403e48abc5a80f8dcce44b50c8e3e5f76b38150fb2497c7a663",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 982,
+      "case_id": "dev/task2/repair_unconfirmed",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": true
+      },
+      "family": "repair_unconfirmed",
+      "group": "dev/task2",
+      "input_sha256": "29a50eb68ae3371e43b7c072f687d704d720ff1fd1cf25e156441ea0f5f6b508",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 312,
+      "case_id": "dev/task2/other_calculation",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "other_calculation",
+      "group": "dev/task2",
+      "input_sha256": "301e39e4f7fbd0571f3643e8c7081e1023f30224cc63d38ee807af7062009af1",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 360,
+      "case_id": "dev/task2/wrong_before_calculation",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "wrong_before_calculation",
+      "group": "dev/task2",
+      "input_sha256": "10f2d565ce1bd6ce5aacd93190e8d28e8a207b8ad28706a8a2b8f28ce825f49c",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 176,
+      "case_id": "dev/task3/normal0",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "normal0",
+      "group": "dev/task3",
+      "input_sha256": "1c80582fc5c0ae37396d18aa9cd29e0dbf3b3d362e7f8dc17579d7f5ebc250dc",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 319,
+      "case_id": "dev/task3/normal1",
+      "facts": {
+        "C": true,
+        "F": null,
+        "M": false
+      },
+      "family": "normal1",
+      "group": "dev/task3",
+      "input_sha256": "a0f1ee0ce0997461f3788d4924c6dd956aaaff49f794c70f1db9deec1c05eb4f",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 501,
+      "case_id": "dev/task3/normal2",
+      "facts": {
+        "C": true,
+        "F": null,
+        "M": true
+      },
+      "family": "normal2",
+      "group": "dev/task3",
+      "input_sha256": "d25741fb1e8cb06c5ca55dbc755bb308e7137962df885a685a0f6eaf87b22fa5",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 652,
+      "case_id": "dev/task3/normal3",
+      "facts": {
+        "C": true,
+        "F": true,
+        "M": true
+      },
+      "family": "normal3",
+      "group": "dev/task3",
+      "input_sha256": "b0c3e4fe9f7a197ab10a61b82c45b25eb583f92ebb7a170146c9800ff459273a",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 821,
+      "case_id": "dev/task3/wrong_overwrite",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": false
+      },
+      "family": "wrong_overwrite",
+      "group": "dev/task3",
+      "input_sha256": "1bf62d3939eca7e1251b0ae40e52fe07f5b43cb1f7aba51b61323ca2fdca3230",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 817,
+      "case_id": "dev/task3/same_write",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": true
+      },
+      "family": "same_write",
+      "group": "dev/task3",
+      "input_sha256": "e2cbbe6cc899317904e981d60b945d69f2dcb501a7ec72b002702abbd4d8c467",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 837,
+      "case_id": "dev/task3/unrelated_write",
+      "facts": {
+        "C": true,
+        "F": true,
+        "M": true
+      },
+      "family": "unrelated_write",
+      "group": "dev/task3",
+      "input_sha256": "c52871fc5f1f5cd84ffd2945a52dbd4865e04cb0fb14597228fdb143f348c920",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 984,
+      "case_id": "dev/task3/repair_unconfirmed",
+      "facts": {
+        "C": true,
+        "F": false,
+        "M": true
+      },
+      "family": "repair_unconfirmed",
+      "group": "dev/task3",
+      "input_sha256": "20f4f5815a34ae75801834a9c3f2be4b94583cf1b92f782dfdf3b9093bd90515",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 315,
+      "case_id": "dev/task3/other_calculation",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "other_calculation",
+      "group": "dev/task3",
+      "input_sha256": "7a5d1ca68b845f5de0b2768fa47f86fa81c11fd5608bd2e923f103bafda07a0d",
+      "split": "dev"
+    },
+    {
+      "byte_tokens": 361,
+      "case_id": "dev/task3/wrong_before_calculation",
+      "facts": {
+        "C": false,
+        "F": null,
+        "M": null
+      },
+      "family": "wrong_before_calculation",
+      "group": "dev/task3",
+      "input_sha256": "ba59327334fc1dd0a6aeff3ce548608e02a9f28a25b307296a346a52c6847dbe",
+      "split": "dev"
+    }
+  ],
+  "manifest_sha256": "f03a7957b0ff43125607016e3c63c38ac8ec0717e1a54f37aaf62ca11f75fd1b",
+  "max_byte_tokens": 1005,
+  "model_scored": 0,
+  "model_updates": 0,
+  "pairs": [
+    {
+      "left": "dev/task0/same_write",
+      "right": "dev/task0/unrelated_write",
+      "same_event_count": true,
+      "same_facts": false
+    },
+    {
+      "left": "dev/task0/normal3",
+      "right": "dev/task0/unrelated_write",
+      "same_event_count": false,
+      "same_facts": true
+    },
+    {
+      "left": "dev/task0/same_write",
+      "right": "dev/task0/repair_unconfirmed",
+      "same_event_count": false,
+      "same_facts": true
+    },
+    {
+      "left": "dev/task0/wrong_overwrite",
+      "right": "dev/task0/repair_unconfirmed",
+      "same_event_count": false,
+      "same_facts": false
+    },
+    {
+      "left": "dev/task1/same_write",
+      "right": "dev/task1/unrelated_write",
+      "same_event_count": true,
+      "same_facts": false
+    },
+    {
+      "left": "dev/task1/normal3",
+      "right": "dev/task1/unrelated_write",
+      "same_event_count": false,
+      "same_facts": true
+    },
+    {
+      "left": "dev/task1/same_write",
+      "right": "dev/task1/repair_unconfirmed",
+      "same_event_count": false,
+      "same_facts": true
+    },
+    {
+      "left": "dev/task1/wrong_overwrite",
+      "right": "dev/task1/repair_unconfirmed",
+      "same_event_count": false,
+      "same_facts": false
+    },
+    {
+      "left": "dev/task2/same_write",
+      "right": "dev/task2/unrelated_write",
+      "same_event_count": true,
+      "same_facts": false
+    },
+    {
+      "left": "dev/task2/normal3",
+      "right": "dev/task2/unrelated_write",
+      "same_event_count": false,
+      "same_facts": true
+    },
+    {
+      "left": "dev/task2/same_write",
+      "right": "dev/task2/repair_unconfirmed",
+      "same_event_count": false,
+      "same_facts": true
+    },
+    {
+      "left": "dev/task2/wrong_overwrite",
+      "right": "dev/task2/repair_unconfirmed",
+      "same_event_count": false,
+      "same_facts": false
+    },
+    {
+      "left": "dev/task3/same_write",
+      "right": "dev/task3/unrelated_write",
+      "same_event_count": true,
+      "same_facts": false
+    },
+    {
+      "left": "dev/task3/normal3",
+      "right": "dev/task3/unrelated_write",
+      "same_event_count": false,
+      "same_facts": true
+    },
+    {
+      "left": "dev/task3/same_write",
+      "right": "dev/task3/repair_unconfirmed",
+      "same_event_count": false,
+      "same_facts": true
+    },
+    {
+      "left": "dev/task3/wrong_overwrite",
+      "right": "dev/task3/repair_unconfirmed",
+      "same_event_count": false,
+      "same_facts": false
+    },
+    {
+      "left": "train/task0/same_write",
+      "right": "train/task0/unrelated_write",
+      "same_event_count": true,
+      "same_facts": false
+    },
+    {
+      "left": "train/task0/normal3",
+      "right": "train/task0/unrelated_write",
+      "same_event_count": false,
+      "same_facts": true
+    },
+    {
+      "left": "train/task0/same_write",
+      "right": "train/task0/repair_unconfirmed",
+      "same_event_count": false,
+      "same_facts": true
+    },
+    {
+      "left": "train/task0/wrong_overwrite",
+      "right": "train/task0/repair_unconfirmed",
+      "same_event_count": false,
+      "same_facts": false
+    },
+    {
+      "left": "train/task1/same_write",
+      "right": "train/task1/unrelated_write",
+      "same_event_count": true,
+      "same_facts": false
+    },
+    {
+      "left": "train/task1/normal3",
+      "right": "train/task1/unrelated_write",
+      "same_event_count": false,
+      "same_facts": true
+    },
+    {
+      "left": "train/task1/same_write",
+      "right": "train/task1/repair_unconfirmed",
+      "same_event_count": false,
+      "same_facts": true
+    },
+    {
+      "left": "train/task1/wrong_overwrite",
+      "right": "train/task1/repair_unconfirmed",
+      "same_event_count": false,
+      "same_facts": false
+    },
+    {
+      "left": "train/task2/same_write",
+      "right": "train/task2/unrelated_write",
+      "same_event_count": true,
+      "same_facts": false
+    },
+    {
+      "left": "train/task2/normal3",
+      "right": "train/task2/unrelated_write",
+      "same_event_count": false,
+      "same_facts": true
+    },
+    {
+      "left": "train/task2/same_write",
+      "right": "train/task2/repair_unconfirmed",
+      "same_event_count": false,
+      "same_facts": true
+    },
+    {
+      "left": "train/task2/wrong_overwrite",
+      "right": "train/task2/repair_unconfirmed",
+      "same_event_count": false,
+      "same_facts": false
+    },
+    {
+      "left": "train/task3/same_write",
+      "right": "train/task3/unrelated_write",
+      "same_event_count": true,
+      "same_facts": false
+    },
+    {
+      "left": "train/task3/normal3",
+      "right": "train/task3/unrelated_write",
+      "same_event_count": false,
+      "same_facts": true
+    },
+    {
+      "left": "train/task3/same_write",
+      "right": "train/task3/repair_unconfirmed",
+      "same_event_count": false,
+      "same_facts": true
+    },
+    {
+      "left": "train/task3/wrong_overwrite",
+      "right": "train/task3/repair_unconfirmed",
+      "same_event_count": false,
+      "same_facts": false
+    },
+    {
+      "left": "train/task4/same_write",
+      "right": "train/task4/unrelated_write",
+      "same_event_count": true,
+      "same_facts": false
+    },
+    {
+      "left": "train/task4/normal3",
+      "right": "train/task4/unrelated_write",
+      "same_event_count": false,
+      "same_facts": true
+    },
+    {
+      "left": "train/task4/same_write",
+      "right": "train/task4/repair_unconfirmed",
+      "same_event_count": false,
+      "same_facts": true
+    },
+    {
+      "left": "train/task4/wrong_overwrite",
+      "right": "train/task4/repair_unconfirmed",
+      "same_event_count": false,
+      "same_facts": false
+    },
+    {
+      "left": "train/task5/same_write",
+      "right": "train/task5/unrelated_write",
+      "same_event_count": true,
+      "same_facts": false
+    },
+    {
+      "left": "train/task5/normal3",
+      "right": "train/task5/unrelated_write",
+      "same_event_count": false,
+      "same_facts": true
+    },
+    {
+      "left": "train/task5/same_write",
+      "right": "train/task5/repair_unconfirmed",
+      "same_event_count": false,
+      "same_facts": true
+    },
+    {
+      "left": "train/task5/wrong_overwrite",
+      "right": "train/task5/repair_unconfirmed",
+      "same_event_count": false,
+      "same_facts": false
+    },
+    {
+      "left": "train/task6/same_write",
+      "right": "train/task6/unrelated_write",
+      "same_event_count": true,
+      "same_facts": false
+    },
+    {
+      "left": "train/task6/normal3",
+      "right": "train/task6/unrelated_write",
+      "same_event_count": false,
+      "same_facts": true
+    },
+    {
+      "left": "train/task6/same_write",
+      "right": "train/task6/repair_unconfirmed",
+      "same_event_count": false,
+      "same_facts": true
+    },
+    {
+      "left": "train/task6/wrong_overwrite",
+      "right": "train/task6/repair_unconfirmed",
+      "same_event_count": false,
+      "same_facts": false
+    },
+    {
+      "left": "train/task7/same_write",
+      "right": "train/task7/unrelated_write",
+      "same_event_count": true,
+      "same_facts": false
+    },
+    {
+      "left": "train/task7/normal3",
+      "right": "train/task7/unrelated_write",
+      "same_event_count": false,
+      "same_facts": true
+    },
+    {
+      "left": "train/task7/same_write",
+      "right": "train/task7/repair_unconfirmed",
+      "same_event_count": false,
+      "same_facts": true
+    },
+    {
+      "left": "train/task7/wrong_overwrite",
+      "right": "train/task7/repair_unconfirmed",
+      "same_event_count": false,
+      "same_facts": false
+    }
+  ],
+  "run_id": "648099f20e944cec94844e73ab60d363",
+  "saved_audit_match": true,
+  "schema_version": "aster-history-reader-preflight-0",
+  "source": {
+    "dirty": false,
+    "git_sha": "a0a0e5460e3d33baa2510de98cf71f4e98f3e035",
+    "git_tree": "bf017ac7952d8862c236eb1a31afa21139adfb9d",
+    "protocol_sha256": "79a87829a40c069f58d4e69f98fcda289261e2e97e02a741e329541e67fa5124",
+    "python_file_sha256": {
+      "aster_bridge.py": "e83ac99aa2c4154c2bba081dc53df8d77bd1fa8577a75c4abcba6aa4ba66b83d",
+      "data/samples/python.py": "f2da2153616c6be0115167155286c4eaae512d100b60d893b72c4676dbc4a66f",
+      "data/tokenizer/eval/code/001.py": "a361808b26f498a81822aba6911a15a2c2883f5039709ddd9646015dcdab8656",
+      "data/tokenizer/train/code/001.py": "e6f92e2981edf80e99f27388c0290d9cbbfd57dc0eb537fde06085ca9b257125",
+      "script/array.py": "78aa1743b6cd0ae9e751f9ab4058a35398f1f36d823641ce73ee774486eaed8d",
+      "script/calculation.py": "aa3fdb087da2a7b7edd0fd0fcd14c93d5ae9f64c8ec6a8ee1a7350013e7a7e3a",
+      "script/classification.py": "7745c51d6f821c3f68650aedd4b007fea3dcf0d78ba810a14f754c78670814fb",
+      "script/equal.py": "41e9fbfc378fe9605892b8f4d21fb4fde51d414e29cb24d31435132de1c5cc29",
+      "script/hello.py": "66d73231fc9dd65f1b7fb4962203a5b8cda7f8e1540c75f4d9cd9afc41fd8897",
+      "script/input.py": "443224d9fd183d42bec37d0365615f8255fa39bf38ecc3dc65024abb3d223d76",
+      "script/inspect_byte_tokenizer.py": "79c556a3c5d04a171960c546058f4680178a1b26b8fc61859a2cde5e41de0e4b",
+      "script/loop.py": "54ad15dfa2e398a7fd3467b2cd2de3b760467bff444f95f6558b35377472d827",
+      "script/train_bpe.py": "7dc6cd122b72a1cccd91892b8bb4411119d7847a584ad5b5611ee6d478f2ad57",
+      "script/type.py": "de1524f95d16fce3a6a1f752ff70d48e849b17860d7dae48e41bc6cf5a55b028",
+      "scripts/analyze_decision_relation_support.py": "6e5d96689599c7d2a0911d96e201debd5068a746c1dc93e7820ec5973de72abe",
+      "scripts/audit_decision_action_types.py": "4b58e621a55561b3b2c6dd39a8cfa61e102f288a5e0ca362c952296efe2402de",
+      "scripts/audit_decision_failures.py": "5d087129dab74feeb9362c385b77e39e59d4bde31433a65d6e822613e268a03a",
+      "scripts/audit_decision_mixed_preflight.py": "7cb90a97ec7787b082160778e228fb617f065b50fcc120e0c66691c287585106",
+      "scripts/audit_decision_mixed_v1.py": "ac5eb1eeec31328900ee7a02bb5f04427040a1e76fd9d12f5c5806dcb55b2e62",
+      "scripts/audit_decision_relations.py": "9c26e78b5dec9b018f1c71a8eb70f010f3fd13cedac68cc3ad413837f90942ad",
+      "scripts/audit_fixed_v1_diagnostics.py": "0deceb9c10cb0c666326d026eccc662be16b08509154dca1081f8e0c113f8f81",
+      "scripts/build_canonical.py": "27221ff4b9dcadc59db7f586046c79306109a3653f040f6739f171cf4e0aad32",
+      "scripts/build_training.py": "25db50ed48599fb2f08b1950633542cb1471a79ceda9571a2e1351639c9382c9",
+      "scripts/check_workbench.py": "5f7194f9717fb398262e9db88b02beb5fabee1ffa64f683f17d37a995b0f1fd5",
+      "scripts/fetch_external_seed.py": "98aab4ccfd8c70dabba816c6a725c6b8c2f9aa6c56139af69df9b4793e1ed54d",
+      "scripts/inventory_corpus.py": "4ff6e9eabdd7ceaf3838410751465f15cbcb2ef197a440d1cc2e854b8373e537",
+      "scripts/prepare_workbench.py": "8875667c43a7b7e2f05742885122ba294d7e9efba78d0c3b0a2c6d251787fd7d",
+      "scripts/run_decision_action_types.py": "0494df605e428ada677ef73d2cd899dc53952081b768bd8125b5f363d0ff27ef",
+      "scripts/run_decision_baseline.py": "f268809553838f75ab837f73c9ff0b92ab66537af59b5a633c9b7fbb0d0e18f1",
+      "scripts/run_decision_data_intervention.py": "24b687b6e2e0d0d39c99ddcc020b10ba37060b6068e94282dee4cece218d49c1",
+      "scripts/run_decision_fit.py": "94c520b156851ee1665174abc756466c2c9de7ffa9ae8fdb6cdfd6ccc01944e3",
+      "scripts/run_decision_fixed_v1_diagnostics.py": "6e948e27f765bddd1f9da778f82dc0938519ef46a25e582c1c049a70179dc60f",
+      "scripts/run_decision_mixed_preflight.py": "64e1ecac3dfddb8ad07fc5a572732028bfd5b51e1da4dbaa68aefe0b7add3b4b",
+      "scripts/run_decision_mixed_v1.py": "5798b65dfcfa5175af7b4454921e1d3f54fb5070902c7955833f48d6b10c6e6a",
+      "scripts/run_decision_relations.py": "23ceb4bdb007b900bc793d5df1bd56268b556505c2ecc5184f4908e8107ea2ac",
+      "scripts/run_decision_representation_comparison.py": "c018228d7421cc043f0d2433e768fb90bda575cbeb6778a9b8b4e3d90792a1f8",
+      "scripts/run_decision_state_diagnostics.py": "aabc11450ff03d7c0e7a507ae096c4e58242dac9b7f483b5479f4657a1167404",
+      "scripts/run_decision_state_training.py": "ab726d991c5327a48e35587fb5f0fd510d120b9ea81013a4813512f2d7e72d2d",
+      "scripts/run_decision_tokenizer_comparison.py": "cc0c9faba91452f1fdd4cc37eb0adca158461aa34e346ea25660f7385371a017",
+      "scripts/run_history_reader_preflight.py": "9c52dded51b0574a7b68c83fac6c7e50877cdedd85134eb50510121eaee5d600",
+      "scripts/run_state_representation_preflight.py": "0a379943ce4e19d5a11559c36fb3d4d6df170a201fcca152888e33af518cc687",
+      "scripts/train_tinylm.py": "99d3e23e16d2946d7669b1f4927efb153a0ba7b2447fbd973c3d81b724fca46c",
+      "src/aster/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/agent/agent.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/agent/candidates.py": "e98b89bdb9f73d8c4de79989306ca1a7925c36a3f7a47e3a53e1c4f15957dd91",
+      "src/aster/agent/intervention.py": "2203b8e179aef9c67d04863a3132322cdec0bcacd7b8746d413e9d21d09911a1",
+      "src/aster/agent/planner.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/agent/policy.py": "2ac32a3b7c413e1127e6688cfa4d09ab20d5e222384135ca9e2ce264389798ec",
+      "src/aster/agent/selective.py": "12c40b9fb82a16316d1c9c00d2b25071b1370bcef8459dc27270bafe55fb4e35",
+      "src/aster/benchmark/__init__.py": "26eefdea13b7a9242ec0f37d4e09b77a39a01c0f8f7d110940af6a3a153c9f17",
+      "src/aster/benchmark/case.py": "d3b9afe0d3321f0728423c109596c6d0ec88faf604b4b4ac36e96d0b238b9625",
+      "src/aster/benchmark/decision_failure.py": "5e337560e347a9654a42a90a504cc092cbcd8de3a4a4aa5113760dd980933b80",
+      "src/aster/benchmark/fixed_v1_diagnostics.py": "38475772b95ae06a651e955df43a7f74018c602c96acfae47c2cbdb0d218ad6c",
+      "src/aster/benchmark/history_reader.py": "91823be0828ae15cd91717f50e417b7edb6bb8c915256b6941524e4c0b152860",
+      "src/aster/benchmark/metrics.py": "e851c7f2ef788e85d3a9417faab53975b49927fb02ec31636c01933638ba3d59",
+      "src/aster/benchmark/mixed_v1_preflight.py": "98b82efee51c76f8bd09557836d6ed8eaba152c66f6224f747bbd19fc0c8ed59",
+      "src/aster/benchmark/runner.py": "44d0210ed2739bd117594e9bb5286e8411321188a2ce1887ff0f17c58cc9cdd4",
+      "src/aster/benchmark/state_diagnostics.py": "78fb66e432cc44c63c8ee7164c90d2d53c62e293f6ec14e22f2d69d0c3e7813b",
+      "src/aster/benchmark/state_representation.py": "d1ab2d2a618fe46325213f932dacd4d58b721211cabcb76e9386a4a3fa478302",
+      "src/aster/benchmark/suite.py": "98784b5d28dfead42176fe180a6b6e4b743e949ebf414393c3759e6e93387573",
+      "src/aster/cli.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/coding/ast_snapshot.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/coding/edits.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/coding/verifier.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/corpus/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/corpus/canonicalize.py": "ff4f4daf7fc0e054b7dce60510885bce34daaaa81fbab78807c9a5433ff1ee24",
+      "src/aster/corpus/dedup.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/corpus/filter.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/corpus/ingest.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/corpus/loader.py": "59855b3998e6b0c289de0cd0d77652fb6ec09f3480a21fdadc0d216bc1589454",
+      "src/aster/corpus/manifest.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/corpus/normalize.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/corpus/pipeline.py": "f69dd6fda1d6d8bd7e93b616f12d52d2d4d9d2542dbdc12dc67e6dd11e6cf02c",
+      "src/aster/corpus/schema.py": "732dbb8daec2bc88ecee2bb0883b06c6131b09ad18446ad240e6ee0e7670e746",
+      "src/aster/corpus/split.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/evaluator/episode.py": "874da6c8c784c0287966f320623ef9448b8d3fb46f0fe7f57570c5d1c936a671",
+      "src/aster/evaluator/goal_contract.py": "75dfe67d50d782f470d1f1bac8e1fa5904fe48f5bae3905b1efb26b305c5243b",
+      "src/aster/evaluator/metrics.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/evaluator/protocol.py": "9624bbf37d019e1b07fe5ab44c8e92f8f690274aa032fc7c6add9f2c62ca728c",
+      "src/aster/evaluator/result.py": "ea93ebb624ce44c0b95783d52f08568ac710bb987d972d720b10aba3b84e96bd",
+      "src/aster/evaluator/scoring.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/evaluator/verifier.py": "ac92a67bcd687228ee66f2e589b1830f2119a84c8f012bd1a6d582bf94bd902e",
+      "src/aster/inference/decide.py": "d34a50cae1305f3d14173b76e22573ef781325dc4bf40f170b50b0183d484953",
+      "src/aster/inference/forward.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/inference/generate.py": "8d1b1f28c5e74d2877b4cd3357d2a69fa8e86136b9ef579b06285deda00a7e00",
+      "src/aster/inference/sampling.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/model/checkpoint.py": "9f77bffd0b349fa932fffa87204e4f6e5b6229327793a666a5911d307bc7c893",
+      "src/aster/model/decision_artifact.py": "abf45d47b6bdb9b6ca91e41e075c540229f44451e57f76846444fc01c8bd9bd1",
+      "src/aster/model/decision_head.py": "22af4f7ded1b475461fa86a5aab591c7217e7f81f94bd766e1f2c856eb611cd3",
+      "src/aster/model/lm_head.py": "f2999511e80ccbc0c21ad593a503c717f6c719b398c84bd8746b4e191513dfea",
+      "src/aster/model/tiny_lm.py": "a254a9bb735596d8c0d85e881994a340e66326a73ffb143a9560e420eee64aeb",
+      "src/aster/model/transformer.py": "aaf5889f57f2679fefe2c7ffd274aca55657fe97e78ad2239e7c058c49f1744c",
+      "src/aster/records/decision.py": "8e100445690f50236a90a3e3f426c4d878673c215d8e73e051115e45c5fdbaa5",
+      "src/aster/records/decision_relations.py": "d9490c74317bfbfc903803a7369e0c7a44a20b1ea14c1e2a801fc47880a06c4d",
+      "src/aster/records/intervention.py": "3855ab14911c9fe061f8e72707cf3dfeee914d9476f9901132d84ff02c65ddd8",
+      "src/aster/records/recorder.py": "8cf7987a1a276956fe5c5dfc3bcb7e3ebaad296ec09ab5e6b6fde1931b94c33a",
+      "src/aster/records/routing.py": "99336cf8cefe2336161a23d268e93a3e20261d61443ebcfb4cc0141954f302a3",
+      "src/aster/records/runlog.py": "f9d203be127789d37e034580f5aec8b72a6766bea843ae8dbbf27044f0950751",
+      "src/aster/records/schema.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/records/trajectory.py": "85e28f86ecc384b40124a61be1220a99a0922b166afa55c7161a7e40622d4681",
+      "src/aster/records/transition.py": "f7e77b9455053e88e0740de47c631234b97be5d80890289daed93625ba0726fd",
+      "src/aster/reward/__init__.py": "59a103235d1cd16cf296abb0d25e2258d7b85048adfe8f9f922cf1d121140c82",
+      "src/aster/reward/contract.py": "ec2ea66e27dbbdee28fac3b8df7d9af639dad33d635f64379597651ca4509507",
+      "src/aster/runtime/context.py": "c0fde742335e564aaa02a5bd3daf366f118412935224c0fb5276856378e5d131",
+      "src/aster/runtime/executor.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/runtime/learning.py": "f6b1f2f2eeafc1e8b260c2e67fe327bc72440c861f8fbb976fdcf08c9ebb4367",
+      "src/aster/runtime/loop.py": "e2f70ea9e84938200eae1f22175b6735c47e80bd55c549b23d2f705e1cfe8b94",
+      "src/aster/runtime/selective.py": "ce84bdeb9e146bf7f7bafeb98f58775365c55de850e88ddc38b34caacc9871c2",
+      "src/aster/runtime/service_agent.py": "1684d5e2a01db521997f568a76a5a451b3b1a0ffa98501a0265466b647246fcb",
+      "src/aster/runtime/state.py": "b5e7a5ae75201285d93364b087fb51ee05b972540aca14c2e2a4ed0f62865a9f",
+      "src/aster/service/__init__.py": "44ac24069787e8d1da4bc737fc25be93d7cd8a30f8c65c2752f9c293929f6963",
+      "src/aster/service/artifacts.py": "dcf86b26ba89464934f71fe4a50bea8441b99aa379da26c52de709c80e05b8ac",
+      "src/aster/service/contracts.py": "5f0984410b6f498be531118b3628708bfe75fd3de19ae112b0bdd081bb81eab7",
+      "src/aster/service/http.py": "65e4af451d9952bd7312ec83e1f3c5e4f4540016267f0ead90872fe199012fdf",
+      "src/aster/service/jobs.py": "03bc7a20a3b52f3e2796b3f03397ef478bf6344b9f2bda8191b2f84f711134cf",
+      "src/aster/service/recipes.py": "988bd640c93e871094d18232965b5554f1568ae8d15806212599247afd38d27c",
+      "src/aster/tokenizer/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/tokenizer/artifact.py": "005f53bd3b851ed8d7db97036137744e1928f75ffd3a63a128d22a32b80a5d7e",
+      "src/aster/tokenizer/bpe.py": "802bce7518ecd3041825a4b0ff0c6d1e885117d9b2580252d02f2a1441e6628d",
+      "src/aster/tokenizer/build.py": "67df11a1b0b8dd0940efe82b887e09685587c1f14e62a6ac33bc7cd1b82625b7",
+      "src/aster/tokenizer/byte.py": "0ed110751235f1df681a1157d346aa9bc2fa3e33550d4fe060461fe2c3526ce4",
+      "src/aster/tokenizer/cli.py": "b62999ac89b8214aa93d8a6f8dfe2597dccfbbc1b3b14bb4766bc1c942be34bf",
+      "src/aster/tokenizer/codec.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/tokenizer/metrics.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/tokenizer/trainer.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/tools/builtin/calculator.py": "356c0be5e6d3eeb50e9b9696958476f8f3a6b86eff59baf94979c96c2853b1b4",
+      "src/aster/tools/builtin/filesystem.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/tools/builtin/memory.py": "9c76b7fb37d411dd20730a8adff26e5afc60f79cc5e4902eb6318adc576e6c15",
+      "src/aster/tools/builtin/python.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/tools/builtin/shell.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/tools/executor.py": "6ab0c8cdba2035def9d43bdfed78230775c8a15b881623827d2f7b4886fb34a6",
+      "src/aster/tools/registry.py": "8b07831d772866e54647e37eeab01d7461607fd4b3427ce7fb2eafaf29f787b3",
+      "src/aster/tools/schema.py": "8e9e29421cfbff38b86b84299e430f6a413ae41436f0a970df357d7127e9f364",
+      "src/aster/training/dataset.py": "6de01c499c45f8e1165a83f01b1328ef3ec74670cb6743df3c0659a42144a129",
+      "src/aster/training/decision.py": "d0d214ac09ba9a5b87f8a5d0fa41da31c8cb72629d7456360f6aa36a573684a9",
+      "src/aster/training/decision_action_types.py": "f07e22aa0d5ac7d09050fe1543691db8989acdb261e0963a3f09e1eb97d1f0bd",
+      "src/aster/training/decision_baseline.py": "1a3338759df46730722fb4e0e01668dfa1236ddde59ad4ee991d72dff0c0a81c",
+      "src/aster/training/decision_data.py": "38503fff3731a7ab7290924a336ad3733a67a6633adb77c0672c1811a9da59c8",
+      "src/aster/training/decision_fit.py": "11441da221938ba2204ef30d3cf98b5a7b1c2ced20a9be93da7a6ac8f896b237",
+      "src/aster/training/decision_mixed_v1.py": "ea041c2269a9e83286a39f4b543b8c1b25b156f16d82a9cfca63497ea6e21256",
+      "src/aster/training/decision_relations.py": "7b9fa5f9e54b8e0e2b4dc93cfde7b38fe423703d658a1d302c781abcdc01c01e",
+      "src/aster/training/decision_representation.py": "8b819fecf7f7d3c5b117f3db7c25266af3bdc3ef232aa5f5632a34610b3d40da",
+      "src/aster/training/decision_state_training.py": "dcff5090f6c289ec2fb139732c589adbf18e2c42ccbdfc997c2892959a51c5c7",
+      "src/aster/training/decision_tokenizer.py": "99e02c9c1022817af19319494dd5b3e187df1028bad0cd572b52fe457f2d9bbe",
+      "src/aster/training/experiment.py": "134676b2133e878ab03a3c3b0fd98c7aa315947357192ecfa3e58f1e5b959ae8",
+      "src/aster/training/extract.py": "b2ec95615017882228eb8b4a4b154cd6b7f82e2551b6209c9e835a4b0d671b44",
+      "src/aster/training/intervention.py": "c151224cd8a35bdcef3bd411af32b5d38797156783d024a81392900bba308e8e",
+      "src/aster/training/pretrain.py": "0d677e88c9a61d93a9bf7426d0c87809acc2a171a684d0f5aeda927892d08e2d",
+      "src/aster/training/sft.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/aster/training/tokenizer_run.py": "d3e5cae3609339dd944df47cc45278d96afb9ee75af843a17929a4bc3018b37e",
+      "src/aster/training/view.py": "7f691e2de75aecc5ac80fbd07f1d3118eb6273a1c57189282ce3c54cff7a74c8",
+      "tests/benchmark/test_decision_baseline.py": "8455b8f7e73ad92ff8ae479eeea806fd8e7142a6047977886c748ceabdc13834",
+      "tests/benchmark/test_decision_benchmark.py": "8b3484d1b17c84e8c730217402e7210219be3374fb5b850b4a445705b623fc76",
+      "tests/benchmark/test_decision_data.py": "25b96eaffdcd1abcfd228d699089436adc4b1b5909cc8131d0d27bf8e5c20d54",
+      "tests/benchmark/test_decision_failure.py": "2594b2b40fd098a27553028f4c0a6a495541a4feee7c0165efc4467976468dc6",
+      "tests/benchmark/test_decision_fit.py": "730e924ff7b7fd382ac6fe3e11f4607c27662c7b534a2351e3a4b2f3038b5ad1",
+      "tests/benchmark/test_decision_representation.py": "f729ebf1de92e7f957a9f24652a768948722bbe918702d2476db2aa07f286670",
+      "tests/benchmark/test_decision_state_training.py": "f734edaeab5d3f6f540e39463bd30ce653621d88e526225896f908fda6e609fb",
+      "tests/benchmark/test_decision_tokenizer.py": "9272caf0d1631fae822cdb4517b72399f2d144a4a08f48ea6a659176dccdb10f",
+      "tests/benchmark/test_fixed_v1_diagnostics.py": "c912719b69b79c9447d29d7777344d7cfd29175e79df1f490d9f8a48c070f4cd",
+      "tests/benchmark/test_history_reader.py": "9c675ea8a6e4b2eeea5f2232fa269ca75dae336bf3c9fe0b5c82e4841f19f56e",
+      "tests/benchmark/test_mixed_v1_preflight.py": "9ed9a3594305623a6b3be30a20d304feee4c5266f6da8f16941de689018efab2",
+      "tests/benchmark/test_state_diagnostics.py": "89f186fd70e9c5905577857c082cef3241da92e6b1ce99669149a215b5f4a110",
+      "tests/benchmark/test_state_representation.py": "7e3f6f04b70446aa6743860f174267afe15a716be6104a44e9834f273a35134a",
+      "tests/benchmark/test_train_diagnostics.py": "f3c80318b634632420cdd60dd505f4e0ce9d1b7bb06dc974064d66c08a3cbccd",
+      "tests/corpus/test_canonicalize.py": "fc6ee574752f9771398801d5e9b9b9ff33b19871ec2994b53d79f9f71266c220",
+      "tests/corpus/test_pipeline.py": "8c118abe6b85e11a0e17342f775a126cd3c358b8138efd295beeb4d83b85e04b",
+      "tests/corpus/test_training_view.py": "72ed27ad640cf74b56ae4ae099393e87ce4a1fc48e53126fffb6e27e5e89fd5d",
+      "tests/evaluator/test_current_state_goal.py": "bac642465df276bde0066b013a691e0f9078da7b1cd7696b57e06a7e891915c3",
+      "tests/evaluator/test_episode.py": "1548f9799daa7bbe62b859b4837c0d5ae3650a0c8901e71baf7afeee0bf05644",
+      "tests/model/test_decision.py": "0e8c87670326575d486b485659bf599b141d238547534efc5ccb88fd0c6ab689",
+      "tests/model/test_decision_artifact.py": "0a2697e4778657ba16655a57225dbc2f23199bae27a61239693ce3eefd7fc991",
+      "tests/model/test_tinylm.py": "a6e5b5bdd5c4c27fe61ecafbdb39798464434987212c0474d9a5f2d27868e017",
+      "tests/reward/test_contract.py": "5beb2ed3967abd33620cd1ab7dd37c99a269760c203c65bbbfd3543dafadc830",
+      "tests/reward/test_runtime.py": "a5bc2bc3dd6a7c3605822c3033b874c73bf3dcca5603c0a719a864eb8820263e",
+      "tests/runtime/test_agent_kernel.py": "46083d2d74e2264a0678005afdb9621f1a79f8eda40e4ab664f28c839c09f7f3",
+      "tests/runtime/test_intervention_experiment.py": "a9692688529bb8bc558f916f007fbb183adde93624611540e9f12767cdbb255b",
+      "tests/runtime/test_intervention_learning.py": "9127fcc462500dd24e48532ac2086be9c1d77157d4030ac18adee4b3b44f68a2",
+      "tests/runtime/test_selective_runtime.py": "2751ddd5554198bc6d60e1d6d033ac1a6f8fb28437d6cb685f8399d76aa81a9e",
+      "tests/runtime/test_service_agent.py": "85190f34e04381e53835d358545c3b3041e1db8cff8afc67e9c4e6ab0229f765",
+      "tests/service/test_agent_service.py": "7e3e30d697bf645ce37ea41d4e8ca1cded8a4bd36a51e43448f9eaedf7f9d5bc",
+      "tests/service/test_service.py": "ed6a28f70a9849db3329865b730fc21fb28375913179231a95562df7dbb4971c",
+      "tests/tokenizer/test_artifact.py": "32dc2063238e8379b7d01edf7ae9bb70a443efe79bc2c1b027a4319e2ce8c3c4",
+      "tests/tokenizer/test_bpe.py": "fa40156179772289b55a32240c2ff3c92f156f5e32aca1220ab677bf157275e9",
+      "tests/tokenizer/test_build.py": "7aff1468a361cbf190ee8454b97fdc58fa62c92113def192070b7592bd40a8e0",
+      "tests/tokenizer/test_byte.py": "d432acf60d9c240fc380c2f4ed75f0a2eac01fa0a85c6583786461f16b4ac597",
+      "tests/training/test_decision_action_types.py": "0d976de2eb5788c068d74244267e9d00e716f4cdfa1f234e47b317dfa73eab50",
+      "tests/training/test_decision_mixed_v1.py": "1f67ffa7e8905634ebeddec9413750d50e7d42028f603f38f4b7d7dae6e371cb",
+      "tests/training/test_decision_relations.py": "b790915f7adc15884c8cd0a8793923779625abd030a1435b119a2d6ebefc8a99"
+    }
+  },
+  "split_kind": "task-identity parameter transfer; shared procedural templates",
+  "state_contrasts": 48,
+  "structural_holdout": false,
+  "suite_sha256": "e6f3c7f7fe3f9703b5f46591471e3e45142e304451c74bce375cd84da282fbe1",
+  "task_groups": 12,
+  "test_constructed": 0,
+  "test_scored": 0,
+  "validation": {
+    "environment": "ChatGPT Linux / Python 3.12; no user WSL measurement",
+    "full_training_suite_run": false,
+    "new_tests": 5,
+    "pyright_errors": 0,
+    "pyright_warnings": 0,
+    "pytest_passed": 34,
+    "torch_installed": false
+  }
+}

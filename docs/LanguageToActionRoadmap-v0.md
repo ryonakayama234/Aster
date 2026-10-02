@@ -59,3 +59,7 @@ configs/tinylm-pilot-v0.jsonはwidth64/layers2/heads4/context128/batch8/200step�
 本checkoutには私的原文/training view/Tokenizer artifactが同梱されていないため、
 本文・採用・splitを確認せずこの記録だけで言語pilotを開始しない。
 読解用の入力長とTokenizer可逆性、Corpusからの評価例除外、現行素材の所在を確認するのが次の準備。
+
+## 2026-10-02: reader学習前検証へ
+
+[HistoryFactReader-v0](HistoryFactReader-v0.md)へ固定120件の実Tool生成・候補非依存入力・unknownラベル・独立JSON oracle・whole-task splitを登録。事前学習素材を待たず実行履歴で準備する。shared templateのparameter-transfer診断で、独立構造holdoutではない。モデル学習/推論とrandom/pretrained比較は後続。
