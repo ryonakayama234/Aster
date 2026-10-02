@@ -82,3 +82,16 @@ Status: implementation complete, CI/user run pending
 - Draft PR #49を作成。
 - Research Observatory PR #47を実機確認・既存CI成功後にmainへmerge。
 - PR #49をmainへretarget。main向けActionsを起動するため、この進捗更新をsynchronize commitとして追加。
+
+
+## Session 3 — 2026-10-02
+
+Task: ACT v0 CI gate。
+
+Status: CI passed; user WSL2 run pending
+
+- PR #49 GitHub Actions run #121。
+- Pyright: success。
+- pytest: success。
+- これでコード/型/自動テストGateは通過。
+- Capability成功はまだ主張しない。次はユーザーWSL2の既存DecisionModel Artifactをcatalogへ登録し、Service JobとしてACT Runを実測する。
