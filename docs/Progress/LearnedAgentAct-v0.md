@@ -115,3 +115,15 @@ Task: ユーザー実機でformal DecisionModel Artifactが見つからない問
 - `source_checkpoint_id` と `serializer_id=aster-decision-input-0` をlineageへ追加。
 - 架空のtemperature/routing thresholdは作らない。
 - checkpoint本体がlocalに無い場合は、元archiveを復元するかfit studyを再実行する必要がある。
+
+
+## Session 5 — 2026-10-03
+
+Task: PR #49 merge後に判明したArtifact形式ギャップを追補する。
+
+Status: follow-up implementation ready for PR
+
+- PR #49は2026-10-02 22:07 JST前後にmainへmerge済み。
+- その後ユーザー実機でformal `model-artifact/manifest.json` が見つからず、既存実測の主保存物が `decision_fit` checkpointであることを再確認。
+- 本Sessionのpromotion実装はmerged #49へのfollow-upとして別PRへ提出する。
+- ACT本体のmodel-only runtime contractは変更しない。入力Artifactを作る手前に、provenance-preserving promotion stepを追加するだけ。
