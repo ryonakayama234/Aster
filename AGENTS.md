@@ -86,3 +86,5 @@ Asterは、自作TinyLMを通してAI・Python・数学・コンピューター�
 2026-10-02履歴reader補足: docs/HistoryFactReader-v0.mdに従い、入力へcandidate/teacher/evaluation/stepを混入させない。unknownとfalseを区別し、固定行動分類器への写像と事実読解を別測定にする。task単位分割と共有templateを併記し、実Tool生成/独立oracle検証をモデル能力と呼ばない。
 
 2026-10-02reader学習補足: docs/HistoryFactReaderTraining-v0.mdを正式測定前に固定。未知観測unknownと予測矛盾abstainを区別し、保存済みseed42分類器を全reader seedで固定する。予測事実を真値へ差し替えず、誤停止/abstain/invalidを保存し、train fitとdev読解と自力完了を別報告。
+
+2026-10-02固定reader対照補足: docs/HistoryReaderFrozenContrasts-v0.mdに従い、名前は全参照の一貫改名、一致は最後の書込み、順序は同じイベントmultisetとmemoryを検証する。48参照slotを40uniqueや8taskと混同しない。予測不変だけでは正答と扱わず、元train/前回dev重複を表示する。保存3reader/分類器の更新0と元cached logits照合を要求し、診断devを独立holdoutと呼ばない。

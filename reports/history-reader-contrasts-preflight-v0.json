@@ -1,0 +1,551 @@
+{
+  "schema_version": "aster-history-frozen-contrasts-0",
+  "suite_sha256": "0f847cde25546822b8ee3862b0733526ad23b1c1534bca8aafae302fbbae3ca8",
+  "pairs_sha256": "7d961e799fd0107023950e670afc67762b52f01856eeef2b79a447f8ff44a5ce",
+  "manifest_sha256": "51a56c935f39a8f7ca49cf8148ca427ee083ebb9b022a1572f07bd0b3a507960",
+  "input_id": "aster-history-reader-input-0",
+  "goal_contract": "calculate-and-store-current-v1",
+  "unique_inputs": 40,
+  "pair_count": 24,
+  "reference_slots": 48,
+  "task_groups": 8,
+  "counts": {
+    "train": 20,
+    "dev": 20
+  },
+  "max_byte_tokens": 832,
+  "context_length": 2048,
+  "manifest": [
+    {
+      "case_id": "train/task0/normal",
+      "input_sha256": "630d3cedb101fb93a620cb4460aa6fe6b70a45e98b76ae59623230c97156611c",
+      "byte_tokens": 590,
+      "old_train_overlap": true,
+      "old_dev_overlap": false,
+      "teacher_type": "stop",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": true
+      }
+    },
+    {
+      "case_id": "train/task0/renamed",
+      "input_sha256": "267aef9e01f1f2f9ab4f113d93129c012f668b7810f1f6b9ab2c7bcbb2f97f64",
+      "byte_tokens": 590,
+      "old_train_overlap": false,
+      "old_dev_overlap": false,
+      "teacher_type": "stop",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": true
+      }
+    },
+    {
+      "case_id": "train/task0/same",
+      "input_sha256": "588c00d2cbca4cd84c4b2fa25f313940a0f7adfe10b86f4d852d91fc5048234d",
+      "byte_tokens": 740,
+      "old_train_overlap": true,
+      "old_dev_overlap": false,
+      "teacher_type": "memory.get",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": false
+      }
+    },
+    {
+      "case_id": "train/task0/wrong",
+      "input_sha256": "53899993df50bb9a3c4f80adbb4178a9cded95a977665c55be94671e01b0f571",
+      "byte_tokens": 740,
+      "old_train_overlap": false,
+      "old_dev_overlap": false,
+      "teacher_type": "memory.put",
+      "facts": {
+        "C": true,
+        "M": false,
+        "F": false
+      }
+    },
+    {
+      "case_id": "train/task0/fresh",
+      "input_sha256": "c0a2cf24b8d524d5de15ea00b30d88bdd7702c1f9c330f623419b8a6f79ef219",
+      "byte_tokens": 740,
+      "old_train_overlap": false,
+      "old_dev_overlap": false,
+      "teacher_type": "stop",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": true
+      }
+    },
+    {
+      "case_id": "train/task1/normal",
+      "input_sha256": "b6095e809a386c337853828ec75e2658089be5d96637f9813b2759bcb5fba7aa",
+      "byte_tokens": 612,
+      "old_train_overlap": true,
+      "old_dev_overlap": false,
+      "teacher_type": "stop",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": true
+      }
+    },
+    {
+      "case_id": "train/task1/renamed",
+      "input_sha256": "e202ff142ba8cd27313bb8d56bd58a88096bffd6ddf9c79b9eb412f69925ee85",
+      "byte_tokens": 612,
+      "old_train_overlap": false,
+      "old_dev_overlap": false,
+      "teacher_type": "stop",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": true
+      }
+    },
+    {
+      "case_id": "train/task1/same",
+      "input_sha256": "bd517d555cd45f14f57f397743b27adb8858918d77146d76fe821d06dd1664e9",
+      "byte_tokens": 769,
+      "old_train_overlap": true,
+      "old_dev_overlap": false,
+      "teacher_type": "memory.get",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": false
+      }
+    },
+    {
+      "case_id": "train/task1/wrong",
+      "input_sha256": "711e354956ee7ecc30d4f12d84ee1df0fba2be1c26076b2bd32275be65e50c3a",
+      "byte_tokens": 769,
+      "old_train_overlap": false,
+      "old_dev_overlap": false,
+      "teacher_type": "memory.put",
+      "facts": {
+        "C": true,
+        "M": false,
+        "F": false
+      }
+    },
+    {
+      "case_id": "train/task1/fresh",
+      "input_sha256": "3daf967abf74be64f1757d6dbc9b1881979ebb26fd4a20511d15614a3d697715",
+      "byte_tokens": 769,
+      "old_train_overlap": false,
+      "old_dev_overlap": false,
+      "teacher_type": "stop",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": true
+      }
+    },
+    {
+      "case_id": "train/task4/normal",
+      "input_sha256": "1240c5c821b7c36cb899398e6484336e3a1cf8e6a61db21f41a00186ef7a842f",
+      "byte_tokens": 606,
+      "old_train_overlap": true,
+      "old_dev_overlap": false,
+      "teacher_type": "stop",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": true
+      }
+    },
+    {
+      "case_id": "train/task4/renamed",
+      "input_sha256": "8140222139c07608705deef1f5d50efb70b3c3bab9a6b8413e2673721d16a83c",
+      "byte_tokens": 606,
+      "old_train_overlap": false,
+      "old_dev_overlap": false,
+      "teacher_type": "stop",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": true
+      }
+    },
+    {
+      "case_id": "train/task4/same",
+      "input_sha256": "799b278b0d01d813a4b247ae7cf41f6b8f6b9d919b9392ef51f234359e200c49",
+      "byte_tokens": 758,
+      "old_train_overlap": true,
+      "old_dev_overlap": false,
+      "teacher_type": "memory.get",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": false
+      }
+    },
+    {
+      "case_id": "train/task4/wrong",
+      "input_sha256": "12c9413bc68dbf3edd9df4880cf0cf346ee7197eb262470f9823a5e52e3631d4",
+      "byte_tokens": 758,
+      "old_train_overlap": false,
+      "old_dev_overlap": false,
+      "teacher_type": "memory.put",
+      "facts": {
+        "C": true,
+        "M": false,
+        "F": false
+      }
+    },
+    {
+      "case_id": "train/task4/fresh",
+      "input_sha256": "e27eb0a04122e42b3c14562c048805aaff521bb8973e9b809e69dcdce3e50c09",
+      "byte_tokens": 758,
+      "old_train_overlap": false,
+      "old_dev_overlap": false,
+      "teacher_type": "stop",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": true
+      }
+    },
+    {
+      "case_id": "train/task5/normal",
+      "input_sha256": "23574c52fec9d397d400eb64f3e272aa976375b6aa0d0c168f4421b69e8096ef",
+      "byte_tokens": 662,
+      "old_train_overlap": true,
+      "old_dev_overlap": false,
+      "teacher_type": "stop",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": true
+      }
+    },
+    {
+      "case_id": "train/task5/renamed",
+      "input_sha256": "2a737680b3c4b85f85529875ce79bc2650e81c6c2502a714346fcb4ced6167d0",
+      "byte_tokens": 662,
+      "old_train_overlap": false,
+      "old_dev_overlap": false,
+      "teacher_type": "stop",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": true
+      }
+    },
+    {
+      "case_id": "train/task5/same",
+      "input_sha256": "997b54c304faab9483d87946f09395d101661fdaae2d781e0b290a06f9b47860",
+      "byte_tokens": 832,
+      "old_train_overlap": true,
+      "old_dev_overlap": false,
+      "teacher_type": "memory.get",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": false
+      }
+    },
+    {
+      "case_id": "train/task5/wrong",
+      "input_sha256": "8d77e4a4172b3fdf3ddeafdd391af325ca5a8cd16d0cede520033be778e464b2",
+      "byte_tokens": 832,
+      "old_train_overlap": false,
+      "old_dev_overlap": false,
+      "teacher_type": "memory.put",
+      "facts": {
+        "C": true,
+        "M": false,
+        "F": false
+      }
+    },
+    {
+      "case_id": "train/task5/fresh",
+      "input_sha256": "6682da29e1ef35ff8c80e421c1705898e6fd938d2842f3372f86a6979c51cd80",
+      "byte_tokens": 832,
+      "old_train_overlap": false,
+      "old_dev_overlap": false,
+      "teacher_type": "stop",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": true
+      }
+    },
+    {
+      "case_id": "dev/task0/normal",
+      "input_sha256": "bfbaa7abfeb0d12c3279f59c2fed2f60479a71984817b19f5d96befb006748a5",
+      "byte_tokens": 640,
+      "old_train_overlap": false,
+      "old_dev_overlap": true,
+      "teacher_type": "stop",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": true
+      }
+    },
+    {
+      "case_id": "dev/task0/renamed",
+      "input_sha256": "8c4a3539f514b5a8a42ace9e5cb898f85414fad580eb6c768de6e7ff24fd05ad",
+      "byte_tokens": 640,
+      "old_train_overlap": false,
+      "old_dev_overlap": false,
+      "teacher_type": "stop",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": true
+      }
+    },
+    {
+      "case_id": "dev/task0/same",
+      "input_sha256": "94438117df18c873ecb355bfd03463280c14f866f9e8bb4fde021bc6571bc300",
+      "byte_tokens": 805,
+      "old_train_overlap": false,
+      "old_dev_overlap": true,
+      "teacher_type": "memory.get",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": false
+      }
+    },
+    {
+      "case_id": "dev/task0/wrong",
+      "input_sha256": "e6b190175287d717f6b8c7afb6ed963ae953fc758cee638917ab52f16a161364",
+      "byte_tokens": 805,
+      "old_train_overlap": false,
+      "old_dev_overlap": false,
+      "teacher_type": "memory.put",
+      "facts": {
+        "C": true,
+        "M": false,
+        "F": false
+      }
+    },
+    {
+      "case_id": "dev/task0/fresh",
+      "input_sha256": "094b6895db8b1a1e5336f897f446364e1912a8aa8cef3935a13da3c6e0e73362",
+      "byte_tokens": 805,
+      "old_train_overlap": false,
+      "old_dev_overlap": false,
+      "teacher_type": "stop",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": true
+      }
+    },
+    {
+      "case_id": "dev/task1/normal",
+      "input_sha256": "e106f8cbf5729cce8e2f9d1e7fad4f2b2079553c5dc9f90afe0cc08abb063af5",
+      "byte_tokens": 644,
+      "old_train_overlap": false,
+      "old_dev_overlap": true,
+      "teacher_type": "stop",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": true
+      }
+    },
+    {
+      "case_id": "dev/task1/renamed",
+      "input_sha256": "c5c758396989c4969cece647f3ed67b0f75d9a08f9f4988a3b11acdaeaa73b05",
+      "byte_tokens": 644,
+      "old_train_overlap": false,
+      "old_dev_overlap": false,
+      "teacher_type": "stop",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": true
+      }
+    },
+    {
+      "case_id": "dev/task1/same",
+      "input_sha256": "ec69dfde5d425696ddcfd288fe1a0ba1be543e10743bd1f2a7ad59f89b6a77ca",
+      "byte_tokens": 810,
+      "old_train_overlap": false,
+      "old_dev_overlap": true,
+      "teacher_type": "memory.get",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": false
+      }
+    },
+    {
+      "case_id": "dev/task1/wrong",
+      "input_sha256": "735696aaf1b175effb4e8fe7b26670865272900de0c696eb970737c8e8acdbc0",
+      "byte_tokens": 810,
+      "old_train_overlap": false,
+      "old_dev_overlap": false,
+      "teacher_type": "memory.put",
+      "facts": {
+        "C": true,
+        "M": false,
+        "F": false
+      }
+    },
+    {
+      "case_id": "dev/task1/fresh",
+      "input_sha256": "c6596cd9adfb0222e999b91f58a5e6ab8c554107da85206da7d353d6b85f7948",
+      "byte_tokens": 810,
+      "old_train_overlap": false,
+      "old_dev_overlap": false,
+      "teacher_type": "stop",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": true
+      }
+    },
+    {
+      "case_id": "dev/task2/normal",
+      "input_sha256": "ad748ea7b0b1512b2b113ca9f878ddf80a6d98beb36c9ea500c3476f73c11523",
+      "byte_tokens": 650,
+      "old_train_overlap": false,
+      "old_dev_overlap": true,
+      "teacher_type": "stop",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": true
+      }
+    },
+    {
+      "case_id": "dev/task2/renamed",
+      "input_sha256": "8eb034e211db5ee74d88051732cfe8ddb13aac227b57c9a432920a090c206f83",
+      "byte_tokens": 650,
+      "old_train_overlap": false,
+      "old_dev_overlap": false,
+      "teacher_type": "stop",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": true
+      }
+    },
+    {
+      "case_id": "dev/task2/same",
+      "input_sha256": "661f44782d62474f3f7254d8faf6e25133e246223aae67b8fba6d27c5e28505f",
+      "byte_tokens": 815,
+      "old_train_overlap": false,
+      "old_dev_overlap": true,
+      "teacher_type": "memory.get",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": false
+      }
+    },
+    {
+      "case_id": "dev/task2/wrong",
+      "input_sha256": "c4f8edf46615062339f660efbcc4a9fe784f6675bb7c21467f00f482674deb74",
+      "byte_tokens": 815,
+      "old_train_overlap": false,
+      "old_dev_overlap": false,
+      "teacher_type": "memory.put",
+      "facts": {
+        "C": true,
+        "M": false,
+        "F": false
+      }
+    },
+    {
+      "case_id": "dev/task2/fresh",
+      "input_sha256": "cfc1ca91747484bba5e07ed6baff80e1ec67805262a5171fe8ddf6fc4dba01b1",
+      "byte_tokens": 815,
+      "old_train_overlap": false,
+      "old_dev_overlap": false,
+      "teacher_type": "stop",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": true
+      }
+    },
+    {
+      "case_id": "dev/task3/normal",
+      "input_sha256": "b0c3e4fe9f7a197ab10a61b82c45b25eb583f92ebb7a170146c9800ff459273a",
+      "byte_tokens": 652,
+      "old_train_overlap": false,
+      "old_dev_overlap": true,
+      "teacher_type": "stop",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": true
+      }
+    },
+    {
+      "case_id": "dev/task3/renamed",
+      "input_sha256": "3a9cad29c4626e7f9b1d7ce01ece4ea1b9ff3b9c555f75d45d99f58527c55d40",
+      "byte_tokens": 652,
+      "old_train_overlap": false,
+      "old_dev_overlap": false,
+      "teacher_type": "stop",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": true
+      }
+    },
+    {
+      "case_id": "dev/task3/same",
+      "input_sha256": "e2cbbe6cc899317904e981d60b945d69f2dcb501a7ec72b002702abbd4d8c467",
+      "byte_tokens": 817,
+      "old_train_overlap": false,
+      "old_dev_overlap": true,
+      "teacher_type": "memory.get",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": false
+      }
+    },
+    {
+      "case_id": "dev/task3/wrong",
+      "input_sha256": "9dfeb9a84943c19c55d3eae18da705966641a5bbe3f5009bfedf696f010c621c",
+      "byte_tokens": 817,
+      "old_train_overlap": false,
+      "old_dev_overlap": false,
+      "teacher_type": "memory.put",
+      "facts": {
+        "C": true,
+        "M": false,
+        "F": false
+      }
+    },
+    {
+      "case_id": "dev/task3/fresh",
+      "input_sha256": "cf8426c448342aa83f90eb7a582e43899d283cebd6c365bdf4f5a70b6fee184c",
+      "byte_tokens": 817,
+      "old_train_overlap": false,
+      "old_dev_overlap": false,
+      "teacher_type": "stop",
+      "facts": {
+        "C": true,
+        "M": true,
+        "F": true
+      }
+    }
+  ],
+  "old_train_overlap": 8,
+  "old_dev_overlap": 8,
+  "collisions": 0,
+  "all_pair_lengths_equal": true,
+  "all_prefixes_replayed": true,
+  "oracle_completions": 40,
+  "structural_holdout": false,
+  "model_scored": 0,
+  "model_updates": 0,
+  "test_constructed": 0,
+  "test_scored": 0
+}

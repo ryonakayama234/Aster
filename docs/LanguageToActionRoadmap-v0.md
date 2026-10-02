@@ -69,3 +69,7 @@ configs/tinylm-pilot-v0.jsonはwidth64/layers2/heads4/context128/batch8/200step�
 [HistoryFactReaderTraining-v0](HistoryFactReaderTraining-v0.md)で既存80train/40devを固定。random initializationのreaderと保存済み行動分類器を組み合わせ、oracle事実/予測事実の実行を比較する。一般Corpus事前学習との比較は今回未実施。結果はreports/history-reader-study-v0.md/.jsonへ別記録。
 
 2026-10-02実測: random reader全3seed fit、dev/復帰履歴の汎化未成立。[報告](../reports/history-reader-study-v0.md)。次は固定モデルで対応付け/一致/時系列を切り分ける。事前学習初期化の効果は未測定で、今回の結果だけで必要性・十分性を断定しない。
+
+2026-10-02: readerの追加診断を[HistoryReaderFrozenContrasts-v0](HistoryReaderFrozenContrasts-v0.md)へ事前登録。事前学習が名前・値・順序のどれを助けたか比較できる物差しを先に作る。今回一般Corpus学習/Task readerは未実施。
+
+固定reader対照の[実測](../reports/history-reader-contrasts-study-v0.md)では、同長の値不一致/取得順対照を全seedが選び分けられない。事前学習の必要性は未確定。次は順序関係の課題学習を独立介入として設計し、将来のrandom/pretrained比較に同じ物差しを残す。
