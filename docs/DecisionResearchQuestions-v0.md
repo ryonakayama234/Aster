@@ -226,3 +226,7 @@ PR #43でtrain fitと未知/復帰読解が分離した。次は[固定対照pro
 ## 2026-10-02: 順序追加学習の境界
 
 [実測](../reports/history-reader-order-study-v0.md)は追加対照fit16/15/0（/16）、既存dev未学習shape0/1/0（/12）。元80例を全条件保持したが安定転用はない。次はFのみの最小読解でfit/形転用を分ける候補。未実装。
+
+## 2026-10-02: Fのみの最小読解を事前登録
+
+[HistoryFreshnessMinimal-v0](HistoryFreshnessMinimal-v0.md)で同raw入力・同初期weightのF単独/CMF教師を比較。48train、48既知未学習shape、32dev、unknown保持。正式測定は後続記録。未fitなら多目的学習だけの説明を支持せず、fit/転用を分離する。

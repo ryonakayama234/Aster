@@ -143,3 +143,5 @@ UIでdiagnostic successを再計算せず、未提供の値を推測しない。
 2026-10-02固定reader対照: 将来表示ではrename/value/order、期待する事実不変/変化、両側事実正答/Action正答/予測不変、24組/48参照/40unique/8task、旧train/前回dev重複を区別する。更新0/元cached logits照合とmodel hashを表示に保持。正本はresearch Runとreports/history-reader-contrasts-study-v0.md/.json（正式測定後）。CLI診断はService/API/Webへ未接続。
 
 2026-10-02順序介入: 将来表示はfrozen/repeat/order、同親model/同更新4480/同ラベル頻度と異なるtoken量、元80例保持/追加対照16組/未学習shape既知24組・dev12組/自力完了を分ける。正本reports/history-reader-order-study-v0.md/.json。研究CLIのみで公開Service/Web未接続。
+
+2026-10-02最小F診断: 将来の表示はF単独/CMF教師、同初期weight/slot順/token量、unknown、学習適合/未学習shape/未知taskの分母を保持。3事実同時正答やAgent完了とは合算しない。研究CLIのみ、Service/API/aster-web公開は後続。

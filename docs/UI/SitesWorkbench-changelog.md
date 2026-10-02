@@ -307,3 +307,9 @@
 - 264評価slot/236unique/12task、未学習72入力のtrain union重複0。3seed×3arm、追加対照両側16/15/0（/16）、元80例保持、dev未学習shape0/1/0（/12）。
 - 元dev完了order5/17/4対repeat13/10/12、混合結果を併記。全193test/型0/0、予測2376/reload2376/episode2376/transition20652/visit11957/oracle264監査。
 - 次はFだけの最小課題候補、未実装。main/Service/API/aster-web/公開モデル/promotion変更なし。ユーザー追加作業不要。
+
+## 2026-10-02: 最小F読解の事前登録
+
+- PR #45 head751d42aを基準に、F単独対CMFの同raw入力/全初期weight/提示順/更新量/token量比較を実装。
+- 実Tool生成128unique/12task/52対照、train48/未知shape48/dev32、unknown保持、入力重複0。正式測定前の独立再生と試運転監査を確認。
+- 正式測定/全検証は後続追記。main/Service/API/aster-web/公開版/promotion変更なし、ユーザー追加作業不要。

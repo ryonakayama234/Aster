@@ -90,3 +90,5 @@ Asterは、自作TinyLMを通してAI・Python・数学・コンピューター�
 2026-10-02固定reader対照補足: docs/HistoryReaderFrozenContrasts-v0.mdに従い、名前は全参照の一貫改名、一致は最後の書込み、順序は同じイベントmultisetとmemoryを検証する。48参照slotを40uniqueや8taskと混同しない。予測不変だけでは正答と扱わず、元train/前回dev重複を表示する。保存3reader/分類器の更新0と元cached logits照合を要求し、診断devを独立holdoutと呼ばない。
 
 2026-10-02順序学習介入補足: docs/HistoryReaderOrderIntervention-v0.mdに従い、親weights/slot順/元80例exposure/追加slotのtaskとC,M,F頻度を揃える。更新量一致とtoken量一致を混同せず、train union重複を評価へ表示する。正常保持、追加shapefit、未学習shape、未知task、自力完了を分離。次の条件は測定後に同実験へ混ぜない。
+
+2026-10-02最小F読解補足: docs/HistoryFreshnessMinimal-v0.mdに従い、F単独/CMFの同初期tensor・提示順・token量を揃える。F loss係数の違いを目的変更の一部として明記し、勾配干渉の原因確定と扱わない。unknownをfalseへ潰さず、F単体と3事実/自力完了を分ける。観察済みtask/shapeの診断を独立testと呼ばない。
