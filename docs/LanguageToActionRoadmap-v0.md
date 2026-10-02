@@ -73,3 +73,5 @@ configs/tinylm-pilot-v0.jsonはwidth64/layers2/heads4/context128/batch8/200step�
 2026-10-02: readerの追加診断を[HistoryReaderFrozenContrasts-v0](HistoryReaderFrozenContrasts-v0.md)へ事前登録。事前学習が名前・値・順序のどれを助けたか比較できる物差しを先に作る。今回一般Corpus学習/Task readerは未実施。
 
 固定reader対照の[実測](../reports/history-reader-contrasts-study-v0.md)では、同長の値不一致/取得順対照を全seedが選び分けられない。事前学習の必要性は未確定。次は順序関係の課題学習を独立介入として設計し、将来のrandom/pretrained比較に同じ物差しを残す。
+
+2026-10-02順序学習介入: [結果](../reports/history-reader-order-study-v0.md)では一部seedの既知fit改善を確認、安定関係転用なし。一般Corpus事前学習の必要性は未確定。Fだけの課題縮小を先に検討し、事前学習と課題用学習を分ける。

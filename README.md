@@ -172,3 +172,5 @@ PYTHONPATH=src python scripts/run_history_reader_preflight.py --root .
 2026-10-02: 次の固定reader診断を[HistoryReaderFrozenContrasts-v0](docs/HistoryReaderFrozenContrasts-v0.md)へ登録。名前・値一致・取得順の24組/40uniqueを実Toolで生成・監査し、保存済み3readerを更新0で測定する。生成成功は読解能力を意味しない。正式実測は後続reportへ記録。PR #43依存の研究ブランチで、main/Service/Web未導入。
 
 固定reader対照の[正式結果](reports/history-reader-contrasts-study-v0.md)：名前の既知task4/4を全3seedで保持。一致/取得順の両側正答は既知・既存devとも各0/4。取得確認済みでも同じgetを繰り返す反例を実測。全190test/型検査/独立監査成功。次は順序対照だけをtrainへ追加する更新量対照の設計候補で、追加学習は未実施。
+
+2026-10-02順序学習介入: [protocol](docs/HistoryReaderOrderIntervention-v0.md)と[正式結果](reports/history-reader-order-study-v0.md)。同更新量/同ラベル頻度の元例反復に対し追加対照両側16/15/0（/16）、元80例保持。未学習shape転用と3seed安定fitは未成立。モデル採用せず、次はFだけの最小読解課題が候補。
