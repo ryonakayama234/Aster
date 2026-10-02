@@ -53,3 +53,14 @@ Asterは、自作TinyLMを通してAI・Python・数学・コンピューター�
 - 同じ作業内で設計契約を現状へ更新し、changelogへ変更理由・ソースcommit/PR・検証結果・未検証・公開状態・次の課題を追記してGitへ保存する。
 - API契約とUI責務を区別し、Job/Run/Artifactの識別、出典・採用理由、実測と保存再生の区別を保つ。
 - 将来案は未実装と明示する。前提PRが未マージなら導入済みと扱わない。設計書を完成記録だけ先に更新しない。
+
+
+## Learned Agent ACT v0（Issue #48, 2026-10-02）
+
+- ACT v0の正本は `docs/LearnedAgentAct-v0.md`、作業順は `docs/TODO/LearnedAgentAct-v0.md`、進捗は `docs/Progress/LearnedAgentAct-v0.md`。
+- 初版は保存済みDecisionModelのmodel-only実行。RuleBasedPolicy/fallback/abstainで成功を補わない。
+- Service requestはlogical `decision_model:<digest>` のみを受け、任意model path/task/tool/serializer/thresholdを受けない。
+- serializerは既存 `aster-decision-input-0`、candidate builderは `calculate-and-store-v0` を維持し、ACTの配線変更と表現研究を混ぜない。
+- DecisionTraceはモデル側の候補/score/選択、Transitionは実際のAction/Observation/Stateを正本とし、model-onlyではselected Actionとexecuted Actionの一致を監査する。
+- ACT-Wiring PASSとACT-Capability PASSを分ける。モデルがtaskに失敗しても配線が正しければWiringはPASSになり得る。
+- ACT中にweightsを更新せず、sealed testを開かない。
