@@ -88,6 +88,29 @@ Service用catalogは少なくとも以下を検証する。
 
 既存Run内artifactをService catalogへ登録するときだけローカルCLIがsource pathを受ける。登録後のService requestはlogical IDだけを受ける。
 
+### decision_fit checkpointからの明示的promotion
+
+ユーザーPCの既存研究Runで主に保存されているのは `aster-decision-fit-checkpoint-0` / `decision_fit:<digest>` であり、
+これは `aster-decision-model-artifact-0` とは別形式である。ACT v0ではこの差を黙って同一視しない。
+
+`scripts/promote_decision_fit_checkpoint.py` は、fit checkpointを `load_decision_fit_checkpoint` で検証し、
+weights/Tokenizer/suite/arm/study config/source checkpoint IDを保持した正式DecisionModel Artifactへ変換してcatalog登録する。
+
+fit checkpointはcalibrationを実行していないため、promotion後manifestは明示的に:
+
+```json
+{
+  "calibration": {"status": "not_run"},
+  "routing": {"status": "not_configured"}
+}
+```
+
+とする。架空のtemperature fitやrouting thresholdを記録しない。
+ACT v0はmodel-onlyなのでcalibration/routing未設定でも実行可能。
+promotion元は `source_checkpoint_id`、serializerは `aster-decision-input-0` としてlineageへ残す。
+
+Gitにcommitされたsummary/reportだけではweightsを復元できない。local checkpoint本体または元archiveが無い場合はfit studyを再実行してcheckpointを生成する。
+
 ## Service recipe
 
 初版recipe:
