@@ -108,3 +108,15 @@ UIでdiagnostic successを再計算せず、未提供の値を推測しない。
 
 2026-09-30データ介入研究メモ: 将来の比較表示はarm名だけでなく、提示回数/更新回数、unique判断数、元課題group数、同じTokenizer/初期weightの識別、train fit成立、元課題保持、dev probeの由来を表示する。
 反復slotの増加を新課題の増加と同一視しない。dev probeの親trainとの重なり、test scored_cases=0、reserved procedural prefixと独立task familyの違いをbundle正本から表示する。この研究CLIはService公開recipeではなく、UI接続は未実装。
+
+
+## 2026-10-02 Research Observatory v0
+
+次の縦切りは新しいDecision実験ではなく、保存済み研究証拠をAster Service→aster-webで調べるread-only観測経路とする。
+
+- Asterが `research.observe` とversioned experiment bundleの正本を持つ。
+- WebはExperiment → arm/seed → shared caseを選び、保存済みtarget/selected Action、正誤、target candidate serialization、token分割を並べる。
+- 同一caseの対応はcase IDで行う。Tokenizerを跨いでtoken IDを意味対応させない。
+- source reportに存在しないcandidate scoreや学習曲線は未取得と表示し、UIで推測・再計算しない。
+- 初版は `decision-failure-audit-v0` のphase-zero evidenceに限定し、test本文・private corpus・repository-local pathを公開しない。
+- これは学習済みDecisionModelを新規実行する経路ではない。保存再生の観測系を先に閉じ、その後にlearned Agent end-to-endへ進む。
