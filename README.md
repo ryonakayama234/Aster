@@ -85,14 +85,16 @@ Decision baselineはtestを自動開封しません。まずdevelopment runを�
 
 ## 次に作るもの
 
-2026-09-30: PR #25上のCPU fitをユーザーWSL2で実測し、LR0.001・50epochの8判断でseed42/43/44すべてtrain fit成立。
-[実測記録](reports/decision-fit-user-pc-v0.md) と [状態診断の設計](docs/DecisionStateDiagnostics-v0.md) を参照。
-保存checkpointを更新せずに診断するCLI `scripts/run_decision_state_diagnostics.py` を追加した。
-[初回診断結果](reports/decision-state-diagnostics-v0.md)では、既知課題の自力完了は成立し、新しい数値・キー・履歴への応用に弱点が残る。
-この変更はPR #25に依存する研究ブランチ上の実装であり、main/Service/Webに導入済みとは扱わない。
+2026-10-02: mainにはDecision fit後の失敗/Tokenizer監査とequal-budgetデータ介入4条件（PR #27）まで入っている。
+局所的なDecision実験をさらに増やす前に、保存済み研究証拠をService→aster-webで調べられる観測系を閉じる。
 
-1. [失敗/Tokenizer監査](reports/decision-failure-audit-v0.md)と[データ4条件比較](docs/DecisionDataIntervention-v0.md)を研究ブランチに追加。[実測報告](reports/decision-data-intervention-v0.md)でtrain fit・元課題保持・変更課題episodeを分ける。旧testと予約prefix testはモデル評価せず封印を維持。次は必要に応じTokenizer/入力表現の独立比較へ進む。
-2. 保存済みDecisionModelと固定task suiteをServiceのallowlisted recipeへ公開し、`aster-web`でrule / model / model+fallbackのRunを観測・比較する。
-3. Interventionの訂正 → candidate再学習 → 親子比較を、同じArtifact/Run/Evaluator契約へ接続する。
+現在の作業branch `feat/research-observatory-v0`:
 
-Aster Service / aster-webは任意shellやrepository-local pathを公開せず、Job / Run / Artifactを分離する方針を維持します。
+1. `research.observe` と `GET /experiments` / `GET /experiments/{experiment_id}` を追加。
+2. 初版は保存済み `decision-failure-audit-v0` をread-only projectionし、source digest、arm/seed、checkpoint/suite/Tokenizer、phase-zeroのtarget/selected Action、正誤、target candidate tokenizationを公開。
+3. committed evidenceに無いcandidate score / learning curveは未取得のまま返し、Service/Webで補完しない。
+4. aster-web #2で同一caseを2 arm並べて観測する。既存固定Agent Run consoleは維持。
+5. 実ブラウザでcanonical report→Service response→UI表示の一致を確認した後、saved DecisionModel + typed stateのlearned Agent end-to-endへ進む。
+6. その後Aster #20で親model→訂正→candidate再学習→同じEvaluatorによる親子比較を行う。
+
+Aster Service / aster-webは任意shellやrepository-local pathを公開せず、Job / Run / Artifact / Research evidenceの出典を分離する方針を維持します。
