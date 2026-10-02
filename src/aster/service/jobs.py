@@ -18,6 +18,7 @@ from uuid import uuid4
 
 from aster.service.artifacts import ArtifactCatalog
 from aster.service.contracts import JobSpec
+from aster.service.experiments import ExperimentCatalog
 from aster.service.recipes import RecipeRegistry
 
 _JOB_ID = re.compile(r"[0-9a-f]{32}")
@@ -52,6 +53,7 @@ class JobManager:
         self.base.mkdir(parents=True, exist_ok=True)
         self.lock = threading.Lock()
         self.catalog = ArtifactCatalog(self.root)
+        self.experiments = ExperimentCatalog(self.root)
         self.recipes = RecipeRegistry(self.root, self.catalog, python or sys.executable)
         self.process_runner = process_runner or subprocess.run
         self._recover_interrupted()
