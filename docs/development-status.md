@@ -101,3 +101,15 @@ CIのpytest/Pyright成功やGitHub runnerの速度を、ユーザーPCの能力�
 - モデル候補は自動昇格しない。改善・不変・悪化を同じ物差しで見てから採用する。
 
 Decision baselineの仕様は [DecisionBaseline-v0](DecisionBaseline-v0.md)、Agent Service境界は [ServiceContract-v1](ServiceContract-v1.md) を参照してください。
+
+
+## 2026-10-02追記: Research Observatory Gate
+
+Decision研究の次の局所実験を増やす前に、Aster #29 / aster-web #2の保存再生観測系を閉じるbranch
+`feat/research-observatory-v0` をmainから開始した。
+
+このbranchでは保存済みfailure-audit reportだけをversioned read-only bundleとしてServiceから公開し、
+aster-webで同じcaseを2 arm並べて確認する。candidate scoreやlearning curveがcommit済み証拠に無い場合は未取得のまま表示する。
+
+この作業はDecision能力改善、学習済みpolicyのService実行、Intervention Learningを意味しない。
+次のGateは、観測系の実ブラウザ確認後に learned DecisionModel → typed Runtime state → real Tool → Evaluator を通すend-to-end run。
