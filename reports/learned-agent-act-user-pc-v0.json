@@ -1,0 +1,197 @@
+{
+  "schema_version": "aster-learned-agent-act-user-pc-evidence-0",
+  "captured_at": "2026-10-03",
+  "provenance": "user-provided WSL2 Aster Service output; actual model-only ACT run, not a format example",
+  "fit_run_id": "10d679f7575b40c7ae1f78ecb2abe10e",
+  "fit_arm": "one-fixed",
+  "source_checkpoint_id": "decision_fit:fceed28d3a3c9c4632575c0bd4f422b2e13842e6d9510df6018714d0435b19a8",
+  "decision_model_artifact_id": "decision_model:e28fb30d64f9b9f00c71c232e5200648eed2d208922909e065dbd65d7c5d4bf0",
+  "promotion": {
+    "calibration_status": "not_run",
+    "routing_status": "not_configured"
+  },
+  "act_run_id": "5a8076571dca446fa07190cf4fc62509",
+  "job_status": "completed",
+  "task_id": "act-calculate-store-dev-v0",
+  "task": {
+    "kind": "calculate_and_store",
+    "operation": "add",
+    "left": 23,
+    "right": 19,
+    "store_as": "answer"
+  },
+  "summary": {
+    "accepted_actions": 8,
+    "failed_executions": 0,
+    "first_goal_verified_step": null,
+    "goal_verified": false,
+    "notes": [],
+    "rejected_actions": 0,
+    "steps": 8,
+    "stop_reason": null,
+    "successful_executions": 8,
+    "task_success": false,
+    "terminal_reached": false
+  },
+  "wiring_gate": {
+    "artifact_reload_verified": true,
+    "candidate_builder_id": "calculate-and-store-v0",
+    "decision_transition_alignment": true,
+    "fallback_count": 0,
+    "model_only": true,
+    "passed": true,
+    "rule_intervention_count": 0,
+    "serializer_id": "aster-decision-input-0",
+    "weights_unchanged": true
+  },
+  "capability_gate": {
+    "goal_verified": false,
+    "passed": false,
+    "scope": "predeclared fresh development probe; not sealed test or independent task-family holdout",
+    "task_id": "act-calculate-store-dev-v0",
+    "task_success": false
+  },
+  "trajectory": [
+    {
+      "step": 0,
+      "selected_action": {"kind":"tool","name":"calculator","arguments":{"left":23,"operation":"add","right":19}},
+      "observation_output": 42,
+      "memory_after": {},
+      "goal_satisfied": false
+    },
+    {
+      "step": 1,
+      "selected_action": {"kind":"tool","name":"memory.put","arguments":{"key":"answer","value":42}},
+      "observation_output": {"key":"answer","stored":true},
+      "memory_after": {"answer":42},
+      "goal_satisfied": false
+    },
+    {
+      "step": 2,
+      "selected_action": {"kind":"tool","name":"memory.put","arguments":{"key":"answer","value":42}},
+      "observation_output": {"key":"answer","stored":true},
+      "memory_after": {"answer":42},
+      "goal_satisfied": false
+    },
+    {
+      "step": 3,
+      "selected_action": {"kind":"tool","name":"calculator","arguments":{"left":23,"operation":"add","right":19}},
+      "observation_output": 42,
+      "memory_after": {"answer":42},
+      "goal_satisfied": false
+    },
+    {
+      "step": 4,
+      "selected_action": {"kind":"tool","name":"calculator","arguments":{"left":23,"operation":"add","right":19}},
+      "observation_output": 42,
+      "memory_after": {"answer":42},
+      "goal_satisfied": false
+    },
+    {
+      "step": 5,
+      "selected_action": {"kind":"tool","name":"memory.put","arguments":{"key":"answer","value":42}},
+      "observation_output": {"key":"answer","stored":true},
+      "memory_after": {"answer":42},
+      "goal_satisfied": false
+    },
+    {
+      "step": 6,
+      "selected_action": {"kind":"tool","name":"memory.put","arguments":{"key":"answer","value":42}},
+      "observation_output": {"key":"answer","stored":true},
+      "memory_after": {"answer":42},
+      "goal_satisfied": false
+    },
+    {
+      "step": 7,
+      "selected_action": {"kind":"tool","name":"memory.put","arguments":{"key":"answer","value":42}},
+      "observation_output": {"key":"answer","stored":true},
+      "memory_after": {"answer":42},
+      "goal_satisfied": false
+    }
+  ],
+  "decision_traces": [
+    {
+      "step": 0,
+      "candidate_names": ["calculator","memory.get","stop"],
+      "scores": [-1.0722543001174927,-1.0744915008544922,-1.0740762948989868],
+      "probabilities": [0.3337844908237457,0.3330385982990265,0.3331768810749054],
+      "selected_index": 0,
+      "selected_name": "calculator"
+    },
+    {
+      "step": 1,
+      "candidate_names": ["calculator","memory.put","memory.get","stop"],
+      "scores": [-1.0834909677505493,-1.0557714700698853,-1.0839837789535522,-1.0846471786499023],
+      "probabilities": [0.2483571618795395,0.25533780455589294,0.2482347935438156,0.24807018041610718],
+      "selected_index": 1,
+      "selected_name": "memory.put"
+    },
+    {
+      "step": 2,
+      "candidate_names": ["calculator","memory.put","memory.get","stop"],
+      "scores": [-1.0614073276519775,-1.0478594303131104,-1.0648486614227295,-1.0691077709197998],
+      "probabilities": [0.24984174966812134,0.2532496154308319,0.2489834427833557,0.24792525172233582],
+      "selected_index": 1,
+      "selected_name": "memory.put"
+    },
+    {
+      "step": 3,
+      "candidate_names": ["calculator","memory.put","memory.get","stop"],
+      "scores": [-1.0755574703216553,-1.0769624710083008,-1.076628565788269,-1.077980875968933],
+      "probabilities": [0.25030630826950073,0.24995487928390503,0.25003835558891296,0.24970044195652008],
+      "selected_index": 0,
+      "selected_name": "calculator"
+    },
+    {
+      "step": 4,
+      "candidate_names": ["calculator","memory.put","memory.get","stop"],
+      "scores": [-1.057870626449585,-1.0679703950881958,-1.0603244304656982,-1.0635732412338257],
+      "probabilities": [0.25114181637763977,0.24861811101436615,0.2505263090133667,0.2497137188911438],
+      "selected_index": 0,
+      "selected_name": "calculator"
+    },
+    {
+      "step": 5,
+      "candidate_names": ["calculator","memory.put","memory.get","stop"],
+      "scores": [-1.0744730234146118,-1.0514750480651855,-1.075124740600586,-1.0759648084640503],
+      "probabilities": [0.2486867755651474,0.2544723451137543,0.2485247552394867,0.24831606447696686],
+      "selected_index": 1,
+      "selected_name": "memory.put"
+    },
+    {
+      "step": 6,
+      "candidate_names": ["calculator","memory.put","memory.get","stop"],
+      "scores": [-1.0733063220977783,-1.0671703815460205,-1.0740866661071777,-1.075194239616394],
+      "probabilities": [0.24978213012218475,0.2513194978237152,0.2495872974395752,0.24931101500988007],
+      "selected_index": 1,
+      "selected_name": "memory.put"
+    },
+    {
+      "step": 7,
+      "candidate_names": ["calculator","memory.put","memory.get","stop"],
+      "scores": [-1.0675582885742188,-1.0470720529556274,-1.068838357925415,-1.0706571340560913],
+      "probabilities": [0.24898387491703033,0.25413721799850464,0.24866536259651184,0.2482134997844696],
+      "selected_index": 1,
+      "selected_name": "memory.put"
+    }
+  ],
+  "evidence_reading": {
+    "facts": [
+      "calculator produced 42 at step 0",
+      "memory.put stored answer=42 at step 1",
+      "memory remained answer=42 from step 1 through step 7",
+      "memory.get was available as a candidate at every step",
+      "memory.get was never selected",
+      "stop was available as a candidate at every step and was never selected",
+      "all eight selected actions were accepted and executed successfully",
+      "goal verification never occurred"
+    ],
+    "interpretation": [
+      "candidate coverage is sufficient for the missing verification action",
+      "the primary observed failure is action ranking/state-conditioned policy after the value is stored, not calculator execution or memory.put execution",
+      "the model does not transition from stored state to memory.get verification",
+      "selected probabilities are close to the uniform baseline, indicating weak discrimination in this one-fixed checkpoint",
+      "this single run does not by itself identify whether the underlying cause is state reading, history reading, optimization, or data coverage"
+    ]
+  }
+}
