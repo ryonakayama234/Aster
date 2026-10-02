@@ -85,16 +85,38 @@ Decision baselineはtestを自動開封しません。まずdevelopment runを�
 
 ## 次に作るもの
 
-2026-10-02: mainにはDecision fit後の失敗/Tokenizer監査とequal-budgetデータ介入4条件（PR #27）まで入っている。
-局所的なDecision実験をさらに増やす前に、保存済み研究証拠をService→aster-webで調べられる観測系を閉じる。
+2026-10-02: Research Observatory（SEE）はユーザーWSL2実ブラウザで成立した。
+保存済みDecision研究をAster Service→aster-webでarm/case比較でき、欠損scoreをWebで再計算しないことも確認済み。
+Aster PR #47はReady for review、aster-web PR #4はmerge済み。
 
-現在の作業branch `feat/research-observatory-v0`:
+現在の作業は Issue #48 / branch `feat/learned-agent-act-v0` の **ACT v0**。
 
-1. `research.observe` と `GET /experiments` / `GET /experiments/{experiment_id}` を追加。
-2. 初版は保存済み `decision-failure-audit-v0` をread-only projectionし、source digest、arm/seed、checkpoint/suite/Tokenizer、phase-zeroのtarget/selected Action、正誤、target candidate tokenizationを公開。
-3. committed evidenceに無いcandidate score / learning curveは未取得のまま返し、Service/Webで補完しない。
-4. aster-web #2で同一caseを2 arm並べて観測する。既存固定Agent Run consoleは維持。
-5. 実ブラウザでcanonical report→Service response→UI表示の一致を確認した後、saved DecisionModel + typed stateのlearned Agent end-to-endへ進む。
-6. その後Aster #20で親model→訂正→candidate再学習→同じEvaluatorによる親子比較を行う。
+```text
+decision_model:<digest>
+→ verified artifact load
+→ ModelPolicy
+→ CalculateAndStoreCandidates
+→ candidate score / Action select
+→ real ToolExecutor
+→ Observation / RuntimeState
+→ TaskEvaluator
+→ DecisionTrace + Trajectory + evaluation
+```
 
-Aster Service / aster-webは任意shellやrepository-local pathを公開せず、Job / Run / Artifact / Research evidenceの出典を分離する方針を維持します。
+初版はmodel-only。固定development task `add 23 + 19 → answer` を実装前に固定し、
+fallback / RuleBasedPolicy介入 / 自由task / 任意tool / 新serializer / model update / sealed test開封を含めない。
+
+ACTでは次を別々に判定する。
+
+- **Wiring Gate**: artifact→model→tool→evidenceが一周したか。task failureでもPASSになり得る。
+- **Capability Gate**: 固定development taskをmodel-onlyで `task_success=true` / `goal_verified=true` にできたか。
+
+仕様は [LearnedAgentAct-v0](docs/LearnedAgentAct-v0.md)、作業順は
+[TODO](docs/TODO/LearnedAgentAct-v0.md)、進捗は
+[Progress](docs/Progress/LearnedAgentAct-v0.md) を正本にする。
+
+ACT成立後は失敗RunをResearch Observatoryで調べ、Aster #20の
+親model→訂正→candidate再学習→同じEvaluatorによる親子比較へ接続する。
+
+Aster Service / aster-webは任意shellやrepository-local pathを公開せず、
+Job / Run / Artifact / Research evidenceの出典を分離する方針を維持します。
