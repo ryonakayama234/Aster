@@ -32,3 +32,46 @@ Status: in progress
 2. model-only runtime runnerとDecisionTrace永続化。
 3. Service recipe。
 4. CI後、ユーザーWSL2実測。
+
+
+## Session 2 — 2026-10-02
+
+Task: ACT v0のAster側vertical sliceを実装する。
+
+Status: implementation complete, CI/user run pending
+
+### 実装
+
+- Service Artifact kindへ `decision_model` を追加。
+- `ArtifactCatalog.register_decision_model` を追加し、既存DecisionModel artifactをload検証後に `artifacts/decision_models/<digest>/` へimmutable copyする。
+- source artifact内symlink、tampered model state、identity/candidate-builder不一致を拒否。
+- `scripts/register_decision_artifact.py` を追加。filesystem pathを扱うのはローカル登録時だけで、Service Jobはlogical IDだけを受ける。
+- `src/aster/runtime/service_learned_agent.py` を追加。
+- fixed task `act-calculate-store-dev-v0` = add(23, 19), store_as=answer を実装。
+- `load_decision_artifact → ModelPolicy → run_loop → real ToolExecutor → TaskEvaluator` を接続。
+- model weights unchangedを実行前後で監査。
+- `DecisionTrace.selected == Transition.action` とstep/count alignmentをmodel-only invariantとして監査。
+- `decision-traces.jsonl` とagent bundle内decision evidenceを保存。
+- ACT-Wiring GateとACT-Capability Gateを別fieldで保存。
+- `agent-decision-model-v0` recipeを追加し、入力を `decision_model:<digest>` だけに固定。
+- ServiceContract / AGENTS / changelog / development status / READMEを同期。
+
+### テスト追加
+
+- DecisionModel catalog registration / idempotence / tamper / symlink拒否。
+- ACT runnerのDecisionTrace/Transition alignment、weights unchanged、Gate保存。
+- learned Agent Service recipeがlogical IDだけを受け、内部でregistered pathへ解決すること。
+
+### 未確認
+
+- GitHub Actions pytest / Pyright。
+- ユーザーWSL2の既存DecisionModel artifact登録。
+- 実ACT RunのWiring/Capability結果。
+- aster-webのACT表示。
+
+### 次
+
+1. stacked Draft PRを作成してCI。
+2. CI failureを修正。
+3. ユーザーWSL2でartifact登録 → Service ACT Run。
+4. 実測Runを基準にaster-webを接続。
