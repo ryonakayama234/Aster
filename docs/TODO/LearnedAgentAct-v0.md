@@ -8,6 +8,9 @@ Issue #48。各項目は実装・検証・実測を分けて更新する。
 - [x] `decision_model` をArtifact kindへ追加
 - [x] DecisionModel Service catalogのlist / resolveを実装
 - [x] 既存DecisionModel artifactをimmutable catalogへ登録するローカルCLIを実装
+- [x] decision_fit checkpoint → uncalibrated DecisionModel Artifact promotionを実装
+- [x] promotion後に calibration=not_run / routing=not_configured を保持
+- [x] promotion score一致/lineageのunit test
 - [x] catalog登録/改ざん/path拒否のunit test
 - [x] model-only learned Agent runtime runnerを実装
 - [x] 固定 `act-calculate-store-dev-v0` taskをrunnerへ固定
@@ -19,7 +22,9 @@ Issue #48。各項目は実装・検証・実測を分けて更新する。
 - [x] Service requestはlogical DecisionModel IDだけを受ける
 - [x] Service contract / AGENTS / changelog / development statusを同期
 - [x] pytest / Pyright
-- [ ] ユーザーWSL2でDecision artifactを登録
+- [ ] ユーザーWSL2でfit checkpoint本体の有無を確認
+- [ ] checkpointがある場合はpromotionしてDecision artifactを登録
+- [ ] checkpointが無い場合はarchive復元またはfit study再実行
 - [ ] ユーザーWSL2でACT Runを実行
 - [ ] Wiring PASS/FAILを記録
 - [ ] Capability PASS/FAILを記録

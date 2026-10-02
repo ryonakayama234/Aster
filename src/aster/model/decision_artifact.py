@@ -40,11 +40,13 @@ def save_decision_artifact(
     suite_id: str,
     suite_sha256: str,
     train_config: dict[str, object],
-    temperature: float,
-    autonomous_threshold: float,
-    fallback_threshold: float,
+    temperature: float | None,
+    autonomous_threshold: float | None,
+    fallback_threshold: float | None,
     initialization: str = "scratch",
     source_git_sha: str | None = None,
+    source_checkpoint_id: str | None = None,
+    serializer_id: str | None = None,
 ) -> dict[str, object]:
     """Persist one inference-ready DecisionModel and its interpretation metadata."""
 
@@ -52,10 +54,16 @@ def save_decision_artifact(
         raise ValueError("Decision artifact identities must not be empty")
     if len(suite_sha256) != 64:
         raise ValueError("suite_sha256 must be a SHA-256 hex digest")
-    if temperature <= 0:
-        raise ValueError("temperature must be positive")
-    if not 0.0 <= fallback_threshold <= autonomous_threshold <= 1.0:
-        raise ValueError("routing thresholds must satisfy 0 <= fallback <= autonomous <= 1")
+    if temperature is None:
+        if autonomous_threshold is not None or fallback_threshold is not None:
+            raise ValueError("uncalibrated artifacts must not configure routing thresholds")
+    else:
+        if temperature <= 0:
+            raise ValueError("temperature must be positive")
+        if autonomous_threshold is None or fallback_threshold is None:
+            raise ValueError("calibrated artifacts require routing thresholds")
+        if not 0.0 <= fallback_threshold <= autonomous_threshold <= 1.0:
+            raise ValueError("routing thresholds must satisfy 0 <= fallback <= autonomous <= 1")
 
     output = Path(output_dir)
     output.mkdir(parents=True, exist_ok=False)
@@ -92,16 +100,28 @@ def save_decision_artifact(
         "train_config": train_config,
         "initialization": initialization,
         "source_git_sha": source_git_sha,
-        "calibration": {
-            "fit_split": "calibration",
-            "temperature": float(temperature),
-        },
-        "routing": {
-            "autonomous_threshold": float(autonomous_threshold),
-            "fallback_threshold": float(fallback_threshold),
-        },
+        "calibration": (
+            {"status": "not_run"}
+            if temperature is None
+            else {
+                "fit_split": "calibration",
+                "temperature": float(temperature),
+            }
+        ),
+        "routing": (
+            {"status": "not_configured"}
+            if temperature is None
+            else {
+                "autonomous_threshold": float(autonomous_threshold),
+                "fallback_threshold": float(fallback_threshold),
+            }
+        ),
         "resume_supported": False,
     }
+    if source_checkpoint_id is not None:
+        manifest["source_checkpoint_id"] = source_checkpoint_id
+    if serializer_id is not None:
+        manifest["serializer_id"] = serializer_id
     manifest["artifact_id"] = _artifact_id(manifest)
     (output / "manifest.json").write_bytes(json_bytes(manifest))
     return manifest

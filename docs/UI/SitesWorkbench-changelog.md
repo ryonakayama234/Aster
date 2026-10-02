@@ -163,3 +163,13 @@
 - `decision_model` Artifact kind、検証登録CLI、model-only ACT runner、`decision-traces.jsonl`、logical Artifact入力のService recipeを実装中。
 - aster-webのACT表示はAster側canonical evidence契約とCIが固まった後に接続する。
 - 現時点でACTコードのGitHub CIとユーザーWSL2実測は未確認。能力成功を主張しない。
+
+
+## 2026-10-03: ACT v0 Artifact promotion追補
+
+- ACT v0 PR #49はmainへmerge済み。
+- 実機でformal DecisionModel Artifactが見つからず、既存研究Runの主保存物が `decision_fit:<digest>` checkpointであることを確認。
+- committed summary/reportはweights本体を含まないため、reportだけから推論Artifactを再構成しない。
+- verified fit checkpointをformal `decision_model:<digest>` へ変換する明示的promotion CLIを追加。
+- fit checkpointはcalibration未実行なので、promotion後も `calibration=not_run` / `routing=not_configured` とし、架空の校正を作らない。
+- Service/Webは引き続きlogical DecisionModel Artifactだけを扱い、local checkpoint pathはpromotion CLI境界の外へ出さない。
