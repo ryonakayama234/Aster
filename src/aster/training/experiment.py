@@ -410,6 +410,7 @@ def run_logged_correction_transfer_experiment(
         }
 
         sequential_transfer = None
+        sequential_run_ids: dict[str, str] = {}
         if sequential_task is not None:
             sequential_arms: dict[str, object] = {}
             for (
@@ -464,8 +465,10 @@ def run_logged_correction_transfer_experiment(
                     },
                 )
                 episode_run = _read_json(episode_path / "run.json")
+                episode_run_id = str(episode_run["run_id"])
+                sequential_run_ids[arm] = episode_run_id
                 sequential_arms[arm] = {
-                    "run_id": episode_run["run_id"],
+                    "run_id": episode_run_id,
                     "summary": _read_json(episode_path / "sequential.json"),
                 }
             sequential_transfer = {
@@ -543,14 +546,7 @@ def run_logged_correction_transfer_experiment(
             correction_benchmark="benchmark-correction/benchmark.json",
             replay_artifact_id=replay_artifact["artifact_id"],
             correction_artifact_id=correction_artifact["artifact_id"],
-            sequential_runs=(
-                None
-                if sequential_transfer is None
-                else {
-                    arm: data["run_id"]
-                    for arm, data in sequential_transfer["arms"].items()
-                }
-            ),
+            sequential_runs=sequential_run_ids or None,
         )
         return run.path
     except BaseException as error:
