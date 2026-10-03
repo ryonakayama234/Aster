@@ -125,3 +125,22 @@ def test_decision_artifact_rejects_tampered_model_state(tmp_path):
 
     with pytest.raises(ValueError, match="state digest mismatch"):
         load_decision_artifact(tmp_path / "artifact")
+
+
+@pytest.mark.parametrize("temperature", [0.0, -1.0, float("nan"), float("inf")])
+def test_decision_artifact_rejects_invalid_temperature(tmp_path, temperature):
+    suite, model, tokenizer = _fixture_model()
+    with pytest.raises(ValueError, match="positive and finite"):
+        save_decision_artifact(
+            tmp_path / "artifact",
+            model,
+            tokenizer,
+            model_id="decision-artifact-test",
+            candidate_builder_id="calculate-and-store-v0",
+            suite_id=suite.suite_id,
+            suite_sha256=digest(json_bytes(suite.to_dict())),
+            train_config={"steps": 0},
+            temperature=temperature,
+            autonomous_threshold=0.8,
+            fallback_threshold=0.6,
+        )
