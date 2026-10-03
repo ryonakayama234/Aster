@@ -13,6 +13,7 @@ from aster.benchmark.suite import build_calculate_and_store_suite
 from aster.evaluator.verifier import TaskEvaluator
 from aster.inference.decide import ModelPolicy
 from aster.model.decision_artifact import load_decision_artifact
+from aster.records.decision import DecisionExample
 from aster.records.transition import JsonValue
 from aster.runtime.context import RuntimeContext
 from aster.runtime.loop import run_loop
@@ -176,7 +177,7 @@ def run_learn_dev_probe(
     )
 
 
-def _teacher_examples(task: dict[str, JsonValue]):
+def _teacher_examples(task: dict[str, JsonValue]) -> list[DecisionExample]:
     trajectory = run_loop(
         policy=RuleBasedPolicy(),
         executor=build_executor(),
