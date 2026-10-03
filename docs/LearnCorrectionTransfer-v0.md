@@ -172,3 +172,10 @@ benchmark runner内部の `test` splitはこのdevelopment-only sibling測定の
 ```
 
 training条件はCLI引数で変更できない。
+
+
+### Model-only calibration semantics
+
+ACT v0は`ModelPolicy`を直接使い、Actionはraw score argmaxで選択する。LEARN development probeはtrace収集のため`SelectivePolicy`を使うが、fallbackなし・threshold 0で常にmodel routeとする。
+
+このためrouting temperatureはidentity `1.0` に固定し、parent Artifactのcalibration temperatureをAction選択やprobe実行可否へ使わない。Artifact calibrationはprovenance diagnosticとしてのみ保存する。これによりACT parentと同じAction-selection semanticsを保つ。
