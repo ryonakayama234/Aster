@@ -59,3 +59,34 @@ Status: implementation complete; CI pending
 - GitHub Actions pytest / Pyright。
 - 実student rollout由来のcorrectionを使うdevelopment wiring probe。
 - Artifact保存・reloadを含むP0/R1/C1実験。
+
+
+## Session 3 — 2026-10-03
+
+Task: P0/R1/C1を同一benchmarkへ通すLEARN-Wiring runnerを追加する。
+
+Status: implementation complete; CI pending
+
+### 実装
+
+- `run_logged_correction_transfer_experiment` を追加。
+- student rolloutはmodel-onlyを要求し、各traceで `route == model` と `executed_action == student_action` を監査。
+- student-visited stateのtrainable Teacher label数をCorrectionのadded-example countとする。
+- R1 ReplayとC1 Correctionを同じparent / train config / optimizer-step count / training-example countで作る。
+- P0 Parent / R1 Replay / C1 Correctionを同じBenchmarkSuiteで測定。
+- parent→replay、parent→correction、replay→correctionの3比較を保存。
+- `equal_flops_claimed=false` を明示し、同step数を同計算量と誇張しない。
+- candidateはpromotionせず `candidate_only`。
+
+### テスト
+
+- fallbackなし、threshold 0のmodel-only policyで三者比較runnerを一周。
+- replay/correctionのadded example数とtraining example数が一致することを検査。
+- 3比較が保存されることを検査。
+- 親model weightsが実験後も不変であることを検査。
+
+### 境界
+
+- このtest fixtureはresearch development probeではない。
+- sibling transfer / model-only sibling episode / Artifact save+reloadは未実装。
+- sealed testや既存devの結果を能力主張に使っていない。
