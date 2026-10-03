@@ -267,7 +267,7 @@ Status: completed; metric interpretation pending
 
 Task: 1-family development probeを解釈し、Sequential Transfer Gateを実装する。
 
-Status: development result interpreted; sequential/reload implementation in CI
+Status: development result interpreted; sequential/reload implementation CI passed; WSL remeasurement pending
 
 ### Development result
 
@@ -317,3 +317,12 @@ two-sided sign test alpha=0.05のpower >=0.8に必要な最小family数は:
 - true win probability 0.75: n=30
 
 これはsample-size planningの目安であり、このdevelopment familyへの統計的推論ではない。
+
+
+### CI gate
+
+- GitHub Actions run #156。
+- Pyright: success。
+- pytest: **133 passed in 49.04s**。
+- Sequential evaluator / P0-R1-C1 Artifact reload / finite-temperature contract / compact CLI summaryを含むheadで成功。
+- 次は同一fixed development probeをWSLで再実行し、追加instrumentationだけを実測する。
