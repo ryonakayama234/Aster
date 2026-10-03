@@ -5,6 +5,8 @@ import json
 from pathlib import Path
 from typing import Sequence
 
+import torch
+
 from aster.agent.policy import Policy
 from aster.agent.selective import SelectivePolicy
 from aster.benchmark.case import BenchmarkSuite
@@ -13,13 +15,17 @@ from aster.benchmark.runner import (
     run_decision_benchmark,
     write_benchmark_artifacts,
 )
+from aster.corpus.pipeline import digest, json_bytes
 from aster.evaluator.verifier import TaskEvaluator
+from aster.model.decision_artifact import load_decision_artifact, save_decision_artifact
 from aster.model.decision_head import DecisionModel
 from aster.records.decision import DecisionExample
 from aster.records.intervention import read_intervention_traces_jsonl
 from aster.records.runlog import RunLog
+from aster.records.transition import JsonValue
 from aster.runtime.context import RuntimeContext
 from aster.runtime.learning import run_logged_intervention_agent
+from aster.service.artifacts import ArtifactCatalog
 from aster.tokenizer.artifact import AsterTokenizer
 from aster.tools.executor import ToolExecutor
 from aster.training.decision import DecisionTrainConfig, evaluate_decisions
@@ -28,8 +34,10 @@ from aster.training.intervention import (
     train_intervention_candidate,
     train_replay_control_candidate,
 )
+from aster.training.sequential import run_logged_model_only_sequential_episode
 
 _SCALAR_METRICS = ("accuracy", "nll", "brier", "ece")
+_DECISION_CANDIDATE_BUILDER_ID = "calculate-and-store-v0"
 
 
 def run_logged_intervention_learning_experiment(
@@ -217,6 +225,8 @@ def run_logged_correction_transfer_experiment(
     correction_model_id: str | None = None,
     max_steps: int = 8,
     provenance: dict[str, object] | None = None,
+    sequential_task: dict[str, JsonValue] | None = None,
+    parent_artifact_id: str | None = None,
 ) -> Path:
     """Run the LEARN-v0 P0/R1/C1 wiring experiment without a promotion verdict."""
     root = Path(root)
@@ -244,6 +254,8 @@ def run_logged_correction_transfer_experiment(
             "max_steps": max_steps,
             "policy_mode": "model_only_required",
             "provenance": provenance,
+            "sequential_task": sequential_task,
+            "parent_artifact_id": parent_artifact_id,
         },
         producer="trainer",
     )
@@ -301,20 +313,6 @@ def run_logged_correction_transfer_experiment(
         if len(replay.losses) != len(correction.losses):
             raise RuntimeError("Replay and correction optimizer-step counts must match")
 
-        repair = {
-            "source": "student_visited_teacher_labels",
-            "examples": added_examples,
-            "parent": evaluate_decisions(
-                parent_model, tokenizer, intervention_examples
-            ),
-            "replay": evaluate_decisions(
-                replay.model, tokenizer, intervention_examples
-            ),
-            "correction": evaluate_decisions(
-                correction.model, tokenizer, intervention_examples
-            ),
-        }
-
         replay_training = {
             "schema_version": "aster-replay-control-training-0",
             "parent_model_id": parent_model_id,
@@ -361,6 +359,121 @@ def run_logged_correction_transfer_experiment(
         write_benchmark_artifacts(run.path / "benchmark-replay", replay_benchmark)
         write_benchmark_artifacts(run.path / "benchmark-correction", correction_benchmark)
 
+        suite_sha256 = digest(json_bytes(benchmark_suite.to_dict()))
+        replay_model, replay_tokenizer, replay_artifact = _persist_candidate_artifact(
+            root,
+            run.path,
+            arm="replay",
+            model=replay.model,
+            tokenizer=tokenizer,
+            model_id=replay_model_id,
+            suite_id=benchmark_suite.suite_id,
+            suite_sha256=suite_sha256,
+            train_config=train_config,
+            temperature=replay_benchmark.temperature,
+        )
+        correction_model, correction_tokenizer, correction_artifact = (
+            _persist_candidate_artifact(
+                root,
+                run.path,
+                arm="correction",
+                model=correction.model,
+                tokenizer=tokenizer,
+                model_id=correction_model_id,
+                suite_id=benchmark_suite.suite_id,
+                suite_sha256=suite_sha256,
+                train_config=train_config,
+                temperature=correction_benchmark.temperature,
+            )
+        )
+        candidate_artifacts = {
+            "parent": {
+                "artifact_id": parent_artifact_id,
+                "reload_verified": parent_artifact_id is not None,
+            },
+            "replay": replay_artifact,
+            "correction": correction_artifact,
+        }
+
+        repair = {
+            "source": "student_visited_teacher_labels",
+            "examples": added_examples,
+            "parent": evaluate_decisions(
+                parent_model, tokenizer, intervention_examples
+            ),
+            "replay": evaluate_decisions(
+                replay_model, replay_tokenizer, intervention_examples
+            ),
+            "correction": evaluate_decisions(
+                correction_model, correction_tokenizer, intervention_examples
+            ),
+        }
+
+        sequential_transfer = None
+        if sequential_task is not None:
+            sequential_arms: dict[str, object] = {}
+            for (
+                arm,
+                arm_model,
+                arm_tokenizer,
+                arm_model_id,
+                arm_artifact_id,
+            ) in (
+                (
+                    "parent",
+                    parent_model,
+                    tokenizer,
+                    parent_model_id,
+                    parent_artifact_id,
+                ),
+                (
+                    "replay",
+                    replay_model,
+                    replay_tokenizer,
+                    replay_model_id,
+                    replay_artifact["artifact_id"],
+                ),
+                (
+                    "correction",
+                    correction_model,
+                    correction_tokenizer,
+                    correction_model_id,
+                    correction_artifact["artifact_id"],
+                ),
+            ):
+                episode_path = run_logged_model_only_sequential_episode(
+                    root,
+                    model=arm_model,
+                    tokenizer=arm_tokenizer,
+                    model_id=arm_model_id,
+                    artifact_id=(
+                        arm_artifact_id
+                        if isinstance(arm_artifact_id, str)
+                        else None
+                    ),
+                    arm=arm,
+                    task=sequential_task,
+                    teacher=teacher,
+                    teacher_id=teacher_id,
+                    executor=executor,
+                    evaluator=evaluator,
+                    max_steps=max_steps,
+                    lineage={
+                        "correction_transfer_run_id": run.id,
+                        "rollout_run_id": rollout_run_id,
+                    },
+                )
+                episode_run = _read_json(episode_path / "run.json")
+                sequential_arms[arm] = {
+                    "run_id": episode_run["run_id"],
+                    "summary": _read_json(episode_path / "sequential.json"),
+                }
+            sequential_transfer = {
+                "scope": "model_only_uncorrected_sibling_episode",
+                "task": dict(sequential_task),
+                "arms": sequential_arms,
+            }
+
         comparisons = {
             "parent_to_replay": compare_benchmark_bundles(
                 parent_benchmark, replay_benchmark
@@ -382,7 +495,9 @@ def run_logged_correction_transfer_experiment(
             "benchmark_suite_id": benchmark_suite.suite_id,
             "policy_mode": "model_only",
             "provenance": provenance,
+            "candidate_artifacts": candidate_artifacts,
             "repair": repair,
+            "sequential_transfer": sequential_transfer,
             "budget": {
                 "base_examples": len(base_examples),
                 "added_examples_per_candidate": added_examples,
@@ -398,6 +513,8 @@ def run_logged_correction_transfer_experiment(
                 "parent_benchmark": "benchmark-parent/benchmark.json",
                 "replay_benchmark": "benchmark-replay/benchmark.json",
                 "correction_benchmark": "benchmark-correction/benchmark.json",
+                "replay_candidate_manifest": "candidate-artifacts/replay/manifest.json",
+                "correction_candidate_manifest": "candidate-artifacts/correction/manifest.json",
             },
             "comparisons": comparisons,
             "promotion": "candidate_only",
@@ -411,6 +528,8 @@ def run_logged_correction_transfer_experiment(
                 "training_examples_per_candidate": len(replay.training_examples),
                 "optimizer_steps_per_candidate": len(replay.losses),
                 "repair": repair,
+                "candidate_artifacts": candidate_artifacts,
+                "sequential_transfer": sequential_transfer,
             },
         )
         run.finish(
@@ -422,6 +541,16 @@ def run_logged_correction_transfer_experiment(
             parent_benchmark="benchmark-parent/benchmark.json",
             replay_benchmark="benchmark-replay/benchmark.json",
             correction_benchmark="benchmark-correction/benchmark.json",
+            replay_artifact_id=replay_artifact["artifact_id"],
+            correction_artifact_id=correction_artifact["artifact_id"],
+            sequential_runs=(
+                None
+                if sequential_transfer is None
+                else {
+                    arm: data["run_id"]
+                    for arm, data in sequential_transfer["arms"].items()
+                }
+            ),
         )
         return run.path
     except BaseException as error:
@@ -431,6 +560,63 @@ def run_logged_correction_transfer_experiment(
             error=str(error),
         )
         raise
+
+
+def _persist_candidate_artifact(
+    root: Path,
+    run_path: Path,
+    *,
+    arm: str,
+    model: DecisionModel,
+    tokenizer: AsterTokenizer,
+    model_id: str,
+    suite_id: str,
+    suite_sha256: str,
+    train_config: DecisionTrainConfig,
+    temperature: float,
+) -> tuple[DecisionModel, AsterTokenizer, dict[str, object]]:
+    """Save, register, reload, and exactly verify one non-promoted candidate."""
+    source = run_path / "candidate-artifacts" / arm
+    manifest = save_decision_artifact(
+        source,
+        model,
+        tokenizer,
+        model_id=model_id,
+        candidate_builder_id=_DECISION_CANDIDATE_BUILDER_ID,
+        suite_id=suite_id,
+        suite_sha256=suite_sha256,
+        train_config=asdict(train_config),
+        temperature=temperature,
+        autonomous_threshold=0.0,
+        fallback_threshold=0.0,
+        initialization=f"correction_transfer_{arm}_v0",
+    )
+    catalog = ArtifactCatalog(root)
+    ref = catalog.register_decision_model(source)
+    registered = catalog.resolve(ref.artifact_id, "decision_model")
+    loaded_model, loaded_tokenizer, loaded_manifest = load_decision_artifact(registered)
+
+    if manifest.get("artifact_id") != ref.artifact_id:
+        raise RuntimeError("Candidate source and registered artifact IDs differ")
+    if loaded_manifest.get("artifact_id") != ref.artifact_id:
+        raise RuntimeError("Reloaded candidate artifact identity mismatch")
+    if loaded_manifest.get("model_id") != model_id:
+        raise RuntimeError("Reloaded candidate model ID mismatch")
+    original_state = model.state_dict()
+    loaded_state = loaded_model.state_dict()
+    if original_state.keys() != loaded_state.keys() or any(
+        not torch.equal(original_state[name].detach().cpu(), loaded_state[name].detach().cpu())
+        for name in original_state
+    ):
+        raise RuntimeError("Reloaded candidate weights differ from trained candidate")
+
+    return loaded_model, loaded_tokenizer, {
+        "artifact_id": ref.artifact_id,
+        "source_manifest": f"candidate-artifacts/{arm}/manifest.json",
+        "registered": True,
+        "reload_verified": True,
+        "temperature": temperature,
+    }
 
 def compare_benchmark_bundles(
     parent: BenchmarkBundle,
