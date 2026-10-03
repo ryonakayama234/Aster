@@ -13,7 +13,7 @@
 - [x] parentをdeep-copyしReplay candidateを学習するhelper。
 - [x] Replay/Correctionでtraining example列長・optimizer step・configが一致するtest。
 - [x] どちらもparent weightsを変更しないtest。
-- [ ] added supervision以外の条件差をsummaryへ保存。
+- [ ] added supervision以外の条件差をsummaryへ保存（example数/step/configは保存済み。token数/time/RSSは未実装）。
 
 ## Gate 2 — Development wiring probe
 
