@@ -64,9 +64,7 @@ def resolve_act_parent_artifact(
         raise ValueError("ACT run ID must be a 32-character lowercase hex ID")
 
     root_path = Path(root).resolve()
-    run_path = root_path / "runs" / act_run_id / "run.json"
-    if run_path.is_symlink() or not run_path.is_file():
-        raise ValueError("ACT run does not exist")
+    run_path = _find_act_run_path(root_path, act_run_id)
 
     try:
         run = json.loads(run_path.read_text(encoding="utf-8"))
@@ -97,6 +95,36 @@ def resolve_act_parent_artifact(
     artifact_path = ArtifactCatalog(root_path).resolve(artifact_id, "decision_model")
     return artifact_id, artifact_path
 
+
+
+def _find_act_run_path(root: Path, act_run_id: str) -> Path:
+    """Find one RunLog record from either a direct run or a Service workbench job."""
+    runs_root = (root / "runs").resolve()
+    candidates = [root / "runs" / act_run_id / "run.json"]
+    workbench = root / "runs" / "workbench"
+    if workbench.is_dir() and not workbench.is_symlink():
+        candidates.extend(workbench.glob(f"*/runs/{act_run_id}/run.json"))
+
+    matches: list[Path] = []
+    for candidate in candidates:
+        if candidate.is_symlink() or not candidate.is_file():
+            continue
+        resolved = candidate.resolve()
+        if not resolved.is_relative_to(runs_root):
+            continue
+        if any(parent.is_symlink() for parent in candidate.parents if parent != root.parent):
+            continue
+        matches.append(resolved)
+
+    unique = sorted(set(matches))
+    if not unique:
+        raise ValueError(
+            "ACT run does not exist under runs/<run_id> or "
+            "runs/workbench/<job_id>/runs/<run_id>"
+        )
+    if len(unique) != 1:
+        raise ValueError("ACT run ID is ambiguous across local run stores")
+    return unique[0]
 
 def build_learn_dev_probe_suite() -> BenchmarkSuite:
     """Build a development-only sibling suite; it never opens the project sealed test."""
