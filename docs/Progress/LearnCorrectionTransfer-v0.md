@@ -90,3 +90,32 @@ Status: implementation complete; CI pending
 - このtest fixtureはresearch development probeではない。
 - sibling transfer / model-only sibling episode / Artifact save+reloadは未実装。
 - sealed testや既存devの結果を能力主張に使っていない。
+
+
+## Session 4 — 2026-10-03
+
+Task: LEARN-Wiring runnerのCI gate。
+
+Status: CI passed
+
+### 初回失敗
+
+- GitHub Actions run #129でPyrightは成功、pytestは1 failure / 124 pass。
+- 新しいmodel-only wiring testで、未学習parentが最初に誤ったTool Actionを選択した。
+- tool failureを含むtrajectoryが次stateの入力へ入り、serialized decision inputが88 tokenへ伸長。
+- test fixtureがbase/benchmark入力だけから `context_length=25` を決めていたため、`88 > 25` で明示的に失敗した。
+- runner側でtruncateせず、failure-historyを含む逐次実行では入力長が伸びるという実際の制約として扱った。
+
+### 修正
+
+- correction-transfer wiring testだけ `context_length >= 256` を確保。
+- runtime / serializer / truncation semanticsは変更していない。
+- context超過時に黙って切らず失敗する既存挙動を維持。
+
+### 最終CI
+
+- GitHub Actions run #130。
+- Pyright: success。
+- pytest: **125 passed in 47.89s**。
+- これでprotocol + matched Replay control + P0/R1/C1同一benchmark配線の自動テストGateは成立。
+- まだ実parent Artifactを使うdevelopment probe、sibling transfer、model-only sibling episodeは未実測。
