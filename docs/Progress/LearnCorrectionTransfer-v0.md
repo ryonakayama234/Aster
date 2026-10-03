@@ -261,3 +261,59 @@ Status: completed; metric interpretation pending
 - model-only sibling episode（Sequential Transfer）とcandidate Artifact save/reloadはまだ未実装。
 - この1-family probeはconfirmatory能力結果へ算入しない。
 - GitHub Actions run #145: Pyright / pytest success。
+
+
+## Session 10 — 2026-10-03
+
+Task: 1-family development probeを解釈し、Sequential Transfer Gateを実装する。
+
+Status: development result interpreted; sequential/reload implementation in CI
+
+### Development result
+
+Run `43d3966e1b0049dc904e2c0330d8abf0`:
+
+- Repair (8 student-visited teacher labels):
+  - Parent accuracy 0.25 / NLL 1.3512
+  - Replay accuracy 0.125 / NLL 1.3750
+  - Correction accuracy 0.625 / NLL 0.6539
+- uncorrected sibling teacher-prefix decisions (4 steps):
+  - Parent accuracy 0.25 / raw NLL 1.3623
+  - Replay accuracy 0.0 / raw NLL 1.3932
+  - Correction accuracy 0.25 / raw NLL 2.6694
+- ParentとCorrectionはいずれもsibling step 0のみ正解。Correctionが新たに正解へ変えたsibling stepは0件。
+- Correction sibling step 2ではtarget logit約 -2.890、best wrong logit約 2.976で、大きな誤答marginを観測。
+
+Development判定:
+- L0 Repair: observed。
+- L1 Local Transfer: not demonstrated。
+- これは1 familyのdevelopment probeであり、H1/H0のconfirmatory判定には使わない。
+
+### 次の設計判断
+
+結果を見てLR/steps/model/tokenizer/serializerを調整しない。
+同一の固定family/seed/training条件のまま、観測層だけ拡張する。
+
+実装:
+- P0/R1/C1をmodel-onlyでuncorrected sibling episodeへ通すSequential evaluator。
+- task success / goal verified / steps / stop reason。
+- shadow teacherとのfirst divergence step / disagreement数。
+- first tool failure / divergence後の残りstep数。
+- R1/C1をDecisionModel Artifactとして保存・ArtifactCatalog登録・reload。
+- reload後weightsの完全一致を検証。
+- P0もregistered parent Artifactから再resolve/reloadして一致検証。
+- Sequential episodeはreload後モデルで独立Runとして保存。
+- dev CLIはRepair / Local / Artifact / Sequentialのcompact summaryを出力。
+
+Artifact contract補修:
+- Decision artifact temperatureはpositiveだけでなくfiniteも必須に変更。
+- NaN / ±Inf / non-positiveを拒否するtestを追加。
+
+### Confirmatory planning (Wolfram, planning heuristic only)
+
+独立familyをBernoulli win/lossとして扱い、tieなし・true family win probability固定という単純化の下で、
+two-sided sign test alpha=0.05のpower >=0.8に必要な最小family数は:
+- true win probability 0.80: n=20
+- true win probability 0.75: n=30
+
+これはsample-size planningの目安であり、このdevelopment familyへの統計的推論ではない。
