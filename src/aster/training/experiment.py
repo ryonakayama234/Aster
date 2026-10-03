@@ -22,7 +22,7 @@ from aster.runtime.context import RuntimeContext
 from aster.runtime.learning import run_logged_intervention_agent
 from aster.tokenizer.artifact import AsterTokenizer
 from aster.tools.executor import ToolExecutor
-from aster.training.decision import DecisionTrainConfig
+from aster.training.decision import DecisionTrainConfig, evaluate_decisions
 from aster.training.intervention import (
     examples_from_interventions,
     train_intervention_candidate,
@@ -216,6 +216,7 @@ def run_logged_correction_transfer_experiment(
     replay_model_id: str | None = None,
     correction_model_id: str | None = None,
     max_steps: int = 8,
+    provenance: dict[str, object] | None = None,
 ) -> Path:
     """Run the LEARN-v0 P0/R1/C1 wiring experiment without a promotion verdict."""
     root = Path(root)
@@ -242,6 +243,7 @@ def run_logged_correction_transfer_experiment(
             "base_examples": len(base_examples),
             "max_steps": max_steps,
             "policy_mode": "model_only_required",
+            "provenance": provenance,
         },
         producer="trainer",
     )
@@ -298,6 +300,20 @@ def run_logged_correction_transfer_experiment(
             raise RuntimeError("Replay and correction training-example counts must match")
         if len(replay.losses) != len(correction.losses):
             raise RuntimeError("Replay and correction optimizer-step counts must match")
+
+        repair = {
+            "source": "student_visited_teacher_labels",
+            "examples": added_examples,
+            "parent": evaluate_decisions(
+                parent_model, tokenizer, intervention_examples
+            ),
+            "replay": evaluate_decisions(
+                replay.model, tokenizer, intervention_examples
+            ),
+            "correction": evaluate_decisions(
+                correction.model, tokenizer, intervention_examples
+            ),
+        }
 
         replay_training = {
             "schema_version": "aster-replay-control-training-0",
@@ -365,6 +381,8 @@ def run_logged_correction_transfer_experiment(
             "rollout_run_id": rollout_run_id,
             "benchmark_suite_id": benchmark_suite.suite_id,
             "policy_mode": "model_only",
+            "provenance": provenance,
+            "repair": repair,
             "budget": {
                 "base_examples": len(base_examples),
                 "added_examples_per_candidate": added_examples,
@@ -392,6 +410,7 @@ def run_logged_correction_transfer_experiment(
                 "added_examples": added_examples,
                 "training_examples_per_candidate": len(replay.training_examples),
                 "optimizer_steps_per_candidate": len(replay.losses),
+                "repair": repair,
             },
         )
         run.finish(
