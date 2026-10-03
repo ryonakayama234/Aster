@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from dataclasses import asdict
 import hashlib
+import math
 from pathlib import Path
 from typing import cast
 
@@ -52,8 +53,8 @@ def save_decision_artifact(
         raise ValueError("Decision artifact identities must not be empty")
     if len(suite_sha256) != 64:
         raise ValueError("suite_sha256 must be a SHA-256 hex digest")
-    if temperature <= 0:
-        raise ValueError("temperature must be positive")
+    if not math.isfinite(temperature) or temperature <= 0:
+        raise ValueError("temperature must be positive and finite")
     if not 0.0 <= fallback_threshold <= autonomous_threshold <= 1.0:
         raise ValueError("routing thresholds must satisfy 0 <= fallback <= autonomous <= 1")
 
