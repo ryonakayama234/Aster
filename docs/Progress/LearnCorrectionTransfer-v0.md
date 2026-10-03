@@ -166,3 +166,17 @@ Status: implementation complete; CI/user WSL run pending
 3. Repair / uncorrected sibling結果を読んで配線を監査。
 4. P0/R1/C1のsibling model-only episode保存を追加。
 5. その後にconfirmatory family manifestを事前固定。
+
+
+## Session 6 — 2026-10-03
+
+Task: fixed real-parent development probe CI gate。
+
+Status: CI passed; user WSL run pending
+
+- GitHub Actions run #138。
+- Pyright: success。
+- pytest: success。
+- ACT Run ID lineage resolver、fixed key-shift family、exact Repair evidence、development probe CLIを含むlatest headで成功。
+- 次のGateはユーザーWSL上で `scripts/run_learn_correction_transfer_dev.py` を1回実測すること。
+- このprobe結果はconfirmatory family勝率・能力主張へ算入しない。
