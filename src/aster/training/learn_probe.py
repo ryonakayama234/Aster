@@ -190,6 +190,8 @@ def run_learn_dev_probe(
         replay_model_id=f"{model_id}+replay-dev-v0",
         correction_model_id=f"{model_id}+correction-dev-v0",
         max_steps=8,
+        sequential_task=SIBLING_TASK,
+        parent_artifact_id=artifact_id,
         provenance={
             "scope": "development_wiring_probe_only",
             "confirmatory_evidence": False,
