@@ -116,7 +116,7 @@ def _find_act_run_path(root: Path, act_run_id: str) -> Path:
             continue
         matches.append(resolved)
 
-    unique = sorted(set(matches))
+    unique = sorted(set(matches), key=str)
     if not unique:
         raise ValueError(
             "ACT run does not exist under runs/<run_id> or "
