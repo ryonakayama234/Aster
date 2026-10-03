@@ -11,6 +11,7 @@ from aster.training.learn_probe import (
     PROBE_ID,
     SIBLING_TASK,
     TRAIN_CONFIG,
+    _artifact_calibration_diagnostic,
     build_learn_dev_probe_suite,
     resolve_act_parent_artifact,
 )
@@ -127,3 +128,19 @@ def test_learn_dev_probe_is_fixed_key_shift_and_not_confirmatory():
     assert {case.leakage_group for case in sibling_cases} == {PROBE_FAMILY_ID}
     assert all(case.example.state.task["store_as"] == "sibling_total" for case in sibling_cases)
     assert suite.cases_for("calibration")
+
+
+def test_model_only_probe_treats_parent_calibration_as_diagnostic_only():
+    assert _artifact_calibration_diagnostic(
+        {"calibration": {"temperature": 0.0}}
+    ) == {"status": "invalid_value", "temperature": 0.0}
+    assert _artifact_calibration_diagnostic(
+        {"calibration": {"temperature": None}}
+    ) == {"status": "invalid_type", "temperature": None}
+    assert _artifact_calibration_diagnostic({}) == {
+        "status": "missing",
+        "temperature": None,
+    }
+    assert _artifact_calibration_diagnostic(
+        {"calibration": {"temperature": 1.25}}
+    ) == {"status": "valid", "temperature": 1.25}
