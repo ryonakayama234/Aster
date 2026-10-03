@@ -31,3 +31,31 @@ Status: protocol fixed; matched-control implementation next
 1. `src/aster/training/intervention.py` にmatched Replay controlを追加。
 2. testsでparent不変・同example列長・同step budgetを固定。
 3. 1 familyのdevelopment wiring probeを固定してP0/R1/C1を一周。
+
+
+## Session 2 — 2026-10-03
+
+Task: matched Replay controlを実装する。
+
+Status: implementation complete; CI pending
+
+### 実装
+
+- `replay_decision_examples(base_examples, count)` を追加。
+- Correctionのtrainable example件数と同数だけbase supervisionをdeterministicに再提示できるようにした。
+- `DecisionReplayUpdate` を追加し、replay-only candidateのtraining examples / before-after metrics / loss列を保持。
+- `train_replay_control_candidate` を追加。parentをdeepcopyし、元modelを変更しない。
+- 同じ `DecisionTrainConfig` とadded-example countなら、Correction armとtraining example列長・optimizer step budgetを一致させられる。
+- equal stepはequal FLOPsと主張しないことをdocstring/specへ残した。
+
+### テスト
+
+- base例とCorrection例の内容が等価な人工条件で、Replay/Correctionのtraining lengthとstep数が一致することを検査。
+- 同じparent / seed / config / model-visible supervisionなら両candidateの全weightが一致することを検査。
+- parent weightsが両arm学習後も不変であることを検査。
+
+### 未確認
+
+- GitHub Actions pytest / Pyright。
+- 実student rollout由来のcorrectionを使うdevelopment wiring probe。
+- Artifact保存・reloadを含むP0/R1/C1実験。
