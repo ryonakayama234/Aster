@@ -214,3 +214,33 @@ NumPy未導入のPyTorch warningも表示されたが、例外原因ではない
 - Service workbench構造を再現する自動テストを追加。
 
 この失敗は能力結果ではなくLEARN-Wiringのlineage bugとして記録する。
+
+
+## Session 8 — 2026-10-03
+
+Task: user WSL second attemptのparent calibration mismatchを修正。
+
+Status: implementation fix complete; CI pending
+
+### 実機で観測した失敗
+
+Service workbench内ACT Runの解決には成功し、registered parent Artifact loadまで進んだ。その後、
+`ValueError: Parent artifact temperature must be positive`
+で学習前に停止。
+
+### 設計確認
+
+- ACT v0 runtime `service_learned_agent.py` は `ModelPolicy` を直接実行する。
+- ACTのAction選択はraw DecisionModel scoreのargmaxであり、Artifact calibration temperatureを使用しない。
+- LEARN development probeはmodel-only保証のため `SelectivePolicy` をwrapperとして使うが、threshold=0 / fallbackなしではrouteは常にmodel。
+- この条件ではtemperatureはrouting confidence表示にしか影響せず、selected Actionには影響しない。
+- したがってArtifact calibrationをprobe実行の前提条件にするのはACTとの意味論を不必要に狭める。
+
+### 修正
+
+- LEARN model-only probeのrouting temperatureをidentity `1.0` に固定。
+- parent Artifact calibrationは実行条件ではなくdiagnostic metadataとして保存する。
+- missing / invalid_type / invalid_value / validを区別。
+- Action selection、parent weights、Tokenizer、candidate builder、training条件は変更しない。
+
+NumPy未導入warningは引き続き今回の例外原因ではない。
