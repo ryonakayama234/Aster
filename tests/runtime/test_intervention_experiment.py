@@ -268,6 +268,7 @@ def test_correction_transfer_experiment_compares_parent_replay_and_correction(tm
         ),
         replay_model_id="decision-learn-replay-test",
         correction_model_id="decision-learn-correction-test",
+        sequential_task=task(),
     )
 
     run = json.loads((run_path / "run.json").read_text(encoding="utf-8"))
@@ -299,6 +300,25 @@ def test_correction_transfer_experiment_compares_parent_replay_and_correction(tm
         replay_training["update"]["training_examples"]
         == correction_training["update"]["training_examples"]
     )
+    assert experiment["candidate_artifacts"]["replay"]["registered"] is True
+    assert experiment["candidate_artifacts"]["replay"]["reload_verified"] is True
+    assert experiment["candidate_artifacts"]["correction"]["registered"] is True
+    assert experiment["candidate_artifacts"]["correction"]["reload_verified"] is True
+    assert experiment["candidate_artifacts"]["parent"]["artifact_id"] is None
+
+    sequential = experiment["sequential_transfer"]
+    assert sequential["scope"] == "model_only_uncorrected_sibling_episode"
+    assert set(sequential["arms"]) == {"parent", "replay", "correction"}
+    for arm, data in sequential["arms"].items():
+        child_run = json.loads(
+            (tmp_path / "runs" / data["run_id"] / "run.json").read_text(encoding="utf-8")
+        )
+        assert child_run["status"] == "completed"
+        assert child_run["kind"] == "learn_sequential_episode"
+        assert data["summary"]["arm"] == arm
+        assert data["summary"]["policy_mode"] == "model_only"
+        assert data["summary"]["weights_unchanged"] is True
+
     assert len(experiment["comparisons"]) == 3
     assert set(experiment["comparisons"]) == {
         "parent_to_replay",
