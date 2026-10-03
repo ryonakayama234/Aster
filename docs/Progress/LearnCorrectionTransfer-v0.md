@@ -126,3 +126,43 @@ Status: CI passed
 - LEARN v0 development probeのparent lineage起点として、実ACT Run IDを `5a8076571dca446fa07190cf4fc62509` に固定。
 - 次のprobeでは `runs/5a8076571dca446fa07190cf4fc62509/run.json` の `inputs.decision_model_artifact_id` を検証し、同じ登録済みDecisionModel Artifactを再利用する。
 - Run IDからArtifact IDを推測・再生成しない。Run evidenceに記録されたlogical IDだけを使う。
+
+
+## Session 5 — 2026-10-03
+
+Task: 実ACT Runから同じparentを再利用するdevelopment probe入口を固定する。
+
+Status: implementation complete; CI/user WSL run pending
+
+### Lineage
+
+- ACT Run IDを `5a8076571dca446fa07190cf4fc62509` と補完。
+- Issue #48 / ACT Progress / LEARN Progressへ記録。
+- probeはACT Runの `inputs.decision_model_artifact_id` だけをparent参照として使う。
+- completed agent / ACT recipe / model-only / fixed ACT taskを検証してからArtifactCatalogでresolveする。
+
+### Fixed development family
+
+- family: `learn-dev-key-shift-family-v0`
+- correction: add(2,3) → `diagnostic_total`
+- uncorrected sibling: add(2,3) → `sibling_total`
+- 数値・operationを固定し、key shiftだけを見る。
+- seed=42、100 steps、LR=0.003、fallbackなし。
+- confirmatory evidenceには算入しない。
+
+### 実装
+
+- `src/aster/training/learn_probe.py`
+- `scripts/run_learn_correction_transfer_dev.py`
+- ACT Run → registered parent Artifactの厳格な逆引き。
+- exact student-visited correction stateについてP0/R1/C1 Repair metricsを保存。
+- sibling benchmarkはproject sealed testを開かず、development-only suiteとして生成。
+- training条件はCLIから変更不可。
+
+### 次
+
+1. CI。
+2. ユーザーWSLで固定CLIを1回実行。
+3. Repair / uncorrected sibling結果を読んで配線を監査。
+4. P0/R1/C1のsibling model-only episode保存を追加。
+5. その後にconfirmatory family manifestを事前固定。
