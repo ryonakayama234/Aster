@@ -217,7 +217,8 @@ def test_correction_transfer_experiment_compares_parent_replay_and_correction(tm
         version="0",
     )
     context_length = max(
-        len(tokenizer.encode(text, add_bos=True, add_eos=True)) for text in texts
+        256,
+        max(len(tokenizer.encode(text, add_bos=True, add_eos=True)) for text in texts),
     )
     model = DecisionModel(
         TinyLM(
