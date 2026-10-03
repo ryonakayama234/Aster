@@ -180,3 +180,37 @@ Status: CI passed; user WSL run pending
 - ACT Run ID lineage resolver、fixed key-shift family、exact Repair evidence、development probe CLIを含むlatest headで成功。
 - 次のGateはユーザーWSL上で `scripts/run_learn_correction_transfer_dev.py` を1回実測すること。
 - このprobe結果はconfirmatory family勝率・能力主張へ算入しない。
+
+
+## Session 7 — 2026-10-03
+
+Task: user WSL development probe first attemptのlineage failureを修正。
+
+Status: resolver fix implemented; CI pending
+
+### 実機で観測した失敗
+
+固定CLIは学習開始前に
+`ValueError: ACT run does not exist`
+で停止した。
+
+NumPy未導入のPyTorch warningも表示されたが、例外原因ではない。
+
+### 原因
+
+- LEARN probe resolverはACT Runを `<repo>/runs/<RUN_ID>/run.json` と仮定していた。
+- ACT v0はAster Service Jobとして実行される。
+- `JobManager` は各Jobを `<repo>/runs/workbench/<JOB_ID>/` に隔離し、recipeへそのJob directoryを `--root` として渡す。
+- したがって実ACT Runは
+  `<repo>/runs/workbench/<JOB_ID>/runs/<RUN_ID>/run.json`
+  に存在する。
+- `--root .` を渡したユーザー操作は正しかった。resolverの保存構造モデルが誤っていた。
+
+### 修正
+
+- direct Run `runs/<RUN_ID>/run.json` とService Run `runs/workbench/*/runs/<RUN_ID>/run.json` の双方を探索。
+- Run store外へのescape/symlinkを受理しない。
+- 同じRUN_IDが複数見つかれば曖昧として停止。
+- Service workbench構造を再現する自動テストを追加。
+
+この失敗は能力結果ではなくLEARN-Wiringのlineage bugとして記録する。
