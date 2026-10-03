@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 import re
 
@@ -158,14 +159,14 @@ def run_learn_dev_probe(
     if manifest.get("suite_id") != PARENT_SUITE_ID:
         raise ValueError("LEARN dev probe requires the calculate-and-store-v0 parent suite")
     model_id = _require_str(manifest, "model_id")
-    temperature = _artifact_temperature(manifest)
+    artifact_calibration = _artifact_calibration_diagnostic(manifest)
 
     primary = ModelPolicy(model, tokenizer, model_id=model_id)
     policy = SelectivePolicy(
         primary,
         fallback=None,
         config=SelectivePolicyConfig(
-            temperature=temperature,
+            temperature=1.0,
             autonomous_threshold=0.0,
             fallback_threshold=0.0,
         ),
@@ -196,6 +197,9 @@ def run_learn_dev_probe(
             "family_id": PROBE_FAMILY_ID,
             "act_run_id": act_run_id,
             "parent_artifact_id": artifact_id,
+            "routing_temperature": 1.0,
+            "routing_temperature_source": "identity_for_model_only_probe",
+            "artifact_calibration": artifact_calibration,
             "correction_task": dict(CORRECTION_TASK),
             "uncorrected_sibling_task": dict(SIBLING_TASK),
             "seed": TRAIN_CONFIG.seed,
@@ -218,14 +222,18 @@ def _teacher_examples(task: dict[str, JsonValue]) -> list[DecisionExample]:
     )
 
 
-def _artifact_temperature(manifest: dict[str, object]) -> float:
+def _artifact_calibration_diagnostic(manifest: dict[str, object]) -> dict[str, object]:
+    """Record parent calibration metadata without making model-only routing depend on it."""
     calibration = manifest.get("calibration")
     if not isinstance(calibration, dict):
-        raise ValueError("Parent artifact calibration metadata is missing")
+        return {"status": "missing", "temperature": None}
     value = calibration.get("temperature")
-    if not isinstance(value, (int, float)) or isinstance(value, bool) or value <= 0:
-        raise ValueError("Parent artifact temperature must be positive")
-    return float(value)
+    if not isinstance(value, (int, float)) or isinstance(value, bool):
+        return {"status": "invalid_type", "temperature": None}
+    temperature = float(value)
+    if not math.isfinite(temperature) or temperature <= 0:
+        return {"status": "invalid_value", "temperature": temperature}
+    return {"status": "valid", "temperature": temperature}
 
 
 def _require_str(data: dict[str, object], key: str) -> str:
