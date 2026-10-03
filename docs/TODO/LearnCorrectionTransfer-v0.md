@@ -5,14 +5,14 @@
 - [x] ACT v0実機確認を記録しIssue #48をclose。
 - [x] Issue #20をCorrection Transfer研究として更新。
 - [x] Spec / TODO / Progressを作成。
-- [ ] AGENTS / READMEへ現在Gateを反映。
+- [x] AGENTS / READMEへ現在Gateを反映。
 
 ## Gate 1 — Matched control
 
-- [ ] base exampleからdeterministic replay追加例を作るhelper。
-- [ ] parentをdeep-copyしReplay candidateを学習するhelper。
-- [ ] Replay/Correctionでtraining example列長・optimizer step・configが一致するtest。
-- [ ] どちらもparent weightsを変更しないtest。
+- [x] base exampleからdeterministic replay追加例を作るhelper。
+- [x] parentをdeep-copyしReplay candidateを学習するhelper。
+- [x] Replay/Correctionでtraining example列長・optimizer step・configが一致するtest。
+- [x] どちらもparent weightsを変更しないtest。
 - [ ] added supervision以外の条件差をsummaryへ保存。
 
 ## Gate 2 — Development wiring probe
