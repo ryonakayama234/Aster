@@ -113,3 +113,62 @@ RL、reward optimization、KLPO、new tokenizer、new serializer、model scaling
 parent artifact / rollout + interventions / replay candidate artifact / correction candidate artifact / training metadata / corrected-state evaluation / sibling evaluation / model-only episode evaluation / comparison summary をlineage付きで残す。
 
 Webはcanonical evidenceを表示するだけで再計算しない。
+
+
+## Development probe v0 — predeclared
+
+Confirmatory familyを設計する前に、既存の実ACT parentを使って1 family × 1 seedの配線確認を行う。この結果は能力結論・family勝率・confirmatory統計へ算入しない。
+
+### Lineage
+
+- ACT Run ID: `5a8076571dca446fa07190cf4fc62509`
+- `runs/<ACT Run ID>/run.json` の `inputs.decision_model_artifact_id` を唯一のparent Artifact参照とする。
+- Run IDからArtifact IDを推測・再生成しない。
+- completed / `agent-decision-model-v0` / model-only / `act-calculate-store-dev-v0` を満たさないRunは拒否する。
+
+### Fixed family
+
+`learn-dev-key-shift-family-v0`
+
+Correction member:
+
+```json
+{"operation":"add","left":2,"right":3,"store_as":"diagnostic_total"}
+```
+
+Uncorrected sibling:
+
+```json
+{"operation":"add","left":2,"right":3,"store_as":"sibling_total"}
+```
+
+数値・operation・tool semanticsを固定し、保存keyだけを変える。Correction rolloutへsiblingは入れない。
+
+### Fixed training budget
+
+- seed: 42
+- optimizer steps: 100
+- learning rate: 0.003
+- train_backbone: true
+- max episode steps: 8
+- Replay/Correction added-example countを一致
+- model-only; fallbackなし
+
+### Metrics
+
+- Repair: student-visited exact correction statesをP0/R1/C1で直接再評価。
+- Local Transfer: uncorrected sibling teacher-prefix decisionを同一suiteで比較。
+- Sequential Transfer: このdevelopment probeの次の実装でsibling model-only episodeをP0/R1/C1別に保存する。
+
+benchmark runner内部の `test` splitはこのdevelopment-only sibling測定の保持場所であり、project sealed testを意味しない。旧sealed testは開かない。
+
+### WSL entry point
+
+```bash
+.venv/bin/python scripts/run_learn_correction_transfer_dev.py \
+  --root . \
+  --act-run-id 5a8076571dca446fa07190cf4fc62509 \
+  --threads 2
+```
+
+training条件はCLI引数で変更できない。
