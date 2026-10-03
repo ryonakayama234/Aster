@@ -19,9 +19,9 @@
 
 - [x] 1つの固定task family / seedを実装前固定。
 - [x] model-only student rolloutからteacher correctionを取得（実ACT parent WSL Run `43d3966e1b0049dc904e2c0330d8abf0`）。
-- [ ] P0/R1/C1を生成・保存・reload。
-- [ ] corrected state / uncorrected sibling / model-only episodeを別評価（corrected/sibling decision評価は実測済み、model-only episodeは未実装）。
-- [ ] このprobeをconfirmatory能力結果に算入しない。
+- [ ] P0/R1/C1を生成・保存・reload（R1/C1 Artifact登録・P0再resolve/reload実装済み、実WSL再測待ち）。
+- [ ] corrected state / uncorrected sibling / model-only episodeを別評価（corrected/sibling decision実測済み、model-only sibling episode実装済み、実WSL再測待ち）。
+- [x] このprobeをconfirmatory能力結果に算入しない。
 
 ## Gate 3 — Confirmatory manifest
 
