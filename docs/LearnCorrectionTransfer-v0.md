@@ -122,7 +122,7 @@ Confirmatory familyを設計する前に、既存の実ACT parentを使って1 f
 ### Lineage
 
 - ACT Run ID: `5a8076571dca446fa07190cf4fc62509`
-- `runs/<ACT Run ID>/run.json` の `inputs.decision_model_artifact_id` を唯一のparent Artifact参照とする。
+- `runs/<ACT Run ID>/run.json` またはService実行時の `runs/workbench/<JOB_ID>/runs/<ACT Run ID>/run.json` を解決し、その `inputs.decision_model_artifact_id` を唯一のparent Artifact参照とする。
 - Run IDからArtifact IDを推測・再生成しない。
 - completed / `agent-decision-model-v0` / model-only / `act-calculate-store-dev-v0` を満たさないRunは拒否する。
 
