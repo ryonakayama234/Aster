@@ -286,6 +286,14 @@ def test_correction_transfer_experiment_compares_parent_replay_and_correction(tm
     assert experiment["policy_mode"] == "model_only"
     assert experiment["promotion"] == "candidate_only"
     assert experiment["budget"]["equal_flops_claimed"] is False
+    assert experiment["repair"]["examples"] == replay_training["added_examples"]
+    assert set(experiment["repair"]) == {
+        "source",
+        "examples",
+        "parent",
+        "replay",
+        "correction",
+    }
     assert replay_training["added_examples"] == correction_training["added_examples"]
     assert (
         replay_training["update"]["training_examples"]
