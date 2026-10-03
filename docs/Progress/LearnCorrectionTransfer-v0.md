@@ -9,7 +9,7 @@ Status: protocol fixed; matched-control implementation next
 ### 完了
 
 - ユーザー報告によりACT v0はWSL2実機確認済みとして扱う。Issue #48へ記録しclose。
-- 実ACT Run ID / bundle IDはrepo正本に未記録のため、値を推測して補わない。
+- 実ACT Run IDは `5a8076571dca446fa07190cf4fc62509` と後から補完。bundle ID等、未記録の追加値は推測して補わない。
 - branch `feat/learn-v0-correction-transfer` をAster mainから作成。
 - Issue #20を **LEARN v0 — Correction Transfer** へ再定義。
 - 中心仮説を「student-visited correctionが、同budget Replayより未訂正siblingへ転移するか」に固定。
@@ -119,3 +119,10 @@ Status: CI passed
 - pytest: **125 passed in 47.89s**。
 - これでprotocol + matched Replay control + P0/R1/C1同一benchmark配線の自動テストGateは成立。
 - まだ実parent Artifactを使うdevelopment probe、sibling transfer、model-only sibling episodeは未実測。
+
+
+## ACT lineage補完 — 2026-10-03
+
+- LEARN v0 development probeのparent lineage起点として、実ACT Run IDを `5a8076571dca446fa07190cf4fc62509` に固定。
+- 次のprobeでは `runs/5a8076571dca446fa07190cf4fc62509/run.json` の `inputs.decision_model_artifact_id` を検証し、同じ登録済みDecisionModel Artifactを再利用する。
+- Run IDからArtifact IDを推測・再生成しない。Run evidenceに記録されたlogical IDだけを使う。
