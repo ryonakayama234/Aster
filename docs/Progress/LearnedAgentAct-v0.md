@@ -107,5 +107,6 @@ Status: complete
 - PR #49はmainへmerge済み。
 - Issue #48へ実機確認済みを追記し、completedとしてclose。
 - ACT-Wiring / ACT-Capabilityは実機確認済みという理解で次Gateへ進む。
-- 実Run ID / bundle ID等の詳細はrepo正本に未記録。値を推測して補わない。
+- 実ACT Run ID: `5a8076571dca446fa07190cf4fc62509`（2026-10-03にユーザーから記録漏れ分を補完）。
+- bundle ID等、未記録の追加値は推測して補わない。
 - 次Gateは Issue #20 **LEARN v0 — Correction Transfer**。
