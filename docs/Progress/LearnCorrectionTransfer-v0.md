@@ -244,3 +244,20 @@ Service workbench内ACT Runの解決には成功し、registered parent Artifact
 - Action selection、parent weights、Tokenizer、candidate builder、training条件は変更しない。
 
 NumPy未導入warningは引き続き今回の例外原因ではない。
+
+
+## Session 9 — 2026-10-03
+
+Task: fixed real-parent LEARN development probe WSL実測。
+
+Status: completed; metric interpretation pending
+
+- ユーザーWSLで固定CLIが最後まで完了。
+- LEARN development probe Run ID: `43d3966e1b0049dc904e2c0330d8abf0`。
+- lineage起点はACT Run `5a8076571dca446fa07190cf4fc62509`。
+- これにより実parent Artifact load → model-only student rollout → teacher correction収集 → matched Replay / Correction training → P0/R1/C1 sibling benchmark → canonical Run保存まで実機で一周した。
+- CLIがRun pathを返して完了したため、LEARN-Wiringの「実parentで一周」は確認済み。
+- Repair / Local Transferの数値解釈はRun artifact内容を読み取るまで保留。
+- model-only sibling episode（Sequential Transfer）とcandidate Artifact save/reloadはまだ未実装。
+- この1-family probeはconfirmatory能力結果へ算入しない。
+- GitHub Actions run #145: Pyright / pytest success。
