@@ -179,3 +179,25 @@ training条件はCLI引数で変更できない。
 ACT v0は`ModelPolicy`を直接使い、Actionはraw score argmaxで選択する。LEARN development probeはtrace収集のため`SelectivePolicy`を使うが、fallbackなし・threshold 0で常にmodel routeとする。
 
 このためrouting temperatureはidentity `1.0` に固定し、parent Artifactのcalibration temperatureをAction選択やprobe実行可否へ使わない。Artifact calibrationはprovenance diagnosticとしてのみ保存する。これによりACT parentと同じAction-selection semanticsを保つ。
+
+
+## Sequential Transfer v0 — predeclared development metrics
+
+teacher-prefix Local Transferを見た後もtraining条件は変更しない。Sequential development probeは同一P0/R1/C1を、未訂正sibling taskへmodel-onlyで実行する。
+
+保存する主項目:
+- task_success / goal_verified
+- episode steps / stop_reason
+- shadow teacher agreement / disagreement
+- first_teacher_divergence_step
+- steps_after_first_teacher_divergence
+- first_tool_failure_step
+- final memory
+- DecisionTrace / Transition alignment
+- evaluation前後のweights unchanged
+
+Teacherはshadow label専用で、Action executionへ介入しない。
+
+R1/C1は非promotion candidateとしてDecisionModel Artifactを保存し、ArtifactCatalogへimmutable登録した後にreloadする。reload weight一致を確認し、そのreload後model/tokenizerでSequential episodeを実行する。P0も既存registered parent Artifactを再resolve/reloadして同じ検証を行う。
+
+この追加観測はdevelopment probeのinstrumentation拡張であり、既に見たLocal Transfer結果に合わせたlearning hyperparameter tuningではない。
