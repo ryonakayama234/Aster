@@ -386,11 +386,27 @@ def run_logged_correction_transfer_experiment(
                 temperature=correction_benchmark.temperature,
             )
         )
+        parent_eval_model = parent_model
+        parent_eval_tokenizer = tokenizer
+        parent_artifact: dict[str, object] = {
+            "artifact_id": parent_artifact_id,
+            "registered": parent_artifact_id is not None,
+            "reload_verified": False,
+        }
+        if parent_artifact_id is not None:
+            (
+                parent_eval_model,
+                parent_eval_tokenizer,
+                parent_artifact,
+            ) = _reload_parent_artifact(
+                root,
+                artifact_id=parent_artifact_id,
+                model=parent_model,
+                model_id=parent_model_id,
+            )
+
         candidate_artifacts = {
-            "parent": {
-                "artifact_id": parent_artifact_id,
-                "reload_verified": parent_artifact_id is not None,
-            },
+            "parent": parent_artifact,
             "replay": replay_artifact,
             "correction": correction_artifact,
         }
@@ -399,7 +415,7 @@ def run_logged_correction_transfer_experiment(
             "source": "student_visited_teacher_labels",
             "examples": added_examples,
             "parent": evaluate_decisions(
-                parent_model, tokenizer, intervention_examples
+                parent_eval_model, parent_eval_tokenizer, intervention_examples
             ),
             "replay": evaluate_decisions(
                 replay_model, replay_tokenizer, intervention_examples
@@ -422,8 +438,8 @@ def run_logged_correction_transfer_experiment(
             ) in (
                 (
                     "parent",
-                    parent_model,
-                    tokenizer,
+                    parent_eval_model,
+                    parent_eval_tokenizer,
                     parent_model_id,
                     parent_artifact_id,
                 ),
@@ -557,6 +573,35 @@ def run_logged_correction_transfer_experiment(
         )
         raise
 
+
+
+def _reload_parent_artifact(
+    root: Path,
+    *,
+    artifact_id: str,
+    model: DecisionModel,
+    model_id: str,
+) -> tuple[DecisionModel, AsterTokenizer, dict[str, object]]:
+    """Resolve and exactly verify the already-registered P0 parent artifact."""
+    catalog = ArtifactCatalog(root)
+    registered = catalog.resolve(artifact_id, "decision_model")
+    loaded_model, loaded_tokenizer, loaded_manifest = load_decision_artifact(registered)
+    if loaded_manifest.get("artifact_id") != artifact_id:
+        raise RuntimeError("Reloaded parent artifact identity mismatch")
+    if loaded_manifest.get("model_id") != model_id:
+        raise RuntimeError("Reloaded parent model ID mismatch")
+    original_state = model.state_dict()
+    loaded_state = loaded_model.state_dict()
+    if original_state.keys() != loaded_state.keys() or any(
+        not torch.equal(original_state[name].detach().cpu(), loaded_state[name].detach().cpu())
+        for name in original_state
+    ):
+        raise RuntimeError("Reloaded parent weights differ from experiment parent")
+    return loaded_model, loaded_tokenizer, {
+        "artifact_id": artifact_id,
+        "registered": True,
+        "reload_verified": True,
+    }
 
 def _persist_candidate_artifact(
     root: Path,
