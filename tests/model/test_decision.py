@@ -1,5 +1,7 @@
 """AsterDecision-v0 wiring tests: records, learning, and Agent Kernel integration."""
 
+from copy import deepcopy
+
 import pytest
 
 torch = pytest.importorskip("torch")
@@ -20,9 +22,11 @@ from aster.tools.executor import ToolExecutor
 from aster.tools.registry import ToolRegistry
 from aster.training.decision import (
     DecisionTrainConfig,
+    evaluate_decision_diagnostics,
     evaluate_decisions,
     examples_from_teacher_trajectory,
     train_decision,
+    train_decision_with_checkpoints,
 )
 
 
@@ -140,6 +144,58 @@ def test_candidate_scoring_is_equivariant_to_candidate_order():
             model, tokenizer, example.state, example.trajectory, reversed_candidates
         )
     torch.testing.assert_close(forward, torch.flip(backward, dims=(0,)))
+
+
+def test_checkpoint_training_matches_legacy_training_exactly():
+    torch.manual_seed(19)
+    _, _, examples = build_teacher_examples()
+    parent, tokenizer = build_decision_model(examples)
+    legacy = deepcopy(parent)
+    checkpointed = deepcopy(parent)
+    config = DecisionTrainConfig(
+        steps=25,
+        learning_rate=3e-3,
+        train_backbone=True,
+        seed=19,
+    )
+
+    legacy_losses = train_decision(legacy, tokenizer, examples, config)
+    checkpoint_losses, snapshots = train_decision_with_checkpoints(
+        checkpointed,
+        tokenizer,
+        examples,
+        checkpoints=(0, 10, 25),
+        config=config,
+    )
+
+    assert checkpoint_losses == legacy_losses
+    assert set(snapshots) == {0, 10, 25}
+    for name, expected in parent.state_dict().items():
+        torch.testing.assert_close(
+            snapshots[0].state_dict()[name], expected, rtol=0, atol=0
+        )
+    for name, expected in legacy.state_dict().items():
+        torch.testing.assert_close(
+            checkpointed.state_dict()[name], expected, rtol=0, atol=0
+        )
+        torch.testing.assert_close(
+            snapshots[25].state_dict()[name], expected, rtol=0, atol=0
+        )
+
+
+def test_decision_diagnostics_include_correct_vs_best_wrong_margin():
+    torch.manual_seed(23)
+    _, _, examples = build_teacher_examples()
+    model, tokenizer = build_decision_model(examples)
+
+    metrics = evaluate_decision_diagnostics(model, tokenizer, examples)
+
+    assert metrics["examples"] == len(examples)
+    assert 0.0 <= metrics["accuracy"] <= 1.0
+    assert metrics["nll"] >= 0.0
+    assert isinstance(metrics["margin_mean"], float)
+    assert isinstance(metrics["margin_min"], float)
+    assert metrics["margin_min"] <= metrics["margin_mean"]
 
 
 def test_decision_training_overfits_teacher_and_runs_same_kernel():
