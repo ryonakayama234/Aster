@@ -300,6 +300,15 @@ def test_correction_transfer_experiment_compares_parent_replay_and_correction(tm
         replay_training["update"]["training_examples"]
         == correction_training["update"]["training_examples"]
     )
+    measured = experiment["budget"]["measured_resources"]
+    assert measured["replay"] == replay_training["update"]["resources"]
+    assert measured["correction"] == correction_training["update"]["resources"]
+    for resources in measured.values():
+        assert resources["optimizer_steps"] == 24
+        assert resources["encoded_tokens_presented"] > 0
+        assert resources["padded_token_positions"] >= resources["encoded_tokens_presented"]
+        assert resources["candidate_sequences_presented"] > 0
+        assert resources["wall_seconds"] >= 0.0
     assert experiment["candidate_artifacts"]["replay"]["registered"] is True
     assert experiment["candidate_artifacts"]["replay"]["reload_verified"] is True
     assert experiment["candidate_artifacts"]["correction"]["registered"] is True
