@@ -290,6 +290,17 @@ def test_replay_control_matches_correction_budget_and_preserves_parent():
     assert replay.replay_examples == replay_decision_examples(
         base_examples, len(correction.intervention_examples)
     )
+    for update in (replay, correction):
+        resources = update.resources
+        assert resources["optimizer_steps"] == config.steps
+        assert resources["encoded_tokens_presented"] > 0
+        assert resources["padded_token_positions"] >= resources["encoded_tokens_presented"]
+        assert resources["candidate_sequences_presented"] > 0
+        assert resources["wall_seconds"] >= 0.0
+        assert (
+            resources["process_max_rss_after_kib"]
+            >= resources["process_max_rss_before_kib"]
+        )
     for name, tensor in model.state_dict().items():
         torch.testing.assert_close(tensor, parent_state[name])
         torch.testing.assert_close(replay.model.state_dict()[name], correction.model.state_dict()[name])
