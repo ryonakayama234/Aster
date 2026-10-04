@@ -469,3 +469,53 @@ Wolfram planning:
 2. review threadを実装根拠付きでclose。
 3. PR #51をGate 3完了状態へ更新。
 4. Gate 4 confirmatory measurement runnerを、このfrozen manifestを唯一の入力として実装・実行する。
+
+
+## Session 14 — 2026-10-04
+
+Task: Gate 4 confirmatory measurement runnerを、凍結済みprotocolを変えずに実装。
+
+Status: implementation in PR #52; confirmatory measurement has not started
+
+### Gate transition
+
+PR #51をsquash mergeし、Gate 3の基準commitを `85315684cd24798efd7860e571bec4da873ab7d6` とした。
+Gate 4は別branch `feat/learn-v0-confirmatory-gate4` / PR #52で実装する。
+この分離により、Gate 3 manifestとGate 4 execution codeを履歴上も区別する。
+
+### Measurement runner
+
+実装:
+- frozen manifestの30 family × seeds 42/43/44をmanifest順に実行。
+- 1 unit = 1 family × 1 seed。seedを独立familyとして数えない。
+- 各unitは既存 `run_logged_correction_transfer_experiment` を使い、Repair / sibling benchmark / model-only Sequential / resource evidenceをcanonical Runへ保存。
+- siblingはtrainingへ入れない。benchmark suiteは既存calibration + frozen sibling testだけ。
+- parent ArtifactはACT Run logical IDから解決し、suite ID / suite SHA-256をcurrent base supervisionと再照合。
+- completed unitはresume可能。
+- failed/interruptedでprimary endpoint未出力のattemptだけretry可能。
+- primary endpoint出力済みfailure、running duplicate、completed duplicateは停止。
+- clean Git working treeを要求し、全completed unitの `measurement_git_sha` が同一であることを強制。最初のendpoint測定後にcode revisionが変わった場合、protocol v0を継続しない。
+- partial campaignではprogress件数とRun IDだけを保存し、family effect / p-value / verdictを出さない。全90 unit完成後だけaggregationする。
+
+### Confirmatory analysis
+
+primary:
+- unit accuracy delta = C1 sibling accuracy - R1 sibling accuracy。
+- fixed 3 seedをfamily内平均。
+- family mean delta > 0 = win、< 0 = loss、= 0 = tie。
+- exact two-sided sign testはnon-tie familyだけ。
+- alpha 0.05、minimum non-tied 20、Supported / Not supported / Inconclusiveはfrozen manifest規則に従う。
+
+accuracy tie判定はbenchmark predictionのcorrect count / examplesから `Fraction` で行い、浮動小数の丸めでwin/tieを変えない。
+
+Wolfram cross-check:
+- 21 wins / 9 losses: p = 0.04277394525706768
+- 20 / 0: p = 1.9073486328125e-6
+- 15 / 15: p = 1.0
+
+上記をregression testへ固定した。
+
+### Measurement boundary
+
+このSessionではconfirmatory endpointを1件も測定していない。
+PR #52のCI/review完了とmain merge後、ユーザーWSLでmerge commitをpullし、その同一clean commitからGate 4 measurementを開始する。
