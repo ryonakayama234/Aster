@@ -114,7 +114,7 @@ closeoutは [report](reports/learn-correction-transfer-v0.md)、作業履歴は
 - **Trial**: 小さく速く、mechanismやfailure modeを削る。既定は最大6 family程度 × 3 seed程度。途中結果を見てよいがconfirmatory claimには使わない。
 - **Batch**: 大規模・凍結。manifest / code revision / endpoint / retry規則を固定し、resume可能なunitへ分けて実行する。
 
-DIAG v0 Trial 0は実機instrumentation bugでpartialとなり、旧SHAのunitを新SHAへ混ぜないためsupersedeした。現在は Trial 1（`diag-correction-interference-trial-1`）を6 family × 1 deterministic trajectory = 6 training unitsで最初から回し、5 checkpointずつ30 repeated observationsを得る。checkpointは独立sampleではない。training-unit数はLEARN v0 Batchの90 unitの1/15だが、snapshot/evaluation overheadを含む実wall timeが1/15になるとは主張しない。
+DIAG v0 Trial 0は実機instrumentation bugでpartialとなり、Trial 1（`diag-correction-interference-trial-1`）へsupersedeした。Trial 1は6 family × 1 deterministic trajectory = 6 training units / 30 repeated checkpoint observationsを完了。結果は **local interferenceを一部familyで明確に観測、operation-specific explanationは未確立、broad forgettingは未観測**。closeoutは [report](reports/diag-correction-interference-v0.md) を参照。次はshared backbone updateがinterferenceの原因かを `train_backbone=false` controlで切り分ける小さいcausal Trialを優先する。
 
 RL / KLPO / new Tokenizer / new serializer / model scaling / sealed testは、DIAGで原因仮説が絞れるまで混ぜない。
 Aster Service / aster-webは任意shellやrepository-local pathを公開せず、Job / Run / Artifact / Research evidenceの出典を分離する方針を維持する。
