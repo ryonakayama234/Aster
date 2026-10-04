@@ -25,6 +25,7 @@ from aster.training.decision import DecisionTrainConfig, examples_from_teacher_t
 from aster.training.experiment import run_logged_correction_transfer_experiment
 from aster.training.learn_confirmatory import (
     DEFAULT_MANIFEST_PATH,
+    EXPECTED_MANIFEST_SHA256,
     confirmatory_manifest_sha256,
     load_confirmatory_manifest,
     validate_confirmatory_candidate_coverage,
@@ -76,6 +77,8 @@ def run_confirmatory_unit(
             "Git revision changed during confirmatory measurement; protocol v0 cannot continue"
         )
     manifest_sha256 = confirmatory_manifest_sha256(manifest)
+    if manifest_sha256 != EXPECTED_MANIFEST_SHA256:
+        raise ValueError("Frozen confirmatory manifest digest mismatch")
     family = _family_by_id(manifest, family_id)
     training = _require_dict(manifest, "training")
     seeds = training.get("seeds")
