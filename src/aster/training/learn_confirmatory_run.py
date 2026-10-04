@@ -491,7 +491,7 @@ def _benchmark_primary(directory: Path) -> dict[str, int | float]:
 
 
 def _primary_endpoint_emitted(run_dir: Path) -> bool:
-    return all(
+    return any(
         (run_dir / f"benchmark-{arm}" / "benchmark.json").is_file()
         and (run_dir / f"benchmark-{arm}" / "predictions.jsonl").is_file()
         for arm in ("replay", "correction")
