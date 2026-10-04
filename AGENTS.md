@@ -76,3 +76,15 @@ Asterは、自作TinyLMを通してAI・Python・数学・コンピューター�
 - 良いseedだけを後から追加しない。既存devを独立holdoutへ名称変更せず、sealed testを開かない。
 - parentを上書きせずcandidate artifactとして保存し、自動promotionしない。
 - LEARN v0中にRL、reward optimization、new Tokenizer、new serializer、model scalingを同時導入しない。
+
+
+## LEARN v0 Confirmatory freeze（2026-10-04）
+
+- Confirmatory v0の正本は `docs/experiments/learn-correction-transfer-confirmatory-v0.json`。
+- canonical manifest SHA-256は `72fa77acf48403d5a45f927f1122d6fb5753b1118d9f25322e1d6700f2cb1563`。最初のconfirmatory endpoint測定後に内容を変える場合、同じv0 claimを継続せずprotocol versionを上げる。
+- familyは30件を明示列挙。結果を見てfamily/seedを追加・差し替えしない。seed/trajectory stepを独立family数へ加算しない。
+- primary endpointはL1 uncorrected sibling teacher-prefix accuracyのC1-R1 family差のみ。L0 RepairとL2 sequential指標をprimaryへ昇格させない。
+- sibling memberをtrainingへ入れない。development familyをconfirmatory evidenceへ混ぜない。project sealed testを開かない。
+- parent ArtifactはACT Runのlogical IDから解決し、suite IDだけでなくsuite SHA-256もcurrent base supervisionと一致させる。
+- R1/C1ではexample/stepだけでなくtoken presentations、padding込みtoken positions、wall time、process max RSSも保存する。equal stepをequal FLOPsと呼ばない。
+- candidate coverage failure、infrastructure failure、behavioral failureを区別し、missing familyを新familyで補充しない。
