@@ -36,12 +36,26 @@
 
 ## Gate 4 — Measurement
 
+### Gate 4a — Measurement runner
+
+- [x] frozen manifestを唯一のprotocol inputとして90 unit（30 family × 3 seed）をmanifest順に実行するrunner。
+- [x] 1 unit = 1 family × 1 seed。seedを独立familyとして数えない。
+- [x] completed unitのresume、endpoint未出力failureだけretry、endpoint出力済みfailure/running duplicateを停止。
+- [x] clean Git working treeと全unit同一measurement Git SHAを要求。
+- [x] partial campaignでは件数/run IDだけを保存し、family effect / p-value / verdictを出さない。
+- [x] exact two-sided sign testを整数演算で実装し、Wolfram reference値でregression test。
+- [ ] PR #52 CI / review完了後にmainへmerge。
+- [ ] merge後の同一commitをWSLへpullし、preflightを再実行。
+
+### Gate 4b — Frozen measurement
+
 - [ ] Repair。
 - [ ] Local Transfer。
 - [ ] Sequential Transfer。
 - [ ] first error / failure propagation。
 - [ ] token count / wall time / RSS。
 - [ ] family単位のpaired P0/R1/C1 comparison。
+- [ ] 全90 unit完成後だけprimary family effect / exact sign test / verdictを生成。
 
 ## Gate 5 — Record
 
