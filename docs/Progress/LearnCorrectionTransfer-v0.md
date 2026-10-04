@@ -332,7 +332,7 @@ two-sided sign test alpha=0.05のpower >=0.8に必要な最小family数は:
 
 Task: Sequential Transfer development evidenceを実機で取得。
 
-Status: real WSL evidence collected; trajectory-level diagnosis pending
+Status: real WSL evidence collected; trajectory-level diagnosis complete; Gate 2 complete
 
 LEARN Run: `720c9e43a8a248a48829fc6b789ba75f`
 
@@ -353,10 +353,58 @@ Sequential model-only sibling:
 - 3 armともfirst_tool_failure=null。
 
 Interpretation boundary:
-- predeclared primary terminal endpoint `task_success` は3 armともfalse。したがってL2 Sequential Transfer passとは扱わない。
+- strict terminal success `task_success` は3 armともfalse。`goal_verified` と同一視せず、terminal successは未実証とする。
 - C1だけがgoal_verified=trueに到達したため、Parent/Replayにはないsequential goal-reaching signalは観測。
-- ただしgoal verification後にsuccessful terminal stopへ到達できずmax_steps終了。成功条件を結果観測後に緩めない。
-- 次は既存Runのtrajectory/action列をread-onlyに監査し、goal到達stepとその後のaction driftを特定する。再学習・hyperparameter変更は行わない。
+- read-only trajectory監査で、C1のfirst_goal_verified_stepは最終許容step 7だった。したがってgoal verification後にstopを誤った証拠はなく、次のstop decisionを選ぶ機会自体がなかった。
+- 8-step horizonは結果観測後に延長しない。9-step診断を実施する場合はpost-hoc development diagnosticとして別記録にする。
+- 既存Specはtask_success / goal_verifiedの両方を保存対象にしていたがprimary/secondary序列までは明示していなかった。Confirmatory manifestでendpoint hierarchyを事前固定する。
 
 Read-only summarizer:
 `scripts/summarize_learn_sequential_run.py --root . --run-id 720c9e43a8a248a48829fc6b789ba75f`
+
+
+## Session 12 — 2026-10-04
+
+Task: PR #51最終整理とGate 2 closeout。
+
+Status: **Gate 2 COMPLETE**
+
+### Trajectory diagnosis
+
+Read-only summary of Run `720c9e43a8a248a48829fc6b789ba75f`:
+
+- P0 Parent: calculator → calculator → memory.put → memory.put → calculator → stop。最終memoryは `sibling_total=5` だがmemory.get verificationへ到達せず、goal_verified=false。
+- R1 Replay: step 0でstop。goal_verified=false。
+- C1 Correction: calculatorをstep 0–4で反復 → step 5 memory.put(`sibling_total=5`) → step 6 calculator → step 7 memory.get(`sibling_total`)。この最終stepで初めてgoal_verified=true。
+- C1にはgoal verification後のactionは存在しないため、termination decision failureとは判定しない。
+- 3 armともtool execution failureは0。
+
+### Gate 2 conclusion
+
+Development wiringとして必要なlineage / matched control / save+register+reload / Repair / Local / model-only Sequential / trajectory diagnosisが実ACT parentで一周した。
+
+Development-only verdict:
+- **L0 Repair: observed.**
+- **L1 Local Transfer: not demonstrated.**
+- **L2 strict terminal task success within 8-step horizon: not demonstrated.**
+- **L2 sequential goal-reaching signal: observed for C1 only.**
+- 1 family × 1 seedなのでconfirmatory capability claimには算入しない。
+- 結果を受けたLR / steps / model / tokenizer / serializer調整は行わない。
+- 8-step horizonをpost hocに延長して元結果を書き換えない。
+
+Matched-controlのtoken count / wall time / RSSは能力Gate 2の成立条件とはせず、Gate 4 resource auditで測定する。equal optimizer stepsをequal FLOPsとは主張しない。
+
+### Validation
+
+- GitHub Actions run #159: Pyright success。
+- pytest: **133 passed in 25.07s**。
+- unresolved PR review threads: 0。
+
+### Next gate
+
+Gate 3 — Confirmatory manifest。実測前にfamily/leakage group、correction/sibling生成規則、seed集合、episode horizon、endpoint hierarchy、tie/win/loss規則を固定する。
+
+Wolfram planning heuristic（独立family、tieなし、two-sided sign test alpha=0.05）を再確認:
+- true family win probability 0.80を仮定しpower >= 0.8: 最小20 families。
+- true family win probability 0.75を仮定しpower >= 0.8: 最小30 families。
+これはsample-size planningのみで、development Runへの統計的推論ではない。
