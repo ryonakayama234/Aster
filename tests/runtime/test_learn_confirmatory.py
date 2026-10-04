@@ -10,6 +10,7 @@ from aster.training.learn_confirmatory import (
     EXPECTED_MANIFEST_SHA256,
     confirmatory_manifest_sha256,
     load_confirmatory_manifest,
+    validate_confirmatory_candidate_coverage,
     validate_confirmatory_manifest,
 )
 
@@ -44,6 +45,17 @@ def test_committed_confirmatory_manifest_is_frozen_and_valid():
     assert isinstance(primary, dict)
     assert primary["level"] == "L1_local_transfer"
     assert primary["metric"] == "uncorrected_sibling_teacher_prefix_accuracy"
+
+
+def test_frozen_confirmatory_families_have_complete_candidate_coverage():
+    manifest = load_confirmatory_manifest(_ROOT / DEFAULT_MANIFEST_PATH)
+
+    coverage = validate_confirmatory_candidate_coverage(manifest)
+
+    assert coverage == {
+        "tasks_checked": 60,
+        "decisions_checked": 240,
+    }
 
 
 def test_confirmatory_validator_rejects_post_freeze_endpoint_or_training_drift():
