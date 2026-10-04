@@ -107,14 +107,14 @@ closeoutは [report](reports/learn-correction-transfer-v0.md)、作業履歴は
 [TODO](docs/TODO/LearnCorrectionTransfer-v0.md) / [Progress](docs/Progress/LearnCorrectionTransfer-v0.md) を参照する。
 
 次の研究Gateは **DIAG v0 — Correction Interference Curve**。
-学習step 0/10/25/50/100でRepair / sibling transfer / base retention / parameter driftを追い、overfit・local interference・operation-specific representation・optimizer instability・broad forgettingを切り分ける。
+学習step 0/10/25/50/100でRepair / sibling transfer / base retention / parameter driftを追い、overfit・local interference・operation-specific representation・broad forgettingを切り分ける。現行trainingは決定論的なのでseed反復を独立trajectoryとして数えず、optimizer instabilityは必要なら別Trialで扱う。
 
 今後の実験は [Experiment Cycle v0](docs/ExperimentCycle-v0.md) に従い、**Trial** と **Batch** を区別する。
 
 - **Trial**: 小さく速く、mechanismやfailure modeを削る。既定は最大6 family程度 × 3 seed程度。途中結果を見てよいがconfirmatory claimには使わない。
 - **Batch**: 大規模・凍結。manifest / code revision / endpoint / retry規則を固定し、resume可能なunitへ分けて実行する。
 
-DIAG v0 Trial 0は6 family × 3 seed = 18 training unitsを既定とし、LEARN v0 Batchの90 unitより学習本体を約5倍軽くする一方、複数checkpointからmechanism evidenceを得る。
+DIAG v0 Trial 0は6 family × 1 deterministic trajectory = 6 training unitsとし、5 checkpointずつ30 repeated observationsを得る。checkpointは独立sampleではない。training-unit数はLEARN v0 Batchの90 unitの1/15だが、snapshot/evaluation overheadを含む実wall timeが1/15になるとは主張しない。
 
 RL / KLPO / new Tokenizer / new serializer / model scaling / sealed testは、DIAGで原因仮説が絞れるまで混ぜない。
 Aster Service / aster-webは任意shellやrepository-local pathを公開せず、Job / Run / Artifact / Research evidenceの出典を分離する方針を維持する。
