@@ -64,3 +64,15 @@ Asterは、自作TinyLMを通してAI・Python・数学・コンピューター�
 - DecisionTraceはモデル側の候補/score/選択、Transitionは実際のAction/Observation/Stateを正本とし、model-onlyではselected Actionとexecuted Actionの一致を監査する。
 - ACT-Wiring PASSとACT-Capability PASSを分ける。モデルがtaskに失敗しても配線が正しければWiringはPASSになり得る。
 - ACT中にweightsを更新せず、sealed testを開かない。
+
+
+## LEARN v0 — Correction Transfer（Issue #20, 2026-10-03）
+
+- 正本は `docs/LearnCorrectionTransfer-v0.md`、作業順は `docs/TODO/LearnCorrectionTransfer-v0.md`、進捗は `docs/Progress/LearnCorrectionTransfer-v0.md`。
+- 同一parentから P0 Parent / R1 Replay / C1 Correction を分岐し、Correction固有効果と単なる追加update効果を分離する。
+- R1/C1はparent、Tokenizer、serializer、candidate builder、DecisionTrainConfig、seed、optimizer step数、training example列長を可能な範囲で一致させる。equal stepをequal computeと呼ばず、token数・時間・RSSも記録する。
+- corrected stateの改善だけをtransfer成功と扱わない。Repair / uncorrected sibling transfer / model-only sequential transferを分離する。
+- seedや同一trajectory内decision stepを独立task数に数えない。task/generator familyを基本単位とし、confirmatory manifestを結果を見る前に固定する。
+- 良いseedだけを後から追加しない。既存devを独立holdoutへ名称変更せず、sealed testを開かない。
+- parentを上書きせずcandidate artifactとして保存し、自動promotionしない。
+- LEARN v0中にRL、reward optimization、new Tokenizer、new serializer、model scalingを同時導入しない。
