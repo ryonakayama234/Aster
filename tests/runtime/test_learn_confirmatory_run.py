@@ -92,7 +92,6 @@ def test_failed_attempt_after_one_primary_arm_blocks_retry(tmp_path):
     benchmark = run_dir / "benchmark-replay"
     benchmark.mkdir()
     (benchmark / "benchmark.json").write_text("{}\n", encoding="utf-8")
-    (benchmark / "predictions.jsonl").write_text("{}\n", encoding="utf-8")
 
     with pytest.raises(RuntimeError, match="already emitted primary endpoint"):
         discover_completed_confirmatory_units(tmp_path, manifest)
