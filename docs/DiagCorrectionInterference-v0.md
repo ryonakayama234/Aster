@@ -158,3 +158,26 @@ Trial 1は6 training unitsで停止する。
 Trialでmechanism signatureが絞れた後、新しい独立familyを使ってprimary endpointを事前固定できる場合だけBatch manifestを作る。
 
 Trial 1で選んだ6 familyは、そのBatchの未見confirmatory evidenceには使わない。
+
+
+## Trial 1 result — COMPLETE (2026-10-04)
+
+- source Git SHA: `20da70b859e02c16d2a017239c039b7f2a2e6133`
+- local campaign Run ID: `0b55d23115f54fb797ca1898ca07751a`
+- 6/6 independent deterministic trajectories complete
+- 30 repeated checkpoint observations
+- confirmatory verdict: none
+- closeout report: `reports/diag-correction-interference-v0.md`
+
+Diagnostic classification:
+
+- **A — local interference: observed, heterogeneous**
+  - strongest in family 03 (add loss exemplar) and family 02 (subtract loss exemplar)
+  - not universal across win/tie exemplars
+- **B — operation-specific interference: not established**
+- **C — broad forgetting: not observed**
+- **D — optimizer instability: not evaluated**
+
+Secondary clue: Correction base NLL improves less than matched Replay in all 6 selected families, despite absolute base retention improving in 5/6. This is treated as a relative optimization/retention cost, not catastrophic forgetting.
+
+Next causal Trial should test whether the loss-exemplar interference survives `train_backbone=false`.
