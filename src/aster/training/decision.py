@@ -137,8 +137,13 @@ def evaluate_decision_diagnostics(
     model: DecisionModel,
     tokenizer: AsterTokenizer,
     examples: Sequence[DecisionExample],
-) -> dict[str, float | int]:
-    """Evaluate accuracy/NLL plus target-vs-best-wrong score margin."""
+) -> dict[str, float | int | None]:
+    """Evaluate accuracy/NLL plus target-vs-best-wrong score margin.
+
+    DecisionExample permits a single candidate. Such states remain valid for
+    accuracy/NLL but have no "best wrong" candidate, so their margin is
+    intentionally undefined rather than fabricated.
+    """
     if not examples:
         raise ValueError("At least one decision example is required")
 
@@ -147,6 +152,7 @@ def evaluate_decision_diagnostics(
     total_loss = 0.0
     correct = 0
     margins: list[float] = []
+    singleton_candidate_examples = 0
     with torch.no_grad():
         for example in examples:
             scores = score_candidates(
@@ -156,13 +162,15 @@ def evaluate_decision_diagnostics(
                 example.trajectory,
                 example.candidates,
             )
-            if scores.numel() < 2:
-                raise ValueError("Decision margin requires at least two candidates")
             target = torch.tensor(
                 [example.target_index], dtype=torch.long, device=scores.device
             )
             total_loss += float(F.cross_entropy(scores.unsqueeze(0), target).item())
             correct += int(torch.argmax(scores).item() == example.target_index)
+
+            if scores.numel() == 1:
+                singleton_candidate_examples += 1
+                continue
 
             target_score = scores[example.target_index]
             wrong_mask = torch.ones_like(scores, dtype=torch.bool)
@@ -176,8 +184,10 @@ def evaluate_decision_diagnostics(
         "examples": len(examples),
         "accuracy": correct / len(examples),
         "nll": total_loss / len(examples),
-        "margin_mean": sum(margins) / len(margins),
-        "margin_min": min(margins),
+        "margin_examples": len(margins),
+        "singleton_candidate_examples": singleton_candidate_examples,
+        "margin_mean": None if not margins else sum(margins) / len(margins),
+        "margin_min": None if not margins else min(margins),
     }
 
 
