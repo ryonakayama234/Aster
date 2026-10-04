@@ -160,7 +160,7 @@ def test_checkpoint_training_matches_legacy_training_exactly():
     )
 
     legacy_losses = train_decision(legacy, tokenizer, examples, config)
-    checkpoint_losses, snapshots = train_decision_with_checkpoints(
+    checkpoint_losses, snapshots, elapsed = train_decision_with_checkpoints(
         checkpointed,
         tokenizer,
         examples,
@@ -170,6 +170,9 @@ def test_checkpoint_training_matches_legacy_training_exactly():
 
     assert checkpoint_losses == legacy_losses
     assert set(snapshots) == {0, 10, 25}
+    assert set(elapsed) == {0, 10, 25}
+    assert elapsed[0] == 0.0
+    assert 0.0 <= elapsed[10] <= elapsed[25]
     for name, expected in parent.state_dict().items():
         torch.testing.assert_close(
             snapshots[0].state_dict()[name], expected, rtol=0, atol=0
