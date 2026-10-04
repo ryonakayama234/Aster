@@ -1,5 +1,6 @@
 """Supervised imitation utilities for AsterDecision-v0."""
 
+from copy import deepcopy
 from dataclasses import dataclass
 from typing import Sequence
 
@@ -129,6 +130,114 @@ def evaluate_decisions(
         "accuracy": correct / len(examples),
         "nll": total_loss / len(examples),
     }
+
+
+def evaluate_decision_diagnostics(
+    model: DecisionModel,
+    tokenizer: AsterTokenizer,
+    examples: Sequence[DecisionExample],
+) -> dict[str, float | int]:
+    """Evaluate accuracy/NLL plus target-vs-best-wrong score margin."""
+    if not examples:
+        raise ValueError("At least one decision example is required")
+
+    was_training = model.training
+    model.eval()
+    total_loss = 0.0
+    correct = 0
+    margins: list[float] = []
+    with torch.no_grad():
+        for example in examples:
+            scores = score_candidates(
+                model,
+                tokenizer,
+                example.state,
+                example.trajectory,
+                example.candidates,
+            )
+            if scores.numel() < 2:
+                raise ValueError("Decision margin requires at least two candidates")
+            target = torch.tensor(
+                [example.target_index], dtype=torch.long, device=scores.device
+            )
+            total_loss += float(F.cross_entropy(scores.unsqueeze(0), target).item())
+            correct += int(torch.argmax(scores).item() == example.target_index)
+
+            target_score = scores[example.target_index]
+            wrong_mask = torch.ones_like(scores, dtype=torch.bool)
+            wrong_mask[example.target_index] = False
+            best_wrong = torch.max(scores[wrong_mask])
+            margins.append(float((target_score - best_wrong).item()))
+    if was_training:
+        model.train()
+
+    return {
+        "examples": len(examples),
+        "accuracy": correct / len(examples),
+        "nll": total_loss / len(examples),
+        "margin_mean": sum(margins) / len(margins),
+        "margin_min": min(margins),
+    }
+
+
+def train_decision_with_checkpoints(
+    model: DecisionModel,
+    tokenizer: AsterTokenizer,
+    examples: Sequence[DecisionExample],
+    *,
+    checkpoints: Sequence[int],
+    config: DecisionTrainConfig = DecisionTrainConfig(),
+) -> tuple[list[float], dict[int, DecisionModel]]:
+    """Train once while snapshotting model weights at fixed optimizer steps.
+
+    Checkpoints are repeated observations from one training trajectory. They are
+    not independent samples. The optimizer is created once and preserved across
+    all requested checkpoints.
+    """
+    if not examples:
+        raise ValueError("At least one decision example is required")
+    points = tuple(checkpoints)
+    if not points:
+        raise ValueError("At least one checkpoint is required")
+    if any(type(step) is not int for step in points):
+        raise ValueError("Checkpoints must be integers")
+    if tuple(sorted(set(points))) != points:
+        raise ValueError("Checkpoints must be unique and sorted")
+    if points[0] < 0 or points[-1] > config.steps:
+        raise ValueError("Checkpoints must fall within 0..config.steps")
+
+    torch.manual_seed(config.seed)
+    for parameter in model.backbone.parameters():
+        parameter.requires_grad_(config.train_backbone)
+    for parameter in model.head.parameters():
+        parameter.requires_grad_(True)
+
+    trainable = [parameter for parameter in model.parameters() if parameter.requires_grad]
+    optimizer = torch.optim.AdamW(trainable, lr=config.learning_rate)
+    model.train()
+    losses: list[float] = []
+    snapshots: dict[int, DecisionModel] = {}
+    requested = set(points)
+
+    if 0 in requested:
+        snapshots[0] = deepcopy(model)
+
+    for step in range(config.steps):
+        example = examples[step % len(examples)]
+        optimizer.zero_grad(set_to_none=True)
+        loss = decision_loss(model, tokenizer, example)
+        loss.backward()
+        optimizer.step()
+        losses.append(float(loss.detach().item()))
+
+        completed_steps = step + 1
+        if completed_steps in requested:
+            snapshots[completed_steps] = deepcopy(model)
+
+    if set(snapshots) != requested:
+        missing = sorted(requested.difference(snapshots))
+        raise RuntimeError(f"Decision training checkpoints were not captured: {missing}")
+    return losses, snapshots
 
 
 def train_decision(
