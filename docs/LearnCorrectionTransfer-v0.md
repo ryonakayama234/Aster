@@ -235,4 +235,67 @@ Gate 2はwiring/instrumentationの成立を目的として完了とする。次�
 - failed/missing runの扱い
 - sealed-test boundary
 
-Matched-controlのtoken count / wall time / RSSはGate 4 resource auditで測る。optimizer step一致をequal FLOPsとは解釈しない。
+Matched-controlのtoken count / wall time / RSSは、PR #51のreviewを受けてGate 3着手前にinstrumentationを追加した。以後のR1/C1 training artifactとcorrection-transfer summaryへ、encoded token presentations / padded token positions / candidate sequence数 / wall time / process max RSS before/after/increaseを保存する。optimizer step一致をequal FLOPsとは解釈しない。既存development Runはinstrumentation追加前の実測なので、これらのresource値を後から推測して補わない。
+
+
+## Confirmatory Gate 3 — frozen protocol v0（2026-10-04）
+
+confirmatory測定前の正本を
+`docs/experiments/learn-correction-transfer-confirmatory-v0.json`
+として固定する。canonical JSON SHA-256は
+`72fa77acf48403d5a45f927f1122d6fb5753b1118d9f25322e1d6700f2cb1563`。
+`src/aster/training/learn_confirmatory.py` と自動テストがschema、主要条件、family構造、hashを検査する。
+
+### Frozen family design
+
+- 30 independent experimental familyを明示列挙し、測定後に生成・追加・差し替えしない。
+- 15 add / 15 subtract。
+- 各familyで operation / left / right をcorrectionとsiblingで同一にし、`store_as` keyだけを変える。
+- development family `learn-dev-key-shift-family-v0` はconfirmatory結果へ含めない。
+- sibling memberはtrainingへ入れない。
+- seedsは `42, 43, 44`。seedやtrajectory内stepを独立familyとして数えない。
+- optimizer steps=100、LR=0.003、train_backbone=true、model-only、fallbackなし、8-step horizonを固定する。
+- serializerは `aster-decision-input-0`、candidate builderは `calculate-and-store-v0` を維持する。
+- parentはACT Run `5a8076571dca446fa07190cf4fc62509` の記録したlogical DecisionModel Artifactから解決し、current `calculate-and-store-v0` suiteのdigestとartifact manifestの `suite_sha256` を一致要求する。
+
+### Candidate coverage Gate
+
+全30 familyのcorrection/sibling、計60 taskについて、RuleBased teacher trajectoryから作る全teacher Actionがcandidate setに存在することを測定前に検査する。現在の固定manifestは60 task / 240 decisionでcoverageが成立することを自動テスト対象とする。
+
+candidate coverage failureはranking/transfer failureとして数えず、protocol-invalid familyとして扱う。
+
+### Endpoint hierarchy
+
+confirmatory primaryは **L1 Local Transfer only**。
+
+`uncorrected sibling teacher-prefix accuracy` の
+`C1 Correction - R1 Replay` を各seedで測り、固定3 seedのfamily内平均差をfamily outcomeへ変換する。
+
+- positive: win
+- negative: loss
+- zero: tie
+
+L0 Repairはmanipulation check。L1 raw NLL、L2 strict terminal `task_success`、L2 `goal_verified` はsecondary/descriptiveとし、primary hypothesis testを増やさない。
+
+### Confirmatory decision rule
+
+primary testはnon-tied familyだけに対するexact two-sided sign test、alpha=0.05。
+
+- Supported: p < 0.05、wins > losses、かつmedian family accuracy delta > 0。
+- Not supported: p < 0.05、losses > wins。
+- Inconclusive: 上記以外、またはnon-tied family < 20。
+
+tieは隠さず件数を報告し、test分母からのみ除く。fixed familyを別familyで補充しない。
+
+Wolframでの事前planningでは、独立family・tieなしという単純化の下、n=30でtrue win probability 0.75ならpower≈0.8034、0.80なら≈0.9389。これはsample-size planningだけで、development evidenceへの推論ではない。
+
+### Failure / retry boundary
+
+- modelの誤Action、policy_stop、tool/task failureはbehavioral outcomeとして残す。
+- candidate coverage failureはprotocol invalidでありwin/lossにしない。
+- infrastructure failureはendpoint metric出力前、同一code/manifestの場合だけ同じfamily/seedをretryできる。全attemptを記録する。
+- missing familyを新生成familyで置換しない。
+- 最初のconfirmatory endpointを測定した後にcodeまたはmanifestを変更した場合、v0のconfirmatory claimを継続せずprotocol versionを上げて再開する。
+- project sealed testは開かない。
+
+このGate 3は「結果を得るGate」ではなく、**結果を見てから研究質問を動かせなくするGate**である。Gate 4で初めてこのmanifestを入力としてconfirmatory measurementを行う。
