@@ -186,6 +186,30 @@ def test_checkpoint_training_matches_legacy_training_exactly():
         )
 
 
+def test_decision_diagnostics_allow_singleton_candidate_states():
+    torch.manual_seed(29)
+    _, _, examples = build_teacher_examples()
+    model, tokenizer = build_decision_model(examples)
+    source = examples[0]
+    singleton = DecisionExample(
+        state=source.state,
+        trajectory=source.trajectory,
+        candidates=(source.target,),
+        target_index=0,
+        teacher=source.teacher,
+    )
+
+    metrics = evaluate_decision_diagnostics(model, tokenizer, (singleton,))
+
+    assert metrics["examples"] == 1
+    assert metrics["accuracy"] == 1.0
+    assert metrics["nll"] == pytest.approx(0.0)
+    assert metrics["margin_examples"] == 0
+    assert metrics["singleton_candidate_examples"] == 1
+    assert metrics["margin_mean"] is None
+    assert metrics["margin_min"] is None
+
+
 def test_decision_diagnostics_include_correct_vs_best_wrong_margin():
     torch.manual_seed(23)
     _, _, examples = build_teacher_examples()
@@ -196,6 +220,8 @@ def test_decision_diagnostics_include_correct_vs_best_wrong_margin():
     assert metrics["examples"] == len(examples)
     assert 0.0 <= metrics["accuracy"] <= 1.0
     assert metrics["nll"] >= 0.0
+    assert metrics["margin_examples"] == len(examples)
+    assert metrics["singleton_candidate_examples"] == 0
     assert isinstance(metrics["margin_mean"], float)
     assert isinstance(metrics["margin_min"], float)
     assert metrics["margin_min"] <= metrics["margin_mean"]
