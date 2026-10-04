@@ -1,0 +1,721 @@
+{
+  "schema_version": "aster-learn-confirmatory-manifest-0",
+  "protocol_id": "learn-correction-transfer-confirmatory-v0",
+  "status": "frozen_before_measurement",
+  "research_question": "Does supervision on learner-visited corrected states improve uncorrected sibling decisions beyond a matched replay update?",
+  "lineage": {
+    "parent_act_run_id": "5a8076571dca446fa07190cf4fc62509",
+    "parent_recipe_id": "agent-decision-model-v0",
+    "parent_suite_id": "calculate-and-store-v0",
+    "parent_artifact_resolution": "run.inputs.decision_model_artifact_id",
+    "require_exact_parent_suite_digest": true
+  },
+  "arms": {
+    "parent": "P0: no update",
+    "replay": "R1: deterministic replay of base supervision with matched added-example count",
+    "correction": "C1: base supervision plus teacher labels on learner-visited states"
+  },
+  "training": {
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "optimizer_steps": 100,
+    "learning_rate": 0.003,
+    "train_backbone": true,
+    "max_episode_steps": 8,
+    "policy_mode": "model_only",
+    "fallback": false,
+    "serializer_id": "aster-decision-input-0",
+    "candidate_builder_id": "calculate-and-store-v0",
+    "equal_flops_claimed": false
+  },
+  "family_design": {
+    "planned_families": 30,
+    "unit_of_evidence": "task_generator_family",
+    "shift_axis": "store_as_key_only",
+    "authoritative_source": "explicit_family_list_below",
+    "sibling_used_for_training": false,
+    "development_family_excluded": "learn-dev-key-shift-family-v0",
+    "families": [
+      {
+        "family_id": "learn-confirm-keyshift-01",
+        "leakage_group": "learn-confirm-keyshift-01",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-01-correction",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 35,
+          "right": 50,
+          "store_as": "corr_f01"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-01-sibling",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 35,
+          "right": 50,
+          "store_as": "sibling_f01"
+        }
+      },
+      {
+        "family_id": "learn-confirm-keyshift-02",
+        "leakage_group": "learn-confirm-keyshift-02",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-02-correction",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 210,
+          "right": 29,
+          "store_as": "corr_f02"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-02-sibling",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 210,
+          "right": 29,
+          "store_as": "sibling_f02"
+        }
+      },
+      {
+        "family_id": "learn-confirm-keyshift-03",
+        "leakage_group": "learn-confirm-keyshift-03",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-03-correction",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 43,
+          "right": 56,
+          "store_as": "corr_f03"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-03-sibling",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 43,
+          "right": 56,
+          "store_as": "sibling_f03"
+        }
+      },
+      {
+        "family_id": "learn-confirm-keyshift-04",
+        "leakage_group": "learn-confirm-keyshift-04",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-04-correction",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 220,
+          "right": 33,
+          "store_as": "corr_f04"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-04-sibling",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 220,
+          "right": 33,
+          "store_as": "sibling_f04"
+        }
+      },
+      {
+        "family_id": "learn-confirm-keyshift-05",
+        "leakage_group": "learn-confirm-keyshift-05",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-05-correction",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 51,
+          "right": 62,
+          "store_as": "corr_f05"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-05-sibling",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 51,
+          "right": 62,
+          "store_as": "sibling_f05"
+        }
+      },
+      {
+        "family_id": "learn-confirm-keyshift-06",
+        "leakage_group": "learn-confirm-keyshift-06",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-06-correction",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 230,
+          "right": 37,
+          "store_as": "corr_f06"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-06-sibling",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 230,
+          "right": 37,
+          "store_as": "sibling_f06"
+        }
+      },
+      {
+        "family_id": "learn-confirm-keyshift-07",
+        "leakage_group": "learn-confirm-keyshift-07",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-07-correction",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 59,
+          "right": 68,
+          "store_as": "corr_f07"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-07-sibling",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 59,
+          "right": 68,
+          "store_as": "sibling_f07"
+        }
+      },
+      {
+        "family_id": "learn-confirm-keyshift-08",
+        "leakage_group": "learn-confirm-keyshift-08",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-08-correction",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 240,
+          "right": 41,
+          "store_as": "corr_f08"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-08-sibling",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 240,
+          "right": 41,
+          "store_as": "sibling_f08"
+        }
+      },
+      {
+        "family_id": "learn-confirm-keyshift-09",
+        "leakage_group": "learn-confirm-keyshift-09",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-09-correction",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 67,
+          "right": 74,
+          "store_as": "corr_f09"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-09-sibling",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 67,
+          "right": 74,
+          "store_as": "sibling_f09"
+        }
+      },
+      {
+        "family_id": "learn-confirm-keyshift-10",
+        "leakage_group": "learn-confirm-keyshift-10",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-10-correction",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 250,
+          "right": 45,
+          "store_as": "corr_f10"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-10-sibling",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 250,
+          "right": 45,
+          "store_as": "sibling_f10"
+        }
+      },
+      {
+        "family_id": "learn-confirm-keyshift-11",
+        "leakage_group": "learn-confirm-keyshift-11",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-11-correction",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 75,
+          "right": 80,
+          "store_as": "corr_f11"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-11-sibling",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 75,
+          "right": 80,
+          "store_as": "sibling_f11"
+        }
+      },
+      {
+        "family_id": "learn-confirm-keyshift-12",
+        "leakage_group": "learn-confirm-keyshift-12",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-12-correction",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 260,
+          "right": 49,
+          "store_as": "corr_f12"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-12-sibling",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 260,
+          "right": 49,
+          "store_as": "sibling_f12"
+        }
+      },
+      {
+        "family_id": "learn-confirm-keyshift-13",
+        "leakage_group": "learn-confirm-keyshift-13",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-13-correction",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 83,
+          "right": 86,
+          "store_as": "corr_f13"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-13-sibling",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 83,
+          "right": 86,
+          "store_as": "sibling_f13"
+        }
+      },
+      {
+        "family_id": "learn-confirm-keyshift-14",
+        "leakage_group": "learn-confirm-keyshift-14",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-14-correction",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 270,
+          "right": 53,
+          "store_as": "corr_f14"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-14-sibling",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 270,
+          "right": 53,
+          "store_as": "sibling_f14"
+        }
+      },
+      {
+        "family_id": "learn-confirm-keyshift-15",
+        "leakage_group": "learn-confirm-keyshift-15",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-15-correction",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 91,
+          "right": 92,
+          "store_as": "corr_f15"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-15-sibling",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 91,
+          "right": 92,
+          "store_as": "sibling_f15"
+        }
+      },
+      {
+        "family_id": "learn-confirm-keyshift-16",
+        "leakage_group": "learn-confirm-keyshift-16",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-16-correction",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 280,
+          "right": 57,
+          "store_as": "corr_f16"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-16-sibling",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 280,
+          "right": 57,
+          "store_as": "sibling_f16"
+        }
+      },
+      {
+        "family_id": "learn-confirm-keyshift-17",
+        "leakage_group": "learn-confirm-keyshift-17",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-17-correction",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 99,
+          "right": 98,
+          "store_as": "corr_f17"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-17-sibling",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 99,
+          "right": 98,
+          "store_as": "sibling_f17"
+        }
+      },
+      {
+        "family_id": "learn-confirm-keyshift-18",
+        "leakage_group": "learn-confirm-keyshift-18",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-18-correction",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 290,
+          "right": 61,
+          "store_as": "corr_f18"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-18-sibling",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 290,
+          "right": 61,
+          "store_as": "sibling_f18"
+        }
+      },
+      {
+        "family_id": "learn-confirm-keyshift-19",
+        "leakage_group": "learn-confirm-keyshift-19",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-19-correction",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 107,
+          "right": 104,
+          "store_as": "corr_f19"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-19-sibling",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 107,
+          "right": 104,
+          "store_as": "sibling_f19"
+        }
+      },
+      {
+        "family_id": "learn-confirm-keyshift-20",
+        "leakage_group": "learn-confirm-keyshift-20",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-20-correction",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 300,
+          "right": 65,
+          "store_as": "corr_f20"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-20-sibling",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 300,
+          "right": 65,
+          "store_as": "sibling_f20"
+        }
+      },
+      {
+        "family_id": "learn-confirm-keyshift-21",
+        "leakage_group": "learn-confirm-keyshift-21",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-21-correction",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 115,
+          "right": 110,
+          "store_as": "corr_f21"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-21-sibling",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 115,
+          "right": 110,
+          "store_as": "sibling_f21"
+        }
+      },
+      {
+        "family_id": "learn-confirm-keyshift-22",
+        "leakage_group": "learn-confirm-keyshift-22",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-22-correction",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 310,
+          "right": 69,
+          "store_as": "corr_f22"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-22-sibling",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 310,
+          "right": 69,
+          "store_as": "sibling_f22"
+        }
+      },
+      {
+        "family_id": "learn-confirm-keyshift-23",
+        "leakage_group": "learn-confirm-keyshift-23",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-23-correction",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 123,
+          "right": 116,
+          "store_as": "corr_f23"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-23-sibling",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 123,
+          "right": 116,
+          "store_as": "sibling_f23"
+        }
+      },
+      {
+        "family_id": "learn-confirm-keyshift-24",
+        "leakage_group": "learn-confirm-keyshift-24",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-24-correction",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 320,
+          "right": 73,
+          "store_as": "corr_f24"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-24-sibling",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 320,
+          "right": 73,
+          "store_as": "sibling_f24"
+        }
+      },
+      {
+        "family_id": "learn-confirm-keyshift-25",
+        "leakage_group": "learn-confirm-keyshift-25",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-25-correction",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 131,
+          "right": 122,
+          "store_as": "corr_f25"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-25-sibling",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 131,
+          "right": 122,
+          "store_as": "sibling_f25"
+        }
+      },
+      {
+        "family_id": "learn-confirm-keyshift-26",
+        "leakage_group": "learn-confirm-keyshift-26",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-26-correction",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 330,
+          "right": 77,
+          "store_as": "corr_f26"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-26-sibling",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 330,
+          "right": 77,
+          "store_as": "sibling_f26"
+        }
+      },
+      {
+        "family_id": "learn-confirm-keyshift-27",
+        "leakage_group": "learn-confirm-keyshift-27",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-27-correction",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 139,
+          "right": 128,
+          "store_as": "corr_f27"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-27-sibling",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 139,
+          "right": 128,
+          "store_as": "sibling_f27"
+        }
+      },
+      {
+        "family_id": "learn-confirm-keyshift-28",
+        "leakage_group": "learn-confirm-keyshift-28",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-28-correction",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 340,
+          "right": 81,
+          "store_as": "corr_f28"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-28-sibling",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 340,
+          "right": 81,
+          "store_as": "sibling_f28"
+        }
+      },
+      {
+        "family_id": "learn-confirm-keyshift-29",
+        "leakage_group": "learn-confirm-keyshift-29",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-29-correction",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 147,
+          "right": 134,
+          "store_as": "corr_f29"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-29-sibling",
+          "kind": "calculate_and_store",
+          "operation": "add",
+          "left": 147,
+          "right": 134,
+          "store_as": "sibling_f29"
+        }
+      },
+      {
+        "family_id": "learn-confirm-keyshift-30",
+        "leakage_group": "learn-confirm-keyshift-30",
+        "correction_task": {
+          "task_id": "learn-confirm-keyshift-30-correction",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 350,
+          "right": 85,
+          "store_as": "corr_f30"
+        },
+        "sibling_task": {
+          "task_id": "learn-confirm-keyshift-30-sibling",
+          "kind": "calculate_and_store",
+          "operation": "subtract",
+          "left": 350,
+          "right": 85,
+          "store_as": "sibling_f30"
+        }
+      }
+    ]
+  },
+  "endpoints": {
+    "primary": {
+      "level": "L1_local_transfer",
+      "metric": "uncorrected_sibling_teacher_prefix_accuracy",
+      "contrast": "correction_minus_replay",
+      "seed_aggregation": "mean_within_family_over_fixed_seeds",
+      "family_outcome": "win_if_positive_loss_if_negative_tie_if_zero"
+    },
+    "secondary": [
+      {
+        "level": "L1_local_transfer",
+        "metric": "uncorrected_sibling_raw_nll",
+        "contrast": "replay_minus_correction",
+        "role": "continuous_diagnostic_positive_is_better_for_correction"
+      },
+      {
+        "level": "L2_sequential_transfer",
+        "metric": "strict_terminal_task_success",
+        "contrast": "correction_minus_replay",
+        "seed_aggregation": "mean_within_family_over_fixed_seeds"
+      },
+      {
+        "level": "L2_sequential_transfer",
+        "metric": "goal_verified",
+        "contrast": "correction_minus_replay",
+        "seed_aggregation": "mean_within_family_over_fixed_seeds"
+      }
+    ],
+    "manipulation_check": {
+      "level": "L0_repair",
+      "metric": "corrected_state_accuracy",
+      "note": "reported separately and never counted as transfer success"
+    }
+  },
+  "analysis": {
+    "primary_test": "exact_two_sided_sign_test_on_non_tied_family_outcomes",
+    "alpha": 0.05,
+    "planned_family_count": 30,
+    "minimum_non_tied_families_for_confirmatory_verdict": 20,
+    "supported_rule": "p<0.05 AND wins>losses AND median_family_accuracy_delta>0",
+    "not_supported_rule": "p<0.05 AND losses>wins",
+    "inconclusive_rule": "all other valid outcomes, including fewer than 20 non-tied families",
+    "ties": "excluded_from_sign_test_but_reported",
+    "multiple_comparisons": "only the primary endpoint receives a confirmatory hypothesis test; secondary endpoints are descriptive",
+    "power_planning": {
+      "method": "exact BinomialDistribution sign-test planning; independent families and no ties assumed",
+      "power_at_n30_if_true_win_probability_0_75": 0.8034069187820484,
+      "power_at_n30_if_true_win_probability_0_80": 0.9389128561889027,
+      "note": "planning guidance only; not inference from development evidence"
+    }
+  },
+  "failure_handling": {
+    "model_or_tool_failure": "valid behavioral outcome and retained",
+    "candidate_coverage_failure": "protocol-invalid family; no win/loss assigned",
+    "infrastructure_failure": "same frozen family/seed may be retried only if no endpoint metric was emitted; every attempt remains logged",
+    "missing_family": "never replaced by a newly generated family",
+    "code_or_manifest_change_after_first_confirmatory_metric": "requires a new protocol version and restart of confirmatory claims"
+  },
+  "resource_audit": {
+    "required_per_arm": [
+      "training_examples",
+      "optimizer_steps",
+      "encoded_tokens_presented",
+      "padded_token_positions",
+      "candidate_sequences_presented",
+      "wall_seconds",
+      "process_max_rss_before_kib",
+      "process_max_rss_after_kib",
+      "process_max_rss_increase_kib"
+    ],
+    "interpretation": "resource differences are reported; equal optimizer steps are not called equal FLOPs"
+  },
+  "sealed_test": {
+    "project_sealed_test_opened": false,
+    "confirmatory_families_are_new_explicit_evaluation_material": true,
+    "sibling_members_must_never_enter_training": true
+  }
+}

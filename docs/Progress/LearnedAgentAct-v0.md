@@ -95,3 +95,18 @@ Status: CI passed; user WSL2 run pending
 - pytest: success。
 - これでコード/型/自動テストGateは通過。
 - Capability成功はまだ主張しない。次はユーザーWSL2の既存DecisionModel Artifactをcatalogへ登録し、Service JobとしてACT Runを実測する。
+
+
+## Session 4 — 2026-10-03
+
+Task: 実機確認の記録漏れを修正し、ACTを閉じる。
+
+Status: complete
+
+- ユーザー報告により、WSL2実機でACT v0の実行経路は確認済み。
+- PR #49はmainへmerge済み。
+- Issue #48へ実機確認済みを追記し、completedとしてclose。
+- ACT-Wiring / ACT-Capabilityは実機確認済みという理解で次Gateへ進む。
+- 実ACT Run ID: `5a8076571dca446fa07190cf4fc62509`（2026-10-03にユーザーから記録漏れ分を補完）。
+- bundle ID等、未記録の追加値は推測して補わない。
+- 次Gateは Issue #20 **LEARN v0 — Correction Transfer**。

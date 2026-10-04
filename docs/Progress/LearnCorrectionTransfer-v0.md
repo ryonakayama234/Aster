@@ -1,0 +1,471 @@
+# Progress: LEARN v0 — Correction Transfer
+
+## Session 1 — 2026-10-03
+
+Task: ACTを閉じ、Correction Transferの反証可能な研究境界を固定する。
+
+Status: protocol fixed; matched-control implementation next
+
+### 完了
+
+- ユーザー報告によりACT v0はWSL2実機確認済みとして扱う。Issue #48へ記録しclose。
+- 実ACT Run IDは `5a8076571dca446fa07190cf4fc62509` と後から補完。bundle ID等、未記録の追加値は推測して補わない。
+- branch `feat/learn-v0-correction-transfer` をAster mainから作成。
+- Issue #20を **LEARN v0 — Correction Transfer** へ再定義。
+- 中心仮説を「student-visited correctionが、同budget Replayより未訂正siblingへ転移するか」に固定。
+- P0 Parent / R1 Replay / C1 Correctionの3 armを固定。
+- Repair / Local Transfer / Sequential Transferを別Gateに分離。
+- seed/decision stepを独立task数として数えず、task/generator familyを基本単位とする。
+- 良い結果を見てseedを追加する任意停止を禁止。
+- RL / new Tokenizer / new serializer / model scaling / sealed testを非目標とした。
+
+### 既存実装の確認
+
+- `run_logged_intervention_agent` はstudentが訪れた各stateへshadow teacher labelを保存できる。
+- `train_intervention_candidate` はparentをdeepcopyし、base + intervention examplesからcandidateを作れる。
+- 現状はCorrection固有効果を分離するmatched Replay armがない。
+- 次の最小実装はReplay control helperとbudget invariant test。
+
+### 次
+
+1. `src/aster/training/intervention.py` にmatched Replay controlを追加。
+2. testsでparent不変・同example列長・同step budgetを固定。
+3. 1 familyのdevelopment wiring probeを固定してP0/R1/C1を一周。
+
+
+## Session 2 — 2026-10-03
+
+Task: matched Replay controlを実装する。
+
+Status: implementation complete; CI pending
+
+### 実装
+
+- `replay_decision_examples(base_examples, count)` を追加。
+- Correctionのtrainable example件数と同数だけbase supervisionをdeterministicに再提示できるようにした。
+- `DecisionReplayUpdate` を追加し、replay-only candidateのtraining examples / before-after metrics / loss列を保持。
+- `train_replay_control_candidate` を追加。parentをdeepcopyし、元modelを変更しない。
+- 同じ `DecisionTrainConfig` とadded-example countなら、Correction armとtraining example列長・optimizer step budgetを一致させられる。
+- equal stepはequal FLOPsと主張しないことをdocstring/specへ残した。
+
+### テスト
+
+- base例とCorrection例の内容が等価な人工条件で、Replay/Correctionのtraining lengthとstep数が一致することを検査。
+- 同じparent / seed / config / model-visible supervisionなら両candidateの全weightが一致することを検査。
+- parent weightsが両arm学習後も不変であることを検査。
+
+### 未確認
+
+- GitHub Actions pytest / Pyright。
+- 実student rollout由来のcorrectionを使うdevelopment wiring probe。
+- Artifact保存・reloadを含むP0/R1/C1実験。
+
+
+## Session 3 — 2026-10-03
+
+Task: P0/R1/C1を同一benchmarkへ通すLEARN-Wiring runnerを追加する。
+
+Status: implementation complete; CI pending
+
+### 実装
+
+- `run_logged_correction_transfer_experiment` を追加。
+- student rolloutはmodel-onlyを要求し、各traceで `route == model` と `executed_action == student_action` を監査。
+- student-visited stateのtrainable Teacher label数をCorrectionのadded-example countとする。
+- R1 ReplayとC1 Correctionを同じparent / train config / optimizer-step count / training-example countで作る。
+- P0 Parent / R1 Replay / C1 Correctionを同じBenchmarkSuiteで測定。
+- parent→replay、parent→correction、replay→correctionの3比較を保存。
+- `equal_flops_claimed=false` を明示し、同step数を同計算量と誇張しない。
+- candidateはpromotionせず `candidate_only`。
+
+### テスト
+
+- fallbackなし、threshold 0のmodel-only policyで三者比較runnerを一周。
+- replay/correctionのadded example数とtraining example数が一致することを検査。
+- 3比較が保存されることを検査。
+- 親model weightsが実験後も不変であることを検査。
+
+### 境界
+
+- このtest fixtureはresearch development probeではない。
+- sibling transfer / model-only sibling episode / Artifact save+reloadは未実装。
+- sealed testや既存devの結果を能力主張に使っていない。
+
+
+## Session 4 — 2026-10-03
+
+Task: LEARN-Wiring runnerのCI gate。
+
+Status: CI passed
+
+### 初回失敗
+
+- GitHub Actions run #129でPyrightは成功、pytestは1 failure / 124 pass。
+- 新しいmodel-only wiring testで、未学習parentが最初に誤ったTool Actionを選択した。
+- tool failureを含むtrajectoryが次stateの入力へ入り、serialized decision inputが88 tokenへ伸長。
+- test fixtureがbase/benchmark入力だけから `context_length=25` を決めていたため、`88 > 25` で明示的に失敗した。
+- runner側でtruncateせず、failure-historyを含む逐次実行では入力長が伸びるという実際の制約として扱った。
+
+### 修正
+
+- correction-transfer wiring testだけ `context_length >= 256` を確保。
+- runtime / serializer / truncation semanticsは変更していない。
+- context超過時に黙って切らず失敗する既存挙動を維持。
+
+### 最終CI
+
+- GitHub Actions run #130。
+- Pyright: success。
+- pytest: **125 passed in 47.89s**。
+- これでprotocol + matched Replay control + P0/R1/C1同一benchmark配線の自動テストGateは成立。
+- まだ実parent Artifactを使うdevelopment probe、sibling transfer、model-only sibling episodeは未実測。
+
+
+## ACT lineage補完 — 2026-10-03
+
+- LEARN v0 development probeのparent lineage起点として、実ACT Run IDを `5a8076571dca446fa07190cf4fc62509` に固定。
+- 次のprobeでは `runs/5a8076571dca446fa07190cf4fc62509/run.json` の `inputs.decision_model_artifact_id` を検証し、同じ登録済みDecisionModel Artifactを再利用する。
+- Run IDからArtifact IDを推測・再生成しない。Run evidenceに記録されたlogical IDだけを使う。
+
+
+## Session 5 — 2026-10-03
+
+Task: 実ACT Runから同じparentを再利用するdevelopment probe入口を固定する。
+
+Status: implementation complete; CI/user WSL run pending
+
+### Lineage
+
+- ACT Run IDを `5a8076571dca446fa07190cf4fc62509` と補完。
+- Issue #48 / ACT Progress / LEARN Progressへ記録。
+- probeはACT Runの `inputs.decision_model_artifact_id` だけをparent参照として使う。
+- completed agent / ACT recipe / model-only / fixed ACT taskを検証してからArtifactCatalogでresolveする。
+
+### Fixed development family
+
+- family: `learn-dev-key-shift-family-v0`
+- correction: add(2,3) → `diagnostic_total`
+- uncorrected sibling: add(2,3) → `sibling_total`
+- 数値・operationを固定し、key shiftだけを見る。
+- seed=42、100 steps、LR=0.003、fallbackなし。
+- confirmatory evidenceには算入しない。
+
+### 実装
+
+- `src/aster/training/learn_probe.py`
+- `scripts/run_learn_correction_transfer_dev.py`
+- ACT Run → registered parent Artifactの厳格な逆引き。
+- exact student-visited correction stateについてP0/R1/C1 Repair metricsを保存。
+- sibling benchmarkはproject sealed testを開かず、development-only suiteとして生成。
+- training条件はCLIから変更不可。
+
+### 次
+
+1. CI。
+2. ユーザーWSLで固定CLIを1回実行。
+3. Repair / uncorrected sibling結果を読んで配線を監査。
+4. P0/R1/C1のsibling model-only episode保存を追加。
+5. その後にconfirmatory family manifestを事前固定。
+
+
+## Session 6 — 2026-10-03
+
+Task: fixed real-parent development probe CI gate。
+
+Status: CI passed; user WSL run pending
+
+- GitHub Actions run #138。
+- Pyright: success。
+- pytest: success。
+- ACT Run ID lineage resolver、fixed key-shift family、exact Repair evidence、development probe CLIを含むlatest headで成功。
+- 次のGateはユーザーWSL上で `scripts/run_learn_correction_transfer_dev.py` を1回実測すること。
+- このprobe結果はconfirmatory family勝率・能力主張へ算入しない。
+
+
+## Session 7 — 2026-10-03
+
+Task: user WSL development probe first attemptのlineage failureを修正。
+
+Status: resolver fix implemented; CI pending
+
+### 実機で観測した失敗
+
+固定CLIは学習開始前に
+`ValueError: ACT run does not exist`
+で停止した。
+
+NumPy未導入のPyTorch warningも表示されたが、例外原因ではない。
+
+### 原因
+
+- LEARN probe resolverはACT Runを `<repo>/runs/<RUN_ID>/run.json` と仮定していた。
+- ACT v0はAster Service Jobとして実行される。
+- `JobManager` は各Jobを `<repo>/runs/workbench/<JOB_ID>/` に隔離し、recipeへそのJob directoryを `--root` として渡す。
+- したがって実ACT Runは
+  `<repo>/runs/workbench/<JOB_ID>/runs/<RUN_ID>/run.json`
+  に存在する。
+- `--root .` を渡したユーザー操作は正しかった。resolverの保存構造モデルが誤っていた。
+
+### 修正
+
+- direct Run `runs/<RUN_ID>/run.json` とService Run `runs/workbench/*/runs/<RUN_ID>/run.json` の双方を探索。
+- Run store外へのescape/symlinkを受理しない。
+- 同じRUN_IDが複数見つかれば曖昧として停止。
+- Service workbench構造を再現する自動テストを追加。
+
+この失敗は能力結果ではなくLEARN-Wiringのlineage bugとして記録する。
+
+
+## Session 8 — 2026-10-03
+
+Task: user WSL second attemptのparent calibration mismatchを修正。
+
+Status: implementation fix complete; CI pending
+
+### 実機で観測した失敗
+
+Service workbench内ACT Runの解決には成功し、registered parent Artifact loadまで進んだ。その後、
+`ValueError: Parent artifact temperature must be positive`
+で学習前に停止。
+
+### 設計確認
+
+- ACT v0 runtime `service_learned_agent.py` は `ModelPolicy` を直接実行する。
+- ACTのAction選択はraw DecisionModel scoreのargmaxであり、Artifact calibration temperatureを使用しない。
+- LEARN development probeはmodel-only保証のため `SelectivePolicy` をwrapperとして使うが、threshold=0 / fallbackなしではrouteは常にmodel。
+- この条件ではtemperatureはrouting confidence表示にしか影響せず、selected Actionには影響しない。
+- したがってArtifact calibrationをprobe実行の前提条件にするのはACTとの意味論を不必要に狭める。
+
+### 修正
+
+- LEARN model-only probeのrouting temperatureをidentity `1.0` に固定。
+- parent Artifact calibrationは実行条件ではなくdiagnostic metadataとして保存する。
+- missing / invalid_type / invalid_value / validを区別。
+- Action selection、parent weights、Tokenizer、candidate builder、training条件は変更しない。
+
+NumPy未導入warningは引き続き今回の例外原因ではない。
+
+
+## Session 9 — 2026-10-03
+
+Task: fixed real-parent LEARN development probe WSL実測。
+
+Status: completed; metric interpretation pending
+
+- ユーザーWSLで固定CLIが最後まで完了。
+- LEARN development probe Run ID: `43d3966e1b0049dc904e2c0330d8abf0`。
+- lineage起点はACT Run `5a8076571dca446fa07190cf4fc62509`。
+- これにより実parent Artifact load → model-only student rollout → teacher correction収集 → matched Replay / Correction training → P0/R1/C1 sibling benchmark → canonical Run保存まで実機で一周した。
+- CLIがRun pathを返して完了したため、LEARN-Wiringの「実parentで一周」は確認済み。
+- Repair / Local Transferの数値解釈はRun artifact内容を読み取るまで保留。
+- model-only sibling episode（Sequential Transfer）とcandidate Artifact save/reloadはまだ未実装。
+- この1-family probeはconfirmatory能力結果へ算入しない。
+- GitHub Actions run #145: Pyright / pytest success。
+
+
+## Session 10 — 2026-10-03
+
+Task: 1-family development probeを解釈し、Sequential Transfer Gateを実装する。
+
+Status: development result interpreted; sequential/reload implementation CI passed; WSL remeasurement pending
+
+### Development result
+
+Run `43d3966e1b0049dc904e2c0330d8abf0`:
+
+- Repair (8 student-visited teacher labels):
+  - Parent accuracy 0.25 / NLL 1.3512
+  - Replay accuracy 0.125 / NLL 1.3750
+  - Correction accuracy 0.625 / NLL 0.6539
+- uncorrected sibling teacher-prefix decisions (4 steps):
+  - Parent accuracy 0.25 / raw NLL 1.3623
+  - Replay accuracy 0.0 / raw NLL 1.3932
+  - Correction accuracy 0.25 / raw NLL 2.6694
+- ParentとCorrectionはいずれもsibling step 0のみ正解。Correctionが新たに正解へ変えたsibling stepは0件。
+- Correction sibling step 2ではtarget logit約 -2.890、best wrong logit約 2.976で、大きな誤答marginを観測。
+
+Development判定:
+- L0 Repair: observed。
+- L1 Local Transfer: not demonstrated。
+- これは1 familyのdevelopment probeであり、H1/H0のconfirmatory判定には使わない。
+
+### 次の設計判断
+
+結果を見てLR/steps/model/tokenizer/serializerを調整しない。
+同一の固定family/seed/training条件のまま、観測層だけ拡張する。
+
+実装:
+- P0/R1/C1をmodel-onlyでuncorrected sibling episodeへ通すSequential evaluator。
+- task success / goal verified / steps / stop reason。
+- shadow teacherとのfirst divergence step / disagreement数。
+- first tool failure / divergence後の残りstep数。
+- R1/C1をDecisionModel Artifactとして保存・ArtifactCatalog登録・reload。
+- reload後weightsの完全一致を検証。
+- P0もregistered parent Artifactから再resolve/reloadして一致検証。
+- Sequential episodeはreload後モデルで独立Runとして保存。
+- dev CLIはRepair / Local / Artifact / Sequentialのcompact summaryを出力。
+
+Artifact contract補修:
+- Decision artifact temperatureはpositiveだけでなくfiniteも必須に変更。
+- NaN / ±Inf / non-positiveを拒否するtestを追加。
+
+### Confirmatory planning (Wolfram, planning heuristic only)
+
+独立familyをBernoulli win/lossとして扱い、tieなし・true family win probability固定という単純化の下で、
+two-sided sign test alpha=0.05のpower >=0.8に必要な最小family数は:
+- true win probability 0.80: n=20
+- true win probability 0.75: n=30
+
+これはsample-size planningの目安であり、このdevelopment familyへの統計的推論ではない。
+
+
+### CI gate
+
+- GitHub Actions run #156。
+- Pyright: success。
+- pytest: **133 passed in 49.04s**。
+- Sequential evaluator / P0-R1-C1 Artifact reload / finite-temperature contract / compact CLI summaryを含むheadで成功。
+- 次は同一fixed development probeをWSLで再実行し、追加instrumentationだけを実測する。
+
+
+## Session 11 — 2026-10-04
+
+Task: Sequential Transfer development evidenceを実機で取得。
+
+Status: real WSL evidence collected; trajectory-level diagnosis complete; Gate 2 complete
+
+LEARN Run: `720c9e43a8a248a48829fc6b789ba75f`
+
+Artifact reload:
+- P0 parent: registered=true / reload_verified=true
+- R1 replay: registered=true / reload_verified=true
+- C1 correction: registered=true / reload_verified=true
+
+Repair / Localは前回Runと同一:
+- Repair accuracy P0/R1/C1 = 0.25 / 0.125 / 0.625
+- Local sibling accuracy P0/R1/C1 = 0.25 / 0.0 / 0.25
+- Local raw NLL P0/R1/C1 = 1.3623 / 1.3932 / 2.6694
+
+Sequential model-only sibling:
+- P0 Parent: task_success=false, goal_verified=false, steps=6, first teacher divergence=1, disagreements=4, stop_reason=policy_stop.
+- R1 Replay: task_success=false, goal_verified=false, steps=1, first teacher divergence=0, disagreements=1, stop_reason=policy_stop.
+- C1 Correction: task_success=false, goal_verified=true, steps=8(max), first teacher divergence=1, disagreements=5, stop_reason=null.
+- 3 armともfirst_tool_failure=null。
+
+Interpretation boundary:
+- strict terminal success `task_success` は3 armともfalse。`goal_verified` と同一視せず、terminal successは未実証とする。
+- C1だけがgoal_verified=trueに到達したため、Parent/Replayにはないsequential goal-reaching signalは観測。
+- read-only trajectory監査で、C1のfirst_goal_verified_stepは最終許容step 7だった。したがってgoal verification後にstopを誤った証拠はなく、次のstop decisionを選ぶ機会自体がなかった。
+- 8-step horizonは結果観測後に延長しない。9-step診断を実施する場合はpost-hoc development diagnosticとして別記録にする。
+- 既存Specはtask_success / goal_verifiedの両方を保存対象にしていたがprimary/secondary序列までは明示していなかった。Confirmatory manifestでendpoint hierarchyを事前固定する。
+
+Read-only summarizer:
+`scripts/summarize_learn_sequential_run.py --root . --run-id 720c9e43a8a248a48829fc6b789ba75f`
+
+
+## Session 12 — 2026-10-04
+
+Task: PR #51最終整理とGate 2 closeout。
+
+Status: **Gate 2 COMPLETE**
+
+### Trajectory diagnosis
+
+Read-only summary of Run `720c9e43a8a248a48829fc6b789ba75f`:
+
+- P0 Parent: calculator → calculator → memory.put → memory.put → calculator → stop。最終memoryは `sibling_total=5` だがmemory.get verificationへ到達せず、goal_verified=false。
+- R1 Replay: step 0でstop。goal_verified=false。
+- C1 Correction: calculatorをstep 0–4で反復 → step 5 memory.put(`sibling_total=5`) → step 6 calculator → step 7 memory.get(`sibling_total`)。この最終stepで初めてgoal_verified=true。
+- C1にはgoal verification後のactionは存在しないため、termination decision failureとは判定しない。
+- 3 armともtool execution failureは0。
+
+### Gate 2 conclusion
+
+Development wiringとして必要なlineage / matched control / save+register+reload / Repair / Local / model-only Sequential / trajectory diagnosisが実ACT parentで一周した。
+
+Development-only verdict:
+- **L0 Repair: observed.**
+- **L1 Local Transfer: not demonstrated.**
+- **L2 strict terminal task success within 8-step horizon: not demonstrated.**
+- **L2 sequential goal-reaching signal: observed for C1 only.**
+- 1 family × 1 seedなのでconfirmatory capability claimには算入しない。
+- 結果を受けたLR / steps / model / tokenizer / serializer調整は行わない。
+- 8-step horizonをpost hocに延長して元結果を書き換えない。
+
+Matched-controlのtoken count / wall time / RSSは能力Gate 2の成立条件とはせず、Gate 4 resource auditで測定する。equal optimizer stepsをequal FLOPsとは主張しない。
+
+### Validation
+
+- GitHub Actions run #159: Pyright success。
+- pytest: **133 passed in 25.07s**。
+- unresolved PR review threads: 0。
+
+### Next gate
+
+Gate 3 — Confirmatory manifest。実測前にfamily/leakage group、correction/sibling生成規則、seed集合、episode horizon、endpoint hierarchy、tie/win/loss規則を固定する。
+
+Wolfram planning heuristic（独立family、tieなし、two-sided sign test alpha=0.05）を再確認:
+- true family win probability 0.80を仮定しpower >= 0.8: 最小20 families。
+- true family win probability 0.75を仮定しpower >= 0.8: 最小30 families。
+これはsample-size planningのみで、development Runへの統計的推論ではない。
+
+
+## Session 13 — 2026-10-04
+
+Task: Gate 2.5 review hardening + Gate 3 Confirmatory Manifest。
+
+Status: implementation complete; CI pending
+
+### Gate 2.5 — matched-control audit hardening
+
+PR #51 reviewで、example数/optimizer step数だけではmatched controlのresource差を監査できないこと、parent suite ID一致だけではbase supervision revision driftを検出できないことを確認。
+
+実装:
+- R1/C1 trainingごとに、実際のoptimizer step列に沿ったencoded token presentations、padding込みtoken positions、candidate sequence数を算出。
+- training本体のwall timeを実測。
+- process max RSS before/after/increaseをKiBで保存。
+- 各training artifactのupdate summaryとcorrection-transfer summaryの両方へresource evidenceを保存。
+- equal optimizer stepsをequal FLOPsとは引き続き主張しない。
+- ACT parent Artifactの `suite_sha256` をcurrent `calculate-and-store-v0` suite digestと照合。suite IDだけ一致する別revisionを拒否。
+- 既存development Runにはresource instrumentationが無かったため、過去値を推測して補わない。
+
+### Gate 3 — frozen before measurement
+
+正本:
+`docs/experiments/learn-correction-transfer-confirmatory-v0.json`
+
+canonical SHA-256:
+`72fa77acf48403d5a45f927f1122d6fb5753b1118d9f25322e1d6700f2cb1563`
+
+固定:
+- 30 family。15 add / 15 subtract。
+- 各familyはcorrection/siblingでoperation・operands同一、store_as keyだけ変更。
+- development familyは除外。
+- seeds 42/43/44。
+- 100 optimizer steps、LR 0.003、train_backbone=true。
+- model-only、fallbackなし、8-step horizon。
+- siblingはtrainingへ入れない。
+- primary endpointはL1 uncorrected sibling teacher-prefix accuracyのC1-R1 family差。
+- family差 >0 = win、<0 = loss、=0 = tie。
+- primary inferenceはnon-tie familyのexact two-sided sign test、alpha=0.05。
+- Supported / Not supported / Inconclusiveの判定規則を測定前固定。
+- L0 Repairはmanipulation check。L1 NLL / L2 strict task_success / goal_verifiedはsecondary descriptive。
+- missing familyを追加familyで置換しない。
+- endpoint出力後のcode/manifest変更はprotocol version更新を要求。
+- sealed testは開かない。
+
+Candidate coverage:
+- 全30 family × correction/sibling = 60 task。
+- RuleBased teacherから得る240 decisionすべてについてcandidate coverageを事前検査するtestを追加。
+
+Wolfram planning:
+- exact two-sided sign test、独立family・tieなしという単純化。
+- n=30、true win probability 0.75 -> power ≈ 0.8034069。
+- n=30、true win probability 0.80 -> power ≈ 0.9389129。
+- planning guidanceのみでdevelopment evidenceへの推論ではない。
+
+次:
+1. CI/Pyright/pytest。
+2. review threadを実装根拠付きでclose。
+3. PR #51をGate 3完了状態へ更新。
+4. Gate 4 confirmatory measurement runnerを、このfrozen manifestを唯一の入力として実装・実行する。

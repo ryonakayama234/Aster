@@ -85,38 +85,41 @@ Decision baselineはtestを自動開封しません。まずdevelopment runを�
 
 ## 次に作るもの
 
-2026-10-02: Research Observatory（SEE）はユーザーWSL2実ブラウザで成立した。
-保存済みDecision研究をAster Service→aster-webでarm/case比較でき、欠損scoreをWebで再計算しないことも確認済み。
-Aster PR #47はReady for review、aster-web PR #4はmerge済み。
+2026-10-03: **ACT v0はユーザーWSL2実機で確認済み**。PR #49はmainへmerge済み、Issue #48は完了。後続調査で実ACT Run ID `5a8076571dca446fa07190cf4fc62509` を回収し、LEARNのparent lineageとして固定した。未記録のbundle ID等は推測して補わない。
 
-現在の作業は Issue #48 / branch `feat/learned-agent-act-v0` の **ACT v0**。
+現在の研究Gateは Issue #20 / branch `feat/learn-v0-correction-transfer` の **LEARN v0 — Correction Transfer**。
 
 ```text
-decision_model:<digest>
-→ verified artifact load
-→ ModelPolicy
-→ CalculateAndStoreCandidates
-→ candidate score / Action select
-→ real ToolExecutor
-→ Observation / RuntimeState
-→ TaskEvaluator
-→ DecisionTrace + Trajectory + evaluation
+P0 Parent
+  ├─ R1 Replay control
+  └─ C1 Correction child
+
+student rollout
+→ student-visited state
+→ teacher correction
+→ matched-budget candidate update
+→ corrected state
+→ uncorrected sibling
+→ model-only episode
 ```
 
-初版はmodel-only。固定development task `add 23 + 19 → answer` を実装前に固定し、
-fallback / RuleBasedPolicy介入 / 自由task / 任意tool / 新serializer / model update / sealed test開封を含めない。
+中心仮説は「自分が実際に訪れた失敗状態への訂正が、同じ追加update量のReplayより未訂正の近縁状態へ転移するか」。
 
-ACTでは次を別々に判定する。
+次を別々に判定する。
 
-- **Wiring Gate**: artifact→model→tool→evidenceが一周したか。task failureでもPASSになり得る。
-- **Capability Gate**: 固定development taskをmodel-onlyで `task_success=true` / `goal_verified=true` にできたか。
+- **LEARN-Wiring**: Parent→rollout→correction→R1/C1→save/reload→same evaluatorが一周したか。
+- **LEARN-Repair**: 訂正state自身が改善したか。
+- **LEARN-Transfer**: 学習へ入れていないsibling stateでCorrection固有効果があるか。
+- **LEARN-Sequential**: model-only episode完了へ効果が移ったか。
 
-仕様は [LearnedAgentAct-v0](docs/LearnedAgentAct-v0.md)、作業順は
-[TODO](docs/TODO/LearnedAgentAct-v0.md)、進捗は
-[Progress](docs/Progress/LearnedAgentAct-v0.md) を正本にする。
+仕様は [LearnCorrectionTransfer-v0](docs/LearnCorrectionTransfer-v0.md)、作業順は
+[TODO](docs/TODO/LearnCorrectionTransfer-v0.md)、進捗は
+[Progress](docs/Progress/LearnCorrectionTransfer-v0.md) を正本にする。
 
-ACT成立後は失敗RunをResearch Observatoryで調べ、Aster #20の
-親model→訂正→candidate再学習→同じEvaluatorによる親子比較へ接続する。
+Gate 2 developmentではL0 Repairを観測した一方、L1 Local TransferとL2 strict terminal successは未実証だった。この1 family × 1 seedはconfirmatory結果へ算入しない。
 
-Aster Service / aster-webは任意shellやrepository-local pathを公開せず、
-Job / Run / Artifact / Research evidenceの出典を分離する方針を維持します。
+2026-10-04: **Gate 3 Confirmatory Manifestを測定前に固定**。
+`docs/experiments/learn-correction-transfer-confirmatory-v0.json` に30 family、seeds 42/43/44、8-step horizon、primary endpoint=L1 sibling teacher-prefix accuracy、family win/tie/loss、exact sign test、failure handling、sealed-test境界を明示した。manifestのcanonical SHA-256は `72fa77acf48403d5a45f927f1122d6fb5753b1118d9f25322e1d6700f2cb1563`。
+
+次はGate 4で、この固定manifestを変えずにP0/R1/C1を測定する。RL / KLPO / new Tokenizer / new serializer / model scaling / sealed testを混ぜない。
+Aster Service / aster-webは任意shellやrepository-local pathを公開せず、Job / Run / Artifact / Research evidenceの出典を分離する方針を維持する。

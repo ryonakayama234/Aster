@@ -24,7 +24,10 @@ from aster.tools.builtin.memory import MEMORY_GET_SPEC, MEMORY_PUT_SPEC, memory_
 from aster.tools.executor import ToolExecutor
 from aster.tools.registry import ToolRegistry
 from aster.training.decision import DecisionTrainConfig, examples_from_teacher_trajectory
-from aster.training.experiment import run_logged_intervention_learning_experiment
+from aster.training.experiment import (
+    run_logged_correction_transfer_experiment,
+    run_logged_intervention_learning_experiment,
+)
 
 
 def build_executor() -> ToolExecutor:
@@ -176,5 +179,160 @@ def test_logged_intervention_experiment_closes_v0_to_v1_comparison(tmp_path):
     )
     assert experiment["comparison"]["delta_definition"] == "candidate_minus_parent"
 
+    for name, tensor in model.state_dict().items():
+        torch.testing.assert_close(tensor, parent_state[name])
+
+
+def test_correction_transfer_experiment_compares_parent_replay_and_correction(tmp_path):
+    torch.manual_seed(29)
+    torch.set_num_threads(2)
+
+    teacher_trajectory = run_loop(
+        policy=RuleBasedPolicy(),
+        executor=build_executor(),
+        evaluator=TaskEvaluator(),
+        context=RuntimeContext(task=task()),
+    )
+    base_examples = tuple(
+        examples_from_teacher_trajectory(
+            teacher_trajectory,
+            teacher="rule-v0:base",
+        )
+    )
+    full_suite = build_calculate_and_store_suite()
+    cases = full_suite.cases_for("calibration")[:1] + full_suite.cases_for("test")[:1]
+    suite = BenchmarkSuite("correction-transfer-wiring-test", cases)
+
+    all_examples = base_examples + tuple(case.example for case in suite.cases)
+    texts = [
+        serialize_decision_input(example.state, example.trajectory, candidate)
+        for example in all_examples
+        for candidate in example.candidates
+    ]
+    tokenizer = train_aster_tokenizer(
+        texts,
+        target_vocab_size=512,
+        min_pair_frequency=1,
+        name="CorrectionTransferWiringTokenizer",
+        version="0",
+    )
+    context_length = max(
+        256,
+        max(len(tokenizer.encode(text, add_bos=True, add_eos=True)) for text in texts),
+    )
+    model = DecisionModel(
+        TinyLM(
+            ModelConfig(
+                vocab_size=tokenizer.vocab_size,
+                context_length=context_length,
+                width=8,
+                heads=2,
+                layers=1,
+            )
+        )
+    )
+    parent_state = {name: tensor.detach().clone() for name, tensor in model.state_dict().items()}
+
+    primary = ModelPolicy(
+        model,
+        tokenizer,
+        candidate_builder=CalculateAndStoreCandidates(),
+        model_id="decision-learn-parent-test",
+    )
+    policy = SelectivePolicy(
+        primary,
+        fallback=None,
+        config=SelectivePolicyConfig(
+            autonomous_threshold=0.0,
+            fallback_threshold=0.0,
+        ),
+    )
+
+    run_path = run_logged_correction_transfer_experiment(
+        tmp_path,
+        policy=policy,
+        teacher=RuleBasedPolicy(),
+        teacher_id="rule-v0:teacher",
+        executor=build_executor(),
+        evaluator=TaskEvaluator(),
+        context=RuntimeContext(task=task()),
+        parent_model=model,
+        tokenizer=tokenizer,
+        base_examples=base_examples,
+        benchmark_suite=suite,
+        train_config=DecisionTrainConfig(
+            steps=24,
+            learning_rate=1e-2,
+            train_backbone=True,
+            seed=29,
+        ),
+        replay_model_id="decision-learn-replay-test",
+        correction_model_id="decision-learn-correction-test",
+        sequential_task=task(),
+    )
+
+    run = json.loads((run_path / "run.json").read_text(encoding="utf-8"))
+    experiment = json.loads(
+        (run_path / "correction-transfer.json").read_text(encoding="utf-8")
+    )
+    replay_training = json.loads(
+        (run_path / "training-replay.json").read_text(encoding="utf-8")
+    )
+    correction_training = json.loads(
+        (run_path / "training-correction.json").read_text(encoding="utf-8")
+    )
+
+    assert run["status"] == "completed"
+    assert experiment["schema_version"] == "aster-correction-transfer-experiment-0"
+    assert experiment["policy_mode"] == "model_only"
+    assert experiment["promotion"] == "candidate_only"
+    assert experiment["budget"]["equal_flops_claimed"] is False
+    assert experiment["repair"]["examples"] == replay_training["added_examples"]
+    assert set(experiment["repair"]) == {
+        "source",
+        "examples",
+        "parent",
+        "replay",
+        "correction",
+    }
+    assert replay_training["added_examples"] == correction_training["added_examples"]
+    assert (
+        replay_training["update"]["training_examples"]
+        == correction_training["update"]["training_examples"]
+    )
+    measured = experiment["budget"]["measured_resources"]
+    assert measured["replay"] == replay_training["update"]["resources"]
+    assert measured["correction"] == correction_training["update"]["resources"]
+    for resources in measured.values():
+        assert resources["optimizer_steps"] == 24
+        assert resources["encoded_tokens_presented"] > 0
+        assert resources["padded_token_positions"] >= resources["encoded_tokens_presented"]
+        assert resources["candidate_sequences_presented"] > 0
+        assert resources["wall_seconds"] >= 0.0
+    assert experiment["candidate_artifacts"]["replay"]["registered"] is True
+    assert experiment["candidate_artifacts"]["replay"]["reload_verified"] is True
+    assert experiment["candidate_artifacts"]["correction"]["registered"] is True
+    assert experiment["candidate_artifacts"]["correction"]["reload_verified"] is True
+    assert experiment["candidate_artifacts"]["parent"]["artifact_id"] is None
+
+    sequential = experiment["sequential_transfer"]
+    assert sequential["scope"] == "model_only_uncorrected_sibling_episode"
+    assert set(sequential["arms"]) == {"parent", "replay", "correction"}
+    for arm, data in sequential["arms"].items():
+        child_run = json.loads(
+            (tmp_path / "runs" / data["run_id"] / "run.json").read_text(encoding="utf-8")
+        )
+        assert child_run["status"] == "completed"
+        assert child_run["kind"] == "learn_sequential_episode"
+        assert data["summary"]["arm"] == arm
+        assert data["summary"]["policy_mode"] == "model_only"
+        assert data["summary"]["weights_unchanged"] is True
+
+    assert len(experiment["comparisons"]) == 3
+    assert set(experiment["comparisons"]) == {
+        "parent_to_replay",
+        "parent_to_correction",
+        "replay_to_correction",
+    }
     for name, tensor in model.state_dict().items():
         torch.testing.assert_close(tensor, parent_state[name])

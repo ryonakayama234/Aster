@@ -29,7 +29,9 @@ from aster.tools.registry import ToolRegistry
 from aster.training.decision import DecisionTrainConfig, examples_from_teacher_trajectory
 from aster.training.intervention import (
     decision_example_from_intervention,
+    replay_decision_examples,
     train_intervention_candidate,
+    train_replay_control_candidate,
 )
 
 
@@ -216,6 +218,92 @@ def test_intervention_training_creates_candidate_without_mutating_parent():
         not torch.equal(update.model.state_dict()[name], parent_state[name])
         for name in parent_state
     )
+
+
+
+def test_replay_control_matches_correction_budget_and_preserves_parent():
+    teacher_trajectory = run_loop(
+        policy=RuleBasedPolicy(),
+        executor=build_executor(),
+        evaluator=TaskEvaluator(),
+        context=RuntimeContext(task=task()),
+    )
+    base_examples = tuple(
+        examples_from_teacher_trajectory(teacher_trajectory, teacher="rule-v0:base")
+    )
+    texts = [
+        serialize_decision_input(example.state, example.trajectory, candidate)
+        for example in base_examples
+        for candidate in example.candidates
+    ]
+    tokenizer = train_aster_tokenizer(
+        texts,
+        target_vocab_size=512,
+        min_pair_frequency=1,
+        name="LearnReplayControlTokenizer",
+        version="0",
+    )
+    context_length = max(
+        len(tokenizer.encode(text, add_bos=True, add_eos=True)) for text in texts
+    )
+    torch.manual_seed(17)
+    model = DecisionModel(
+        TinyLM(
+            ModelConfig(
+                vocab_size=tokenizer.vocab_size,
+                context_length=context_length,
+                width=16,
+                heads=2,
+                layers=1,
+            )
+        )
+    )
+    parent_state = {name: tensor.detach().clone() for name, tensor in model.state_dict().items()}
+    traces = tuple(
+        _trace_from_example(index, example) for index, example in enumerate(base_examples)
+    )
+    config = DecisionTrainConfig(
+        steps=40,
+        learning_rate=1e-2,
+        train_backbone=True,
+        seed=17,
+    )
+
+    correction = train_intervention_candidate(
+        model,
+        tokenizer,
+        base_examples,
+        traces,
+        config=config,
+    )
+    replay = train_replay_control_candidate(
+        model,
+        tokenizer,
+        base_examples,
+        added_examples=len(correction.intervention_examples),
+        config=config,
+    )
+
+    assert len(replay.replay_examples) == len(correction.intervention_examples)
+    assert len(replay.training_examples) == len(correction.training_examples)
+    assert len(replay.losses) == len(correction.losses) == config.steps
+    assert replay.replay_examples == replay_decision_examples(
+        base_examples, len(correction.intervention_examples)
+    )
+    for update in (replay, correction):
+        resources = update.resources
+        assert resources["optimizer_steps"] == config.steps
+        assert resources["encoded_tokens_presented"] > 0
+        assert resources["padded_token_positions"] >= resources["encoded_tokens_presented"]
+        assert resources["candidate_sequences_presented"] > 0
+        assert resources["wall_seconds"] >= 0.0
+        assert (
+            resources["process_max_rss_after_kib"]
+            >= resources["process_max_rss_before_kib"]
+        )
+    for name, tensor in model.state_dict().items():
+        torch.testing.assert_close(tensor, parent_state[name])
+        torch.testing.assert_close(replay.model.state_dict()[name], correction.model.state_dict()[name])
 
 
 def _trace_from_example(step, example):
