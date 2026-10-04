@@ -29,16 +29,22 @@ Correction
 addとsubtractで曲線が系統的に異なる。
 特にsubtractでnegative transferが早く・強く現れる。
 
-### H3 — optimizer instability（Trial 0では非対象）
+### H3 — optimizer instability（Trial 1では非対象）
 
 現在のDecision trainingは固定parent・固定example順・dropoutなしの決定論的経路であり、seed 42/43/44を変えても独立trajectoryにならない。
-したがってTrial 0でseed反復を独立証拠として数えない。stochasticityを導入してoptimizer instabilityを調べる場合は、別Trial cycleでその乱数源を事前固定する。
+したがってTrial 1でseed反復を独立証拠として数えない。stochasticityを導入してoptimizer instabilityを調べる場合は、別Trial cycleでその乱数源を事前固定する。
 
 ### H4 — broad forgetting
 
 Correctionでsiblingだけでなくbase supervision retentionも低下する。
 
-## Trial 0 — Representative interference curve
+## Trial lineage
+
+Trial 0（`diag-correction-interference-trial-0`）は、実機測定中にsingleton-candidate stateのmargin instrumentation bugが判明したためpartialで終了した。旧SHAで完成したunitが存在する可能性があるため削除・混合せず、Trial 0 evidenceはTrial 1集計へ算入しない。
+
+bugfix後は `diag-correction-interference-trial-1` として新cycleを開始する。family、training条件、checkpoint、diagnostic questionは維持し、source Git SHAとmetric semanticsを新lineageとして固定する。
+
+## Trial 1 — Representative interference curve
 
 ### Evidence scope
 
@@ -130,12 +136,12 @@ base retention degrades together with sibling performance.
 
 ### Signature D — instability
 
-Trial 0では判定しない。現行学習に独立なseed variationが存在しないため、必要ならstochastic mechanismを明示した別Trialで扱う。
+Trial 1では判定しない。現行学習に独立なseed variationが存在しないため、必要ならstochastic mechanismを明示した別Trialで扱う。
 
 ## Stop / next-decision rule
 
-Trial 0は6 training unitsで停止する。
-結果を見てfamilyやseed反復を追加して同じTrial 0を延長しない。
+Trial 1は6 training unitsで停止する。
+結果を見てfamilyやseed反復を追加して同じTrial 1を延長しない。
 
 次は以下のいずれか1つへ進む。
 
@@ -151,4 +157,4 @@ Trial 0は6 training unitsで停止する。
 
 Trialでmechanism signatureが絞れた後、新しい独立familyを使ってprimary endpointを事前固定できる場合だけBatch manifestを作る。
 
-Trial 0で選んだ6 familyは、そのBatchの未見confirmatory evidenceには使わない。
+Trial 1で選んだ6 familyは、そのBatchの未見confirmatory evidenceには使わない。
