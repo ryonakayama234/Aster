@@ -11,6 +11,7 @@ from aster.agent.policy import RuleBasedPolicy
 from aster.agent.selective import SelectivePolicy, SelectivePolicyConfig
 from aster.benchmark.case import BenchmarkCase, BenchmarkSuite
 from aster.benchmark.suite import build_calculate_and_store_suite
+from aster.corpus.pipeline import digest, json_bytes
 from aster.evaluator.verifier import TaskEvaluator
 from aster.inference.decide import ModelPolicy
 from aster.model.decision_artifact import load_decision_artifact
@@ -156,8 +157,8 @@ def run_learn_dev_probe(
 
     if manifest.get("artifact_id") != artifact_id:
         raise ValueError("Resolved parent artifact identity mismatch")
-    if manifest.get("suite_id") != PARENT_SUITE_ID:
-        raise ValueError("LEARN dev probe requires the calculate-and-store-v0 parent suite")
+    baseline = build_calculate_and_store_suite()
+    _validate_parent_suite_lineage(manifest, baseline)
     model_id = _require_str(manifest, "model_id")
     artifact_calibration = _artifact_calibration_diagnostic(manifest)
 
@@ -171,7 +172,6 @@ def run_learn_dev_probe(
             fallback_threshold=0.0,
         ),
     )
-    baseline = build_calculate_and_store_suite()
     suite = build_learn_dev_probe_suite()
 
     return run_logged_correction_transfer_experiment(
@@ -209,6 +209,22 @@ def run_learn_dev_probe(
             "learning_rate": TRAIN_CONFIG.learning_rate,
         },
     )
+
+
+def _validate_parent_suite_lineage(
+    manifest: dict[str, object],
+    suite: BenchmarkSuite,
+) -> str:
+    """Require the parent artifact to reference the exact current base-supervision suite."""
+    if manifest.get("suite_id") != suite.suite_id or suite.suite_id != PARENT_SUITE_ID:
+        raise ValueError("LEARN dev probe requires the calculate-and-store-v0 parent suite")
+    expected = digest(json_bytes(suite.to_dict()))
+    actual = manifest.get("suite_sha256")
+    if actual != expected:
+        raise ValueError(
+            "Parent DecisionModel suite digest does not match current base supervision"
+        )
+    return expected
 
 
 def _teacher_examples(task: dict[str, JsonValue]) -> list[DecisionExample]:
