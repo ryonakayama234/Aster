@@ -2,6 +2,7 @@
 
 from copy import deepcopy
 from dataclasses import dataclass
+from time import perf_counter
 from typing import Sequence
 
 import torch
@@ -187,7 +188,7 @@ def train_decision_with_checkpoints(
     *,
     checkpoints: Sequence[int],
     config: DecisionTrainConfig = DecisionTrainConfig(),
-) -> tuple[list[float], dict[int, DecisionModel]]:
+) -> tuple[list[float], dict[int, DecisionModel], dict[int, float]]:
     """Train once while snapshotting model weights at fixed optimizer steps.
 
     Checkpoints are repeated observations from one training trajectory. They are
@@ -217,10 +218,13 @@ def train_decision_with_checkpoints(
     model.train()
     losses: list[float] = []
     snapshots: dict[int, DecisionModel] = {}
+    elapsed_wall_seconds: dict[int, float] = {}
     requested = set(points)
+    started = perf_counter()
 
     if 0 in requested:
         snapshots[0] = deepcopy(model)
+        elapsed_wall_seconds[0] = 0.0
 
     for step in range(config.steps):
         example = examples[step % len(examples)]
@@ -233,11 +237,15 @@ def train_decision_with_checkpoints(
         completed_steps = step + 1
         if completed_steps in requested:
             snapshots[completed_steps] = deepcopy(model)
+            elapsed_wall_seconds[completed_steps] = perf_counter() - started
 
     if set(snapshots) != requested:
         missing = sorted(requested.difference(snapshots))
         raise RuntimeError(f"Decision training checkpoints were not captured: {missing}")
-    return losses, snapshots
+    if set(elapsed_wall_seconds) != requested:
+        missing = sorted(requested.difference(elapsed_wall_seconds))
+        raise RuntimeError(f"Decision checkpoint timings were not captured: {missing}")
+    return losses, snapshots, elapsed_wall_seconds
 
 
 def train_decision(
