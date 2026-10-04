@@ -63,11 +63,18 @@ def run_confirmatory_unit(
     *,
     family_id: str,
     seed: int,
-    measurement_git_sha: str | None = None,
+    expected_measurement_git_sha: str | None = None,
 ) -> Path:
     """Run exactly one frozen family/seed unit from the registered ACT parent."""
     root_path = Path(root).resolve()
-    measurement_git_sha = measurement_git_sha or _measurement_git_sha(root_path)
+    measurement_git_sha = _measurement_git_sha(root_path)
+    if (
+        expected_measurement_git_sha is not None
+        and measurement_git_sha != expected_measurement_git_sha
+    ):
+        raise RuntimeError(
+            "Git revision changed during confirmatory measurement; protocol v0 cannot continue"
+        )
     manifest_sha256 = confirmatory_manifest_sha256(manifest)
     family = _family_by_id(manifest, family_id)
     training = _require_dict(manifest, "training")
@@ -388,7 +395,7 @@ def run_confirmatory_campaign(root: str | Path) -> Path:
                     manifest,
                     family_id=family_id,
                     seed=seed,
-                    measurement_git_sha=measurement_git_sha,
+                    expected_measurement_git_sha=measurement_git_sha,
                 )
                 unit = extract_confirmatory_unit_result(unit_path, manifest)
                 completed[key] = (unit_path, unit)
