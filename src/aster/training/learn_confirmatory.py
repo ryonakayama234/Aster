@@ -10,7 +10,14 @@ from pathlib import Path
 import re
 from typing import cast
 
+from aster.agent.policy import RuleBasedPolicy
 from aster.corpus.pipeline import digest, json_bytes
+from aster.evaluator.verifier import TaskEvaluator
+from aster.records.transition import JsonValue
+from aster.runtime.context import RuntimeContext
+from aster.runtime.loop import run_loop
+from aster.runtime.service_agent import build_executor
+from aster.training.decision import examples_from_teacher_trajectory
 
 SCHEMA_VERSION = "aster-learn-confirmatory-manifest-0"
 PROTOCOL_ID = "learn-correction-transfer-confirmatory-v0"
@@ -29,6 +36,41 @@ def load_confirmatory_manifest(path: str | Path = DEFAULT_MANIFEST_PATH) -> dict
     manifest = cast(dict[str, object], raw)
     validate_confirmatory_manifest(manifest)
     return manifest
+
+
+def validate_confirmatory_candidate_coverage(
+    manifest: dict[str, object],
+) -> dict[str, int]:
+    """Verify every frozen correction/sibling teacher Action is representable by candidates."""
+    validate_confirmatory_manifest(manifest)
+    design = _require_dict(manifest, "family_design")
+    families = _require_list(design, "families")
+    tasks_checked = 0
+    decisions_checked = 0
+    for raw in families:
+        if not isinstance(raw, dict):
+            raise ValueError("Each confirmatory family must be an object")
+        family = cast(dict[str, object], raw)
+        for role in ("correction_task", "sibling_task"):
+            task = _require_dict(family, role)
+            trajectory = run_loop(
+                policy=RuleBasedPolicy(),
+                executor=build_executor(),
+                evaluator=TaskEvaluator(),
+                context=RuntimeContext(task=cast(dict[str, JsonValue], task)),
+            )
+            examples = examples_from_teacher_trajectory(
+                trajectory,
+                teacher=f"rule-v0:confirmatory-coverage:{role}",
+            )
+            if not examples:
+                raise ValueError("Confirmatory task produced no teacher decisions")
+            tasks_checked += 1
+            decisions_checked += len(examples)
+    return {
+        "tasks_checked": tasks_checked,
+        "decisions_checked": decisions_checked,
+    }
 
 
 def confirmatory_manifest_sha256(manifest: dict[str, object]) -> str:
