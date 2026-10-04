@@ -158,7 +158,7 @@ Uncorrected sibling:
 
 - Repair: student-visited exact correction statesをP0/R1/C1で直接再評価。
 - Local Transfer: uncorrected sibling teacher-prefix decisionを同一suiteで比較。
-- Sequential Transfer: このdevelopment probeの次の実装でsibling model-only episodeをP0/R1/C1別に保存する。
+- Sequential Transfer: sibling model-only episodeをP0/R1/C1別に保存し、strict terminal successとnonterminal goal-reachingを分離して読む。
 
 benchmark runner内部の `test` splitはこのdevelopment-only sibling測定の保持場所であり、project sealed testを意味しない。旧sealed testは開かない。
 
@@ -201,3 +201,38 @@ Teacherはshadow label専用で、Action executionへ介入しない。
 R1/C1は非promotion candidateとしてDecisionModel Artifactを保存し、ArtifactCatalogへimmutable登録した後にreloadする。reload weight一致を確認し、そのreload後model/tokenizerでSequential episodeを実行する。P0も既存registered parent Artifactを再resolve/reloadして同じ検証を行う。
 
 この追加観測はdevelopment probeのinstrumentation拡張であり、既に見たLocal Transfer結果に合わせたlearning hyperparameter tuningではない。
+
+
+## Development Gate 2 closeout — 2026-10-04
+
+Fixed development Run `720c9e43a8a248a48829fc6b789ba75f` で、実ACT parent lineageからP0/R1/C1 Artifactのsave/register/reload、Repair、teacher-prefix sibling、model-only sibling episode、trajectory diagnosisまで一周した。
+
+### Observed / not demonstrated
+
+- L0 Repair: observed。
+- L1 Local Transfer: not demonstrated。
+- L2 strict terminal task success within the fixed 8-step horizon: not demonstrated。
+- L2 sequential goal-reaching: C1だけでobserved。
+- capability claim: none。1 family × 1 seedのdevelopment evidenceでありconfirmatory結果へ算入しない。
+
+C1はstep 7で初めて `memory.get("sibling_total")` に到達してgoal_verified=trueとなった。step 7は固定8-step horizonの最終許容stepなので、その後のstop decisionは観測されていない。したがって「goal到達後にterminationを誤った」とは結論しない。
+
+8-step horizonはこの結果を見て延長しない。追加horizon診断を行う場合はpost-hoc development diagnosticとして元の8-step結果と分離する。
+
+既存development specは `task_success` / `goal_verified` の両軸を保存対象にしていたが、primary/secondary hierarchyは明示していなかった。Confirmatory manifestではepisode horizonとendpoint hierarchyを実測前に固定する。
+
+### Gate transition
+
+Gate 2はwiring/instrumentationの成立を目的として完了とする。次のGate 3では、結果を見る前に以下をmanifestへ固定する:
+
+- independent task/generator familyとleakage group
+- correction member / uncorrected sibling生成規則
+- candidate coverage
+- seed集合
+- episode horizon
+- endpoint hierarchy
+- family-level win / tie / loss規則
+- failed/missing runの扱い
+- sealed-test boundary
+
+Matched-controlのtoken count / wall time / RSSはGate 4 resource auditで測る。optimizer step一致をequal FLOPsとは解釈しない。
