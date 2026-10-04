@@ -29,9 +29,10 @@ Correction
 addとsubtractで曲線が系統的に異なる。
 特にsubtractでnegative transferが早く・強く現れる。
 
-### H3 — optimizer instability
+### H3 — optimizer instability（Trial 0では非対象）
 
-同一familyでもseed間分散が大きく、Repair/Sibling曲線の方向が安定しない。
+現在のDecision trainingは固定parent・固定example順・dropoutなしの決定論的経路であり、seed 42/43/44を変えても独立trajectoryにならない。
+したがってTrial 0でseed反復を独立証拠として数えない。stochasticityを導入してoptimizer instabilityを調べる場合は、別Trial cycleでその乱数源を事前固定する。
 
 ### H4 — broad forgetting
 
@@ -60,13 +61,12 @@ LEARN v0結果を見た後に、operation × outcomeの代表例を選ぶ。
 
 この選択は `post_hoc_selected=true` と記録する。
 
-### Seeds
+### Deterministic training trajectory
 
-- 42
-- 43
-- 44
-
-6 family × 3 seed = 18 training units。
+- seed field: 42
+- 現行学習は決定論的なのでseed反復を行わない。
+- 6 family × 1 deterministic trajectory = **6 training units**。
+- 5 checkpointずつなので30 checkpoint observations。checkpointは独立sampleではない。
 
 ### Checkpoints
 
@@ -126,20 +126,20 @@ base retention degrades together with sibling performance.
 
 ### Signature D — instability
 
-direction or timing is dominated by seed variance and no stable curve pattern appears.
+Trial 0では判定しない。現行学習に独立なseed variationが存在しないため、必要ならstochastic mechanismを明示した別Trialで扱う。
 
 ## Stop / next-decision rule
 
-Trial 0は18 training unitsで停止する。
-結果を見てfamily/seedを追加して同じTrial 0を延長しない。
+Trial 0は6 training unitsで停止する。
+結果を見てfamilyやseed反復を追加して同じTrial 0を延長しない。
 
 次は以下のいずれか1つへ進む。
 
 - Aが明確 → train_backbone / replay ratio / LR等のcausal intervention Trial
 - Bが明確 → numeric / operation representation Trial
 - Cが明確 → forgetting-control Trial
-- D → optimizer / initialization stability Trial
-- どれも明確でない → instrumentationまたは仮説を再設計
+- A/B/Cのどれも明確でない → instrumentationまたは仮説を再設計
+- optimizer / initialization stabilityが必要なら、乱数源を事前固定した新しいTrial cycleを作る
 
 新しい条件は新しいTrial cycle IDで扱う。
 
