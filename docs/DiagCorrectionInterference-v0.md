@@ -93,6 +93,10 @@ Correction / Replay双方で:
    - raw NLL
    - correct-vs-best-wrong logit margin
 
+Marginはwrong candidateが1つ以上存在するDecisionExampleだけで定義する。
+singleton-candidate stateは正当な評価対象としてaccuracy/NLLに残し、marginは未定義（JSONでは `null`）とする。
+集計には `margin_examples` / `singleton_candidate_examples` を併記し、未定義marginを0などの擬似値へ変換しない。
+
 3. base retention
    - fixed base supervision accuracy / NLL
 
