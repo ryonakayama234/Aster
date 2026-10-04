@@ -519,3 +519,53 @@ Wolfram cross-check:
 
 このSessionではconfirmatory endpointを1件も測定していない。
 PR #52のCI/review完了とmain merge後、ユーザーWSLでmerge commitをpullし、その同一clean commitからGate 4 measurementを開始する。
+
+
+## Session 15 — 2026-10-04
+
+Task: Gate 4実測結果を記録し、LEARN v0をcloseoutする。
+
+Status: **Gate 5 COMPLETE / LEARN v0 closed as Not supported**
+
+### Confirmatory result
+
+- protocol: `learn-correction-transfer-confirmatory-v0`
+- manifest SHA-256: `72fa77acf48403d5a45f927f1122d6fb5753b1118d9f25322e1d6700f2cb1563`
+- measurement Git SHA: `c2fa2d175b4a23bbd246ed61266d0cdda2e22846`
+- 30 family × seeds 42/43/44 = 90 unit complete
+- wins / losses / ties = 6 / 19 / 5
+- non-tied families = 25
+- median family accuracy delta (Correction - Replay) = -0.25
+- exact two-sided sign-test p = 0.01463329792022705
+- verdict = **Not supported**
+
+Primary endpointでは、Correction固有の未訂正sibling transferは支持されず、frozen key-shift benchmark distribution内ではmatched Replayより悪い方向が優勢だった。
+
+### Interpretation boundary
+
+- corrected-state Repairが高くても、Local TransferやSequential Transferの成功とは扱わない。
+- この結果から「correction learning一般が有害」とは主張しない。
+- operation別のadd/subtract差は結果観測後のpost-hoc diagnostic leadであり、LEARN v0 confirmatory verdictを書き換えない。
+- local WSL Run artifactがcanonical machine-readable result。GitHub reportはsummary / lineage / interpretation boundaryを記録し、local artifactをcommit済みとは扱わない。
+
+### Post-hoc lead
+
+non-tied familyをoperation別に見ると:
+- add: 5 win / 7 loss
+- subtract: 1 win / 12 loss
+
+Wolframでのdiagnostic calculation:
+- subtract単独 two-sided sign test: p ≈ 0.00341797
+- add vs subtractのwin/loss allocationをtwo-sided exact comparison: p ≈ 0.0730435
+
+これは次の仮説生成用でありconfirmatory findingではない。
+
+### Next milestone
+
+- RL / KLPOへ直行しない。
+- `DIAG v0 — Correction Interference Curve` で、学習stepに沿ったRepair / sibling / base retention / parameter driftを追う。
+- 今後は `docs/ExperimentCycle-v0.md` の Trial / Batch規約を使う。
+- Trialは小さく速くmechanismを削り、Batchはmanifestを凍結して大きく回す。
+
+Repository closeout report:
+`reports/learn-correction-transfer-v0.md`
