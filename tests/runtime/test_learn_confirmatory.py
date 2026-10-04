@@ -1,6 +1,7 @@
 """Frozen confirmatory protocol invariants for LEARN v0."""
 
 from copy import deepcopy
+import json
 from pathlib import Path
 
 import pytest
@@ -56,6 +57,20 @@ def test_frozen_confirmatory_families_have_complete_candidate_coverage():
         "tasks_checked": 60,
         "decisions_checked": 240,
     }
+
+
+def test_confirmatory_loader_rejects_structurally_valid_hash_drift(tmp_path):
+    manifest = load_confirmatory_manifest(_ROOT / DEFAULT_MANIFEST_PATH)
+    changed = deepcopy(manifest)
+    changed["research_question"] = "post-freeze drift"
+    path = tmp_path / "manifest.json"
+    path.write_text(
+        json.dumps(changed, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValueError, match="digest mismatch"):
+        load_confirmatory_manifest(path)
 
 
 def test_confirmatory_validator_rejects_post_freeze_endpoint_or_training_drift():
