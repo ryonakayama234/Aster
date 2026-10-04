@@ -408,3 +408,64 @@ Wolfram planning heuristic（独立family、tieなし、two-sided sign test alph
 - true family win probability 0.80を仮定しpower >= 0.8: 最小20 families。
 - true family win probability 0.75を仮定しpower >= 0.8: 最小30 families。
 これはsample-size planningのみで、development Runへの統計的推論ではない。
+
+
+## Session 13 — 2026-10-04
+
+Task: Gate 2.5 review hardening + Gate 3 Confirmatory Manifest。
+
+Status: implementation complete; CI pending
+
+### Gate 2.5 — matched-control audit hardening
+
+PR #51 reviewで、example数/optimizer step数だけではmatched controlのresource差を監査できないこと、parent suite ID一致だけではbase supervision revision driftを検出できないことを確認。
+
+実装:
+- R1/C1 trainingごとに、実際のoptimizer step列に沿ったencoded token presentations、padding込みtoken positions、candidate sequence数を算出。
+- training本体のwall timeを実測。
+- process max RSS before/after/increaseをKiBで保存。
+- 各training artifactのupdate summaryとcorrection-transfer summaryの両方へresource evidenceを保存。
+- equal optimizer stepsをequal FLOPsとは引き続き主張しない。
+- ACT parent Artifactの `suite_sha256` をcurrent `calculate-and-store-v0` suite digestと照合。suite IDだけ一致する別revisionを拒否。
+- 既存development Runにはresource instrumentationが無かったため、過去値を推測して補わない。
+
+### Gate 3 — frozen before measurement
+
+正本:
+`docs/experiments/learn-correction-transfer-confirmatory-v0.json`
+
+canonical SHA-256:
+`72fa77acf48403d5a45f927f1122d6fb5753b1118d9f25322e1d6700f2cb1563`
+
+固定:
+- 30 family。15 add / 15 subtract。
+- 各familyはcorrection/siblingでoperation・operands同一、store_as keyだけ変更。
+- development familyは除外。
+- seeds 42/43/44。
+- 100 optimizer steps、LR 0.003、train_backbone=true。
+- model-only、fallbackなし、8-step horizon。
+- siblingはtrainingへ入れない。
+- primary endpointはL1 uncorrected sibling teacher-prefix accuracyのC1-R1 family差。
+- family差 >0 = win、<0 = loss、=0 = tie。
+- primary inferenceはnon-tie familyのexact two-sided sign test、alpha=0.05。
+- Supported / Not supported / Inconclusiveの判定規則を測定前固定。
+- L0 Repairはmanipulation check。L1 NLL / L2 strict task_success / goal_verifiedはsecondary descriptive。
+- missing familyを追加familyで置換しない。
+- endpoint出力後のcode/manifest変更はprotocol version更新を要求。
+- sealed testは開かない。
+
+Candidate coverage:
+- 全30 family × correction/sibling = 60 task。
+- RuleBased teacherから得る240 decisionすべてについてcandidate coverageを事前検査するtestを追加。
+
+Wolfram planning:
+- exact two-sided sign test、独立family・tieなしという単純化。
+- n=30、true win probability 0.75 -> power ≈ 0.8034069。
+- n=30、true win probability 0.80 -> power ≈ 0.9389129。
+- planning guidanceのみでdevelopment evidenceへの推論ではない。
+
+次:
+1. CI/Pyright/pytest。
+2. review threadを実装根拠付きでclose。
+3. PR #51をGate 3完了状態へ更新。
+4. Gate 4 confirmatory measurement runnerを、このfrozen manifestを唯一の入力として実装・実行する。
