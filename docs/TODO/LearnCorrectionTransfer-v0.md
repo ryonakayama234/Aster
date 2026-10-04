@@ -44,22 +44,23 @@
 - [x] clean Git working treeと全unit同一measurement Git SHAを要求。
 - [x] partial campaignでは件数/run IDだけを保存し、family effect / p-value / verdictを出さない。
 - [x] exact two-sided sign testを整数演算で実装し、Wolfram reference値でregression test。
-- [ ] PR #52 CI / review完了後にmainへmerge。
-- [ ] merge後の同一commitをWSLへpullし、preflightを再実行。
+- [x] PR #52 CI / review完了後にmainへmerge（measurement Git SHA `c2fa2d175b4a23bbd246ed61266d0cdda2e22846`）。
+- [x] merge後の同一commitをWSLへpullし、preflightを再実行。
 
 ### Gate 4b — Frozen measurement
 
-- [ ] Repair。
-- [ ] Local Transfer。
-- [ ] Sequential Transfer。
-- [ ] first error / failure propagation。
-- [ ] token count / wall time / RSS。
-- [ ] family単位のpaired P0/R1/C1 comparison。
-- [ ] 全90 unit完成後だけprimary family effect / exact sign test / verdictを生成。
+- [x] Repair。
+- [x] Local Transfer。
+- [x] Sequential Transfer。
+- [x] first error / failure propagation。
+- [x] token count / wall time / RSS。
+- [x] family単位のpaired P0/R1/C1 comparison。
+- [x] 全90 unit完成後だけprimary family effect / exact sign test / verdictを生成。
 
-## Gate 5 — Record
+## Gate 5 — Record — COMPLETE (2026-10-04)
 
-- [ ] report + machine-readable result。
-- [ ] Artifact lineage。
-- [ ] Supported / Not supported / Inconclusiveを明示。
-- [ ] 次にRL/curriculumへ進む根拠があるか判断。
+- [x] repository report `reports/learn-correction-transfer-v0.md` + WSL canonical machine-readable Run resultを記録。local Run artifactをGit管理済みとは扱わない。
+- [x] manifest SHA-256 / measurement Git SHA / ACT parent lineageを記録。
+- [x] verdictを **Not supported** と明示。wins/losses/ties = 6/19/5、median delta = -0.25、exact sign-test p = 0.01463329792022705。
+- [x] RL/curriculumへ直行しないと判断。次は DIAG v0 — Correction Interference Curve。
+- [x] 今後の共通実験サイクルとして `docs/ExperimentCycle-v0.md` に Trial / Batch を定義。
