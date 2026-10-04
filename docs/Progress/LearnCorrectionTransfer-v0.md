@@ -326,3 +326,37 @@ two-sided sign test alpha=0.05のpower >=0.8に必要な最小family数は:
 - pytest: **133 passed in 49.04s**。
 - Sequential evaluator / P0-R1-C1 Artifact reload / finite-temperature contract / compact CLI summaryを含むheadで成功。
 - 次は同一fixed development probeをWSLで再実行し、追加instrumentationだけを実測する。
+
+
+## Session 11 — 2026-10-04
+
+Task: Sequential Transfer development evidenceを実機で取得。
+
+Status: real WSL evidence collected; trajectory-level diagnosis pending
+
+LEARN Run: `720c9e43a8a248a48829fc6b789ba75f`
+
+Artifact reload:
+- P0 parent: registered=true / reload_verified=true
+- R1 replay: registered=true / reload_verified=true
+- C1 correction: registered=true / reload_verified=true
+
+Repair / Localは前回Runと同一:
+- Repair accuracy P0/R1/C1 = 0.25 / 0.125 / 0.625
+- Local sibling accuracy P0/R1/C1 = 0.25 / 0.0 / 0.25
+- Local raw NLL P0/R1/C1 = 1.3623 / 1.3932 / 2.6694
+
+Sequential model-only sibling:
+- P0 Parent: task_success=false, goal_verified=false, steps=6, first teacher divergence=1, disagreements=4, stop_reason=policy_stop.
+- R1 Replay: task_success=false, goal_verified=false, steps=1, first teacher divergence=0, disagreements=1, stop_reason=policy_stop.
+- C1 Correction: task_success=false, goal_verified=true, steps=8(max), first teacher divergence=1, disagreements=5, stop_reason=null.
+- 3 armともfirst_tool_failure=null。
+
+Interpretation boundary:
+- predeclared primary terminal endpoint `task_success` は3 armともfalse。したがってL2 Sequential Transfer passとは扱わない。
+- C1だけがgoal_verified=trueに到達したため、Parent/Replayにはないsequential goal-reaching signalは観測。
+- ただしgoal verification後にsuccessful terminal stopへ到達できずmax_steps終了。成功条件を結果観測後に緩めない。
+- 次は既存Runのtrajectory/action列をread-onlyに監査し、goal到達stepとその後のaction driftを特定する。再学習・hyperparameter変更は行わない。
+
+Read-only summarizer:
+`scripts/summarize_learn_sequential_run.py --root . --run-id 720c9e43a8a248a48829fc6b789ba75f`
