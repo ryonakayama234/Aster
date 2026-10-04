@@ -186,6 +186,40 @@ def test_checkpoint_training_matches_legacy_training_exactly():
         )
 
 
+def test_checkpoint_training_can_freeze_backbone_exactly():
+    torch.manual_seed(31)
+    _, _, examples = build_teacher_examples()
+    parent, tokenizer = build_decision_model(examples)
+    candidate = deepcopy(parent)
+    config = DecisionTrainConfig(
+        steps=25,
+        learning_rate=3e-3,
+        train_backbone=False,
+        seed=31,
+    )
+
+    _, snapshots, _ = train_decision_with_checkpoints(
+        candidate,
+        tokenizer,
+        examples,
+        checkpoints=(0, 25),
+        config=config,
+    )
+
+    for name, expected in parent.backbone.state_dict().items():
+        torch.testing.assert_close(
+            snapshots[25].backbone.state_dict()[name],
+            expected,
+            rtol=0,
+            atol=0,
+        )
+
+    assert any(
+        not torch.equal(value, parent.head.state_dict()[name])
+        for name, value in snapshots[25].head.state_dict().items()
+    )
+
+
 def test_decision_diagnostics_allow_singleton_candidate_states():
     torch.manual_seed(29)
     _, _, examples = build_teacher_examples()
