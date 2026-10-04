@@ -57,6 +57,27 @@ Trialの結論語:
 
 大きいBatchは、可能な限り **1 unit = 1 family × 1 seed** のように分割して実行する。これをbatch処理の基本単位とする。
 
+## 用語とmachine-readable metadata
+
+ここでいう **Batch** はoptimizerのmini-batchではなく、複数の実験unitをまとめて管理・再開する **experiment campaign** を指す。
+
+Run / campaign provenanceには原則として次を保存する。
+
+- `experiment_mode`: `trial` または `batch`
+- `cycle_id`: 例 `diag-correction-interference-trial-0`
+- `evidence_scope`: `development` / `diagnostic` / `confirmatory`
+- `planned_units`
+- `post_hoc_selected`: 結果を見てcaseを選んだTrialならtrue
+- `source_git_sha`
+- `parent_artifact_id` または対応するlineage
+
+Batchでは追加で:
+- `protocol_id`
+- `manifest_sha256`
+- `partial_endpoint_exposed` または同等のoptional-stopping監査情報
+
+Research Observatoryやreportは、このmetadataを使ってTrial evidenceとBatch evidenceを混同しない。
+
 ## Trial → Batch の昇格規則
 
 Trialの目的は「良い数字を探す」ことではなく、**次に何を反証すべきかを絞ること**。
