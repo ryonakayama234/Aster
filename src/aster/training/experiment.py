@@ -522,6 +522,10 @@ def run_logged_correction_transfer_experiment(
                 "added_examples_per_candidate": added_examples,
                 "training_examples_per_candidate": len(replay.training_examples),
                 "optimizer_steps_per_candidate": len(replay.losses),
+                "measured_resources": {
+                    "replay": replay.resources,
+                    "correction": correction.resources,
+                },
                 "equal_flops_claimed": False,
             },
             "artifacts": {
