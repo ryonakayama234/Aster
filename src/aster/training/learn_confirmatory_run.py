@@ -202,6 +202,24 @@ def extract_confirmatory_unit_result(
             "task_success": _require_bool(evaluation, "task_success"),
             "goal_verified": _require_bool(evaluation, "goal_verified"),
             "steps": _require_int(evaluation, "steps"),
+            "terminal_reached": _require_bool(evaluation, "terminal_reached"),
+            "first_goal_verified_step": _optional_int(
+                evaluation.get("first_goal_verified_step"),
+                "first_goal_verified_step",
+            ),
+            "stop_reason": _optional_str(evaluation.get("stop_reason"), "stop_reason"),
+            "teacher_disagreements": _require_int(summary, "teacher_disagreements"),
+            "first_teacher_divergence_step": _optional_int(
+                summary.get("first_teacher_divergence_step"),
+                "first_teacher_divergence_step",
+            ),
+            "steps_after_first_teacher_divergence": _require_int(
+                summary, "steps_after_first_teacher_divergence"
+            ),
+            "first_tool_failure_step": _optional_int(
+                summary.get("first_tool_failure_step"),
+                "first_tool_failure_step",
+            ),
         }
 
     budget = _require_dict(experiment, "budget")
@@ -618,6 +636,22 @@ def _require_float(data: dict[str, object], key: str) -> float:
     if not isinstance(value, (int, float)) or isinstance(value, bool):
         raise ValueError(f"Confirmatory field {key!r} must be numeric")
     return float(value)
+
+
+def _optional_int(value: object, field: str) -> int | None:
+    if value is None:
+        return None
+    if type(value) is not int:
+        raise ValueError(f"Confirmatory field {field!r} must be an integer or null")
+    return cast(int, value)
+
+
+def _optional_str(value: object, field: str) -> str | None:
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        raise ValueError(f"Confirmatory field {field!r} must be a string or null")
+    return value
 
 
 def _require_bool(data: dict[str, object], key: str) -> bool:
