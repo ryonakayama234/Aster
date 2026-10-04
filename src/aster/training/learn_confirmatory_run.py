@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import subprocess
 from typing import cast
 
 from aster.agent.policy import RuleBasedPolicy
@@ -62,9 +63,11 @@ def run_confirmatory_unit(
     *,
     family_id: str,
     seed: int,
+    measurement_git_sha: str | None = None,
 ) -> Path:
     """Run exactly one frozen family/seed unit from the registered ACT parent."""
     root_path = Path(root).resolve()
+    measurement_git_sha = measurement_git_sha or _measurement_git_sha(root_path)
     manifest_sha256 = confirmatory_manifest_sha256(manifest)
     family = _family_by_id(manifest, family_id)
     training = _require_dict(manifest, "training")
@@ -128,6 +131,7 @@ def run_confirmatory_unit(
             "confirmatory_evidence": True,
             "protocol_id": manifest["protocol_id"],
             "manifest_sha256": manifest_sha256,
+            "measurement_git_sha": measurement_git_sha,
             "family_id": family_id,
             "leakage_group": family["leakage_group"],
             "seed": seed,
@@ -161,6 +165,7 @@ def extract_confirmatory_unit_result(
 
     family_id = _require_str(provenance, "family_id")
     seed = _require_int(provenance, "seed")
+    measurement_git_sha = _require_str(provenance, "measurement_git_sha")
     _family_by_id(manifest, family_id)
 
     replay_primary = _benchmark_primary(path / "benchmark-replay")
@@ -194,6 +199,26 @@ def extract_confirmatory_unit_result(
 
     budget = _require_dict(experiment, "budget")
     resources = _require_dict(budget, "measured_resources")
+    training_examples = _require_int(budget, "training_examples_per_candidate")
+    resource_audit = _require_dict(manifest, "resource_audit")
+    required_resources = resource_audit.get("required_per_arm")
+    if not isinstance(required_resources, list) or any(
+        not isinstance(item, str) for item in required_resources
+    ):
+        raise ValueError("Confirmatory resource audit fields are invalid")
+    unit_resources: dict[str, object] = {}
+    for arm in ("replay", "correction"):
+        values = dict(_require_dict(resources, arm))
+        values["training_examples"] = training_examples
+        missing = [
+            item for item in required_resources
+            if isinstance(item, str) and item not in values
+        ]
+        if missing:
+            raise ValueError(
+                f"Confirmatory resource evidence missing for {arm}: {missing}"
+            )
+        unit_resources[arm] = values
 
     unit = {
         "schema_version": "aster-learn-confirmatory-unit-0",
@@ -201,6 +226,7 @@ def extract_confirmatory_unit_result(
         "manifest_sha256": manifest_sha256,
         "family_id": family_id,
         "seed": seed,
+        "measurement_git_sha": measurement_git_sha,
         "run_id": path.name,
         "primary": {
             "examples": replay_primary["examples"],
@@ -219,10 +245,7 @@ def extract_confirmatory_unit_result(
         },
         "repair": repair,
         "sequential": sequential,
-        "resources": {
-            "replay": _require_dict(resources, "replay"),
-            "correction": _require_dict(resources, "correction"),
-        },
+        "resources": unit_resources,
     }
     return unit
 
@@ -230,6 +253,8 @@ def extract_confirmatory_unit_result(
 def discover_completed_confirmatory_units(
     root: str | Path,
     manifest: dict[str, object],
+    *,
+    measurement_git_sha: str | None = None,
 ) -> dict[tuple[str, int], tuple[Path, dict[str, object]]]:
     """Find reusable completed units and reject ambiguous or endpoint-emitting failures."""
     root_path = Path(root).resolve()
@@ -240,6 +265,7 @@ def discover_completed_confirmatory_units(
     protocol_id = _require_str(manifest, "protocol_id")
     manifest_sha256 = confirmatory_manifest_sha256(manifest)
     found: dict[tuple[str, int], tuple[Path, dict[str, object]]] = {}
+    established_git_sha: str | None = None
 
     for run_dir in sorted(runs_root.iterdir(), key=lambda item: item.name):
         if run_dir.is_symlink() or not run_dir.is_dir():
@@ -271,6 +297,18 @@ def discover_completed_confirmatory_units(
 
         if status == "completed":
             unit = extract_confirmatory_unit_result(run_dir, manifest)
+            unit_git_sha = _require_str(unit, "measurement_git_sha")
+            if established_git_sha is None:
+                established_git_sha = unit_git_sha
+            elif unit_git_sha != established_git_sha:
+                raise RuntimeError(
+                    "Completed confirmatory units were produced by different Git SHAs"
+                )
+            if measurement_git_sha is not None and unit_git_sha != measurement_git_sha:
+                raise RuntimeError(
+                    "Existing confirmatory endpoint evidence was produced by a different "
+                    "Git SHA; protocol v0 cannot continue after measurement code changed"
+                )
             if key in found:
                 raise RuntimeError(
                     f"Duplicate completed confirmatory unit: {family_id} seed {seed}"
@@ -295,6 +333,7 @@ def run_confirmatory_campaign(root: str | Path) -> Path:
     """Run or resume all 90 frozen units and emit a verdict only when complete."""
     root_path = Path(root).resolve()
     manifest = load_confirmatory_manifest(root_path / DEFAULT_MANIFEST_PATH)
+    measurement_git_sha = _measurement_git_sha(root_path)
     coverage = validate_confirmatory_candidate_coverage(manifest)
     manifest_sha256 = confirmatory_manifest_sha256(manifest)
     design = _require_dict(manifest, "family_design")
@@ -305,7 +344,11 @@ def run_confirmatory_campaign(root: str | Path) -> Path:
         raise ValueError("Confirmatory seeds are invalid")
     seeds = cast(list[int], seeds_raw)
 
-    existing = discover_completed_confirmatory_units(root_path, manifest)
+    existing = discover_completed_confirmatory_units(
+        root_path,
+        manifest,
+        measurement_git_sha=measurement_git_sha,
+    )
     expected_units = len(families) * len(seeds)
     campaign = RunLog(
         root_path,
@@ -313,6 +356,7 @@ def run_confirmatory_campaign(root: str | Path) -> Path:
         {
             "protocol_id": manifest["protocol_id"],
             "manifest_sha256": manifest_sha256,
+            "measurement_git_sha": measurement_git_sha,
             "expected_units": expected_units,
             "completed_units_at_start": len(existing),
             "candidate_coverage": coverage,
@@ -344,6 +388,7 @@ def run_confirmatory_campaign(root: str | Path) -> Path:
                     manifest,
                     family_id=family_id,
                     seed=seed,
+                    measurement_git_sha=measurement_git_sha,
                 )
                 unit = extract_confirmatory_unit_result(unit_path, manifest)
                 completed[key] = (unit_path, unit)
@@ -379,6 +424,32 @@ def run_confirmatory_campaign(root: str | Path) -> Path:
             error=str(error),
         )
         raise
+
+
+def _measurement_git_sha(root: Path) -> str:
+    """Require one clean source revision for the entire confirmatory campaign."""
+    try:
+        status = subprocess.run(
+            ["git", "-C", str(root), "status", "--porcelain"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        if status.stdout.strip():
+            raise ValueError(
+                "Confirmatory measurement requires a clean Git working tree"
+            )
+        revision = subprocess.run(
+            ["git", "-C", str(root), "rev-parse", "HEAD"],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+    except (OSError, subprocess.CalledProcessError) as error:
+        raise ValueError("Confirmatory measurement requires a readable Git revision") from error
+    if len(revision) != 40 or any(character not in "0123456789abcdef" for character in revision):
+        raise ValueError("Confirmatory Git SHA is invalid")
+    return revision
 
 
 def _benchmark_primary(directory: Path) -> dict[str, int | float]:
