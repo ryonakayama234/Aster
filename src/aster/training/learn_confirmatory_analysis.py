@@ -62,8 +62,10 @@ def aggregate_confirmatory_units(
 
     expected = {(family_id, seed) for family_id in family_ids for seed in seeds}
     indexed: dict[tuple[str, int], dict[str, object]] = {}
+    measurement_git_shas: set[str] = set()
     for unit in units:
         _validate_unit_identity(unit, protocol_id, manifest_sha256)
+        measurement_git_shas.add(_require_str(unit, "measurement_git_sha"))
         family_id = _require_str(unit, "family_id")
         seed = unit.get("seed")
         if type(seed) is not int:
@@ -75,12 +77,18 @@ def aggregate_confirmatory_units(
             raise ValueError(f"Duplicate confirmatory unit: {family_id} seed {seed}")
         indexed[key] = unit
 
+    if len(measurement_git_shas) > 1:
+        raise ValueError("Confirmatory units were produced by different Git SHAs")
+
     missing = sorted(expected - set(indexed))
     if missing:
         return {
             "schema_version": "aster-learn-confirmatory-result-0",
             "protocol_id": protocol_id,
             "manifest_sha256": manifest_sha256,
+            "measurement_git_sha": (
+                next(iter(measurement_git_shas)) if measurement_git_shas else None
+            ),
             "status": "measurement_incomplete",
             "expected_units": len(expected),
             "completed_units": len(indexed),
@@ -213,6 +221,7 @@ def aggregate_confirmatory_units(
         "schema_version": "aster-learn-confirmatory-result-0",
         "protocol_id": protocol_id,
         "manifest_sha256": manifest_sha256,
+        "measurement_git_sha": next(iter(measurement_git_shas)),
         "status": "complete",
         "expected_units": len(expected),
         "completed_units": len(indexed),
