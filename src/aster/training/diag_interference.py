@@ -1,4 +1,4 @@
-"""DIAG v0 Trial 0: checkpointed Correction/Replay interference curves."""
+"""DIAG v0 Trial 1: checkpointed Correction/Replay interference curves."""
 
 from __future__ import annotations
 
@@ -47,7 +47,8 @@ from aster.training.learn_confirmatory import (
 )
 from aster.training.learn_probe import DEFAULT_ACT_RUN_ID, resolve_act_parent_artifact
 
-TRIAL_CYCLE_ID = "diag-correction-interference-trial-0"
+TRIAL_CYCLE_ID = "diag-correction-interference-trial-1"
+TRIAL_SUPERSEDES_CYCLE_ID = "diag-correction-interference-trial-0"
 TRIAL_FAMILY_IDS = (
     "learn-confirm-keyshift-03",
     "learn-confirm-keyshift-15",
@@ -77,9 +78,9 @@ def run_diag_trial_unit(
 ) -> Path:
     """Run one post-hoc diagnostic family/seed trajectory with fixed checkpoints."""
     if family_id not in TRIAL_FAMILY_IDS:
-        raise ValueError(f"Family is not selected for DIAG Trial 0: {family_id}")
+        raise ValueError(f"Family is not selected for DIAG Trial 1: {family_id}")
     if seed not in TRIAL_SEEDS:
-        raise ValueError(f"Seed is not selected for DIAG Trial 0: {seed}")
+        raise ValueError(f"Seed is not selected for DIAG Trial 1: {seed}")
 
     root_path = Path(root).resolve()
     source_git_sha = _clean_git_sha(root_path)
@@ -87,7 +88,7 @@ def run_diag_trial_unit(
         expected_source_git_sha is not None
         and source_git_sha != expected_source_git_sha
     ):
-        raise RuntimeError("Git revision changed during DIAG Trial 0")
+        raise RuntimeError("Git revision changed during DIAG Trial 1")
 
     manifest = load_confirmatory_manifest(root_path / DEFAULT_MANIFEST_PATH)
     family = _family_by_id(manifest, family_id)
@@ -126,6 +127,7 @@ def run_diag_trial_unit(
     provenance = {
         "experiment_mode": "trial",
         "cycle_id": TRIAL_CYCLE_ID,
+        "supersedes_cycle_id": TRIAL_SUPERSEDES_CYCLE_ID,
         "evidence_scope": "diagnostic",
         "post_hoc_selected": True,
         "planned_units": EXPECTED_TRIAL_UNITS,
@@ -154,7 +156,7 @@ def run_diag_trial_unit(
             root_path,
             policy=policy,
             teacher=RuleBasedPolicy(),
-            teacher_id="rule-v0:diag-correction-interference-trial-0",
+            teacher_id="rule-v0:diag-correction-interference-trial-1",
             executor=build_executor(),
             evaluator=TaskEvaluator(),
             context=RuntimeContext(task=correction_task),
@@ -284,6 +286,7 @@ def run_diag_trial_unit(
             "schema_version": "aster-diag-interference-unit-0",
             "experiment_mode": "trial",
             "cycle_id": TRIAL_CYCLE_ID,
+            "supersedes_cycle_id": TRIAL_SUPERSEDES_CYCLE_ID,
             "evidence_scope": "diagnostic",
             "post_hoc_selected": True,
             "source_git_sha": source_git_sha,
@@ -346,6 +349,7 @@ def aggregate_diag_trial_units(
         return {
             "schema_version": "aster-diag-interference-result-0",
             "cycle_id": TRIAL_CYCLE_ID,
+            "supersedes_cycle_id": TRIAL_SUPERSEDES_CYCLE_ID,
             "status": "trial_incomplete",
             "expected_training_trajectories": EXPECTED_TRIAL_UNITS,
             "completed_training_trajectories": len(units),
@@ -412,6 +416,7 @@ def aggregate_diag_trial_units(
     return {
         "schema_version": "aster-diag-interference-result-0",
         "cycle_id": TRIAL_CYCLE_ID,
+        "supersedes_cycle_id": TRIAL_SUPERSEDES_CYCLE_ID,
         "status": "complete",
         "experiment_mode": "trial",
         "evidence_scope": "diagnostic",
@@ -427,7 +432,7 @@ def aggregate_diag_trial_units(
 
 
 def run_diag_trial_campaign(root: str | Path) -> Path:
-    """Run or resume the fixed 18-unit DIAG Trial 0 campaign."""
+    """Run or resume the fixed 18-unit DIAG Trial 1 campaign."""
     root_path = Path(root).resolve()
     source_git_sha = _clean_git_sha(root_path)
     completed = discover_completed_diag_trial_units(
@@ -439,6 +444,7 @@ def run_diag_trial_campaign(root: str | Path) -> Path:
         {
             "experiment_mode": "trial",
             "cycle_id": TRIAL_CYCLE_ID,
+            "supersedes_cycle_id": TRIAL_SUPERSEDES_CYCLE_ID,
             "evidence_scope": "diagnostic",
             "post_hoc_selected": True,
             "planned_units": EXPECTED_TRIAL_UNITS,
@@ -477,7 +483,7 @@ def run_diag_trial_campaign(root: str | Path) -> Path:
             [unit for _, unit in completed.values()]
         )
         if result.get("status") != "complete":
-            raise RuntimeError("DIAG Trial 0 ended without all fixed units")
+            raise RuntimeError("DIAG Trial 1 ended without all fixed units")
         _write_json(campaign.path / "diag-interference-results.json", result)
         campaign.finish(
             "completed",
@@ -804,6 +810,7 @@ def _write_progress(
         {
             "schema_version": "aster-diag-interference-progress-0",
             "cycle_id": TRIAL_CYCLE_ID,
+            "supersedes_cycle_id": TRIAL_SUPERSEDES_CYCLE_ID,
             "expected_training_trajectories": EXPECTED_TRIAL_UNITS,
             "completed_training_trajectories": len(rows),
             "units": rows,
