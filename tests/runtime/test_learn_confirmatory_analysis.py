@@ -135,6 +135,7 @@ def _unit(manifest, family_id, seed, outcome):
         "manifest_sha256": manifest_sha256,
         "family_id": family_id,
         "seed": seed,
+        "measurement_git_sha": "d" * 40,
         "run_id": f"{family_id}-seed-{seed}",
         "primary": {
             "examples": 4,
