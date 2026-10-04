@@ -114,7 +114,9 @@ closeoutは [report](reports/learn-correction-transfer-v0.md)、作業履歴は
 - **Trial**: 小さく速く、mechanismやfailure modeを削る。既定は最大6 family程度 × 3 seed程度。途中結果を見てよいがconfirmatory claimには使わない。
 - **Batch**: 大規模・凍結。manifest / code revision / endpoint / retry規則を固定し、resume可能なunitへ分けて実行する。
 
-DIAG v0 Trial 0は実機instrumentation bugでpartialとなり、Trial 1（`diag-correction-interference-trial-1`）へsupersedeした。Trial 1は6 family × 1 deterministic trajectory = 6 training units / 30 repeated checkpoint observationsを完了。結果は **local interferenceを一部familyで明確に観測、operation-specific explanationは未確立、broad forgettingは未観測**。closeoutは [report](reports/diag-correction-interference-v0.md) を参照。次はshared backbone updateがinterferenceの原因かを `train_backbone=false` controlで切り分ける小さいcausal Trialを優先する。
+DIAG v0 Trial 0は実機instrumentation bugでpartialとなり、Trial 1（`diag-correction-interference-trial-1`）へsupersedeした。Trial 1は6 family × 1 deterministic trajectory = 6 training units / 30 repeated checkpoint observationsを完了。結果は **local interferenceを一部familyで明確に観測、operation-specific explanationは未確立、broad forgettingは未観測**。closeoutは [report](reports/diag-correction-interference-v0.md) を参照。
+
+現在の研究Gateは **DIAG v1 — Backbone Freeze Causal Trial** (#59)。loss exemplar 03/add・02/subtractとnon-loss control 15/add・12/subtractを4つのpaired family blockとして、`train_backbone=true/false` のみを操作する。各conditionでmatched Replay / Correctionを走らせ、primary diagnosticは `freeze_effect = D_freeze - D_full`（`D = Correction sibling-margin Δ - Replay sibling-margin Δ`）。4 family block × 2 conditions = 8 experiment unitsで停止し、Batchにはまだ昇格しない。
 
 RL / KLPO / new Tokenizer / new serializer / model scaling / sealed testは、DIAGで原因仮説が絞れるまで混ぜない。
 Aster Service / aster-webは任意shellやrepository-local pathを公開せず、Job / Run / Artifact / Research evidenceの出典を分離する方針を維持する。
