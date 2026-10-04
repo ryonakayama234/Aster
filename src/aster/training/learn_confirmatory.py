@@ -35,6 +35,12 @@ def load_confirmatory_manifest(path: str | Path = DEFAULT_MANIFEST_PATH) -> dict
         raise ValueError("Confirmatory manifest must be a JSON object")
     manifest = cast(dict[str, object], raw)
     validate_confirmatory_manifest(manifest)
+    actual_sha256 = confirmatory_manifest_sha256(manifest)
+    if actual_sha256 != EXPECTED_MANIFEST_SHA256:
+        raise ValueError(
+            "Frozen confirmatory manifest digest mismatch: "
+            f"{actual_sha256} != {EXPECTED_MANIFEST_SHA256}"
+        )
     return manifest
 
 
