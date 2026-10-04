@@ -87,41 +87,34 @@ Decision baselineはtestを自動開封しません。まずdevelopment runを�
 
 2026-10-03: **ACT v0はユーザーWSL2実機で確認済み**。PR #49はmainへmerge済み、Issue #48は完了。後続調査で実ACT Run ID `5a8076571dca446fa07190cf4fc62509` を回収し、LEARNのparent lineageとして固定した。未記録のbundle ID等は推測して補わない。
 
-現在の研究Gateは Issue #20 / branch `feat/learn-v0-correction-transfer` の **LEARN v0 — Correction Transfer**。
+**LEARN v0 — Correction Transfer** は2026-10-04にconfirmatory measurementを完了し、**Not supported** でcloseした。
 
 ```text
-P0 Parent
-  ├─ R1 Replay control
-  └─ C1 Correction child
+30 family × 3 seeds = 90 units
 
-student rollout
-→ student-visited state
-→ teacher correction
-→ matched-budget candidate update
-→ corrected state
-→ uncorrected sibling
-→ model-only episode
+primary: uncorrected sibling teacher-prefix accuracy
+Correction vs matched Replay
+
+wins / losses / ties = 6 / 19 / 5
+median family delta = -0.25
+exact sign-test p = 0.01463329792022705
+verdict = Not supported
 ```
 
-中心仮説は「自分が実際に訪れた失敗状態への訂正が、同じ追加update量のReplayより未訂正の近縁状態へ転移するか」。
+frozen key-shift benchmark distributionでは、Correction固有のLocal Transferは支持されず、matched Replayより悪い方向が優勢だった。corrected-state Repairと未訂正sibling Transferは別能力として扱う。
 
-次を別々に判定する。
+closeoutは [report](reports/learn-correction-transfer-v0.md)、作業履歴は
+[TODO](docs/TODO/LearnCorrectionTransfer-v0.md) / [Progress](docs/Progress/LearnCorrectionTransfer-v0.md) を参照する。
 
-- **LEARN-Wiring**: Parent→rollout→correction→R1/C1→save/reload→same evaluatorが一周したか。
-- **LEARN-Repair**: 訂正state自身が改善したか。
-- **LEARN-Transfer**: 学習へ入れていないsibling stateでCorrection固有効果があるか。
-- **LEARN-Sequential**: model-only episode完了へ効果が移ったか。
+次の研究Gateは **DIAG v0 — Correction Interference Curve**。
+学習step 0/10/25/50/100でRepair / sibling transfer / base retention / parameter driftを追い、overfit・local interference・operation-specific representation・optimizer instability・broad forgettingを切り分ける。
 
-仕様は [LearnCorrectionTransfer-v0](docs/LearnCorrectionTransfer-v0.md)、作業順は
-[TODO](docs/TODO/LearnCorrectionTransfer-v0.md)、進捗は
-[Progress](docs/Progress/LearnCorrectionTransfer-v0.md) を正本にする。
+今後の実験は [Experiment Cycle v0](docs/ExperimentCycle-v0.md) に従い、**Trial** と **Batch** を区別する。
 
-Gate 2 developmentではL0 Repairを観測した一方、L1 Local TransferとL2 strict terminal successは未実証だった。この1 family × 1 seedはconfirmatory結果へ算入しない。
+- **Trial**: 小さく速く、mechanismやfailure modeを削る。既定は最大6 family程度 × 3 seed程度。途中結果を見てよいがconfirmatory claimには使わない。
+- **Batch**: 大規模・凍結。manifest / code revision / endpoint / retry規則を固定し、resume可能なunitへ分けて実行する。
 
-2026-10-04: **Gate 3 Confirmatory Manifestを測定前に固定**。
-`docs/experiments/learn-correction-transfer-confirmatory-v0.json` に30 family、seeds 42/43/44、8-step horizon、primary endpoint=L1 sibling teacher-prefix accuracy、family win/tie/loss、exact sign test、failure handling、sealed-test境界を明示した。manifestのcanonical SHA-256は `72fa77acf48403d5a45f927f1122d6fb5753b1118d9f25322e1d6700f2cb1563`。
+DIAG v0 Trial 0は6 family × 3 seed = 18 training unitsを既定とし、LEARN v0 Batchの90 unitより学習本体を約5倍軽くする一方、複数checkpointからmechanism evidenceを得る。
 
-Gate 4では、この固定manifestを変えずにP0/R1/C1を測定する。測定runnerはPR #52で、30 family × 3 seedを1 family × 1 seedのunitとして保存し、partial campaignではendpoint集計を公開せず、全90 unit完成後だけfamily-level exact sign testとverdictを生成する。全unitは同一clean Git SHAで実行し、endpoint測定後にcode revisionが変わった場合は同じprotocol v0を継続しない。
-
-Gate 4 measurement自体はまだ開始していない。RL / KLPO / new Tokenizer / new serializer / model scaling / sealed testを混ぜない。
+RL / KLPO / new Tokenizer / new serializer / model scaling / sealed testは、DIAGで原因仮説が絞れるまで混ぜない。
 Aster Service / aster-webは任意shellやrepository-local pathを公開せず、Job / Run / Artifact / Research evidenceの出典を分離する方針を維持する。
