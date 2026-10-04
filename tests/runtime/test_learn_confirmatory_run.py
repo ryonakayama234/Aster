@@ -77,6 +77,27 @@ def test_failed_attempt_after_primary_endpoint_blocks_retry(tmp_path):
         discover_completed_confirmatory_units(tmp_path, manifest)
 
 
+def test_failed_attempt_after_one_primary_arm_blocks_retry(tmp_path):
+    manifest = load_confirmatory_manifest(_ROOT / DEFAULT_MANIFEST_PATH)
+    family_id = _first_family_id(manifest)
+    run_dir = _write_attempt(
+        tmp_path,
+        manifest,
+        run_id="d" * 32,
+        family_id=family_id,
+        seed=42,
+        status="failed",
+        endpoint_emitted=False,
+    )
+    benchmark = run_dir / "benchmark-replay"
+    benchmark.mkdir()
+    (benchmark / "benchmark.json").write_text("{}\n", encoding="utf-8")
+    (benchmark / "predictions.jsonl").write_text("{}\n", encoding="utf-8")
+
+    with pytest.raises(RuntimeError, match="already emitted primary endpoint"):
+        discover_completed_confirmatory_units(tmp_path, manifest)
+
+
 def test_running_attempt_blocks_duplicate_measurement(tmp_path):
     manifest = load_confirmatory_manifest(_ROOT / DEFAULT_MANIFEST_PATH)
     family_id = _first_family_id(manifest)
@@ -145,3 +166,4 @@ def _write_attempt(
             benchmark.mkdir()
             (benchmark / "benchmark.json").write_text("{}\n", encoding="utf-8")
             (benchmark / "predictions.jsonl").write_text("{}\n", encoding="utf-8")
+    return run_dir
