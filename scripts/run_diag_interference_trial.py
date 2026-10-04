@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run or resume DIAG v0 Trial 0 — Correction Interference Curve."""
+"""Run or resume DIAG v0 Trial 1 — Correction Interference Curve."""
 
 from __future__ import annotations
 
