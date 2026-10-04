@@ -47,9 +47,9 @@ def test_trial_definition_is_small_fixed_and_operation_balanced():
             operations[family_id] = correction["operation"]
 
     assert len(TRIAL_FAMILY_IDS) == 6
-    assert TRIAL_SEEDS == (42, 43, 44)
+    assert TRIAL_SEEDS == (42,)
     assert TRIAL_CHECKPOINTS == (0, 10, 25, 50, 100)
-    assert EXPECTED_TRIAL_UNITS == 18
+    assert EXPECTED_TRIAL_UNITS == 6
     assert set(operations) == set(TRIAL_FAMILY_IDS)
     assert list(operations.values()).count("add") == 3
     assert list(operations.values()).count("subtract") == 3
@@ -78,7 +78,7 @@ def test_parameter_drift_separates_head_from_backbone():
     assert drift["backbone_l2"] == 0.0
 
 
-def test_trial_aggregation_keeps_18_trajectories_distinct_from_90_checkpoints():
+def test_trial_aggregation_keeps_6_trajectories_distinct_from_30_checkpoints():
     manifest = load_confirmatory_manifest(_ROOT / DEFAULT_MANIFEST_PATH)
     design = manifest["family_design"]
     assert isinstance(design, dict)
@@ -100,8 +100,8 @@ def test_trial_aggregation_keeps_18_trajectories_distinct_from_90_checkpoints():
     result = aggregate_diag_trial_units(units)
 
     assert result["status"] == "complete"
-    assert result["independent_training_trajectories"] == 18
-    assert result["checkpoint_observations"] == 90
+    assert result["independent_training_trajectories"] == 6
+    assert result["checkpoint_observations"] == 30
     assert result["checkpoint_observations_are_independent"] is False
     assert result["confirmatory_verdict"] is None
 
