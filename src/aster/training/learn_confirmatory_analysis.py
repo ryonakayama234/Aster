@@ -7,6 +7,7 @@ from math import comb
 from typing import Sequence, cast
 
 from aster.training.learn_confirmatory import (
+    EXPECTED_MANIFEST_SHA256,
     PROTOCOL_ID,
     confirmatory_manifest_sha256,
     validate_confirmatory_manifest,
@@ -44,6 +45,8 @@ def aggregate_confirmatory_units(
     if protocol_id != PROTOCOL_ID:
         raise ValueError("Unexpected confirmatory protocol")
     manifest_sha256 = confirmatory_manifest_sha256(manifest)
+    if manifest_sha256 != EXPECTED_MANIFEST_SHA256:
+        raise ValueError("Frozen confirmatory manifest digest mismatch")
 
     design = _require_dict(manifest, "family_design")
     training = _require_dict(manifest, "training")
