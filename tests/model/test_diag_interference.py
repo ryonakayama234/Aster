@@ -1,4 +1,4 @@
-"""DIAG v0 Trial 0 invariants that do not require the local ACT artifact."""
+"""DIAG v0 Trial 1 invariants that do not require the local ACT artifact."""
 
 from copy import deepcopy
 from pathlib import Path
@@ -50,6 +50,7 @@ def test_trial_definition_is_small_fixed_and_operation_balanced():
     assert TRIAL_SEEDS == (42,)
     assert TRIAL_CHECKPOINTS == (0, 10, 25, 50, 100)
     assert EXPECTED_TRIAL_UNITS == 6
+    assert TRIAL_CYCLE_ID == "diag-correction-interference-trial-1"
     assert set(operations) == set(TRIAL_FAMILY_IDS)
     assert list(operations.values()).count("add") == 3
     assert list(operations.values()).count("subtract") == 3
