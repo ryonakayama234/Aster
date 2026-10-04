@@ -85,7 +85,7 @@ Decision baselineはtestを自動開封しません。まずdevelopment runを�
 
 ## 次に作るもの
 
-2026-10-03: **ACT v0はユーザーWSL2実機で確認済み**。PR #49はmainへmerge済み、Issue #48は完了としてcloseした。実Run ID / bundle IDは当時のrepo記録に残っていないため、値は推測して補わない。
+2026-10-03: **ACT v0はユーザーWSL2実機で確認済み**。PR #49はmainへmerge済み、Issue #48は完了。後続調査で実ACT Run ID `5a8076571dca446fa07190cf4fc62509` を回収し、LEARNのparent lineageとして固定した。未記録のbundle ID等は推測して補わない。
 
 現在の研究Gateは Issue #20 / branch `feat/learn-v0-correction-transfer` の **LEARN v0 — Correction Transfer**。
 
@@ -116,5 +116,10 @@ student rollout
 [TODO](docs/TODO/LearnCorrectionTransfer-v0.md)、進捗は
 [Progress](docs/Progress/LearnCorrectionTransfer-v0.md) を正本にする。
 
-このGateではRL / KLPO / new Tokenizer / new serializer / model scaling / sealed testを混ぜない。
+Gate 2 developmentではL0 Repairを観測した一方、L1 Local TransferとL2 strict terminal successは未実証だった。この1 family × 1 seedはconfirmatory結果へ算入しない。
+
+2026-10-04: **Gate 3 Confirmatory Manifestを測定前に固定**。
+`docs/experiments/learn-correction-transfer-confirmatory-v0.json` に30 family、seeds 42/43/44、8-step horizon、primary endpoint=L1 sibling teacher-prefix accuracy、family win/tie/loss、exact sign test、failure handling、sealed-test境界を明示した。manifestのcanonical SHA-256は `72fa77acf48403d5a45f927f1122d6fb5753b1118d9f25322e1d6700f2cb1563`。
+
+次はGate 4で、この固定manifestを変えずにP0/R1/C1を測定する。RL / KLPO / new Tokenizer / new serializer / model scaling / sealed testを混ぜない。
 Aster Service / aster-webは任意shellやrepository-local pathを公開せず、Job / Run / Artifact / Research evidenceの出典を分離する方針を維持する。
