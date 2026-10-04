@@ -2,6 +2,11 @@
 
 import json
 
+import pytest
+
+from aster.benchmark.suite import build_calculate_and_store_suite
+from aster.corpus.pipeline import digest, json_bytes
+
 from aster.training.learn_probe import (
     ACT_RECIPE_ID,
     ACT_TASK_ID,
@@ -12,6 +17,7 @@ from aster.training.learn_probe import (
     SIBLING_TASK,
     TRAIN_CONFIG,
     _artifact_calibration_diagnostic,
+    _validate_parent_suite_lineage,
     build_learn_dev_probe_suite,
     resolve_act_parent_artifact,
 )
@@ -128,6 +134,23 @@ def test_learn_dev_probe_is_fixed_key_shift_and_not_confirmatory():
     assert {case.leakage_group for case in sibling_cases} == {PROBE_FAMILY_ID}
     assert all(case.example.state.task["store_as"] == "sibling_total" for case in sibling_cases)
     assert suite.cases_for("calibration")
+
+
+def test_parent_suite_lineage_requires_exact_digest():
+    suite = build_calculate_and_store_suite()
+    suite_sha256 = digest(json_bytes(suite.to_dict()))
+    manifest = {
+        "suite_id": suite.suite_id,
+        "suite_sha256": suite_sha256,
+    }
+
+    assert _validate_parent_suite_lineage(manifest, suite) == suite_sha256
+
+    with pytest.raises(ValueError, match="suite digest"):
+        _validate_parent_suite_lineage(
+            {**manifest, "suite_sha256": "0" * 64},
+            suite,
+        )
 
 
 def test_model_only_probe_treats_parent_calibration_as_diagnostic_only():
