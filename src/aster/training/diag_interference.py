@@ -9,7 +9,6 @@ import math
 from pathlib import Path
 import subprocess
 from statistics import median
-from time import perf_counter
 from typing import Sequence, cast
 
 import torch
@@ -57,7 +56,7 @@ TRIAL_FAMILY_IDS = (
     "learn-confirm-keyshift-12",
     "learn-confirm-keyshift-22",
 )
-TRIAL_SEEDS = (42, 43, 44)
+TRIAL_SEEDS = (42,)
 TRIAL_CHECKPOINTS = (0, 10, 25, 50, 100)
 TRIAL_CONFIG = DecisionTrainConfig(
     steps=100,
@@ -191,46 +190,38 @@ def run_diag_trial_unit(
         replay_candidate = deepcopy(parent_model)
         correction_candidate = deepcopy(parent_model)
 
-        replay_started = perf_counter()
-        replay_losses, replay_snapshots = train_decision_with_checkpoints(
+        replay_losses, replay_snapshots, replay_elapsed = train_decision_with_checkpoints(
             replay_candidate,
             tokenizer,
             replay_training,
             checkpoints=TRIAL_CHECKPOINTS,
             config=config,
         )
-        replay_wall_seconds = perf_counter() - replay_started
 
-        correction_started = perf_counter()
-        correction_losses, correction_snapshots = train_decision_with_checkpoints(
+        correction_losses, correction_snapshots, correction_elapsed = train_decision_with_checkpoints(
             correction_candidate,
             tokenizer,
             correction_training,
             checkpoints=TRIAL_CHECKPOINTS,
             config=config,
         )
-        correction_wall_seconds = perf_counter() - correction_started
 
         if len(replay_losses) != len(correction_losses):
             raise RuntimeError("DIAG Replay/Correction optimizer-step counts differ")
 
         resources = {
-            "replay": {
-                **_training_token_budget(
-                    tokenizer, replay_training, config.steps
-                ),
-                "optimizer_steps": config.steps,
-                "training_examples": len(replay_training),
-                "wall_seconds_including_checkpoint_snapshots": replay_wall_seconds,
-            },
-            "correction": {
-                **_training_token_budget(
-                    tokenizer, correction_training, config.steps
-                ),
-                "optimizer_steps": config.steps,
-                "training_examples": len(correction_training),
-                "wall_seconds_including_checkpoint_snapshots": correction_wall_seconds,
-            },
+            "replay": _checkpoint_resource_budget(
+                tokenizer,
+                replay_training,
+                step=config.steps,
+                elapsed_wall_seconds=replay_elapsed[config.steps],
+            ),
+            "correction": _checkpoint_resource_budget(
+                tokenizer,
+                correction_training,
+                step=config.steps,
+                elapsed_wall_seconds=correction_elapsed[config.steps],
+            ),
         }
         _write_json(
             run.path / "training-replay.json",
@@ -265,6 +256,12 @@ def run_diag_trial_unit(
                         repair_examples=correction_examples,
                         sibling_examples=sibling_examples,
                         base_examples=base_examples,
+                        resources=_checkpoint_resource_budget(
+                            tokenizer,
+                            replay_training,
+                            step=step,
+                            elapsed_wall_seconds=replay_elapsed[step],
+                        ),
                     ),
                     "correction": _checkpoint_metrics(
                         parent_model,
@@ -273,6 +270,12 @@ def run_diag_trial_unit(
                         repair_examples=correction_examples,
                         sibling_examples=sibling_examples,
                         base_examples=base_examples,
+                        resources=_checkpoint_resource_budget(
+                            tokenizer,
+                            correction_training,
+                            step=step,
+                            elapsed_wall_seconds=correction_elapsed[step],
+                        ),
                     ),
                 }
             )
@@ -578,6 +581,7 @@ def _checkpoint_metrics(
     repair_examples: Sequence[DecisionExample],
     sibling_examples: Sequence[DecisionExample],
     base_examples: Sequence[DecisionExample],
+    resources: dict[str, float | int],
 ) -> dict[str, object]:
     return {
         "repair": evaluate_decision_diagnostics(
@@ -590,6 +594,7 @@ def _checkpoint_metrics(
             candidate, tokenizer, base_examples
         ),
         "parameter_drift": model_parameter_l2_drift(parent, candidate),
+        "resources": resources,
     }
 
 
@@ -658,6 +663,21 @@ def _summary_float(
     if not isinstance(value, (int, float)) or isinstance(value, bool):
         raise ValueError(f"DIAG summary metric is not numeric: {metric}")
     return float(value)
+
+
+def _checkpoint_resource_budget(
+    tokenizer: AsterTokenizer,
+    examples: Sequence[DecisionExample],
+    *,
+    step: int,
+    elapsed_wall_seconds: float,
+) -> dict[str, float | int]:
+    return {
+        **_training_token_budget(tokenizer, examples, step),
+        "optimizer_steps": step,
+        "training_examples": len(examples),
+        "elapsed_training_wall_seconds_including_snapshots": elapsed_wall_seconds,
+    }
 
 
 def _training_token_budget(
