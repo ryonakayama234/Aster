@@ -121,5 +121,7 @@ Gate 2 developmentではL0 Repairを観測した一方、L1 Local TransferとL2 
 2026-10-04: **Gate 3 Confirmatory Manifestを測定前に固定**。
 `docs/experiments/learn-correction-transfer-confirmatory-v0.json` に30 family、seeds 42/43/44、8-step horizon、primary endpoint=L1 sibling teacher-prefix accuracy、family win/tie/loss、exact sign test、failure handling、sealed-test境界を明示した。manifestのcanonical SHA-256は `72fa77acf48403d5a45f927f1122d6fb5753b1118d9f25322e1d6700f2cb1563`。
 
-次はGate 4で、この固定manifestを変えずにP0/R1/C1を測定する。RL / KLPO / new Tokenizer / new serializer / model scaling / sealed testを混ぜない。
+Gate 4では、この固定manifestを変えずにP0/R1/C1を測定する。測定runnerはPR #52で、30 family × 3 seedを1 family × 1 seedのunitとして保存し、partial campaignではendpoint集計を公開せず、全90 unit完成後だけfamily-level exact sign testとverdictを生成する。全unitは同一clean Git SHAで実行し、endpoint測定後にcode revisionが変わった場合は同じprotocol v0を継続しない。
+
+Gate 4 measurement自体はまだ開始していない。RL / KLPO / new Tokenizer / new serializer / model scaling / sealed testを混ぜない。
 Aster Service / aster-webは任意shellやrepository-local pathを公開せず、Job / Run / Artifact / Research evidenceの出典を分離する方針を維持する。
