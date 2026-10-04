@@ -1,5 +1,6 @@
 """Gate 4 confirmatory aggregation and exact-inference invariants."""
 
+from copy import deepcopy
 from pathlib import Path
 
 import pytest
@@ -41,6 +42,22 @@ def test_partial_confirmatory_campaign_exposes_progress_not_endpoint_metrics():
     assert result["primary"] is None
     assert result["family_results"] is None
     assert result["verdict"] is None
+
+
+def test_direct_analysis_rejects_manifest_drift_and_mixed_measurement_revisions():
+    manifest = load_confirmatory_manifest(_ROOT / DEFAULT_MANIFEST_PATH)
+    family_ids = _family_ids(manifest)
+
+    changed = deepcopy(manifest)
+    changed["research_question"] = "post-hoc changed question"
+    with pytest.raises(ValueError, match="manifest digest"):
+        aggregate_confirmatory_units(changed, [])
+
+    first = _unit(manifest, family_ids[0], 42, "win")
+    second = _unit(manifest, family_ids[0], 43, "win")
+    second["measurement_git_sha"] = "e" * 40
+    with pytest.raises(ValueError, match="different Git SHAs"):
+        aggregate_confirmatory_units(manifest, [first, second])
 
 
 def test_confirmatory_primary_rule_supports_21_to_9_family_result():
