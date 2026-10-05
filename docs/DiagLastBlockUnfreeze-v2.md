@@ -33,19 +33,31 @@ Train only `DecisionHead`.
 
 Train:
 
-- Transformer block 1
+- the final Transformer block that actually exists in the saved parent artifact
 - final LayerNorm
 - DecisionHead
 
-Freeze token/position embeddings and Transformer block 0.
+Freeze token/position embeddings and every earlier Transformer block.
+
+The selected block is resolved from the loaded artifact as
+`len(backbone.blocks) - 1`. Evidence stores `backbone_layers`,
+`last_block_index`, and `last_block_group` so the intervention is explicit.
+
+The current ACT parent artifact comes from `DecisionBaselineConfig(layers=1)`, so for
+this Trial the resolved final block is `block_0`. This means the practical contrast is:
+
+- `head-only`: DecisionHead only
+- `last-block`: block 0 + final norm + DecisionHead
+- `full`: embeddings + block 0 + final norm + DecisionHead
+
+No model-depth change is introduced.
 
 ### `full`
 
-Train the complete Decision encoder path:
+Train the complete Decision encoder path present in the saved artifact:
 
 - token/position embeddings
-- Transformer block 0
-- Transformer block 1
+- every existing Transformer block
 - final LayerNorm
 - DecisionHead
 
@@ -132,8 +144,7 @@ plasticity into one scalar score and does not emit p-values.
 Every checkpoint stores L2 drift for:
 
 - embeddings
-- block 0
-- block 1
+- every Transformer block present in the parent artifact
 - final norm
 - LM head
 - DecisionHead
@@ -194,3 +205,14 @@ Next: test added trainable capacity or a separately staged deeper-unfreeze Trial
 Loss exemplars respond differently or controls show comparable effects.
 
 Next: diagnose family/state features before selecting an update policy.
+
+## Real-machine architecture correction
+
+The first WSL execution of DIAG v2 at source SHA `40273ac33731613c03795072fe1ce60369efc925`
+stopped before training because the initial implementation incorrectly asserted that the
+parent DecisionModel had exactly two Transformer blocks. The actual saved ACT parent is
+one-block because the Decision baseline uses `DecisionBaselineConfig.layers = 1`.
+
+That failed attempt produced no completed DIAG v2 experiment unit and is not evidence for
+any endpoint. The implementation was corrected before measurement so that `last-block`
+means the final block in the loaded artifact rather than a hard-coded block index.

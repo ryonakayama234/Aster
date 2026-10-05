@@ -79,25 +79,6 @@ TRIAL_STEPS = 100
 TRIAL_LEARNING_RATE = 3e-3
 TRIAL_MAX_EPISODE_STEPS = 8
 
-PARAMETER_GROUPS = (
-    "embeddings",
-    "block_0",
-    "block_1",
-    "final_norm",
-    "lm_head",
-    "decision_head",
-)
-TRAINABLE_GROUPS = {
-    "head-only": ("decision_head",),
-    "last-block": ("block_1", "final_norm", "decision_head"),
-    "full": (
-        "embeddings",
-        "block_0",
-        "block_1",
-        "final_norm",
-        "decision_head",
-    ),
-}
 
 EXPECTED_FAMILY_BLOCKS = len(TRIAL_FAMILY_IDS)
 EXPECTED_UPDATE_DEPTH_CONDITIONS = len(UPDATE_DEPTHS)
@@ -110,10 +91,12 @@ EXPECTED_ARM_CHECKPOINT_RECORDS = EXPECTED_UNIT_CHECKPOINT_RECORDS * 2
 def _parameter_group(name: str) -> str:
     if name.startswith(("backbone.token_embedding.", "backbone.position_embedding.")):
         return "embeddings"
-    if name.startswith("backbone.blocks.0."):
-        return "block_0"
-    if name.startswith("backbone.blocks.1."):
-        return "block_1"
+    block_prefix = "backbone.blocks."
+    if name.startswith(block_prefix):
+        suffix = name[len(block_prefix):]
+        index_text, separator, _ = suffix.partition(".")
+        if separator and index_text.isdigit():
+            return f"block_{int(index_text)}"
     if name.startswith("backbone.final_norm."):
         return "final_norm"
     if name.startswith("backbone.lm_head."):
@@ -123,14 +106,49 @@ def _parameter_group(name: str) -> str:
     raise ValueError(f"Unexpected DecisionModel parameter: {name}")
 
 
+def parameter_groups(model: DecisionModel) -> tuple[str, ...]:
+    """Return the parameter groups that actually exist in one saved model."""
+    block_count = len(model.backbone.blocks)
+    if block_count < 1:
+        raise ValueError("DIAG v2 requires at least one Transformer block")
+    return (
+        "embeddings",
+        *(f"block_{index}" for index in range(block_count)),
+        "final_norm",
+        "lm_head",
+        "decision_head",
+    )
+
+
+def _trainable_groups(model: DecisionModel, update_depth: str) -> tuple[str, ...]:
+    groups = parameter_groups(model)
+    block_groups = tuple(group for group in groups if group.startswith("block_"))
+    last_block_group = block_groups[-1]
+
+    if update_depth == "head-only":
+        return ("decision_head",)
+    if update_depth == "last-block":
+        return (last_block_group, "final_norm", "decision_head")
+    if update_depth == "full":
+        return (
+            "embeddings",
+            *block_groups,
+            "final_norm",
+            "decision_head",
+        )
+    raise ValueError(f"Unknown DIAG v2 update depth: {update_depth}")
+
+
 def trainability_spec(model: DecisionModel, update_depth: str) -> dict[str, object]:
     """Return the exact parameter mask used by one DIAG v2 condition."""
     if update_depth not in UPDATE_DEPTHS:
         raise ValueError(f"Unknown DIAG v2 update depth: {update_depth}")
-    if len(model.backbone.blocks) != 2:
-        raise ValueError("DIAG v2 is frozen to the current two-block TinyLM")
 
-    trainable_groups = TRAINABLE_GROUPS[update_depth]
+    groups = parameter_groups(model)
+    block_count = len(model.backbone.blocks)
+    last_block_index = block_count - 1
+    last_block_group = f"block_{last_block_index}"
+    trainable_groups = _trainable_groups(model, update_depth)
     trainable_names = tuple(
         name
         for name, _ in model.named_parameters()
@@ -141,10 +159,14 @@ def trainability_spec(model: DecisionModel, update_depth: str) -> dict[str, obje
 
     all_names = tuple(name for name, _ in model.named_parameters())
     frozen_names = tuple(name for name in all_names if name not in trainable_names)
-    frozen_groups = tuple(group for group in PARAMETER_GROUPS if group not in trainable_groups)
+    frozen_groups = tuple(group for group in groups if group not in trainable_groups)
 
     return {
         "update_depth": update_depth,
+        "backbone_layers": block_count,
+        "last_block_index": last_block_index,
+        "last_block_group": last_block_group,
+        "parameter_groups": list(groups),
         "trainable_groups": list(trainable_groups),
         "frozen_groups": list(frozen_groups),
         "trainable_parameter_names": list(trainable_names),
@@ -164,19 +186,22 @@ def component_parameter_l2_drift(
     if parent_parameters.keys() != candidate_parameters.keys():
         raise ValueError("Parent/candidate parameter structures differ")
 
-    sums = {group: 0.0 for group in PARAMETER_GROUPS}
+    groups = parameter_groups(parent)
+    sums = {group: 0.0 for group in groups}
     for name, parent_parameter in parent_parameters.items():
         group = _parameter_group(name)
+        if group not in sums:
+            raise ValueError(f"Candidate parameter group is absent from parent: {group}")
         delta = (
             candidate_parameters[name].detach().float()
             - parent_parameter.detach().float()
         )
         sums[group] += float(torch.sum(delta * delta).item())
 
-    result = {f"{group}_l2": math.sqrt(sums[group]) for group in PARAMETER_GROUPS}
+    result = {f"{group}_l2": math.sqrt(sums[group]) for group in groups}
     result["head_l2"] = result["decision_head_l2"]
     result["backbone_l2"] = math.sqrt(
-        sum(sums[group] for group in PARAMETER_GROUPS if group != "decision_head")
+        sum(sums[group] for group in groups if group != "decision_head")
     )
     return result
 

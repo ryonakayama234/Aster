@@ -16,7 +16,7 @@ from aster.training.diag_update_depth import (
     EXPECTED_FAMILY_BLOCKS,
     EXPECTED_UNIT_CHECKPOINT_RECORDS,
     EXPECTED_UPDATE_DEPTH_CONDITIONS,
-    PARAMETER_GROUPS,
+    parameter_groups,
     TRIAL_CYCLE_ID,
     TRIAL_FAMILY_IDS,
     TRIAL_FAMILY_STRATA,
@@ -28,7 +28,7 @@ from aster.training.diag_update_depth import (
 )
 
 
-def _model(*, layers=2):
+def _model(*, layers=1):
     return DecisionModel(
         TinyLM(
             ModelConfig(
@@ -46,19 +46,24 @@ def _model(*, layers=2):
     ("update_depth", "expected_groups"),
     [
         ("head-only", {"decision_head"}),
-        ("last-block", {"block_1", "final_norm", "decision_head"}),
+        ("last-block", {"block_0", "final_norm", "decision_head"}),
         (
             "full",
-            {"embeddings", "block_0", "block_1", "final_norm", "decision_head"},
+            {"embeddings", "block_0", "final_norm", "decision_head"},
         ),
     ],
 )
-def test_trainability_spec_is_exact(update_depth, expected_groups):
-    model = _model()
+def test_trainability_spec_matches_real_one_block_parent_shape(
+    update_depth, expected_groups
+):
+    model = _model(layers=1)
     spec = trainability_spec(model, update_depth)
 
+    assert spec["backbone_layers"] == 1
+    assert spec["last_block_index"] == 0
+    assert spec["last_block_group"] == "block_0"
     assert set(spec["trainable_groups"]) == expected_groups
-    assert set(spec["frozen_groups"]) == set(PARAMETER_GROUPS) - expected_groups
+    assert set(spec["frozen_groups"]) == set(parameter_groups(model)) - expected_groups
     assert spec["lm_head_in_decision_forward_path"] is False
 
     trainable_names = set(spec["trainable_parameter_names"])
@@ -69,9 +74,20 @@ def test_trainability_spec_is_exact(update_depth, expected_groups):
     assert not any(name.startswith("backbone.lm_head.") for name in trainable_names)
 
 
-def test_update_depth_trial_is_frozen_to_two_transformer_blocks():
-    with pytest.raises(ValueError, match="two-block TinyLM"):
-        trainability_spec(_model(layers=1), "last-block")
+def test_last_block_is_resolved_from_saved_model_depth():
+    model = _model(layers=3)
+    spec = trainability_spec(model, "last-block")
+
+    assert spec["backbone_layers"] == 3
+    assert spec["last_block_index"] == 2
+    assert spec["last_block_group"] == "block_2"
+    assert set(spec["trainable_groups"]) == {
+        "block_2",
+        "final_norm",
+        "decision_head",
+    }
+    assert "block_0" in spec["frozen_groups"]
+    assert "block_1" in spec["frozen_groups"]
 
 
 def test_explicit_parameter_mask_overrides_legacy_train_backbone(monkeypatch):
@@ -118,17 +134,16 @@ def test_component_drift_separates_parameter_groups():
     parent = _model()
     candidate = deepcopy(parent)
     with torch.no_grad():
-        candidate.backbone.blocks[1].projection.weight.add_(0.25)
+        candidate.backbone.blocks[0].projection.weight.add_(0.25)
         candidate.head.projection.bias.add_(0.5)
 
     drift = component_parameter_l2_drift(parent, candidate)
 
-    assert drift["block_1_l2"] > 0.0
+    assert drift["block_0_l2"] > 0.0
     assert drift["decision_head_l2"] > 0.0
     assert drift["head_l2"] == drift["decision_head_l2"]
-    assert drift["backbone_l2"] == pytest.approx(drift["block_1_l2"])
+    assert drift["backbone_l2"] == pytest.approx(drift["block_0_l2"])
     assert drift["embeddings_l2"] == 0.0
-    assert drift["block_0_l2"] == 0.0
     assert drift["final_norm_l2"] == 0.0
     assert drift["lm_head_l2"] == 0.0
 
