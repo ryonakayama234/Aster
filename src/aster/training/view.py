@@ -82,6 +82,8 @@ def split_and_dedup(candidates, recipe):
         official_train = any(m['record']['transform']['adapter'] == 'gsm8k' for m in members)
         if overrides:
             split = next(iter(overrides))
+        elif recipe.get('require_explicit_split_groups'):
+            raise ValueError('Missing explicit split override for leakage group: ' + ', '.join(groups))
         else:
             bucket = int(digest(f"{recipe['seed']}:{cluster}".encode())[:8], 16) % 100
             split = ('dev' if bucket < 10 else 'train') if official_train else ('test' if bucket < 10 else 'dev' if bucket < 20 else 'train')
@@ -127,10 +129,36 @@ def build_view(root: Path, recipe_path: Path):
     try:
         recipe_bytes = recipe_path.read_bytes()
         recipe = json.loads(recipe_bytes)
-        if recipe['schema_version'] != 'aster-training-recipe-0' or recipe['purpose'] != 'pretrain-pilot-not-corpus-v0':
-            raise ValueError('Only the explicit pretraining pilot recipe is supported')
+        allowed_purposes = {'pretrain-pilot-not-corpus-v0', 'lang-v0-pretrain-pilot'}
+        if recipe['schema_version'] != 'aster-training-recipe-0' or recipe['purpose'] not in allowed_purposes:
+            raise ValueError('Unsupported pretraining recipe purpose')
         if any(not isinstance(n, int) or isinstance(n, bool) or n < 0 for n in recipe['train_byte_budgets'].values()):
             raise ValueError('Budgets must be nonnegative integers')
+
+        split_contract_bytes = None
+        split_contract = None
+        split_contract_path = recipe.get('split_contract')
+        if split_contract_path is not None:
+            path = Path(split_contract_path)
+            if path.is_absolute():
+                raise ValueError('split_contract must be repository-relative')
+            resolved = (root / path).resolve()
+            if not resolved.is_relative_to(root):
+                raise ValueError('split_contract must stay within repository root')
+            split_contract_bytes = resolved.read_bytes()
+            split_contract = json.loads(split_contract_bytes)
+            if split_contract.get('schema_version') != 'aster-lang-split-0':
+                raise ValueError('Unsupported split contract schema')
+            eligible = {
+                item['group_id']: item['disposition']
+                for item in split_contract['groups']
+                if item['disposition'] in {'train', 'dev', 'test'}
+            }
+            if recipe.get('require_explicit_split_groups') and recipe['split_overrides'] != eligible:
+                raise ValueError('Recipe split_overrides do not exactly match split contract eligible groups')
+        elif recipe['purpose'] == 'lang-v0-pretrain-pilot':
+            raise ValueError('LANG v0 recipe requires split_contract')
+
         records = load_canonical(root, recipe['canonical_build'])
         candidates, decisions, transforms = [], [], []
         for record in records:
@@ -188,6 +216,8 @@ def build_view(root: Path, recipe_path: Path):
         decisions.sort(key=lambda d: d['record_id'])
         transforms.sort(key=lambda t: t['record_id'])
         summary = {'purpose': recipe['purpose'], 'canonical_build': recipe['canonical_build'],
+                   'split_contract': split_contract_path,
+                   'split_contract_sha256': digest(split_contract_bytes) if split_contract_bytes is not None else None,
                    'source_records': len(records), 'selected_records': len(samples),
                    'split_counts': dict(Counter(s['split'] for s in samples)),
                    'status_counts': dict(Counter(d['status'] for d in decisions)),
@@ -199,6 +229,7 @@ def build_view(root: Path, recipe_path: Path):
                          'recipe.json': recipe_bytes})
         manifest = {'schema_version': 'aster-training-view-0', 'purpose': recipe['purpose'],
                     'canonical_build': recipe['canonical_build'], 'recipe_sha256': digest(recipe_bytes),
+                    'split_contract_sha256': digest(split_contract_bytes) if split_contract_bytes is not None else None,
                     'docutils_version': docutils.__version__,
                     'code_sha256': {p.name: digest(p.read_bytes()) for p in [Path(__file__), Path(__file__).with_name('extract.py')]}}
         dest = publish(root, payloads, manifest)
