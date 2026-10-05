@@ -118,7 +118,11 @@ DIAG v0 Trial 0は実機instrumentation bugでpartialとなり、Trial 1（`diag
 
 DIAG v1 — Backbone Freeze Causal Trial (#59) はWSL2実測まで完了。loss exemplar 03/02ではbackbone freezeがCorrection固有のsibling degradationをほぼ消した一方、Repair_CRも低下した。したがってshared-backbone updateによるinterference signalは観測したが、full freeze自体は解ではない。
 
-現在の研究Gateは **DIAG v2 — Last-Block Unfreeze Trial** (#61)。同じ4 family blockを `head-only / last-block / full` の3条件で同一source SHAから再実行し、最終Transformer blockだけの更新がRepairを取り戻しつつlocal interferenceを抑えられるかを切り分ける。4 family block × 3 conditions = 12 experiment unitsで停止し、Adapter / LoRA / replay-ratio / objective変更はこのTrialの後まで混ぜない。
+DIAG v2 — Last-Block Unfreeze Trial (#61) はWSL2実測まで完了し、**Mixed / family-dependent** でcloseした。loss 03/02ではlast-blockがfullよりsibling stabilityを改善したがRepairを回復せず、control 15ではlast-block固有の大きなsibling degradationを観測した。単純な更新深度だけでは説明しない。
+
+現在の研究Gateは **DIAG v3 — Family/State Feature Audit** (#64)。新しいweight updateを行わず、既存30-family LEARN evidenceと同じACT parentをread-onlyで監査し、task / serializer-tokenizer / parent Decision / candidate geometryのどれがheterogeneityと対応するかを調べる。feature schemaとdesign-order/collinearity auditをoutcome join前に固定し、familyを独立単位としてSpearmanの記述統計を出す。仕様は [DiagFamilyStateFeatureAudit-v3](docs/DiagFamilyStateFeatureAudit-v3.md)。
+
+特にfrozen manifestではadd/subtract内のoperand/result magnitudeがfamily順と強く結びついているため、design-order confoundingを明示的に扱う。DIAG v3は一つの次 causal questionを選んだ時点で停止し、同cycle内でAdapter / LoRA / embedding-only training等へ進まない。
 
 RL / KLPO / new Tokenizer / new serializer / model scaling / sealed testは、DIAGで原因仮説が絞れるまで混ぜない。
 Aster Service / aster-webは任意shellやrepository-local pathを公開せず、Job / Run / Artifact / Research evidenceの出典を分離する方針を維持する。
