@@ -37,6 +37,12 @@ WSLのリポジトリルートで実行する。
 4. 出力先の絶対パスを表示する。
 
 出典情報は `docs/corpus/source-notes-v0.json`、外部調達の固定版は `external-seed-manifest.json`。
+
+LANG v0ではさらに `configs/lang-v0-corpus.json` を**active raw contract**として使う。
+`source-notes-v0.json` は既知の出典台帳なので、過去に登録したpathが現在のpoolに無くても履歴として保持できる。
+一方、active manifestに列挙したpathは今回の実験入力として必須で、欠落または観測bytes不一致ならinventory生成を停止する。
+active manifestにはpool相対pathとbytes等の公開可能なメタデータだけを置き、Drive ID・URL・private本文は保存しない。
+SHA-256はDriveメタデータに依存せず、WSLへ同期したraw bytesを `inventory_corpus.py` が直接読んで計算する。
 自動生成の `pool-inventory-v0.json` と `selection-review-v0.md` を手編集しても再実行で置き換わるため、出典は出典台帳へ追記する。
 現在の一覧化は全poolを走査する。大規模化時の差分処理・ストリーミングは未実装。
 
