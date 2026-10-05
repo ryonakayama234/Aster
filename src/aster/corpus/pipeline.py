@@ -106,7 +106,8 @@ def build(root: Path, recipe_path: Path | None = None) -> Path:
     pool = root / "data/raw/pool"
     recipe_path = recipe_path or root / "configs/canonical-v0.json"
     input_paths = {"recipe": recipe_path, "inventory": root / "docs/corpus/pool-inventory-v0.json",
-                   "source_notes": root / "docs/corpus/source-notes-v0.json"}
+                   "source_notes": root / "docs/corpus/source-notes-v0.json",
+                   "active_manifest": root / "configs/lang-v0-corpus.json"}
     blobs = {key: path.read_bytes() for key, path in input_paths.items()}
     recipe, inventory = json.loads(blobs["recipe"]), json.loads(blobs["inventory"])
     if recipe["schema_version"] != "aster-canonical-0":
@@ -116,6 +117,8 @@ def build(root: Path, recipe_path: Path | None = None) -> Path:
         raise ValueError("unknown recipe adapter")
     if digest(blobs["source_notes"]) != inventory["source_notes_sha256"]:
         raise ValueError("Source notes changed: regenerate inventory")
+    if digest(blobs["active_manifest"]) != inventory["active_manifest_sha256"]:
+        raise ValueError("Active manifest changed: regenerate inventory")
     listed = [e["path"] for e in inventory["files"]]
     actual = {p.relative_to(pool).as_posix() for p in pool.rglob("*") if p.is_file()}
     if len(set(listed)) != len(listed) or set(listed) != actual:
