@@ -97,7 +97,7 @@ def test_missing_active_raw_file_is_fatal(tmp_path, monkeypatch):
             {"path": "prose/ja/003.txt", "bytes": 1},
         ],
         pool_files={"prose/ja/001.txt": b"hello"},
-        ledger_paths=["prose/ja/001.txt"],
+        ledger_paths=["prose/ja/001.txt", "prose/ja/003.txt"],
     )
     configure(monkeypatch, root)
 
