@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "experiment": "lang-v0",
+  "stage": "active_raw_contract_not_training_approval",
+  "snapshot_date": "2026-10-05",
+  "note": "Metadata-only contract for the current private Drive raw snapshot. No Drive IDs, URLs, or corpus text are stored here.",
+  "expected_files": [
+    {
+      "path": "dialogue/ja/003.txt",
+      "bytes": 464
+    },
+    {
+      "path": "dialogue/ja/004.txt",
+      "bytes": 1047
+    },
+    {
+      "path": "dialogue/ja/005.txt",
+      "bytes": 68083
+    },
+    {
+      "path": "dialogue/ja/006.txt",
+      "bytes": 4340
+    },
+    {
+      "path": "dialogue/ja/007.txt",
+      "bytes": 4604
+    },
+    {
+      "path": "dialogue/ja/009.txt",
+      "bytes": 3801
+    },
+    {
+      "path": "dialogue/ja/010.txt",
+      "bytes": 11099
+    },
+    {
+      "path": "dialogue/ja/011.txt",
+      "bytes": 11273
+    },
+    {
+      "path": "dialogue/ja/012.txt",
+      "bytes": 876
+    },
+    {
+      "path": "dialogue/ja/013.txt",
+      "bytes": 14002
+    },
+    {
+      "path": "dialogue/ja/014.txt",
+      "bytes": 12039
+    },
+    {
+      "path": "dialogue/ja/015.txt",
+      "bytes": 46790
+    },
+    {
+      "path": "prose/ja/001.txt",
+      "bytes": 20861
+    },
+    {
+      "path": "prose/ja/002.txt",
+      "bytes": 16063
+    },
+    {
+      "path": "prose/ja/003.txt",
+      "bytes": 25072
+    },
+    {
+      "path": "prose/ja/004.txt",
+      "bytes": 7983
+    },
+    {
+      "path": "prose/ja/005.txt",
+      "bytes": 7787
+    },
+    {
+      "path": "prose/ja/009.txt",
+      "bytes": 16606
+    },
+    {
+      "path": "prose/ja/010.txt",
+      "bytes": 23347
+    },
+    {
+      "path": "prose/ja/011.txt",
+      "bytes": 1751
+    },
+    {
+      "path": "prose/ja/012.txt",
+      "bytes": 2315
+    },
+    {
+      "path": "prose/ja/013.txt",
+      "bytes": 1028
+    }
+  ],
+  "expected_file_count": 22,
+  "expected_total_bytes": 301231
+}

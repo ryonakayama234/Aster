@@ -59,7 +59,15 @@ def fixture_root(tmp_path):
     (tmp_path / 'docs/corpus/source-notes-v0.json').write_bytes(notes)
     raw = b'hello\r\n'
     (tmp_path / 'data/raw/pool/a.txt').write_bytes(raw)
-    inventory = {'source_notes_sha256': digest(notes), 'files': [{
+    active_manifest = json.dumps({
+        'schema_version': 1,
+        'experiment': 'lang-v0',
+        'expected_files': [{'path': 'a.txt', 'bytes': len(raw)}],
+    }, sort_keys=True).encode()
+    (tmp_path / 'configs/lang-v0-corpus.json').write_bytes(active_manifest)
+    inventory = {'source_notes_sha256': digest(notes),
+                 'active_manifest_sha256': digest(active_manifest),
+                 'files': [{
         'path': 'a.txt', 'sha256': digest(raw), 'origin': 'external_article',
         'status': 'candidate_needs_review', 'group_id': 'original-a',
         'source_verification': 'test', 'license_status': 'unknown', 'flags': []}]}
@@ -82,13 +90,15 @@ def test_build_reproducible_preserves_raw_and_catches_tampering(tmp_path):
         build(root)
 
 
-@pytest.mark.parametrize('mutation', ['raw', 'notes', 'new_file'])
+@pytest.mark.parametrize('mutation', ['raw', 'notes', 'active_manifest', 'new_file'])
 def test_stale_inventory_cannot_publish(tmp_path, mutation):
     root = fixture_root(tmp_path)
     if mutation == 'raw':
         (root / 'data/raw/pool/a.txt').write_text('changed')
     elif mutation == 'notes':
         (root / 'docs/corpus/source-notes-v0.json').write_text('{"updated": true}')
+    elif mutation == 'active_manifest':
+        (root / 'configs/lang-v0-corpus.json').write_text('{"updated": true}')
     else:
         (root / 'data/raw/pool/new.txt').write_text('new')
     with pytest.raises(ValueError, match='regenerate inventory'):
