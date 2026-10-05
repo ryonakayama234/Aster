@@ -60,6 +60,23 @@ def test_ingest_maps_flat_or_nested_drive_names_and_is_idempotent(tmp_path):
     assert (root / "data/raw/pool/dialogue/ja/003.txt").read_bytes() == b"abc"
 
 
+@pytest.mark.parametrize("relation", ["pool", "inside_pool", "contains_pool"])
+def test_source_directory_must_not_overlap_raw_pool(tmp_path, relation):
+    root = fixture_root(tmp_path)
+    pool = root / "data/raw/pool"
+    pool.mkdir(parents=True)
+    if relation == "pool":
+        source = pool
+    elif relation == "inside_pool":
+        source = pool / "download"
+        source.mkdir()
+    else:
+        source = root
+
+    with pytest.raises(ValueError, match="must not overlap data/raw/pool"):
+        ingest_lang_v0.ingest(source, root=root, run_inventory=False)
+
+
 def test_missing_file_fails_before_any_write(tmp_path):
     root = fixture_root(tmp_path)
     source = tmp_path / "download"
