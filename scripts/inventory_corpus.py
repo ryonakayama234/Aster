@@ -9,6 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 POOL = ROOT / "data/raw/pool"
 DOCS = ROOT / "docs/corpus"
+ACTIVE_MANIFEST = ROOT / "configs/lang-v0-corpus.json"
 
 
 def sha(data):
@@ -29,17 +30,34 @@ def json_format(text):
             return "design_text_or_invalid_json", None
 
 
+def load_active_manifest():
+    data = ACTIVE_MANIFEST.read_bytes()
+    manifest = json.loads(data)
+    expected = {}
+    for item in manifest["expected_files"]:
+        path = item["path"]
+        if path in expected:
+            raise ValueError(f"Duplicate active manifest path: {path}")
+        expected[path] = item
+    return data, manifest, expected
+
+
 def build_inventory():
-    notes = json.loads((DOCS / "source-notes-v0.json").read_text(encoding="utf-8"))
+    notes_bytes = (DOCS / "source-notes-v0.json").read_bytes()
+    notes = json.loads(notes_bytes)
     sources = {}
     for group in notes["groups"]:
         for path in group["paths"]:
-            if path in sources or not (POOL / path).is_file():
-                raise ValueError(f"Duplicate or missing source mapping: {path}")
+            if path in sources:
+                raise ValueError(f"Duplicate source mapping: {path}")
             sources[path] = group
+
+    active_bytes, active_manifest, active_expected = load_active_manifest()
     seed = json.loads((DOCS / "external-seed-manifest.json").read_text(encoding="utf-8"))
     external = {f["local_path"]: (s, f) for s in seed["sources"] for f in s["files"]}
     entries = []
+    present_paths = set()
+    active_present_bytes = 0
     for path in sorted(POOL.rglob("*")):
         if not path.is_file():
             continue
@@ -47,10 +65,20 @@ def build_inventory():
             raise ValueError(f"Review symlink before indexing: {path}")
         rel = path.relative_to(POOL).as_posix()
         data = path.read_bytes()
+        present_paths.add(rel)
+        active_item = active_expected.get(rel)
+        if active_item is not None:
+            expected_bytes = active_item.get("bytes")
+            if expected_bytes is not None and len(data) != expected_bytes:
+                raise ValueError(
+                    f"Active manifest byte mismatch: {rel}: expected {expected_bytes}, got {len(data)}"
+                )
+            active_present_bytes += len(data)
         entry = dict(path=rel, bytes=len(data), sha256=sha(data), chars=None,
                      origin="unknown", source_url=None, source_verification="unconfirmed",
                      group_id=None, split=None, usage="undecided", status="needs_source",
-                     license_status="not_reviewed", flags=[], embedded_urls=[])
+                     license_status="not_reviewed", flags=[], embedded_urls=[],
+                     active_for_lang_v0=active_item is not None)
         text = None
         if path.suffix in {".txt", ".jsonl", ".json", ".py", ".rst", ".md"} or path.name == "LICENSE":
             try:
@@ -110,13 +138,29 @@ def build_inventory():
             if any(f in entry["flags"] for f in ["invalid_utf8", "nul_character", "empty_text"]):
                 entry["status"] = "needs_format_review"
         entries.append(entry)
+
+    active_missing = sorted(set(active_expected) - present_paths)
+    if active_missing:
+        raise ValueError("Active manifest missing raw file(s): " + ", ".join(active_missing))
+    ledger_not_present = sorted(set(sources) - present_paths)
+
     groups = defaultdict(list)
     for entry in entries:
         if entry.get("lf_text_sha256"):
             groups[entry["lf_text_sha256"]].append(entry["path"])
     duplicates = [paths for paths in groups.values() if len(paths) > 1]
     return {"schema_version": 1, "stage": "inventory_not_training_release",
-            "source_notes_sha256": sha((DOCS / "source-notes-v0.json").read_bytes()),
+            "source_notes_sha256": sha(notes_bytes),
+            "active_manifest_sha256": sha(active_bytes),
+            "active_manifest": {
+                "path": ACTIVE_MANIFEST.relative_to(ROOT).as_posix(),
+                "experiment": active_manifest["experiment"],
+                "expected_files": len(active_expected),
+                "expected_bytes": sum(item.get("bytes", 0) for item in active_expected.values()),
+                "present_files": len(active_expected),
+                "present_bytes": active_present_bytes,
+            },
+            "ledger_not_present": ledger_not_present,
             "files": entries, "exact_lf_text_duplicates": duplicates,
             "near_duplicate_check": "not_performed", "current_written": False}
 
@@ -126,6 +170,8 @@ def render(inventory):
     lines = ["# AsterCorpus-v0 採用表（初回調査）", "",
              "この表は自動生成。出典の変更は `source-notes-v0.json` に記録する。", "",
              "**候補は採用確定ではない。currentへのコピー・分割・学習はまだ行っていない。**", "",
+             f"LANG v0 active manifest: {inventory['active_manifest']['present_files']} files / {inventory['active_manifest']['present_bytes']:,} bytes.",
+             f"出典台帳にあるが現在のpoolに無いpath: {len(inventory['ledger_not_present'])}件。active manifestの欠落とは区別する。", "",
              "記事のURLはユーザー指定。閲覧できたことは全文一致や利用条件の確認完了を意味しない。",
              "本文内リンクは参考リンクとしてJSON索引に保存し、原典URLと区別する。",
              "ChatGPTの質問はユーザー、回答はChatGPT。モデル版と元会話の境界は未確認。",
@@ -166,7 +212,11 @@ def main():
     inventory = build_inventory()
     (DOCS / "pool-inventory-v0.json").write_text(json.dumps(inventory, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     (DOCS / "selection-review-v0.md").write_text(render(inventory), encoding="utf-8")
-    print(json.dumps({"files": len(inventory["files"]), "statuses": dict(Counter(e["status"] for e in inventory["files"])), "duplicate_groups": len(inventory["exact_lf_text_duplicates"])}))
+    print(json.dumps({"files": len(inventory["files"]),
+                      "active_files": inventory["active_manifest"]["present_files"],
+                      "ledger_not_present": len(inventory["ledger_not_present"]),
+                      "statuses": dict(Counter(e["status"] for e in inventory["files"])),
+                      "duplicate_groups": len(inventory["exact_lf_text_duplicates"])}))
 
 
 if __name__ == "__main__":
