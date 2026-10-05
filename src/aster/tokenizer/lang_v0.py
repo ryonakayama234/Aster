@@ -1,7 +1,8 @@
 """LANG v0 train-only BPE build and tokenizer audit.
 
-The tokenizer is fit only on selected training-view samples. Dev is audited without
-fitting. Test content remains sealed and is never read by this module.
+The tokenizer is fit only on selected training-view train samples. Dev is audited
+without fitting. Test may be materialized by the training-view builder, but it is not
+used for BPE fitting or tokenizer audit metrics in this module.
 """
 
 from __future__ import annotations
@@ -182,7 +183,8 @@ def publish_artifact(
             "split_contract_sha256": split_contract_sha256,
             "fit_split": "train",
             "audited_splits": ["train", "dev"],
-            "sealed_test_content_read": False,
+            "sealed_test_used_for_fit": False,
+            "sealed_test_used_for_audit": False,
             "target_vocab_size": tokenizer.manifest.target_vocab_size,
             "min_pair_frequency": tokenizer.manifest.min_pair_frequency,
         }
@@ -281,7 +283,8 @@ def run(
             "fit_split": "train",
             "audited_splits": ["train", "dev"],
             "sealed_test_records": sealed_test_records,
-            "sealed_test_content_read": False,
+            "sealed_test_used_for_fit": False,
+            "sealed_test_used_for_audit": False,
             "target_vocab_size": target_vocab_size,
             "actual_bpe_vocab_size": len(tokenizer.model.vocab),
             "total_vocab_with_special_tokens": tokenizer.vocab_size,
