@@ -116,7 +116,9 @@ closeoutは [report](reports/learn-correction-transfer-v0.md)、作業履歴は
 
 DIAG v0 Trial 0は実機instrumentation bugでpartialとなり、Trial 1（`diag-correction-interference-trial-1`）へsupersedeした。Trial 1は6 family × 1 deterministic trajectory = 6 training units / 30 repeated checkpoint observationsを完了。結果は **local interferenceを一部familyで明確に観測、operation-specific explanationは未確立、broad forgettingは未観測**。closeoutは [report](reports/diag-correction-interference-v0.md) を参照。
 
-現在の研究Gateは **DIAG v1 — Backbone Freeze Causal Trial** (#59)。loss exemplar 03/add・02/subtractとnon-loss control 15/add・12/subtractを4つのpaired family blockとして、`train_backbone=true/false` のみを操作する。各conditionでmatched Replay / Correctionを走らせ、primary diagnosticは `freeze_effect = D_freeze - D_full`（`D = Correction sibling-margin Δ - Replay sibling-margin Δ`）。4 family block × 2 conditions = 8 experiment unitsで停止し、Batchにはまだ昇格しない。
+DIAG v1 — Backbone Freeze Causal Trial (#59) はWSL2実測まで完了。loss exemplar 03/02ではbackbone freezeがCorrection固有のsibling degradationをほぼ消した一方、Repair_CRも低下した。したがってshared-backbone updateによるinterference signalは観測したが、full freeze自体は解ではない。
+
+現在の研究Gateは **DIAG v2 — Last-Block Unfreeze Trial** (#61)。同じ4 family blockを `head-only / last-block / full` の3条件で同一source SHAから再実行し、最終Transformer blockだけの更新がRepairを取り戻しつつlocal interferenceを抑えられるかを切り分ける。4 family block × 3 conditions = 12 experiment unitsで停止し、Adapter / LoRA / replay-ratio / objective変更はこのTrialの後まで混ぜない。
 
 RL / KLPO / new Tokenizer / new serializer / model scaling / sealed testは、DIAGで原因仮説が絞れるまで混ぜない。
 Aster Service / aster-webは任意shellやrepository-local pathを公開せず、Job / Run / Artifact / Research evidenceの出典を分離する方針を維持する。
