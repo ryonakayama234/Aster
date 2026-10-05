@@ -74,6 +74,18 @@ def discover_source_files(source_dir: Path) -> dict[str, Path]:
 
 
 def build_plan(source_dir: Path, root: Path) -> tuple[list[dict], int]:
+    source_dir = source_dir.expanduser().resolve()
+    pool = (root / "data/raw/pool").resolve()
+    if (
+        source_dir == pool
+        or source_dir.is_relative_to(pool)
+        or pool.is_relative_to(source_dir)
+    ):
+        raise ValueError(
+            "Source directory must not overlap data/raw/pool; "
+            "download the Drive snapshot to a separate directory first"
+        )
+
     expected = load_contract(root)
     found = discover_source_files(source_dir)
 

@@ -6,9 +6,10 @@ LANG v0では、Driveからローカルへ取得した22件を一度だけWSLの
 
 ## 使い方
 
-Driveから対象テキストを任意の1フォルダへダウンロードする。
+Driveから対象テキストを**リポジトリの `data/raw/pool` と重ならない別フォルダ**へダウンロードする。
 フォルダが複数階層でもよい。対象ファイル名は `proseNNN.txt` /
-`dialogueNNN.txt` のままにする。
+`dialogueNNN.txt` のままにする。`data/raw/pool` 自体、その配下、またはそれを含む親ディレクトリを
+sourceとして指定すると、元ファイルと正規化コピーが同じpoolに混在するため拒否する。
 
 最初に書き込みなしで確認する。
 
@@ -44,3 +45,24 @@ GitHubへ保存しない。
 - private本文のGitHub commit
 
 inventory結果を確認し、provenanceとgroup identityを監査してからsplitを固定する。
+
+## 旧版で raw pool 自体をsourceにした場合
+
+旧版helperで `data/raw/pool` 自体をsourceにすると、Drive名の原本
+（`prose001.txt` / `dialogue003.txt` 等）と正規化後の
+`prose/ja/001.txt` / `dialogue/ja/003.txt` が同居する。
+Windows由来の `:Zone.Identifier` がある場合もinventory対象になる。
+
+まず削除候補だけ表示する。
+
+```bash
+find data/raw/pool -type f \( \
+  -name 'prose[0-9][0-9][0-9].txt' -o \
+  -name 'dialogue[0-9][0-9][0-9].txt' -o \
+  -name '*:Zone.Identifier' \
+\) -print
+```
+
+表示内容がDrive名の原本とZone metadataだけであることを確認してから削除し、
+`scripts/inventory_corpus.py` を再実行する。
+正規化後の `prose/ja/NNN.txt` / `dialogue/ja/NNN.txt` は残す。
