@@ -76,6 +76,19 @@ def test_ledger_history_may_be_absent_when_active_manifest_is_complete(tmp_path,
     assert inventory["files"][0]["active_for_lang_v0"] is True
 
 
+def test_active_raw_requires_source_mapping(tmp_path, monkeypatch):
+    root = fixture_root(
+        tmp_path,
+        active_files=[{"path": "prose/ja/003.txt", "bytes": 1}],
+        pool_files={"prose/ja/003.txt": b"x"},
+        ledger_paths=["prose/ja/001.txt"],
+    )
+    configure(monkeypatch, root)
+
+    with pytest.raises(ValueError, match="missing source mapping"):
+        inventory_corpus.build_inventory()
+
+
 def test_missing_active_raw_file_is_fatal(tmp_path, monkeypatch):
     root = fixture_root(
         tmp_path,
