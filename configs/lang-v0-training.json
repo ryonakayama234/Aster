@@ -1,7 +1,7 @@
 {
   "schema_version": "aster-training-recipe-0",
   "purpose": "lang-v0-pretrain-pilot",
-  "canonical_build": "239fff3a6ac9c4d796954ee23c81fae15ffff3e205a9655e7e184fea2c454f587",
+  "canonical_build": "239fff3a6ac9c4d796954ee23c81fae15fff3e205a9655e7e184fea2c454f587",
   "seed": 20260920,
   "split_contract": "configs/lang-v0-split.json",
   "require_explicit_split_groups": true,
