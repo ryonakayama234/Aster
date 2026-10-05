@@ -53,6 +53,11 @@ def build_inventory():
             sources[path] = group
 
     active_bytes, active_manifest, active_expected = load_active_manifest()
+    active_without_source = sorted(set(active_expected) - set(sources))
+    if active_without_source:
+        raise ValueError(
+            "Active manifest path(s) missing source mapping: " + ", ".join(active_without_source)
+        )
     seed = json.loads((DOCS / "external-seed-manifest.json").read_text(encoding="utf-8"))
     external = {f["local_path"]: (s, f) for s in seed["sources"] for f in s["files"]}
     entries = []
