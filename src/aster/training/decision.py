@@ -1,5 +1,6 @@
 """Supervised imitation utilities for AsterDecision-v0."""
 
+from collections.abc import Collection
 from copy import deepcopy
 from dataclasses import dataclass
 from time import perf_counter
@@ -198,6 +199,7 @@ def train_decision_with_checkpoints(
     *,
     checkpoints: Sequence[int],
     config: DecisionTrainConfig = DecisionTrainConfig(),
+    trainable_parameter_names: Collection[str] | None = None,
 ) -> tuple[list[float], dict[int, DecisionModel], dict[int, float]]:
     """Train once while snapshotting model weights at fixed optimizer steps.
 
@@ -218,10 +220,11 @@ def train_decision_with_checkpoints(
         raise ValueError("Checkpoints must fall within 0..config.steps")
 
     torch.manual_seed(config.seed)
-    for parameter in model.backbone.parameters():
-        parameter.requires_grad_(config.train_backbone)
-    for parameter in model.head.parameters():
-        parameter.requires_grad_(True)
+    _configure_trainable_parameters(
+        model,
+        config=config,
+        trainable_parameter_names=trainable_parameter_names,
+    )
 
     trainable = [parameter for parameter in model.parameters() if parameter.requires_grad]
     optimizer = torch.optim.AdamW(trainable, lr=config.learning_rate)
@@ -263,16 +266,19 @@ def train_decision(
     tokenizer: AsterTokenizer,
     examples: Sequence[DecisionExample],
     config: DecisionTrainConfig = DecisionTrainConfig(),
+    *,
+    trainable_parameter_names: Collection[str] | None = None,
 ) -> list[float]:
     """Small deterministic behavior-cloning loop for the v0 candidate scorer."""
     if not examples:
         raise ValueError("At least one decision example is required")
 
     torch.manual_seed(config.seed)
-    for parameter in model.backbone.parameters():
-        parameter.requires_grad_(config.train_backbone)
-    for parameter in model.head.parameters():
-        parameter.requires_grad_(True)
+    _configure_trainable_parameters(
+        model,
+        config=config,
+        trainable_parameter_names=trainable_parameter_names,
+    )
 
     trainable = [parameter for parameter in model.parameters() if parameter.requires_grad]
     optimizer = torch.optim.AdamW(trainable, lr=config.learning_rate)
@@ -288,3 +294,37 @@ def train_decision(
         losses.append(float(loss.detach().item()))
 
     return losses
+
+
+def _configure_trainable_parameters(
+    model: DecisionModel,
+    *,
+    config: DecisionTrainConfig,
+    trainable_parameter_names: Collection[str] | None,
+) -> None:
+    """Apply legacy backbone/head semantics or an explicit parameter mask.
+
+    The explicit mask is an opt-in override used by causal diagnostics that need
+    finer control than the historical `train_backbone` boolean. Leaving the
+    mask unset preserves all existing Decision training behavior.
+    """
+    if trainable_parameter_names is None:
+        for parameter in model.backbone.parameters():
+            parameter.requires_grad_(config.train_backbone)
+        for parameter in model.head.parameters():
+            parameter.requires_grad_(True)
+        return
+
+    requested = frozenset(trainable_parameter_names)
+    if not requested:
+        raise ValueError("Explicit trainable parameter mask must not be empty")
+
+    named_parameters = dict(model.named_parameters())
+    unknown = requested.difference(named_parameters)
+    if unknown:
+        raise ValueError(
+            "Unknown trainable parameter names: " + ", ".join(sorted(unknown))
+        )
+
+    for name, parameter in named_parameters.items():
+        parameter.requires_grad_(name in requested)
