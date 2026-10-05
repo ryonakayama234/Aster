@@ -1,0 +1,108 @@
+{
+  "schema_version": "aster-lang-split-0",
+  "experiment": "lang-v0",
+  "frozen_on": "2026-10-05",
+  "active_manifest": "configs/lang-v0-corpus.json",
+  "provenance_ledger": "docs/corpus/source-notes-v0.json",
+  "prior_split_source": "configs/training-pilot-v0.json",
+  "policy": [
+    "Keep the 10 conservative leakage groups intact; do not split unresolved batches without source/session evidence.",
+    "For the six active groups already admitted by the earlier pilot, preserve the pre-existing split overrides instead of re-optimizing after observing LANG v0 corpus sizes.",
+    "Groups whose original source/page/work identity is still unresolved remain pending_excluded and are not eligible for BPE fitting, training, dev, or test.",
+    "Test is sealed for LANG v0 condition selection."
+  ],
+  "groups": [
+    {
+      "group_id": "article-calculemus",
+      "disposition": "train",
+      "files": 1,
+      "bytes": 20861,
+      "reason": "preserve prior split override"
+    },
+    {
+      "group_id": "article-bsd",
+      "disposition": "dev",
+      "files": 1,
+      "bytes": 16063,
+      "reason": "preserve prior split override"
+    },
+    {
+      "group_id": "article-lean-trust",
+      "disposition": "train",
+      "files": 1,
+      "bytes": 25072,
+      "reason": "preserve prior split override"
+    },
+    {
+      "group_id": "article-tex-lean",
+      "disposition": "train",
+      "files": 1,
+      "bytes": 16606,
+      "reason": "preserve prior split override"
+    },
+    {
+      "group_id": "article-adverbs",
+      "disposition": "test",
+      "files": 1,
+      "bytes": 23347,
+      "reason": "preserve prior split override; sealed holdout"
+    },
+    {
+      "group_id": "unresolved-memes-batch",
+      "disposition": "pending_excluded",
+      "files": 5,
+      "bytes": 20864,
+      "reason": "original source identity unresolved"
+    },
+    {
+      "group_id": "unresolved-manga-batch",
+      "disposition": "pending_excluded",
+      "files": 3,
+      "bytes": 69594,
+      "reason": "work/edition identity unresolved"
+    },
+    {
+      "group_id": "marshmallow-qa-batch",
+      "disposition": "pending_excluded",
+      "files": 3,
+      "bytes": 12745,
+      "reason": "individual source pages unresolved"
+    },
+    {
+      "group_id": "unresolved-chatgpt-sessions",
+      "disposition": "train",
+      "files": 5,
+      "bytes": 95203,
+      "reason": "preserve prior split override; session independence unresolved so keep one leakage group"
+    },
+    {
+      "group_id": "unresolved-x-dialogue",
+      "disposition": "pending_excluded",
+      "files": 1,
+      "bytes": 876,
+      "reason": "original post identity unresolved"
+    }
+  ],
+  "summary": {
+    "all_active_files": 22,
+    "all_active_bytes": 301231,
+    "eligible_files": 10,
+    "eligible_bytes": 197152,
+    "pending_excluded_files": 12,
+    "pending_excluded_bytes": 104079,
+    "train_bytes": 157742,
+    "dev_bytes": 16063,
+    "test_bytes": 23347,
+    "eligible_byte_ratios": {
+      "train": 0.8001034734621003,
+      "dev": 0.0814752069469242,
+      "test": 0.11842131959097549
+    }
+  },
+  "limitations": [
+    "Held-out dev/test are prose-only in LANG v0.",
+    "The ChatGPT dialogue files remain a single train leakage group because session independence is not verified.",
+    "Therefore LANG v0 cannot claim held-out dialogue generalization.",
+    "pending_excluded records may be reconsidered only in a later corpus decision after provenance is resolved; do not silently promote them inside this cycle."
+  ]
+}

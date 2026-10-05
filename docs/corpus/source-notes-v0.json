@@ -6,7 +6,7 @@
   "evidence": "Filtered from the pre-deletion source ledger to the current LANG v0 active manifest. Existing source/page checks are preserved as historical metadata; no new full-text equivalence or license clearance is inferred.",
   "default_usage": "reading_candidate_not_response_exemplar",
   "default_usage_status": "proposal_pending_user_preference",
-  "grouping_note": "Batch groups are conservative provisional leakage boundaries, not claims of common original authorship. Split remains unset.",
+  "grouping_note": "Batch groups are conservative provisional leakage boundaries, not claims of common original authorship. Frozen LANG v0 dispositions live in configs/lang-v0-split.json; this provenance ledger itself carries no split.",
   "license_note": "Presence in this ledger is provenance metadata only and does not mean training approval or license clearance.",
   "groups": [
     {
