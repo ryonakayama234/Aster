@@ -117,8 +117,6 @@ Tokenizer:
 
 - serialized input character length;
 - encoded input token length;
-- candidate count;
-- target-candidate encoded token length;
 - absolute correction-vs-sibling input token-length difference;
 - token-level Levenshtein distance between aligned correction/sibling serialized inputs;
 - longest common token-prefix length;
@@ -172,6 +170,11 @@ For aligned correction/sibling pair features, store:
 - mean;
 - max.
 
+Each primitive measurement has exactly one owning feature group. Derived duplicates are
+not registered under a second group. In particular, candidate-set size and candidate
+token-length measurements belong only to Candidate/action geometry, not to
+Serializer/tokenizer geometry.
+
 Categorical features store counts and the deterministic mode; ties in the mode are stored
 as an explicit sorted list rather than silently broken.
 
@@ -182,7 +185,9 @@ No endpoint-dependent aggregation rule may be chosen after outcome inspection.
 Before joining outcomes, compute pairwise Spearman rank correlations among continuous
 features and between each feature and `stratum_index`.
 
-Use average ranks for ties.
+Use average ranks for ties. A population with fewer than two distinct feature values has
+undefined Spearman rho; record `rho = null`, `degenerate = true`, and never promote
+that population to a descriptive lead.
 
 Mark a feature `design_order_confounded=true` when, within either operation stratum,
 
@@ -260,10 +265,19 @@ An unconfounded continuous feature cluster becomes a `global_descriptive_lead` o
 - add and subtract rho have the same sign;
 - `min(abs(rho_add), abs(rho_sub)) >= 0.25`.
 
-A cluster becomes a `stratum_specific_lead` when:
+A cluster becomes a `stratum_specific_lead` when either add or subtract has
+`abs(rho) >= 0.50`, and at least one of the following holds for the opposite stratum:
 
-- one stratum has `abs(rho) >= 0.50`; and
-- the other stratum does not satisfy the global-consistency rule.
+- its rho is undefined/degenerate;
+- `abs(rho_other) < 0.25`;
+- its nonzero rho has the opposite sign.
+
+If both strata have `abs(rho) >= 0.50` with opposite signs, store
+`bidirectional_stratum_heterogeneity = true`; this is still one stratum-specific lead,
+not two independent leads.
+
+A same-sign pattern with the other stratum in `0.25 <= abs(rho_other) < 0.50` is neither
+a global lead nor a stratum-specific lead unless the global rule itself is satisfied.
 
 Design-order-confounded clusters may be reported as leads but cannot by themselves
 support `task_state_linked`.
@@ -297,6 +311,14 @@ Exactly one qualifying group remains and it is serializer/tokenizer geometry.
 Next: one representation-controlled causal Trial, changing one serialization/tokenization
 factor only.
 
+### `candidate_action_linked`
+
+Exactly one qualifying group remains and it is Candidate/action geometry.
+
+Next: one candidate/action-geometry causal Trial. Keep the parent model, serializer,
+Tokenizer, training examples, and optimizer budget fixed; manipulate exactly one candidate
+construction or action-representation factor.
+
 ### `task_state_linked`
 
 Exactly one qualifying group remains and it is task/state, and at least one qualifying
@@ -307,23 +329,23 @@ without preserving the old ordinal coupling.
 
 ### `design_order_confounded`
 
-The strongest task/state leads are all design-order-confounded and no other unconfounded
-group qualifies.
+No unconfounded feature group qualifies, at least one task/state cluster is a descriptive
+lead, and every task/state lead is `design_order_confounded=true`.
 
 Next: do not call magnitude causal. Build a new matched family design that breaks
 family-order/operand-magnitude coupling before any model intervention.
 
 ### `mixed`
 
-Two or more feature groups qualify, or strong stratum-specific leads point to different
-groups.
+Two or more unconfounded feature groups qualify, or stratum-specific leads qualify
+different groups in add versus subtract.
 
 Next: choose exactly one discriminating causal factor for a new Trial. Do not combine
 interventions.
 
 ### `no_clear_static_explanation`
 
-No unconfounded group qualifies and no design-order-confounded task lead dominates.
+No unconfounded group qualifies and the `design_order_confounded` rule is not satisfied.
 
 Next: return to causal update decomposition. First candidate is a 2x2
 `embedding update x block update` Trial that adds the missing `embeddings + head`
