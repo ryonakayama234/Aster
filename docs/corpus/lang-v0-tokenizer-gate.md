@@ -6,7 +6,7 @@ Gate 0で固定したcanonical buildとgroup splitを使い、既存のUTF-8 byt
 ## Fixed inputs
 
 - canonical build:
-  `239fff3a6ac9c4d796954ee23c81fae15ffff3e205a9655e7e184fea2c454f587`
+  `239fff3a6ac9c4d796954ee23c81fae15fff3e205a9655e7e184fea2c454f587`
 - split contract: `configs/lang-v0-split.json`
 - training recipe: `configs/lang-v0-training.json`
 - target BPE vocab: 512
