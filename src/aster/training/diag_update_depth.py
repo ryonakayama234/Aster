@@ -7,7 +7,7 @@ from dataclasses import asdict
 import math
 from pathlib import Path
 from statistics import median
-from typing import Sequence
+from typing import Sequence, cast
 
 import torch
 
@@ -240,7 +240,7 @@ def run_update_depth_unit(
     parent_model_id = _require_str(parent_manifest, "model_id")
 
     trainability = trainability_spec(parent_model, update_depth)
-    trainable_names = tuple(trainability["trainable_parameter_names"])
+    trainable_names = tuple(cast(list[str], trainability["trainable_parameter_names"]))
     config = DecisionTrainConfig(
         steps=TRIAL_STEPS,
         learning_rate=TRIAL_LEARNING_RATE,
