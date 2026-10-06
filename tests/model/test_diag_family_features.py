@@ -51,6 +51,19 @@ def test_feature_schema_hash_is_deterministic_and_content_addressed():
     changed["aggregation"]["mode_tie"] = "different"
     assert feature_schema_sha256(changed) != feature_schema_sha256(first)
 
+    changed_handling = build_frozen_feature_schema()
+    changed_handling["missing_degenerate_handling"]["missing_primitive_measurement"] = "null"
+    assert feature_schema_sha256(changed_handling) != feature_schema_sha256(first)
+
+
+def test_frozen_schema_records_missing_and_degenerate_handling():
+    handling = build_frozen_feature_schema()["missing_degenerate_handling"]
+    assert handling["undefined_spearman"] == {"rho": None, "degenerate": True}
+    assert handling["missing_primitive_measurement"] == "reject"
+    assert handling["nonfinite_numeric_measurement"] == "reject"
+    assert handling["empty_numeric_aggregation"] == "reject"
+    assert handling["empty_categorical_aggregation"] == "reject"
+
 
 def test_average_ranks_use_average_for_ties():
     assert average_ranks([10, 10, 30, 20]) == [1.5, 1.5, 4.0, 3.0]
@@ -68,6 +81,8 @@ def test_spearman_returns_none_for_degenerate_feature():
 
 def test_fixed_numeric_and_token_geometry_helpers():
     assert numeric_summary([3, 1, 5]) == {"min": 1.0, "mean": 3.0, "max": 5.0}
+    with pytest.raises(ValueError, match="At least one numeric feature value is required"):
+        numeric_summary([])
     assert levenshtein_distance([1, 2, 3], [1, 4, 3, 5]) == 2
     assert longest_common_prefix_length([1, 2, 3], [1, 2, 9]) == 2
     assert longest_common_prefix_ratio([1, 2, 3, 4], [1, 2, 9]) == pytest.approx(0.5)
@@ -151,12 +166,43 @@ def test_classification_single_unconfounded_group(group, expected):
     assert result == expected
 
 
+def test_classification_stratum_specific_groups_are_qualifying_groups():
+    assert (
+        classify_diagnostic(
+            set(),
+            task_state_lead_exists=False,
+            all_task_state_leads_design_order_confounded=False,
+            add_stratum_groups={"parent_geometry"},
+        )
+        == "parent_geometry_linked"
+    )
+    assert (
+        classify_diagnostic(
+            set(),
+            task_state_lead_exists=False,
+            all_task_state_leads_design_order_confounded=False,
+            add_stratum_groups={"parent_geometry"},
+            subtract_stratum_groups={"parent_geometry"},
+        )
+        == "parent_geometry_linked"
+    )
+
+
 def test_classification_mixed_for_multiple_groups_or_different_strata():
     assert (
         classify_diagnostic(
             {"parent_geometry", "candidate_action"},
             task_state_lead_exists=False,
             all_task_state_leads_design_order_confounded=False,
+        )
+        == "mixed"
+    )
+    assert (
+        classify_diagnostic(
+            set(),
+            task_state_lead_exists=False,
+            all_task_state_leads_design_order_confounded=False,
+            add_stratum_groups={"parent_geometry", "candidate_action"},
         )
         == "mixed"
     )

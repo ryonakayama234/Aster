@@ -346,6 +346,16 @@ def build_frozen_feature_schema() -> dict[str, object]:
             "categorical": ["counts", "deterministic_mode"],
             "mode_tie": "sorted_list",
         },
+        "missing_degenerate_handling": {
+            "undefined_spearman": {
+                "rho": None,
+                "degenerate": True,
+            },
+            "missing_primitive_measurement": "reject",
+            "nonfinite_numeric_measurement": "reject",
+            "empty_numeric_aggregation": "reject",
+            "empty_categorical_aggregation": "reject",
+        },
         "features": features,
         "output_names": output_names,
     }
@@ -581,10 +591,10 @@ def classify_diagnostic(
     subtract_stratum_groups: Collection[str] = (),
 ) -> str:
     """Return exactly one preregistered DIAG v3 diagnostic classification."""
-    groups = set(qualifying_unconfounded_groups)
     add_groups = set(add_stratum_groups)
     subtract_groups = set(subtract_stratum_groups)
-    unknown = (groups | add_groups | subtract_groups) - set(FEATURE_GROUPS)
+    groups = set(qualifying_unconfounded_groups) | add_groups | subtract_groups
+    unknown = groups - set(FEATURE_GROUPS)
     if unknown:
         raise ValueError(f"Unknown DIAG v3 feature groups: {sorted(unknown)}")
     if all_task_state_leads_design_order_confounded and not task_state_lead_exists:
@@ -596,11 +606,7 @@ def classify_diagnostic(
     ):
         raise ValueError("An unconfounded task-state lead must qualify task_state")
 
-    stratum_groups = add_groups | subtract_groups
-    different_stratum_groups = bool(
-        add_groups and subtract_groups and len(stratum_groups) > 1
-    )
-    if len(groups) >= 2 or different_stratum_groups:
+    if len(groups) >= 2:
         return "mixed"
 
     if len(groups) == 1:
