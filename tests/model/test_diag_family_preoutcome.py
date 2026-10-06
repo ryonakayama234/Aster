@@ -8,6 +8,7 @@ from typing import cast
 
 import pytest
 
+import aster.training.diag_family_preoutcome as preoutcome
 from aster.training.diag_family_features import (
     build_frozen_feature_schema,
     feature_schema_sha256,
@@ -127,7 +128,7 @@ def test_preoutcome_audit_rejects_wrong_schema_hash():
         build_preoutcome_audit(payload, schema)
 
 
-def test_run_preoutcome_audit_materializes_separate_completed_run(tmp_path):
+def test_run_preoutcome_audit_materializes_separate_completed_run(monkeypatch, tmp_path):
     payload, schema = _feature_payload()
     source_id = "source-feature-run"
     source = tmp_path / "runs" / source_id
@@ -153,6 +154,22 @@ def test_run_preoutcome_audit_materializes_separate_completed_run(tmp_path):
     _write_json(source / "diag-family-feature-schema.json", schema)
     _write_json(source / "diag-family-features.json", payload)
 
+    rows = cast(list[dict[str, object]], payload["families"])
+    families = [
+        {
+            "family_id": row["family_id"],
+            "correction_task": {"operation": row["operation"]},
+        }
+        for row in rows
+    ]
+    manifest: dict[str, object] = {"family_design": {"families": families}}
+    monkeypatch.setattr(preoutcome, "load_confirmatory_manifest", lambda path: manifest)
+    monkeypatch.setattr(
+        preoutcome,
+        "confirmatory_manifest_sha256",
+        lambda value: cast(str, payload["manifest_sha256"]),
+    )
+
     run_path = run_preoutcome_audit(tmp_path, source_id)
 
     assert run_path != source
@@ -165,3 +182,23 @@ def test_run_preoutcome_audit_materializes_separate_completed_run(tmp_path):
     assert run["kind"] == "diag_family_preoutcome_audit"
     assert run["status"] == "completed"
     assert run["source_feature_run_id"] == source_id
+
+
+
+def test_validate_rows_against_manifest_rejects_family_order_mismatch():
+    payload, _ = _feature_payload()
+    rows = cast(list[dict[str, object]], payload["families"])
+    families = [
+        {
+            "family_id": row["family_id"],
+            "correction_task": {"operation": row["operation"]},
+        }
+        for row in rows
+    ]
+    manifest: dict[str, object] = {"family_design": {"families": families}}
+
+    preoutcome._validate_rows_against_manifest(rows, manifest)
+
+    families[0]["family_id"] = "different-family"
+    with pytest.raises(RuntimeError, match="frozen family/order manifest"):
+        preoutcome._validate_rows_against_manifest(rows, manifest)
