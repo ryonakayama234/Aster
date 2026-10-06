@@ -46,10 +46,41 @@ def tokenizer_from_payload(payload):
 
 def load_training_tokenizer(path, view_id):
     path = Path(path)
-    # Require the existing evaluator's provenance, not a similarly named tokenizer.
-    evaluation = json.loads((path / 'evaluation.json').read_text(encoding='utf-8'))
-    if evaluation['experiment']['view_id'] != view_id:
-        raise ValueError('Tokenizer and training view do not match')
+
+    evaluation_path = path / 'evaluation.json'
+    provenance_path = path / 'provenance.json'
+    if evaluation_path.is_file():
+        evaluation = json.loads(evaluation_path.read_text(encoding='utf-8'))
+        if evaluation['experiment']['view_id'] != view_id:
+            raise ValueError('Tokenizer and training view do not match')
+    elif provenance_path.is_file():
+        provenance = json.loads(provenance_path.read_text(encoding='utf-8'))
+        if provenance.get('schema_version') != 'aster-tokenizer-provenance-0':
+            raise ValueError('Unsupported tokenizer provenance schema')
+        if provenance.get('training_view_id') != view_id:
+            raise ValueError('Tokenizer and training view do not match')
+        if provenance.get('fit_split') != 'train':
+            raise ValueError('Training tokenizer must be fit on train split only')
+        if provenance.get('sealed_test_used_for_fit') not in (None, False):
+            raise ValueError('Training tokenizer provenance reports test fitting')
+    else:
+        raise ValueError('Tokenizer artifact has no recognized training provenance')
+
+    artifact_path = path / 'artifact.json'
+    if artifact_path.is_file():
+        identity = json.loads(artifact_path.read_text(encoding='utf-8'))
+        if identity.get('schema_version') != 'aster-tokenizer-artifact-0':
+            raise ValueError('Unsupported tokenizer artifact identity schema')
+        if identity.get('training_view_id') != view_id:
+            raise ValueError('Tokenizer artifact identity does not match training view')
+        files = identity.get('files')
+        if not isinstance(files, dict):
+            raise ValueError('Tokenizer artifact identity has invalid file map')
+        for name, expected in files.items():
+            candidate = path / name
+            if not candidate.is_file() or digest(candidate.read_bytes()) != expected:
+                raise ValueError('Tokenizer artifact file hash mismatch: ' + name)
+
     payload = tokenizer_payload(load_tokenizer(path))
     return tokenizer_from_payload(payload), payload
 
