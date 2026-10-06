@@ -1,0 +1,13 @@
+{
+  "schema_version": "aster-lang-wiring-0",
+  "experiment": "lang-v0",
+  "training_view_id": "6dd51f52b903829b8548686743acda1dd33ccd6d3a4dfefc8abd14deb6e9ff4d",
+  "tokenizer_artifact_id": "37e0b82f8e80f90a84346fd37d00b680669174388cf94f6cd88fa5b76cc13513",
+  "tiny_lm_config": "configs/tinylm-overfit-v0.json",
+  "purpose": "gate-2-wiring-overfit-not-generalization",
+  "notes": [
+    "Use exactly one selected train window because tinylm-overfit-v0 mode=overfit and overfit_windows=1.",
+    "This gate verifies model/data/checkpoint/generation wiring only.",
+    "Do not use the result as held-out language-learning evidence."
+  ]
+}
