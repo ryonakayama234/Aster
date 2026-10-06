@@ -33,6 +33,7 @@ from aster.training.diag_family_features import (
     numeric_summary,
 )
 from aster.training.diag_interference import (
+    _family_by_id,
     _task_from_family,
     _teacher_examples,
     _validate_parent_suite_lineage,
@@ -62,6 +63,22 @@ EXPECTED_PRIMARY_SUMMARY = {
     "losses": 19,
     "ties": 5,
     "median_family_accuracy_delta": -0.25,
+    "sign_test_p_value": 0.01463329792022705,
+}
+LEARN_EVIDENCE_MODES = ("original", "reproduction")
+LEARN_REPRODUCTION_MARKER = Path("runs/learn-v0-reproduction.json")
+LEARN_REPRODUCTION_MARKER_SCHEMA = "aster-learn-reproduction-marker-0"
+EXPECTED_OPERATION_OUTCOMES = {
+    "add": {"win": 5, "loss": 7, "tie": 3},
+    "subtract": {"win": 1, "loss": 12, "tie": 2},
+}
+EXPECTED_SELECTED_FAMILY_OUTCOMES = {
+    "learn-confirm-keyshift-03": "loss",
+    "learn-confirm-keyshift-15": "win",
+    "learn-confirm-keyshift-21": "tie",
+    "learn-confirm-keyshift-02": "loss",
+    "learn-confirm-keyshift-12": "win",
+    "learn-confirm-keyshift-22": "tie",
 }
 _TOKENIZER_FILES = (
     "manifest.json",
@@ -75,7 +92,7 @@ def reconstruct_confirmatory_evidence(
     root: str | Path,
     manifest: dict[str, object],
 ) -> tuple[dict[str, object], str]:
-    """Reconstruct all 30 family outcomes and match the canonical campaign result exactly."""
+    """Reconstruct all 30 family outcomes and match the source campaign result exactly."""
     root_path = Path(root).resolve()
     units = discover_completed_confirmatory_units(root_path, manifest)
     result = aggregate_confirmatory_units(
@@ -115,6 +132,17 @@ def reconstruct_confirmatory_evidence(
     verdict = _require_dict(result, "verdict")
     if verdict.get("label") != "Not supported":
         raise RuntimeError("Confirmatory verdict identity mismatch")
+    validate_preserved_learn_outcome_identity(result, manifest)
+
+    lineage = _require_dict(manifest, "lineage")
+    act_run_id = _require_str(lineage, "parent_act_run_id")
+    parent_artifact_id, _ = resolve_act_parent_artifact(root_path, act_run_id)
+    validate_confirmatory_unit_lineage(
+        units,
+        manifest,
+        expected_act_run_id=act_run_id,
+        expected_parent_artifact_id=parent_artifact_id,
+    )
 
     canonical_run_id, canonical = _discover_canonical_confirmatory_result(
         root_path,
@@ -134,9 +162,194 @@ def reconstruct_confirmatory_evidence(
     ):
         if canonical.get(key) != result.get(key):
             raise RuntimeError(
-                f"Reconstructed confirmatory result differs from canonical campaign: {key}"
+                f"Reconstructed confirmatory result differs from source campaign: {key}"
             )
     return result, canonical_run_id
+
+
+def validate_confirmatory_unit_lineage(
+    units: Mapping[tuple[str, int], tuple[Path, dict[str, object]]],
+    manifest: dict[str, object],
+    *,
+    expected_act_run_id: str,
+    expected_parent_artifact_id: str,
+) -> None:
+    """Verify every completed LEARN unit came from the exact frozen ACT/task lineage."""
+    for (family_id, seed), (run_dir, _) in units.items():
+        family = _family_by_id(manifest, family_id)
+        correction_task = dict(_task_from_family(family, "correction_task"))
+        sibling_task = dict(_task_from_family(family, "sibling_task"))
+        expected = {
+            "family_id": family_id,
+            "seed": seed,
+            "act_run_id": expected_act_run_id,
+            "parent_artifact_id": expected_parent_artifact_id,
+            "correction_task": correction_task,
+            "uncorrected_sibling_task": sibling_task,
+        }
+
+        run = _read_json(run_dir / "run.json")
+        inputs = _require_dict(run, "inputs")
+        run_provenance = _require_dict(inputs, "provenance")
+        experiment = _read_json(run_dir / "correction-transfer.json")
+        experiment_provenance = _require_dict(experiment, "provenance")
+
+        for provenance_name, provenance in (
+            ("Run", run_provenance),
+            ("experiment", experiment_provenance),
+        ):
+            for key, expected_value in expected.items():
+                if provenance.get(key) != expected_value:
+                    raise RuntimeError(
+                        "Confirmatory unit lineage mismatch for "
+                        f"{family_id} seed {seed} {provenance_name} field {key}"
+                    )
+
+
+def validate_preserved_learn_outcome_identity(
+    result: dict[str, object],
+    manifest: dict[str, object],
+) -> None:
+    """Check preserved operation-level and selected-family LEARN outcome identities."""
+    raw_results = result.get("family_results")
+    if not isinstance(raw_results, list) or len(raw_results) != 30:
+        raise RuntimeError("Confirmatory family outcome table is incomplete")
+
+    outcomes: dict[str, str] = {}
+    for raw in raw_results:
+        if not isinstance(raw, dict):
+            raise RuntimeError("Confirmatory family outcome row is invalid")
+        family_id = _require_str(cast(dict[str, object], raw), "family_id")
+        outcome = _require_str(cast(dict[str, object], raw), "outcome")
+        if outcome not in {"win", "loss", "tie"}:
+            raise RuntimeError(f"Unexpected confirmatory family outcome: {outcome}")
+        if family_id in outcomes:
+            raise RuntimeError(f"Duplicate confirmatory family outcome: {family_id}")
+        outcomes[family_id] = outcome
+
+    for family_id, expected in EXPECTED_SELECTED_FAMILY_OUTCOMES.items():
+        if outcomes.get(family_id) != expected:
+            raise RuntimeError(
+                f"Preserved LEARN selected-family outcome mismatch for {family_id}"
+            )
+
+    design = _require_dict(manifest, "family_design")
+    raw_families = design.get("families")
+    if not isinstance(raw_families, list) or len(raw_families) != 30:
+        raise RuntimeError("Frozen LEARN family definitions are incomplete")
+
+    operation_by_family: dict[str, str] = {}
+    for raw in raw_families:
+        if not isinstance(raw, dict):
+            raise RuntimeError("Frozen LEARN family definition is invalid")
+        family = cast(dict[str, object], raw)
+        family_id = _require_str(family, "family_id")
+        correction = _require_dict(family, "correction_task")
+        operation = _require_str(correction, "operation")
+        if operation not in EXPECTED_OPERATION_OUTCOMES:
+            raise RuntimeError(f"Unexpected frozen LEARN operation: {operation}")
+        operation_by_family[family_id] = operation
+
+    if set(outcomes) != set(operation_by_family):
+        raise RuntimeError("Confirmatory family outcome IDs differ from frozen manifest")
+
+    counts = {
+        operation: Counter(
+            outcomes[family_id]
+            for family_id, family_operation in operation_by_family.items()
+            if family_operation == operation
+        )
+        for operation in EXPECTED_OPERATION_OUTCOMES
+    }
+    for operation, expected in EXPECTED_OPERATION_OUTCOMES.items():
+        actual = {outcome: counts[operation][outcome] for outcome in ("win", "loss", "tie")}
+        if actual != expected:
+            raise RuntimeError(
+                f"Preserved LEARN operation outcome mismatch for {operation}: "
+                f"{actual} != {expected}"
+            )
+
+
+def verify_learn_evidence_source(
+    root: str | Path,
+    current_manifest: dict[str, object],
+    *,
+    mode: str,
+    active_root: str | Path | None = None,
+) -> dict[str, object]:
+    """Validate whether Gate 0 reads original or explicitly reproduced LEARN evidence."""
+    if mode not in LEARN_EVIDENCE_MODES:
+        raise ValueError(f"Unknown LEARN evidence mode: {mode}")
+
+    root_path = Path(root).resolve()
+    if mode == "original":
+        if active_root is not None and root_path != Path(active_root).resolve():
+            raise RuntimeError(
+                "Original LEARN evidence must come from the active Aster root"
+            )
+        marker_path = root_path / LEARN_REPRODUCTION_MARKER
+        if marker_path.exists():
+            raise RuntimeError(
+                "Original LEARN evidence root contains a reproduction marker"
+            )
+
+    evidence_manifest = load_confirmatory_manifest(root_path / DEFAULT_MANIFEST_PATH)
+    if evidence_manifest != current_manifest:
+        raise RuntimeError("LEARN evidence root frozen manifest differs from DIAG v3 manifest")
+
+    source = _git_identity(root_path)
+    reproduction_marker: dict[str, object] | None = None
+    reproduction_parent_artifact_id: str | None = None
+    if mode == "reproduction":
+        if source["git_sha"] != EXPECTED_CONFIRMATORY_MEASUREMENT_GIT_SHA:
+            raise RuntimeError(
+                "LEARN reproduction evidence root must be checked out at the original "
+                "measurement Git SHA"
+            )
+        if source["dirty"] is not False:
+            raise RuntimeError("LEARN reproduction evidence root must have a clean worktree")
+
+        marker_path = root_path / LEARN_REPRODUCTION_MARKER
+        if not marker_path.is_file() or marker_path.is_symlink():
+            raise RuntimeError("LEARN reproduction evidence marker is missing")
+        reproduction_marker = _read_json(marker_path)
+        lineage = _require_dict(current_manifest, "lineage")
+        act_run_id = _require_str(lineage, "parent_act_run_id")
+        reproduction_parent_artifact_id, _ = resolve_act_parent_artifact(
+            root_path,
+            act_run_id,
+        )
+        expected_marker = {
+            "schema_version": LEARN_REPRODUCTION_MARKER_SCHEMA,
+            "evidence_mode": "reproduction",
+            "original_raw_artifact_status": "unavailable",
+            "protocol_id": PROTOCOL_ID,
+            "manifest_sha256": EXPECTED_MANIFEST_SHA256,
+            "measurement_git_sha": EXPECTED_CONFIRMATORY_MEASUREMENT_GIT_SHA,
+            "parent_act_run_id": act_run_id,
+            "parent_artifact_id": reproduction_parent_artifact_id,
+            "claim_boundary": "reproduction_not_original_raw_evidence",
+        }
+        for key, expected in expected_marker.items():
+            if reproduction_marker.get(key) != expected:
+                raise RuntimeError(f"LEARN reproduction marker mismatch for {key}")
+
+    result = {
+        "mode": mode,
+        "source_git_sha": source["git_sha"],
+        "source_dirty": source["dirty"],
+        "measurement_git_sha_required": EXPECTED_CONFIRMATORY_MEASUREMENT_GIT_SHA,
+        "original_raw_artifact_used": mode == "original",
+        "claim_boundary": (
+            "original_local_run_evidence"
+            if mode == "original"
+            else "reproduction_evidence_not_original_raw_artifact"
+        ),
+    }
+    if reproduction_marker is not None:
+        result["reproduction_marker"] = str(LEARN_REPRODUCTION_MARKER)
+        result["reproduction_parent_artifact_id"] = reproduction_parent_artifact_id
+    return result
 
 
 def verify_diag_v2_run_identity(root: str | Path) -> dict[str, object]:
@@ -330,9 +543,19 @@ def extract_family_feature_rows(
     return rows
 
 
-def run_family_feature_extraction(root: str | Path) -> Path:
+def run_family_feature_extraction(
+    root: str | Path,
+    *,
+    learn_evidence_root: str | Path | None = None,
+    learn_evidence_mode: str = "original",
+) -> Path:
     """Execute DIAG v3 Gate 0 + Gate 1 without joining outcomes to features."""
     root_path = Path(root).resolve()
+    evidence_root_path = (
+        root_path
+        if learn_evidence_root is None
+        else Path(learn_evidence_root).resolve()
+    )
     started = time.perf_counter()
     source = _git_identity(root_path)
     manifest = load_confirmatory_manifest(root_path / DEFAULT_MANIFEST_PATH)
@@ -340,8 +563,14 @@ def run_family_feature_extraction(root: str | Path) -> Path:
     if manifest_sha256 != EXPECTED_MANIFEST_SHA256:
         raise RuntimeError("DIAG v3 manifest identity mismatch")
 
-    confirmatory_result, canonical_run_id = reconstruct_confirmatory_evidence(
-        root_path,
+    learn_evidence_source = verify_learn_evidence_source(
+        evidence_root_path,
+        manifest,
+        mode=learn_evidence_mode,
+        active_root=root_path,
+    )
+    confirmatory_result, evidence_campaign_run_id = reconstruct_confirmatory_evidence(
+        evidence_root_path,
         manifest,
     )
     diag_v2_identity = verify_diag_v2_run_identity(root_path)
@@ -369,7 +598,11 @@ def run_family_feature_extraction(root: str | Path) -> Path:
             "protocol_id": PROTOCOL_ID,
             "manifest_sha256": manifest_sha256,
             "feature_schema_sha256": schema_sha256,
-            "canonical_confirmatory_run_id": canonical_run_id,
+            "canonical_confirmatory_run_id": (
+                evidence_campaign_run_id if learn_evidence_mode == "original" else None
+            ),
+            "learn_evidence_campaign_run_id": evidence_campaign_run_id,
+            "learn_evidence_source": learn_evidence_source,
             "diag_v2_identity": diag_v2_identity,
             "act_run_id": act_run_id,
             "parent_artifact_id": artifact_id,
@@ -423,9 +656,22 @@ def run_family_feature_extraction(root: str | Path) -> Path:
             "schema_version": "aster-diag-family-evidence-gate-0",
             "protocol_id": PROTOCOL_ID,
             "manifest_sha256": manifest_sha256,
-            "canonical_confirmatory_run_id": canonical_run_id,
+            "canonical_confirmatory_run_id": (
+                evidence_campaign_run_id if learn_evidence_mode == "original" else None
+            ),
+            "learn_evidence_campaign_run_id": evidence_campaign_run_id,
+            "learn_evidence_source": learn_evidence_source,
             "reconstructed_confirmatory_result": confirmatory_result,
-            "exact_family_results_reproduced": True,
+            "source_campaign_result_exact_match": True,
+            "original_family_results_exactly_verified": (
+                learn_evidence_mode == "original"
+            ),
+            "preserved_original_identity_checks": {
+                "primary_summary_exact": True,
+                "operation_outcome_counts_exact": True,
+                "selected_family_outcomes_exact": True,
+                "source_campaign_result_exact": True,
+            },
             "diag_v2_identity": diag_v2_identity,
         }
         summary = {
@@ -433,7 +679,11 @@ def run_family_feature_extraction(root: str | Path) -> Path:
             "status": "feature_extraction_complete",
             "feature_schema_sha256": schema_sha256,
             "manifest_sha256": manifest_sha256,
-            "canonical_confirmatory_run_id": canonical_run_id,
+            "canonical_confirmatory_run_id": (
+                evidence_campaign_run_id if learn_evidence_mode == "original" else None
+            ),
+            "learn_evidence_campaign_run_id": evidence_campaign_run_id,
+            "learn_evidence_source": learn_evidence_source,
             "diag_v2_identity": diag_v2_identity,
             "act_run_id": act_run_id,
             "parent_artifact_id": artifact_id,

@@ -170,7 +170,7 @@ def test_extract_family_rows_match_frozen_schema_without_outcomes(monkeypatch):
     assert "outcome" not in first[0]
 
 
-def test_reconstruct_confirmatory_evidence_requires_exact_canonical_match(monkeypatch):
+def test_reconstruct_confirmatory_evidence_requires_exact_canonical_match(monkeypatch, tmp_path):
     result = {
         "schema_version": "aster-learn-confirmatory-result-0",
         "protocol_id": audit.PROTOCOL_ID,
@@ -187,6 +187,7 @@ def test_reconstruct_confirmatory_evidence_requires_exact_canonical_match(monkey
             "losses": 19,
             "ties": 5,
             "median_family_accuracy_delta": -0.25,
+            "sign_test_p_value": 0.01463329792022705,
         },
         "verdict": {
             "label": "Not supported",
@@ -210,11 +211,31 @@ def test_reconstruct_confirmatory_evidence_requires_exact_canonical_match(monkey
     )
     monkeypatch.setattr(
         audit,
+        "validate_preserved_learn_outcome_identity",
+        lambda result, manifest: None,
+    )
+    monkeypatch.setattr(
+        audit,
+        "resolve_act_parent_artifact",
+        lambda root, run_id: ("decision_model:" + ("a" * 64), tmp_path / "artifact"),
+    )
+    monkeypatch.setattr(
+        audit,
+        "validate_confirmatory_unit_lineage",
+        lambda units, manifest, **kwargs: None,
+    )
+    monkeypatch.setattr(
+        audit,
         "_discover_canonical_confirmatory_result",
         lambda root, manifest: ("canonical-run", dict(result)),
     )
 
-    reconstructed, run_id = audit.reconstruct_confirmatory_evidence(".", {})
+    manifest: dict[str, object] = {
+        "lineage": {
+            "parent_act_run_id": "5a8076571dca446fa07190cf4fc62509",
+        }
+    }
+    reconstructed, run_id = audit.reconstruct_confirmatory_evidence(".", manifest)
     assert reconstructed == result
     assert run_id == "canonical-run"
 
@@ -226,7 +247,7 @@ def test_reconstruct_confirmatory_evidence_requires_exact_canonical_match(monkey
         lambda root, manifest: ("canonical-run", changed),
     )
     with pytest.raises(RuntimeError, match="family_results"):
-        audit.reconstruct_confirmatory_evidence(".", {})
+        audit.reconstruct_confirmatory_evidence(".", manifest)
 
 
 def test_verify_diag_v2_run_identity_requires_exact_frozen_campaign(tmp_path):
@@ -311,3 +332,287 @@ def test_reconstruct_confirmatory_evidence_reports_missing_units(monkeypatch):
         match=r"discovered=2, completed=88, expected=90.*family-03/seed=43.*family-12/seed=44",
     ):
         audit.reconstruct_confirmatory_evidence(".", {})
+
+
+
+def test_verify_learn_evidence_source_marks_reproduction_without_claiming_original(
+    monkeypatch,
+    tmp_path,
+):
+    act_run_id = "5a8076571dca446fa07190cf4fc62509"
+    parent_artifact_id = "decision_model:" + ("a" * 64)
+    manifest = {
+        "protocol_id": audit.PROTOCOL_ID,
+        "lineage": {"parent_act_run_id": act_run_id},
+    }
+    monkeypatch.setattr(
+        audit,
+        "load_confirmatory_manifest",
+        lambda path: manifest,
+    )
+    monkeypatch.setattr(
+        audit,
+        "_git_identity",
+        lambda root: {
+            "git_sha": audit.EXPECTED_CONFIRMATORY_MEASUREMENT_GIT_SHA,
+            "dirty": False,
+            "dirty_entry_count": 0,
+        },
+    )
+    monkeypatch.setattr(
+        audit,
+        "resolve_act_parent_artifact",
+        lambda root, run_id: (parent_artifact_id, tmp_path / "artifact"),
+    )
+    marker_path = tmp_path / audit.LEARN_REPRODUCTION_MARKER
+    marker_path.parent.mkdir(parents=True)
+    audit._write_json(
+        marker_path,
+        {
+            "schema_version": audit.LEARN_REPRODUCTION_MARKER_SCHEMA,
+            "evidence_mode": "reproduction",
+            "original_raw_artifact_status": "unavailable",
+            "protocol_id": audit.PROTOCOL_ID,
+            "manifest_sha256": audit.EXPECTED_MANIFEST_SHA256,
+            "measurement_git_sha": audit.EXPECTED_CONFIRMATORY_MEASUREMENT_GIT_SHA,
+            "parent_act_run_id": act_run_id,
+            "parent_artifact_id": parent_artifact_id,
+            "claim_boundary": "reproduction_not_original_raw_evidence",
+        },
+    )
+
+    source = audit.verify_learn_evidence_source(
+        tmp_path,
+        manifest,
+        mode="reproduction",
+    )
+
+    assert source["mode"] == "reproduction"
+    assert source["original_raw_artifact_used"] is False
+    assert source["claim_boundary"] == (
+        "reproduction_evidence_not_original_raw_artifact"
+    )
+    assert source["reproduction_marker"] == str(audit.LEARN_REPRODUCTION_MARKER)
+    assert source["reproduction_parent_artifact_id"] == parent_artifact_id
+
+
+def test_verify_learn_evidence_source_rejects_wrong_or_dirty_reproduction(
+    monkeypatch,
+    tmp_path,
+):
+    manifest = {"protocol_id": audit.PROTOCOL_ID}
+    monkeypatch.setattr(
+        audit,
+        "load_confirmatory_manifest",
+        lambda path: manifest,
+    )
+
+    monkeypatch.setattr(
+        audit,
+        "_git_identity",
+        lambda root: {
+            "git_sha": "0" * 40,
+            "dirty": False,
+            "dirty_entry_count": 0,
+        },
+    )
+    with pytest.raises(RuntimeError, match="original measurement Git SHA"):
+        audit.verify_learn_evidence_source(
+            tmp_path,
+            manifest,
+            mode="reproduction",
+        )
+
+    monkeypatch.setattr(
+        audit,
+        "_git_identity",
+        lambda root: {
+            "git_sha": audit.EXPECTED_CONFIRMATORY_MEASUREMENT_GIT_SHA,
+            "dirty": True,
+            "dirty_entry_count": 1,
+        },
+    )
+    with pytest.raises(RuntimeError, match="clean worktree"):
+        audit.verify_learn_evidence_source(
+            tmp_path,
+            manifest,
+            mode="reproduction",
+        )
+
+
+
+def test_validate_preserved_learn_outcome_identity_checks_operation_and_selected_families():
+    add_outcomes = {
+        1: "win",
+        3: "loss",
+        5: "win",
+        7: "loss",
+        9: "win",
+        11: "loss",
+        13: "win",
+        15: "win",
+        17: "loss",
+        19: "loss",
+        21: "tie",
+        23: "loss",
+        25: "loss",
+        27: "tie",
+        29: "tie",
+    }
+    subtract_outcomes = {
+        2: "loss",
+        4: "loss",
+        6: "loss",
+        8: "loss",
+        10: "loss",
+        12: "win",
+        14: "loss",
+        16: "loss",
+        18: "loss",
+        20: "loss",
+        22: "tie",
+        24: "loss",
+        26: "loss",
+        28: "loss",
+        30: "tie",
+    }
+    outcomes = {**add_outcomes, **subtract_outcomes}
+    families = []
+    family_results = []
+    for index in range(1, 31):
+        family_id = f"learn-confirm-keyshift-{index:02d}"
+        operation = "add" if index % 2 else "subtract"
+        families.append(
+            {
+                "family_id": family_id,
+                "correction_task": {"operation": operation},
+            }
+        )
+        family_results.append(
+            {
+                "family_id": family_id,
+                "outcome": outcomes[index],
+            }
+        )
+
+    manifest: dict[str, object] = {
+        "family_design": {"families": families},
+    }
+    result: dict[str, object] = {
+        "family_results": family_results,
+    }
+
+    audit.validate_preserved_learn_outcome_identity(result, manifest)
+
+    family_results[2]["outcome"] = "win"
+    with pytest.raises(RuntimeError, match="selected-family outcome mismatch"):
+        audit.validate_preserved_learn_outcome_identity(result, manifest)
+
+
+
+def test_verify_learn_evidence_source_rejects_external_original_root(
+    monkeypatch,
+    tmp_path,
+):
+    manifest = {"protocol_id": audit.PROTOCOL_ID}
+    monkeypatch.setattr(
+        audit,
+        "load_confirmatory_manifest",
+        lambda path: manifest,
+    )
+    monkeypatch.setattr(
+        audit,
+        "_git_identity",
+        lambda root: {
+            "git_sha": "f" * 40,
+            "dirty": False,
+            "dirty_entry_count": 0,
+        },
+    )
+
+    with pytest.raises(RuntimeError, match="active Aster root"):
+        audit.verify_learn_evidence_source(
+            tmp_path / "evidence",
+            manifest,
+            mode="original",
+            active_root=tmp_path / "active",
+        )
+
+
+def test_validate_confirmatory_unit_lineage_rejects_wrong_parent(tmp_path):
+    family_id = "learn-confirm-keyshift-03"
+    seed = 42
+    expected_act_run_id = "5a8076571dca446fa07190cf4fc62509"
+    expected_parent_artifact_id = "decision_model:" + ("a" * 64)
+    correction_task = {
+        "task_id": "correction",
+        "kind": "calculate_and_store",
+        "operation": "add",
+        "left": 2,
+        "right": 3,
+        "store_as": "a",
+    }
+    sibling_task = {
+        "task_id": "sibling",
+        "kind": "calculate_and_store",
+        "operation": "add",
+        "left": 2,
+        "right": 3,
+        "store_as": "b",
+    }
+    manifest: dict[str, object] = {
+        "family_design": {
+            "families": [
+                {
+                    "family_id": family_id,
+                    "correction_task": correction_task,
+                    "sibling_task": sibling_task,
+                }
+            ]
+        }
+    }
+    provenance = {
+        "family_id": family_id,
+        "seed": seed,
+        "act_run_id": expected_act_run_id,
+        "parent_artifact_id": expected_parent_artifact_id,
+        "correction_task": correction_task,
+        "uncorrected_sibling_task": sibling_task,
+    }
+    run_dir = tmp_path / "runs" / "unit"
+    run_dir.mkdir(parents=True)
+    audit._write_json(
+        run_dir / "run.json",
+        {"inputs": {"provenance": provenance}},
+    )
+    audit._write_json(
+        run_dir / "correction-transfer.json",
+        {"provenance": provenance},
+    )
+    units = {
+        (family_id, seed): (
+            run_dir,
+            {"family_id": family_id, "seed": seed},
+        )
+    }
+
+    audit.validate_confirmatory_unit_lineage(
+        units,
+        manifest,
+        expected_act_run_id=expected_act_run_id,
+        expected_parent_artifact_id=expected_parent_artifact_id,
+    )
+
+    bad = dict(provenance)
+    bad["parent_artifact_id"] = "decision_model:" + ("b" * 64)
+    audit._write_json(
+        run_dir / "correction-transfer.json",
+        {"provenance": bad},
+    )
+    with pytest.raises(RuntimeError, match="parent_artifact_id"):
+        audit.validate_confirmatory_unit_lineage(
+            units,
+            manifest,
+            expected_act_run_id=expected_act_run_id,
+            expected_parent_artifact_id=expected_parent_artifact_id,
+        )

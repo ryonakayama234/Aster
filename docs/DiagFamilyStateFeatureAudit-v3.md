@@ -40,7 +40,51 @@ The four DIAG v2 selected families remain post-hoc overlays:
 - 02 subtract / loss
 - 12 subtract / control
 
-No LEARN or DIAG v2 campaign is rerun or modified.
+DIAG v2 is never rerun or modified.
+
+### Evidence recovery addendum — 2026-10-06
+
+After this protocol was frozen, the original local machine-readable LEARN v0 Run store
+(90 confirmatory units plus the completed campaign `confirmatory-results.json`) was
+found unavailable on the WSL checkout. The published closeout summary and frozen
+protocol remain in Git, but they do not contain the 30-family machine-readable table.
+
+The ACT lineage is not lost: the original ACT Run
+`5a8076571dca446fa07190cf4fc62509` still exists under the Service workbench Run
+store, the exact content-addressed parent DecisionModel artifact remains registered, and
+all 12 preserved DIAG v2 units independently reference that same ACT Run and parent
+artifact.
+
+Do not synthesize or infer the missing LEARN family rows from the published summary.
+Gate 0 may instead consume one explicitly labeled **LEARN reproduction** only if all of
+the following hold:
+
+- it is run in an isolated clean worktree at the original measurement Git SHA
+  `c2fa2d175b4a23bbd246ed61266d0cdda2e22846`;
+- it uses the unchanged frozen manifest, exact preserved ACT Run, exact parent artifact,
+  fixed seeds, and original runner;
+- all 90 units complete under the original retry/failure rules;
+- `runs/learn-v0-reproduction.json` explicitly marks the Run store as reproduction
+  evidence and binds the original measurement SHA, frozen manifest, ACT Run, and exact
+  parent artifact;
+- the reconstructed result exactly matches that reproduction campaign's saved result;
+- every preserved LEARN identity invariant matches exactly, including:
+  - global wins / losses / ties = 6 / 19 / 5;
+  - add wins / losses / ties = 5 / 7 / 3;
+  - subtract wins / losses / ties = 1 / 12 / 2;
+  - selected-family outcomes 03=loss, 15=win, 21=tie, 02=loss, 12=win, 22=tie;
+  - median family accuracy delta = -0.25;
+  - exact sign-test p = 0.01463329792022705;
+  - verdict = Not supported;
+- DIAG v3 records `learn_evidence_mode=reproduction` and never labels those rows as the
+  original raw artifact.
+
+Because the original 30-family machine-readable table is unavailable, a reproduction
+cannot prove row-for-row equality to the lost original table. In reproduction mode the
+audit must therefore record `original_family_results_exactly_verified=false`. The
+reproduced family rows may be used for this post-hoc diagnostic only with that provenance
+boundary explicit. No tuning, feature-schema change, or endpoint-dependent choice is
+allowed in response to the reproduction.
 
 ## Evidence unit
 
@@ -53,14 +97,22 @@ measurements or nested observations. They are never counted as independent sampl
 
 Before extracting new features:
 
-1. discover the canonical 90 LEARN units read-only;
-2. reproduce the canonical 30 family-level outcomes exactly;
-3. verify the frozen manifest digest;
-4. resolve the exact ACT parent artifact through the recorded Run lineage;
-5. verify the DIAG v2 Run identity for the four-family overlay.
+1. select either original LEARN local evidence or the explicit reproduction source;
+2. require original mode to read only the active Aster root; a separate evidence root must
+   be explicitly declared as reproduction;
+3. discover all 90 LEARN units read-only from that source;
+4. verify every unit's Run and experiment provenance against the exact ACT Run, exact
+   parent artifact, frozen family/seed, correction task, and sibling task;
+5. reconstruct the source campaign's 30 family-level outcomes exactly;
+6. verify the frozen manifest digest and original measurement Git SHA;
+7. resolve the exact ACT parent artifact through the recorded Run lineage;
+8. verify the DIAG v2 Run identity for the four-family overlay.
 
-If the reconstructed 30-family outcomes differ from the frozen LEARN result, stop. Do
-not continue with a partly reconstructed table.
+In original-evidence mode, the reconstructed 30-family outcomes must match the canonical
+saved LEARN result exactly. In reproduction mode, the reconstructed result must match the
+reproduction campaign exactly and all preserved original summary invariants must match;
+the audit must not claim exact equality to the unavailable original family table. Stop on
+any mismatch or partial reconstruction.
 
 Expected frozen LEARN primary summary:
 
@@ -408,7 +460,8 @@ the 90-unit campaign parser into a second incompatible implementation.
 
 DIAG v3 stops when all of the following are true:
 
-1. canonical 30 LEARN family outcomes reproduce exactly;
+1. LEARN Gate 0 passes under either exact original evidence or explicitly labeled
+   reproduction evidence with all preserved identity checks;
 2. feature schema is frozen and hashed before outcome join;
 3. all 30 families have deterministic feature rows;
 4. no-update invariants pass;
