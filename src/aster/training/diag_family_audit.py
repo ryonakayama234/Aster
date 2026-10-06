@@ -67,6 +67,18 @@ EXPECTED_PRIMARY_SUMMARY = {
 LEARN_EVIDENCE_MODES = ("original", "reproduction")
 LEARN_REPRODUCTION_MARKER = Path("runs/learn-v0-reproduction.json")
 LEARN_REPRODUCTION_MARKER_SCHEMA = "aster-learn-reproduction-marker-0"
+EXPECTED_OPERATION_OUTCOMES = {
+    "add": {"win": 5, "loss": 7, "tie": 3},
+    "subtract": {"win": 1, "loss": 12, "tie": 2},
+}
+EXPECTED_SELECTED_FAMILY_OUTCOMES = {
+    "learn-confirm-keyshift-03": "loss",
+    "learn-confirm-keyshift-15": "win",
+    "learn-confirm-keyshift-21": "tie",
+    "learn-confirm-keyshift-02": "loss",
+    "learn-confirm-keyshift-12": "win",
+    "learn-confirm-keyshift-22": "tie",
+}
 _TOKENIZER_FILES = (
     "manifest.json",
     "vocab.json",
@@ -119,6 +131,7 @@ def reconstruct_confirmatory_evidence(
     verdict = _require_dict(result, "verdict")
     if verdict.get("label") != "Not supported":
         raise RuntimeError("Confirmatory verdict identity mismatch")
+    validate_preserved_learn_outcome_identity(result, manifest)
 
     canonical_run_id, canonical = _discover_canonical_confirmatory_result(
         root_path,
@@ -141,6 +154,70 @@ def reconstruct_confirmatory_evidence(
                 f"Reconstructed confirmatory result differs from source campaign: {key}"
             )
     return result, canonical_run_id
+
+
+def validate_preserved_learn_outcome_identity(
+    result: dict[str, object],
+    manifest: dict[str, object],
+) -> None:
+    """Check preserved operation-level and selected-family LEARN outcome identities."""
+    raw_results = result.get("family_results")
+    if not isinstance(raw_results, list) or len(raw_results) != 30:
+        raise RuntimeError("Confirmatory family outcome table is incomplete")
+
+    outcomes: dict[str, str] = {}
+    for raw in raw_results:
+        if not isinstance(raw, dict):
+            raise RuntimeError("Confirmatory family outcome row is invalid")
+        family_id = _require_str(cast(dict[str, object], raw), "family_id")
+        outcome = _require_str(cast(dict[str, object], raw), "outcome")
+        if outcome not in {"win", "loss", "tie"}:
+            raise RuntimeError(f"Unexpected confirmatory family outcome: {outcome}")
+        if family_id in outcomes:
+            raise RuntimeError(f"Duplicate confirmatory family outcome: {family_id}")
+        outcomes[family_id] = outcome
+
+    for family_id, expected in EXPECTED_SELECTED_FAMILY_OUTCOMES.items():
+        if outcomes.get(family_id) != expected:
+            raise RuntimeError(
+                f"Preserved LEARN selected-family outcome mismatch for {family_id}"
+            )
+
+    design = _require_dict(manifest, "family_design")
+    raw_families = design.get("families")
+    if not isinstance(raw_families, list) or len(raw_families) != 30:
+        raise RuntimeError("Frozen LEARN family definitions are incomplete")
+
+    operation_by_family: dict[str, str] = {}
+    for raw in raw_families:
+        if not isinstance(raw, dict):
+            raise RuntimeError("Frozen LEARN family definition is invalid")
+        family = cast(dict[str, object], raw)
+        family_id = _require_str(family, "family_id")
+        correction = _require_dict(family, "correction_task")
+        operation = _require_str(correction, "operation")
+        if operation not in EXPECTED_OPERATION_OUTCOMES:
+            raise RuntimeError(f"Unexpected frozen LEARN operation: {operation}")
+        operation_by_family[family_id] = operation
+
+    if set(outcomes) != set(operation_by_family):
+        raise RuntimeError("Confirmatory family outcome IDs differ from frozen manifest")
+
+    counts = {
+        operation: Counter(
+            outcomes[family_id]
+            for family_id, family_operation in operation_by_family.items()
+            if family_operation == operation
+        )
+        for operation in EXPECTED_OPERATION_OUTCOMES
+    }
+    for operation, expected in EXPECTED_OPERATION_OUTCOMES.items():
+        actual = {outcome: counts[operation][outcome] for outcome in ("win", "loss", "tie")}
+        if actual != expected:
+            raise RuntimeError(
+                f"Preserved LEARN operation outcome mismatch for {operation}: "
+                f"{actual} != {expected}"
+            )
 
 
 def verify_learn_evidence_source(
@@ -526,6 +603,12 @@ def run_family_feature_extraction(
             "original_family_results_exactly_verified": (
                 learn_evidence_mode == "original"
             ),
+            "preserved_original_identity_checks": {
+                "primary_summary_exact": True,
+                "operation_outcome_counts_exact": True,
+                "selected_family_outcomes_exact": True,
+                "source_campaign_result_exact": True,
+            },
             "diag_v2_identity": diag_v2_identity,
         }
         summary = {
