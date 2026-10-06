@@ -227,3 +227,55 @@ def test_reconstruct_confirmatory_evidence_requires_exact_canonical_match(monkey
     )
     with pytest.raises(RuntimeError, match="family_results"):
         audit.reconstruct_confirmatory_evidence(".", {})
+
+
+def test_verify_diag_v2_run_identity_requires_exact_frozen_campaign(tmp_path):
+    run_dir = tmp_path / "runs" / audit.EXPECTED_DIAG_V2_RUN_ID
+    run_dir.mkdir(parents=True)
+    run = {
+        "schema_version": "aster-run-0",
+        "run_id": audit.EXPECTED_DIAG_V2_RUN_ID,
+        "kind": "diag_update_depth_trial_campaign",
+        "status": "completed",
+        "inputs": {
+            "cycle_id": audit.DIAG_V2_CYCLE_ID,
+            "source_git_sha": audit.EXPECTED_DIAG_V2_SOURCE_GIT_SHA,
+            "families": list(audit.DIAG_V2_FAMILY_IDS),
+            "planned_experiment_units": 12,
+        },
+    }
+    result = {
+        "schema_version": "aster-diag-update-depth-result-0",
+        "cycle_id": audit.DIAG_V2_CYCLE_ID,
+        "status": "complete",
+        "source_git_sha": audit.EXPECTED_DIAG_V2_SOURCE_GIT_SHA,
+        "independent_family_blocks": 4,
+        "experiment_units": 12,
+        "family_summaries": [
+            {"family_id": family_id}
+            for family_id in audit.DIAG_V2_FAMILY_IDS
+        ],
+    }
+    import json
+
+    (run_dir / "run.json").write_text(
+        json.dumps(run),
+        encoding="utf-8",
+    )
+    (run_dir / "diag-update-depth-results.json").write_text(
+        json.dumps(result),
+        encoding="utf-8",
+    )
+
+    identity = audit.verify_diag_v2_run_identity(tmp_path)
+    assert identity["identity_verified"] is True
+    assert identity["run_id"] == audit.EXPECTED_DIAG_V2_RUN_ID
+    assert identity["family_ids"] == list(audit.DIAG_V2_FAMILY_IDS)
+
+    result["source_git_sha"] = "0" * 40
+    (run_dir / "diag-update-depth-results.json").write_text(
+        json.dumps(result),
+        encoding="utf-8",
+    )
+    with pytest.raises(RuntimeError, match="source Git SHA"):
+        audit.verify_diag_v2_run_identity(tmp_path)
