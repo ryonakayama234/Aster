@@ -64,6 +64,9 @@ the following hold:
 - it uses the unchanged frozen manifest, exact preserved ACT Run, exact parent artifact,
   fixed seeds, and original runner;
 - all 90 units complete under the original retry/failure rules;
+- `runs/learn-v0-reproduction.json` explicitly marks the Run store as reproduction
+  evidence and binds the original measurement SHA, frozen manifest, ACT Run, and exact
+  parent artifact;
 - the reconstructed result exactly matches that reproduction campaign's saved result;
 - every preserved LEARN summary invariant matches exactly;
 - DIAG v3 records `learn_evidence_mode=reproduction` and never labels those rows as the
