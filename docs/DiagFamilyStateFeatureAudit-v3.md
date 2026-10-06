@@ -98,11 +98,15 @@ measurements or nested observations. They are never counted as independent sampl
 Before extracting new features:
 
 1. select either original LEARN local evidence or the explicit reproduction source;
-2. discover all 90 LEARN units read-only from that source;
-3. reconstruct the source campaign's 30 family-level outcomes exactly;
-4. verify the frozen manifest digest and original measurement Git SHA;
-5. resolve the exact ACT parent artifact through the recorded Run lineage;
-6. verify the DIAG v2 Run identity for the four-family overlay.
+2. require original mode to read only the active Aster root; a separate evidence root must
+   be explicitly declared as reproduction;
+3. discover all 90 LEARN units read-only from that source;
+4. verify every unit's Run and experiment provenance against the exact ACT Run, exact
+   parent artifact, frozen family/seed, correction task, and sibling task;
+5. reconstruct the source campaign's 30 family-level outcomes exactly;
+6. verify the frozen manifest digest and original measurement Git SHA;
+7. resolve the exact ACT parent artifact through the recorded Run lineage;
+8. verify the DIAG v2 Run identity for the four-family overlay.
 
 In original-evidence mode, the reconstructed 30-family outcomes must match the canonical
 saved LEARN result exactly. In reproduction mode, the reconstructed result must match the
