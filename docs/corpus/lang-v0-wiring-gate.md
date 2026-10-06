@@ -56,3 +56,13 @@ Gate 1のartifact IDは`artifact.json`の保存済みバイト列のSHA-256で�
 検証（2026-10-07、Python 3.12 / PyTorch 2.14.1+cpu）：
 `PYTHONPATH=src python -m pytest -q`は245 passed。
 Pyrightは0 errors / 0 warnings。固定したGate 1実データでの再実行は未実施。
+
+追加レビューへの対応：runnerの事前検証はtrainerを呼ぶ前にも失敗し得るため、
+runner自身が`lang_v0_wiring` Runを入力読み込み前に作る。
+読めたspecのdigest、解析できた選択IDを検証前に保存し、
+成功時には別の`pretrain` Runを`training_run_id`で参照する。
+失敗・中断はrunner Runにも記録する。spec自体が読めない場合はpathとエラー、
+JSON解析できない場合はpath・digestとエラーまでを残し、未知のIDを推測しない。
+view/tokenizer欠落、config不正、schema不正、JSON不正、spec欠落、KeyboardInterruptを
+回帰テストで確認する。
+追加修正後の全体テストは254 passed（57.86s）、Pyrightは0 errors / 0 warnings。

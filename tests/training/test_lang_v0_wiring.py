@@ -216,6 +216,11 @@ def test_runner_passes_digest_of_exact_parsed_spec_bytes(tmp_path, monkeypatch):
     runner.main()
     assert received == {'tokenizer_artifact_id': spec['tokenizer_artifact_id'],
                         'wiring_spec_sha256': digest(raw)}
+    summary, = [json.loads(p.read_bytes()) for p in (tmp_path / 'runs').glob('*/run.json')]
+    assert summary['status'] == 'completed'
+    assert summary['training_run_id'] == 'test-run'
+    assert summary['inputs']['tokenizer_artifact_id'] == spec['tokenizer_artifact_id']
+    assert summary['inputs']['wiring_spec_sha256'] == digest(raw)
 
 
 @pytest.mark.parametrize('mutation,message', [
@@ -239,3 +244,55 @@ def test_invalid_lang_identity_or_provenance_is_rejected(tmp_path, mutation, mes
     artifact = artifact.rename(tmp_path / digest((artifact / 'artifact.json').read_bytes()))
     with pytest.raises(ValueError, match=message):
         load_training_tokenizer(artifact, 'view-123')
+
+
+@pytest.mark.parametrize('failure', [
+    'missing_view', 'missing_tokenizer', 'invalid_config', 'wrong_mode',
+    'wrong_schema', 'malformed_spec', 'nonobject_spec', 'missing_spec', 'interrupted',
+])
+def test_runner_preflight_failures_are_logged(tmp_path, monkeypatch, failure):
+    module_spec = importlib.util.spec_from_file_location('lang_wiring_preflight', ROOT / 'scripts/run_lang_v0_wiring.py')
+    runner = importlib.util.module_from_spec(module_spec)
+    module_spec.loader.exec_module(runner)
+    spec = json.loads((ROOT / 'configs/lang-v0-wiring.json').read_bytes())
+    if failure == 'wrong_schema':
+        spec['schema_version'] = 'unsupported'
+    raw = json.dumps(spec).encode()
+    if failure == 'malformed_spec':
+        raw = b'{bad JSON'
+    elif failure == 'nonobject_spec':
+        raw = b'[]'
+    (tmp_path / 'configs').mkdir()
+    if failure != 'missing_spec':
+        (tmp_path / 'configs/lang-v0-wiring.json').write_bytes(raw)
+    config = json.loads((ROOT / spec['tiny_lm_config']).read_bytes())
+    if failure == 'invalid_config':
+        config['steps'] = 0
+    elif failure == 'wrong_mode':
+        config['mode'] = 'pilot'
+    (tmp_path / spec['tiny_lm_config']).write_bytes(json_bytes(config))
+    if failure != 'missing_view':
+        (tmp_path / 'data/training' / spec['training_view_id']).mkdir(parents=True)
+    if failure != 'missing_tokenizer':
+        (tmp_path / 'artifacts/tokenizers/lang-v0' / spec['tokenizer_artifact_id']).mkdir(parents=True)
+
+    def reject_train(*args, **kwargs):
+        if failure == 'interrupted':
+            raise KeyboardInterrupt()
+        pytest.fail('Invalid runner inputs must not reach training')
+
+    monkeypatch.setattr(runner, 'ROOT', tmp_path)
+    monkeypatch.setattr(runner, 'train', reject_train)
+    expected = KeyboardInterrupt if failure == 'interrupted' else (ValueError, FileNotFoundError)
+    with pytest.raises(expected):
+        runner.main()
+    summary, = [json.loads(p.read_bytes()) for p in (tmp_path / 'runs').glob('*/run.json')]
+    assert summary['kind'] == 'lang_v0_wiring'
+    assert summary['status'] == ('interrupted' if failure == 'interrupted' else 'failed')
+    assert summary['error_type']
+    assert summary['inputs']['wiring_spec_path'] == 'configs/lang-v0-wiring.json'
+    if failure != 'missing_spec':
+        assert summary['inputs']['wiring_spec_sha256'] == digest(raw)
+    if failure not in ('malformed_spec', 'nonobject_spec', 'missing_spec'):
+        assert summary['inputs']['tokenizer_artifact_id'] == spec['tokenizer_artifact_id']
+        assert summary['inputs']['training_view_id'] == spec['training_view_id']
