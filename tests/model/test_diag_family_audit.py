@@ -230,7 +230,12 @@ def test_reconstruct_confirmatory_evidence_requires_exact_canonical_match(monkey
         lambda root, manifest: ("canonical-run", dict(result)),
     )
 
-    reconstructed, run_id = audit.reconstruct_confirmatory_evidence(".", {})
+    manifest: dict[str, object] = {
+        "lineage": {
+            "parent_act_run_id": "5a8076571dca446fa07190cf4fc62509",
+        }
+    }
+    reconstructed, run_id = audit.reconstruct_confirmatory_evidence(".", manifest)
     assert reconstructed == result
     assert run_id == "canonical-run"
 
@@ -242,7 +247,7 @@ def test_reconstruct_confirmatory_evidence_requires_exact_canonical_match(monkey
         lambda root, manifest: ("canonical-run", changed),
     )
     with pytest.raises(RuntimeError, match="family_results"):
-        audit.reconstruct_confirmatory_evidence(".", {})
+        audit.reconstruct_confirmatory_evidence(".", manifest)
 
 
 def test_verify_diag_v2_run_identity_requires_exact_frozen_campaign(tmp_path):
