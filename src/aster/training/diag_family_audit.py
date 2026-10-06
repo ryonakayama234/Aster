@@ -62,7 +62,9 @@ EXPECTED_PRIMARY_SUMMARY = {
     "losses": 19,
     "ties": 5,
     "median_family_accuracy_delta": -0.25,
+    "sign_test_p_value": 0.01463329792022705,
 }
+LEARN_EVIDENCE_MODES = ("original", "reproduction")
 _TOKENIZER_FILES = (
     "manifest.json",
     "vocab.json",
@@ -75,7 +77,7 @@ def reconstruct_confirmatory_evidence(
     root: str | Path,
     manifest: dict[str, object],
 ) -> tuple[dict[str, object], str]:
-    """Reconstruct all 30 family outcomes and match the canonical campaign result exactly."""
+    """Reconstruct all 30 family outcomes and match the source campaign result exactly."""
     root_path = Path(root).resolve()
     units = discover_completed_confirmatory_units(root_path, manifest)
     result = aggregate_confirmatory_units(
@@ -134,9 +136,48 @@ def reconstruct_confirmatory_evidence(
     ):
         if canonical.get(key) != result.get(key):
             raise RuntimeError(
-                f"Reconstructed confirmatory result differs from canonical campaign: {key}"
+                f"Reconstructed confirmatory result differs from source campaign: {key}"
             )
     return result, canonical_run_id
+
+
+def verify_learn_evidence_source(
+    root: str | Path,
+    current_manifest: dict[str, object],
+    *,
+    mode: str,
+) -> dict[str, object]:
+    """Validate whether Gate 0 reads original or explicitly reproduced LEARN evidence."""
+    if mode not in LEARN_EVIDENCE_MODES:
+        raise ValueError(f"Unknown LEARN evidence mode: {mode}")
+
+    root_path = Path(root).resolve()
+    evidence_manifest = load_confirmatory_manifest(root_path / DEFAULT_MANIFEST_PATH)
+    if evidence_manifest != current_manifest:
+        raise RuntimeError("LEARN evidence root frozen manifest differs from DIAG v3 manifest")
+
+    source = _git_identity(root_path)
+    if mode == "reproduction":
+        if source["git_sha"] != EXPECTED_CONFIRMATORY_MEASUREMENT_GIT_SHA:
+            raise RuntimeError(
+                "LEARN reproduction evidence root must be checked out at the original "
+                "measurement Git SHA"
+            )
+        if source["dirty"] is not False:
+            raise RuntimeError("LEARN reproduction evidence root must have a clean worktree")
+
+    return {
+        "mode": mode,
+        "source_git_sha": source["git_sha"],
+        "source_dirty": source["dirty"],
+        "measurement_git_sha_required": EXPECTED_CONFIRMATORY_MEASUREMENT_GIT_SHA,
+        "original_raw_artifact_used": mode == "original",
+        "claim_boundary": (
+            "original_local_run_evidence"
+            if mode == "original"
+            else "reproduction_evidence_not_original_raw_artifact"
+        ),
+    }
 
 
 def verify_diag_v2_run_identity(root: str | Path) -> dict[str, object]:
@@ -330,9 +371,19 @@ def extract_family_feature_rows(
     return rows
 
 
-def run_family_feature_extraction(root: str | Path) -> Path:
+def run_family_feature_extraction(
+    root: str | Path,
+    *,
+    learn_evidence_root: str | Path | None = None,
+    learn_evidence_mode: str = "original",
+) -> Path:
     """Execute DIAG v3 Gate 0 + Gate 1 without joining outcomes to features."""
     root_path = Path(root).resolve()
+    evidence_root_path = (
+        root_path
+        if learn_evidence_root is None
+        else Path(learn_evidence_root).resolve()
+    )
     started = time.perf_counter()
     source = _git_identity(root_path)
     manifest = load_confirmatory_manifest(root_path / DEFAULT_MANIFEST_PATH)
@@ -340,8 +391,13 @@ def run_family_feature_extraction(root: str | Path) -> Path:
     if manifest_sha256 != EXPECTED_MANIFEST_SHA256:
         raise RuntimeError("DIAG v3 manifest identity mismatch")
 
-    confirmatory_result, canonical_run_id = reconstruct_confirmatory_evidence(
-        root_path,
+    learn_evidence_source = verify_learn_evidence_source(
+        evidence_root_path,
+        manifest,
+        mode=learn_evidence_mode,
+    )
+    confirmatory_result, evidence_campaign_run_id = reconstruct_confirmatory_evidence(
+        evidence_root_path,
         manifest,
     )
     diag_v2_identity = verify_diag_v2_run_identity(root_path)
@@ -369,7 +425,11 @@ def run_family_feature_extraction(root: str | Path) -> Path:
             "protocol_id": PROTOCOL_ID,
             "manifest_sha256": manifest_sha256,
             "feature_schema_sha256": schema_sha256,
-            "canonical_confirmatory_run_id": canonical_run_id,
+            "canonical_confirmatory_run_id": (
+                evidence_campaign_run_id if learn_evidence_mode == "original" else None
+            ),
+            "learn_evidence_campaign_run_id": evidence_campaign_run_id,
+            "learn_evidence_source": learn_evidence_source,
             "diag_v2_identity": diag_v2_identity,
             "act_run_id": act_run_id,
             "parent_artifact_id": artifact_id,
@@ -423,9 +483,16 @@ def run_family_feature_extraction(root: str | Path) -> Path:
             "schema_version": "aster-diag-family-evidence-gate-0",
             "protocol_id": PROTOCOL_ID,
             "manifest_sha256": manifest_sha256,
-            "canonical_confirmatory_run_id": canonical_run_id,
+            "canonical_confirmatory_run_id": (
+                evidence_campaign_run_id if learn_evidence_mode == "original" else None
+            ),
+            "learn_evidence_campaign_run_id": evidence_campaign_run_id,
+            "learn_evidence_source": learn_evidence_source,
             "reconstructed_confirmatory_result": confirmatory_result,
-            "exact_family_results_reproduced": True,
+            "source_campaign_result_exact_match": True,
+            "original_family_results_exactly_verified": (
+                learn_evidence_mode == "original"
+            ),
             "diag_v2_identity": diag_v2_identity,
         }
         summary = {
@@ -433,7 +500,11 @@ def run_family_feature_extraction(root: str | Path) -> Path:
             "status": "feature_extraction_complete",
             "feature_schema_sha256": schema_sha256,
             "manifest_sha256": manifest_sha256,
-            "canonical_confirmatory_run_id": canonical_run_id,
+            "canonical_confirmatory_run_id": (
+                evidence_campaign_run_id if learn_evidence_mode == "original" else None
+            ),
+            "learn_evidence_campaign_run_id": evidence_campaign_run_id,
+            "learn_evidence_source": learn_evidence_source,
             "diag_v2_identity": diag_v2_identity,
             "act_run_id": act_run_id,
             "parent_artifact_id": artifact_id,
