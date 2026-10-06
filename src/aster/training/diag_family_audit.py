@@ -65,6 +65,8 @@ EXPECTED_PRIMARY_SUMMARY = {
     "sign_test_p_value": 0.01463329792022705,
 }
 LEARN_EVIDENCE_MODES = ("original", "reproduction")
+LEARN_REPRODUCTION_MARKER = Path("runs/learn-v0-reproduction.json")
+LEARN_REPRODUCTION_MARKER_SCHEMA = "aster-learn-reproduction-marker-0"
 _TOKENIZER_FILES = (
     "manifest.json",
     "vocab.json",
@@ -157,6 +159,8 @@ def verify_learn_evidence_source(
         raise RuntimeError("LEARN evidence root frozen manifest differs from DIAG v3 manifest")
 
     source = _git_identity(root_path)
+    reproduction_marker: dict[str, object] | None = None
+    reproduction_parent_artifact_id: str | None = None
     if mode == "reproduction":
         if source["git_sha"] != EXPECTED_CONFIRMATORY_MEASUREMENT_GIT_SHA:
             raise RuntimeError(
@@ -166,7 +170,32 @@ def verify_learn_evidence_source(
         if source["dirty"] is not False:
             raise RuntimeError("LEARN reproduction evidence root must have a clean worktree")
 
-    return {
+        marker_path = root_path / LEARN_REPRODUCTION_MARKER
+        if not marker_path.is_file() or marker_path.is_symlink():
+            raise RuntimeError("LEARN reproduction evidence marker is missing")
+        reproduction_marker = _read_json(marker_path)
+        lineage = _require_dict(current_manifest, "lineage")
+        act_run_id = _require_str(lineage, "parent_act_run_id")
+        reproduction_parent_artifact_id, _ = resolve_act_parent_artifact(
+            root_path,
+            act_run_id,
+        )
+        expected_marker = {
+            "schema_version": LEARN_REPRODUCTION_MARKER_SCHEMA,
+            "evidence_mode": "reproduction",
+            "original_raw_artifact_status": "unavailable",
+            "protocol_id": PROTOCOL_ID,
+            "manifest_sha256": EXPECTED_MANIFEST_SHA256,
+            "measurement_git_sha": EXPECTED_CONFIRMATORY_MEASUREMENT_GIT_SHA,
+            "parent_act_run_id": act_run_id,
+            "parent_artifact_id": reproduction_parent_artifact_id,
+            "claim_boundary": "reproduction_not_original_raw_evidence",
+        }
+        for key, expected in expected_marker.items():
+            if reproduction_marker.get(key) != expected:
+                raise RuntimeError(f"LEARN reproduction marker mismatch for {key}")
+
+    result = {
         "mode": mode,
         "source_git_sha": source["git_sha"],
         "source_dirty": source["dirty"],
@@ -178,6 +207,10 @@ def verify_learn_evidence_source(
             else "reproduction_evidence_not_original_raw_artifact"
         ),
     }
+    if reproduction_marker is not None:
+        result["reproduction_marker"] = str(LEARN_REPRODUCTION_MARKER)
+        result["reproduction_parent_artifact_id"] = reproduction_parent_artifact_id
+    return result
 
 
 def verify_diag_v2_run_identity(root: str | Path) -> dict[str, object]:
