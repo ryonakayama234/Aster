@@ -319,7 +319,12 @@ def test_verify_learn_evidence_source_marks_reproduction_without_claiming_origin
     monkeypatch,
     tmp_path,
 ):
-    manifest = {"protocol_id": audit.PROTOCOL_ID}
+    act_run_id = "5a8076571dca446fa07190cf4fc62509"
+    parent_artifact_id = "decision_model:" + ("a" * 64)
+    manifest = {
+        "protocol_id": audit.PROTOCOL_ID,
+        "lineage": {"parent_act_run_id": act_run_id},
+    }
     monkeypatch.setattr(
         audit,
         "load_confirmatory_manifest",
@@ -334,6 +339,27 @@ def test_verify_learn_evidence_source_marks_reproduction_without_claiming_origin
             "dirty_entry_count": 0,
         },
     )
+    monkeypatch.setattr(
+        audit,
+        "resolve_act_parent_artifact",
+        lambda root, run_id: (parent_artifact_id, tmp_path / "artifact"),
+    )
+    marker_path = tmp_path / audit.LEARN_REPRODUCTION_MARKER
+    marker_path.parent.mkdir(parents=True)
+    audit._write_json(
+        marker_path,
+        {
+            "schema_version": audit.LEARN_REPRODUCTION_MARKER_SCHEMA,
+            "evidence_mode": "reproduction",
+            "original_raw_artifact_status": "unavailable",
+            "protocol_id": audit.PROTOCOL_ID,
+            "manifest_sha256": audit.EXPECTED_MANIFEST_SHA256,
+            "measurement_git_sha": audit.EXPECTED_CONFIRMATORY_MEASUREMENT_GIT_SHA,
+            "parent_act_run_id": act_run_id,
+            "parent_artifact_id": parent_artifact_id,
+            "claim_boundary": "reproduction_not_original_raw_evidence",
+        },
+    )
 
     source = audit.verify_learn_evidence_source(
         tmp_path,
@@ -346,6 +372,8 @@ def test_verify_learn_evidence_source_marks_reproduction_without_claiming_origin
     assert source["claim_boundary"] == (
         "reproduction_evidence_not_original_raw_artifact"
     )
+    assert source["reproduction_marker"] == str(audit.LEARN_REPRODUCTION_MARKER)
+    assert source["reproduction_parent_artifact_id"] == parent_artifact_id
 
 
 def test_verify_learn_evidence_source_rejects_wrong_or_dirty_reproduction(
