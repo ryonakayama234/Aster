@@ -68,7 +68,14 @@ the following hold:
   evidence and binds the original measurement SHA, frozen manifest, ACT Run, and exact
   parent artifact;
 - the reconstructed result exactly matches that reproduction campaign's saved result;
-- every preserved LEARN summary invariant matches exactly;
+- every preserved LEARN identity invariant matches exactly, including:
+  - global wins / losses / ties = 6 / 19 / 5;
+  - add wins / losses / ties = 5 / 7 / 3;
+  - subtract wins / losses / ties = 1 / 12 / 2;
+  - selected-family outcomes 03=loss, 15=win, 21=tie, 02=loss, 12=win, 22=tie;
+  - median family accuracy delta = -0.25;
+  - exact sign-test p = 0.01463329792022705;
+  - verdict = Not supported;
 - DIAG v3 records `learn_evidence_mode=reproduction` and never labels those rows as the
   original raw artifact.
 
