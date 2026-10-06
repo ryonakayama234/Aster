@@ -20,8 +20,31 @@ def main() -> int:
     result = json.loads(
         (run_path / "diag-family-preoutcome-audit.json").read_text(encoding="utf-8")
     )
+    populations = result["populations"]
+    design_order = result["design_order"]
+    summary = {
+        "status": result["status"],
+        "source_feature_run_id": result["source_feature_run_id"],
+        "source_features_sha256": result["source_features_sha256"],
+        "feature_schema_sha256": result["feature_schema_sha256"],
+        "families": result["families"],
+        "outcome_joined": result["outcome_joined"],
+        "continuous_screening_columns": populations["all30"][
+            "continuous_screening_columns"
+        ],
+        "collinearity_cluster_counts": {
+            population: len(values["collinearity_clusters"])
+            for population, values in populations.items()
+        },
+        "design_order_confounded_columns": sorted(
+            name
+            for name, values in design_order.items()
+            if values["design_order_confounded"]
+        ),
+        "next_gate": result["next_gate"],
+    }
     print(run_path)
-    print(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True))
+    print(json.dumps(summary, ensure_ascii=False, indent=2, sort_keys=True))
     return 0
 
 
