@@ -3,6 +3,7 @@
 import json
 from pathlib import Path
 
+from aster.corpus.pipeline import digest
 from aster.training.pretrain import TrainConfig, train
 
 
@@ -10,7 +11,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def main():
-    spec = json.loads((ROOT / "configs/lang-v0-wiring.json").read_text(encoding="utf-8"))
+    spec_bytes = (ROOT / "configs/lang-v0-wiring.json").read_bytes()
+    spec = json.loads(spec_bytes)
     if spec.get("schema_version") != "aster-lang-wiring-0":
         raise ValueError("Unsupported LANG wiring schema")
 
@@ -27,7 +29,9 @@ def main():
     if config.mode != "overfit" or config.overfit_windows != 1:
         raise ValueError("Gate 2 requires the fixed one-window overfit wiring config")
 
-    run = train(ROOT, view, tokenizer, config)
+    run = train(ROOT, view, tokenizer, config,
+                tokenizer_artifact_id=spec["tokenizer_artifact_id"],
+                wiring_spec_sha256=digest(spec_bytes))
     print(f"wiring_run={run}")
 
 

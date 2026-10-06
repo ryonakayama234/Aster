@@ -44,16 +44,16 @@ def tokenizer_from_payload(payload):
     return AsterTokenizer(BPEModel(merges, vocab), special, manifest)
 
 
-def load_training_tokenizer(path, view_id):
+def load_training_tokenizer(path, view_id, *, expected_artifact_id=None):
     path = Path(path)
 
     evaluation_path = path / 'evaluation.json'
     provenance_path = path / 'provenance.json'
-    if evaluation_path.is_file():
-        evaluation = json.loads(evaluation_path.read_text(encoding='utf-8'))
-        if evaluation['experiment']['view_id'] != view_id:
-            raise ValueError('Tokenizer and training view do not match')
-    elif provenance_path.is_file():
+    # LANG artifacts must not fall back to legacy evaluation-only validation.
+    lang_artifact = provenance_path.is_file() or expected_artifact_id is not None
+    if lang_artifact:
+        if not provenance_path.is_file():
+            raise ValueError('LANG tokenizer artifact requires provenance.json')
         provenance = json.loads(provenance_path.read_text(encoding='utf-8'))
         if provenance.get('schema_version') != 'aster-tokenizer-provenance-0':
             raise ValueError('Unsupported tokenizer provenance schema')
@@ -63,12 +63,23 @@ def load_training_tokenizer(path, view_id):
             raise ValueError('Training tokenizer must be fit on train split only')
         if provenance.get('sealed_test_used_for_fit') not in (None, False):
             raise ValueError('Training tokenizer provenance reports test fitting')
+    elif evaluation_path.is_file():
+        evaluation = json.loads(evaluation_path.read_text(encoding='utf-8'))
+        if evaluation['experiment']['view_id'] != view_id:
+            raise ValueError('Tokenizer and training view do not match')
     else:
         raise ValueError('Tokenizer artifact has no recognized training provenance')
 
     artifact_path = path / 'artifact.json'
+    if lang_artifact and not artifact_path.is_file():
+        raise ValueError('LANG tokenizer artifact requires artifact.json')
+    if expected_artifact_id is not None and path.name != expected_artifact_id:
+        raise ValueError('Tokenizer artifact does not match expected artifact ID')
     if artifact_path.is_file():
-        identity = json.loads(artifact_path.read_text(encoding='utf-8'))
+        identity_bytes = artifact_path.read_bytes()
+        if lang_artifact and digest(identity_bytes) != path.name:
+            raise ValueError('Tokenizer artifact identity digest does not match directory ID')
+        identity = json.loads(identity_bytes)
         if identity.get('schema_version') != 'aster-tokenizer-artifact-0':
             raise ValueError('Unsupported tokenizer artifact identity schema')
         if identity.get('training_view_id') != view_id:
@@ -76,7 +87,14 @@ def load_training_tokenizer(path, view_id):
         files = identity.get('files')
         if not isinstance(files, dict):
             raise ValueError('Tokenizer artifact identity has invalid file map')
+        if lang_artifact:
+            required = {'manifest.json', 'vocab.json', 'merges.json',
+                        'special_tokens.json', 'provenance.json', 'audit.json'}
+            if not required.issubset(files):
+                raise ValueError('Tokenizer artifact identity is missing required file hashes')
         for name, expected in files.items():
+            if not isinstance(name, str) or Path(name).name != name or name in ('.', '..'):
+                raise ValueError('Tokenizer artifact identity has invalid file name')
             candidate = path / name
             if not candidate.is_file() or digest(candidate.read_bytes()) != expected:
                 raise ValueError('Tokenizer artifact file hash mismatch: ' + name)
