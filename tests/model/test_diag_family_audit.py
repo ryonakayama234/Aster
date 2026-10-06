@@ -279,3 +279,35 @@ def test_verify_diag_v2_run_identity_requires_exact_frozen_campaign(tmp_path):
     )
     with pytest.raises(RuntimeError, match="source Git SHA"):
         audit.verify_diag_v2_run_identity(tmp_path)
+
+
+def test_reconstruct_confirmatory_evidence_reports_missing_units(monkeypatch):
+    incomplete = {
+        "status": "measurement_incomplete",
+        "expected_units": 90,
+        "completed_units": 88,
+        "missing_units": [
+            {"family_id": "family-03", "seed": 43},
+            {"family_id": "family-12", "seed": 44},
+        ],
+    }
+    units = {
+        ("family-01", seed): (object(), {"unit": True})
+        for seed in (42, 43)
+    }
+    monkeypatch.setattr(
+        audit,
+        "discover_completed_confirmatory_units",
+        lambda root, manifest: units,
+    )
+    monkeypatch.setattr(
+        audit,
+        "aggregate_confirmatory_units",
+        lambda manifest, rows: incomplete,
+    )
+
+    with pytest.raises(
+        RuntimeError,
+        match=r"discovered=2, completed=88, expected=90.*family-03/seed=43.*family-12/seed=44",
+    ):
+        audit.reconstruct_confirmatory_evidence(".", {})
