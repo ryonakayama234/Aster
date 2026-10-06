@@ -33,6 +33,7 @@ from aster.training.diag_family_features import (
     numeric_summary,
 )
 from aster.training.diag_interference import (
+    _family_by_id,
     _task_from_family,
     _teacher_examples,
     _validate_parent_suite_lineage,
@@ -133,6 +134,16 @@ def reconstruct_confirmatory_evidence(
         raise RuntimeError("Confirmatory verdict identity mismatch")
     validate_preserved_learn_outcome_identity(result, manifest)
 
+    lineage = _require_dict(manifest, "lineage")
+    act_run_id = _require_str(lineage, "parent_act_run_id")
+    parent_artifact_id, _ = resolve_act_parent_artifact(root_path, act_run_id)
+    validate_confirmatory_unit_lineage(
+        units,
+        manifest,
+        expected_act_run_id=act_run_id,
+        expected_parent_artifact_id=parent_artifact_id,
+    )
+
     canonical_run_id, canonical = _discover_canonical_confirmatory_result(
         root_path,
         manifest,
@@ -154,6 +165,45 @@ def reconstruct_confirmatory_evidence(
                 f"Reconstructed confirmatory result differs from source campaign: {key}"
             )
     return result, canonical_run_id
+
+
+def validate_confirmatory_unit_lineage(
+    units: Mapping[tuple[str, int], tuple[Path, dict[str, object]]],
+    manifest: dict[str, object],
+    *,
+    expected_act_run_id: str,
+    expected_parent_artifact_id: str,
+) -> None:
+    """Verify every completed LEARN unit came from the exact frozen ACT/task lineage."""
+    for (family_id, seed), (run_dir, _) in units.items():
+        family = _family_by_id(manifest, family_id)
+        correction_task = dict(_task_from_family(family, "correction_task"))
+        sibling_task = dict(_task_from_family(family, "sibling_task"))
+        expected = {
+            "family_id": family_id,
+            "seed": seed,
+            "act_run_id": expected_act_run_id,
+            "parent_artifact_id": expected_parent_artifact_id,
+            "correction_task": correction_task,
+            "uncorrected_sibling_task": sibling_task,
+        }
+
+        run = _read_json(run_dir / "run.json")
+        inputs = _require_dict(run, "inputs")
+        run_provenance = _require_dict(inputs, "provenance")
+        experiment = _read_json(run_dir / "correction-transfer.json")
+        experiment_provenance = _require_dict(experiment, "provenance")
+
+        for provenance_name, provenance in (
+            ("Run", run_provenance),
+            ("experiment", experiment_provenance),
+        ):
+            for key, expected_value in expected.items():
+                if provenance.get(key) != expected_value:
+                    raise RuntimeError(
+                        "Confirmatory unit lineage mismatch for "
+                        f"{family_id} seed {seed} {provenance_name} field {key}"
+                    )
 
 
 def validate_preserved_learn_outcome_identity(
@@ -225,12 +275,24 @@ def verify_learn_evidence_source(
     current_manifest: dict[str, object],
     *,
     mode: str,
+    active_root: str | Path | None = None,
 ) -> dict[str, object]:
     """Validate whether Gate 0 reads original or explicitly reproduced LEARN evidence."""
     if mode not in LEARN_EVIDENCE_MODES:
         raise ValueError(f"Unknown LEARN evidence mode: {mode}")
 
     root_path = Path(root).resolve()
+    if mode == "original":
+        if active_root is not None and root_path != Path(active_root).resolve():
+            raise RuntimeError(
+                "Original LEARN evidence must come from the active Aster root"
+            )
+        marker_path = root_path / LEARN_REPRODUCTION_MARKER
+        if marker_path.exists():
+            raise RuntimeError(
+                "Original LEARN evidence root contains a reproduction marker"
+            )
+
     evidence_manifest = load_confirmatory_manifest(root_path / DEFAULT_MANIFEST_PATH)
     if evidence_manifest != current_manifest:
         raise RuntimeError("LEARN evidence root frozen manifest differs from DIAG v3 manifest")
@@ -505,6 +567,7 @@ def run_family_feature_extraction(
         evidence_root_path,
         manifest,
         mode=learn_evidence_mode,
+        active_root=root_path,
     )
     confirmatory_result, evidence_campaign_run_id = reconstruct_confirmatory_evidence(
         evidence_root_path,
