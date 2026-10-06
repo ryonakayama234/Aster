@@ -170,7 +170,7 @@ def test_extract_family_rows_match_frozen_schema_without_outcomes(monkeypatch):
     assert "outcome" not in first[0]
 
 
-def test_reconstruct_confirmatory_evidence_requires_exact_canonical_match(monkeypatch):
+def test_reconstruct_confirmatory_evidence_requires_exact_canonical_match(monkeypatch, tmp_path):
     result = {
         "schema_version": "aster-learn-confirmatory-result-0",
         "protocol_id": audit.PROTOCOL_ID,
@@ -213,6 +213,16 @@ def test_reconstruct_confirmatory_evidence_requires_exact_canonical_match(monkey
         audit,
         "validate_preserved_learn_outcome_identity",
         lambda result, manifest: None,
+    )
+    monkeypatch.setattr(
+        audit,
+        "resolve_act_parent_artifact",
+        lambda root, run_id: ("decision_model:" + ("a" * 64), tmp_path / "artifact"),
+    )
+    monkeypatch.setattr(
+        audit,
+        "validate_confirmatory_unit_lineage",
+        lambda units, manifest, **kwargs: None,
     )
     monkeypatch.setattr(
         audit,
@@ -492,3 +502,112 @@ def test_validate_preserved_learn_outcome_identity_checks_operation_and_selected
     family_results[2]["outcome"] = "win"
     with pytest.raises(RuntimeError, match="selected-family outcome mismatch"):
         audit.validate_preserved_learn_outcome_identity(result, manifest)
+
+
+
+def test_verify_learn_evidence_source_rejects_external_original_root(
+    monkeypatch,
+    tmp_path,
+):
+    manifest = {"protocol_id": audit.PROTOCOL_ID}
+    monkeypatch.setattr(
+        audit,
+        "load_confirmatory_manifest",
+        lambda path: manifest,
+    )
+    monkeypatch.setattr(
+        audit,
+        "_git_identity",
+        lambda root: {
+            "git_sha": "f" * 40,
+            "dirty": False,
+            "dirty_entry_count": 0,
+        },
+    )
+
+    with pytest.raises(RuntimeError, match="active Aster root"):
+        audit.verify_learn_evidence_source(
+            tmp_path / "evidence",
+            manifest,
+            mode="original",
+            active_root=tmp_path / "active",
+        )
+
+
+def test_validate_confirmatory_unit_lineage_rejects_wrong_parent(tmp_path):
+    family_id = "learn-confirm-keyshift-03"
+    seed = 42
+    expected_act_run_id = "5a8076571dca446fa07190cf4fc62509"
+    expected_parent_artifact_id = "decision_model:" + ("a" * 64)
+    correction_task = {
+        "task_id": "correction",
+        "kind": "calculate_and_store",
+        "operation": "add",
+        "left": 2,
+        "right": 3,
+        "store_as": "a",
+    }
+    sibling_task = {
+        "task_id": "sibling",
+        "kind": "calculate_and_store",
+        "operation": "add",
+        "left": 2,
+        "right": 3,
+        "store_as": "b",
+    }
+    manifest: dict[str, object] = {
+        "family_design": {
+            "families": [
+                {
+                    "family_id": family_id,
+                    "correction_task": correction_task,
+                    "sibling_task": sibling_task,
+                }
+            ]
+        }
+    }
+    provenance = {
+        "family_id": family_id,
+        "seed": seed,
+        "act_run_id": expected_act_run_id,
+        "parent_artifact_id": expected_parent_artifact_id,
+        "correction_task": correction_task,
+        "uncorrected_sibling_task": sibling_task,
+    }
+    run_dir = tmp_path / "runs" / "unit"
+    run_dir.mkdir(parents=True)
+    audit._write_json(
+        run_dir / "run.json",
+        {"inputs": {"provenance": provenance}},
+    )
+    audit._write_json(
+        run_dir / "correction-transfer.json",
+        {"provenance": provenance},
+    )
+    units = {
+        (family_id, seed): (
+            run_dir,
+            {"family_id": family_id, "seed": seed},
+        )
+    }
+
+    audit.validate_confirmatory_unit_lineage(
+        units,
+        manifest,
+        expected_act_run_id=expected_act_run_id,
+        expected_parent_artifact_id=expected_parent_artifact_id,
+    )
+
+    bad = dict(provenance)
+    bad["parent_artifact_id"] = "decision_model:" + ("b" * 64)
+    audit._write_json(
+        run_dir / "correction-transfer.json",
+        {"provenance": bad},
+    )
+    with pytest.raises(RuntimeError, match="parent_artifact_id"):
+        audit.validate_confirmatory_unit_lineage(
+            units,
+            manifest,
+            expected_act_run_id=expected_act_run_id,
+            expected_parent_artifact_id=expected_parent_artifact_id,
+        )
