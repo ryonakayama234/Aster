@@ -15,11 +15,27 @@ from aster.training.diag_family_audit import run_family_feature_extraction
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path("."))
+    parser.add_argument(
+        "--learn-evidence-root",
+        type=Path,
+        default=None,
+        help="Run store/root containing the LEARN evidence used by Gate 0",
+    )
+    parser.add_argument(
+        "--learn-evidence-mode",
+        choices=("original", "reproduction"),
+        default="original",
+        help="Whether Gate 0 consumes original local Runs or an explicit reproduction",
+    )
     parser.add_argument("--threads", type=int, choices=(2, 4), default=2)
     args = parser.parse_args()
 
     torch.set_num_threads(args.threads)
-    run_path = run_family_feature_extraction(args.root)
+    run_path = run_family_feature_extraction(
+        args.root,
+        learn_evidence_root=args.learn_evidence_root,
+        learn_evidence_mode=args.learn_evidence_mode,
+    )
     result = json.loads(
         (run_path / "diag-family-feature-extraction.json").read_text(encoding="utf-8")
     )
