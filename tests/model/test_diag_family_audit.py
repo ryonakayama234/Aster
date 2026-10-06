@@ -211,6 +211,11 @@ def test_reconstruct_confirmatory_evidence_requires_exact_canonical_match(monkey
     )
     monkeypatch.setattr(
         audit,
+        "validate_preserved_learn_outcome_identity",
+        lambda result, manifest: None,
+    )
+    monkeypatch.setattr(
+        audit,
         "_discover_canonical_confirmatory_result",
         lambda root, manifest: ("canonical-run", dict(result)),
     )
@@ -418,3 +423,72 @@ def test_verify_learn_evidence_source_rejects_wrong_or_dirty_reproduction(
             manifest,
             mode="reproduction",
         )
+
+
+
+def test_validate_preserved_learn_outcome_identity_checks_operation_and_selected_families():
+    add_outcomes = {
+        1: "win",
+        3: "loss",
+        5: "win",
+        7: "loss",
+        9: "win",
+        11: "loss",
+        13: "win",
+        15: "win",
+        17: "loss",
+        19: "loss",
+        21: "tie",
+        23: "loss",
+        25: "loss",
+        27: "tie",
+        29: "tie",
+    }
+    subtract_outcomes = {
+        2: "loss",
+        4: "loss",
+        6: "loss",
+        8: "loss",
+        10: "loss",
+        12: "win",
+        14: "loss",
+        16: "loss",
+        18: "loss",
+        20: "loss",
+        22: "tie",
+        24: "loss",
+        26: "loss",
+        28: "loss",
+        30: "tie",
+    }
+    outcomes = {**add_outcomes, **subtract_outcomes}
+    families = []
+    family_results = []
+    for index in range(1, 31):
+        family_id = f"learn-confirm-keyshift-{index:02d}"
+        operation = "add" if index % 2 else "subtract"
+        families.append(
+            {
+                "family_id": family_id,
+                "correction_task": {"operation": operation},
+            }
+        )
+        family_results.append(
+            {
+                "family_id": family_id,
+                "outcome": outcomes[index],
+            }
+        )
+
+    manifest: dict[str, object] = {
+        "family_design": {"families": families},
+    }
+    result: dict[str, object] = {
+        "family_results": family_results,
+    }
+
+    audit.validate_preserved_learn_outcome_identity(result, manifest)
+
+    family_results[2]["outcome"] = "win"
+    with pytest.raises(RuntimeError, match="selected-family outcome mismatch"):
+        audit.validate_preserved_learn_outcome_identity(result, manifest)
