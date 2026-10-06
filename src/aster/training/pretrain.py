@@ -75,16 +75,23 @@ def evaluate(model, windows, eos_id, batch_size):
                                                 for k, (s, n) in sorted(totals.items())}}
 
 
-def train(root, view, tokenizer_dir, config):
+def train(root, view, tokenizer_dir, config, *, tokenizer_artifact_id=None, wiring_spec_sha256=None):
     root, view = Path(root).resolve(), Path(view).resolve()
-    run = RunLog(root, 'pretrain', {'view_id': view.name, 'config': asdict(config)}, producer='trainer')
+    input_provenance = {}
+    if tokenizer_artifact_id is not None:
+        input_provenance['tokenizer_artifact_id'] = tokenizer_artifact_id
+    if wiring_spec_sha256 is not None:
+        input_provenance['wiring_spec_sha256'] = wiring_spec_sha256
+    run = RunLog(root, 'pretrain', {'view_id': view.name, 'config': asdict(config),
+                                  **input_provenance}, producer='trainer')
     began = time.perf_counter()
     try:
         torch.set_num_threads(config.threads)
         torch.manual_seed(config.seed)
         torch.use_deterministic_algorithms(True)
         chooser = random.Random(config.seed)
-        tokenizer, payload = load_training_tokenizer(tokenizer_dir, view.name)
+        tokenizer, payload = load_training_tokenizer(
+            tokenizer_dir, view.name, expected_artifact_id=tokenizer_artifact_id)
         tokenizer_id = digest(json_bytes(payload))
         splits = prepare_windows(view, tokenizer, config.context_length)
         windows = splits['train']
@@ -104,7 +111,7 @@ def train(root, view, tokenizer_dir, config):
                       'model/tiny_lm.py', 'model/transformer.py', 'model/lm_head.py',
                       'model/checkpoint.py', 'inference/generate.py', 'tokenizer/artifact.py',
                       'tokenizer/bpe.py', 'records/runlog.py']
-        provenance = {'view_id': view.name, 'tokenizer_id': tokenizer_id, 'config': asdict(config),
+        provenance = {**input_provenance, 'view_id': view.name, 'tokenizer_id': tokenizer_id, 'config': asdict(config),
                       'torch_version': str(torch.__version__), 'python_version': sys.version,
                       'device': 'cpu', 'parameter_count': sum(p.numel() for p in model.parameters()),
                       'code_sha256': {p: digest((source / p).read_bytes()) for p in code_files}}
