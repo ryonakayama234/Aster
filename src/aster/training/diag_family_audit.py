@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections import Counter
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 import hashlib
 import json
 import math
@@ -669,14 +669,14 @@ def _categorical(data: dict[str, object], key: str) -> str | bool:
     return value
 
 
-def _require_task_operation(task: dict[str, object]) -> str:
+def _require_task_operation(task: Mapping[str, object]) -> str:
     value = task.get("operation")
     if value not in {"add", "subtract"}:
         raise ValueError("DIAG v3 task operation must be add/subtract")
     return cast(str, value)
 
 
-def _require_task_int(task: dict[str, object], key: str) -> int:
+def _require_task_int(task: Mapping[str, object], key: str) -> int:
     value = task.get(key)
     if type(value) is not int:
         raise ValueError(f"DIAG v3 task field {key!r} must be an integer")
