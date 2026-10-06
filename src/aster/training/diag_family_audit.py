@@ -83,7 +83,28 @@ def reconstruct_confirmatory_evidence(
         [unit for _, unit in units.values()],
     )
     if result.get("status") != "complete" or len(units) != 90:
-        raise RuntimeError("DIAG v3 Gate 0 requires all 90 frozen confirmatory units")
+        completed = result.get("completed_units")
+        expected = result.get("expected_units")
+        missing_raw = result.get("missing_units")
+        missing_preview: list[str] = []
+        if isinstance(missing_raw, list):
+            for item in missing_raw[:12]:
+                if not isinstance(item, dict):
+                    continue
+                family_id = item.get("family_id")
+                seed = item.get("seed")
+                if isinstance(family_id, str) and type(seed) is int:
+                    missing_preview.append(f"{family_id}/seed={seed}")
+        detail = (
+            f"discovered={len(units)}, completed={completed}, expected={expected}"
+        )
+        if missing_preview:
+            detail += ", missing=" + ", ".join(missing_preview)
+            if isinstance(missing_raw, list) and len(missing_raw) > len(missing_preview):
+                detail += f", ... (+{len(missing_raw) - len(missing_preview)} more)"
+        raise RuntimeError(
+            "DIAG v3 Gate 0 requires all 90 frozen confirmatory units; " + detail
+        )
     if result.get("measurement_git_sha") != EXPECTED_CONFIRMATORY_MEASUREMENT_GIT_SHA:
         raise RuntimeError("Confirmatory measurement Git SHA does not match the frozen evidence")
 
