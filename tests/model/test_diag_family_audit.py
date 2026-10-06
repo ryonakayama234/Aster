@@ -187,6 +187,7 @@ def test_reconstruct_confirmatory_evidence_requires_exact_canonical_match(monkey
             "losses": 19,
             "ties": 5,
             "median_family_accuracy_delta": -0.25,
+            "sign_test_p_value": 0.01463329792022705,
         },
         "verdict": {
             "label": "Not supported",
@@ -311,3 +312,81 @@ def test_reconstruct_confirmatory_evidence_reports_missing_units(monkeypatch):
         match=r"discovered=2, completed=88, expected=90.*family-03/seed=43.*family-12/seed=44",
     ):
         audit.reconstruct_confirmatory_evidence(".", {})
+
+
+
+def test_verify_learn_evidence_source_marks_reproduction_without_claiming_original(
+    monkeypatch,
+    tmp_path,
+):
+    manifest = {"protocol_id": audit.PROTOCOL_ID}
+    monkeypatch.setattr(
+        audit,
+        "load_confirmatory_manifest",
+        lambda path: manifest,
+    )
+    monkeypatch.setattr(
+        audit,
+        "_git_identity",
+        lambda root: {
+            "git_sha": audit.EXPECTED_CONFIRMATORY_MEASUREMENT_GIT_SHA,
+            "dirty": False,
+            "dirty_entry_count": 0,
+        },
+    )
+
+    source = audit.verify_learn_evidence_source(
+        tmp_path,
+        manifest,
+        mode="reproduction",
+    )
+
+    assert source["mode"] == "reproduction"
+    assert source["original_raw_artifact_used"] is False
+    assert source["claim_boundary"] == (
+        "reproduction_evidence_not_original_raw_artifact"
+    )
+
+
+def test_verify_learn_evidence_source_rejects_wrong_or_dirty_reproduction(
+    monkeypatch,
+    tmp_path,
+):
+    manifest = {"protocol_id": audit.PROTOCOL_ID}
+    monkeypatch.setattr(
+        audit,
+        "load_confirmatory_manifest",
+        lambda path: manifest,
+    )
+
+    monkeypatch.setattr(
+        audit,
+        "_git_identity",
+        lambda root: {
+            "git_sha": "0" * 40,
+            "dirty": False,
+            "dirty_entry_count": 0,
+        },
+    )
+    with pytest.raises(RuntimeError, match="original measurement Git SHA"):
+        audit.verify_learn_evidence_source(
+            tmp_path,
+            manifest,
+            mode="reproduction",
+        )
+
+    monkeypatch.setattr(
+        audit,
+        "_git_identity",
+        lambda root: {
+            "git_sha": audit.EXPECTED_CONFIRMATORY_MEASUREMENT_GIT_SHA,
+            "dirty": True,
+            "dirty_entry_count": 1,
+        },
+    )
+    with pytest.raises(RuntimeError, match="clean worktree"):
+        audit.verify_learn_evidence_source(
+            tmp_path,
+            manifest,
+            mode="reproduction",
+        )
