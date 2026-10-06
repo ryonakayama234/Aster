@@ -9,6 +9,7 @@ import math
 from pathlib import Path
 from typing import cast
 
+from aster.corpus.pipeline import digest, json_bytes
 from aster.records.runlog import RunLog
 from aster.training.diag_family_features import (
     COLLINEARITY_RHO_THRESHOLD,
@@ -17,6 +18,11 @@ from aster.training.diag_family_features import (
     collinearity_clusters,
     feature_schema_sha256,
     spearman_rho,
+)
+from aster.training.learn_confirmatory import (
+    DEFAULT_MANIFEST_PATH,
+    confirmatory_manifest_sha256,
+    load_confirmatory_manifest,
 )
 
 
@@ -191,10 +197,10 @@ def build_preoutcome_audit(
     for operation in ("add", "subtract"):
         operation_rows = [row for row in rows if row["operation"] == operation]
         indices = sorted(
-            int(_finite_number(row["stratum_index"], field="stratum_index"))
+            _finite_number(row["stratum_index"], field="stratum_index")
             for row in operation_rows
         )
-        if indices != list(range(1, 16)):
+        if indices != [float(index) for index in range(1, 16)]:
             raise RuntimeError(
                 f"DIAG v3 {operation} stratum_index must be exactly 1..15"
             )
@@ -258,6 +264,52 @@ def build_preoutcome_audit(
     }
 
 
+def _validate_rows_against_manifest(
+    rows: Sequence[dict[str, object]],
+    manifest: Mapping[str, object],
+) -> None:
+    design = manifest.get("family_design")
+    if not isinstance(design, dict):
+        raise RuntimeError("DIAG v3 frozen manifest is missing family_design")
+    raw_families = cast(dict[str, object], design).get("families")
+    if not isinstance(raw_families, list) or len(raw_families) != 30:
+        raise RuntimeError("DIAG v3 frozen manifest must contain exactly 30 families")
+
+    expected: list[tuple[str, str, int]] = []
+    counters = {"add": 0, "subtract": 0}
+    for raw in raw_families:
+        if not isinstance(raw, dict):
+            raise RuntimeError("DIAG v3 frozen family definition is invalid")
+        family = cast(dict[str, object], raw)
+        family_id = family.get("family_id")
+        correction = family.get("correction_task")
+        if not isinstance(family_id, str) or not isinstance(correction, dict):
+            raise RuntimeError("DIAG v3 frozen family identity is invalid")
+        operation = cast(dict[str, object], correction).get("operation")
+        if operation not in {"add", "subtract"}:
+            raise RuntimeError("DIAG v3 frozen family operation is invalid")
+        operation_name = cast(str, operation)
+        counters[operation_name] += 1
+        expected.append((family_id, operation_name, counters[operation_name]))
+
+    actual = [
+        (
+            cast(str, row["family_id"]),
+            cast(str, row["operation"]),
+            _finite_number(row["stratum_index"], field="stratum_index"),
+        )
+        for row in rows
+    ]
+    expected_normalized = [
+        (family_id, operation, float(stratum))
+        for family_id, operation, stratum in expected
+    ]
+    if actual != expected_normalized:
+        raise RuntimeError(
+            "DIAG v3 feature rows differ from frozen family/order manifest"
+        )
+
+
 def run_preoutcome_audit(root: str | Path, feature_run_id: str) -> Path:
     """Materialize the outcome-blind Gate 1.5 audit from one completed feature Run."""
     root_path = Path(root).resolve()
@@ -281,6 +333,19 @@ def run_preoutcome_audit(root: str | Path, feature_run_id: str) -> Path:
     feature_payload = _read_json(source_path / "diag-family-features.json")
     audit = build_preoutcome_audit(feature_payload, schema)
 
+    manifest = load_confirmatory_manifest(root_path / DEFAULT_MANIFEST_PATH)
+    manifest_sha = confirmatory_manifest_sha256(manifest)
+    if manifest_sha != audit["manifest_sha256"]:
+        raise RuntimeError("DIAG v3 source feature manifest identity mismatch")
+    raw_rows = feature_payload.get("families")
+    if not isinstance(raw_rows, list):
+        raise RuntimeError("DIAG v3 source feature rows are unavailable")
+    _validate_rows_against_manifest(
+        [cast(dict[str, object], row) for row in raw_rows],
+        manifest,
+    )
+    source_features_sha256 = digest(json_bytes(feature_payload))
+
     if extraction.get("feature_schema_sha256") != audit["feature_schema_sha256"]:
         raise RuntimeError("DIAG v3 source extraction/schema hash mismatch")
     if extraction.get("manifest_sha256") != audit["manifest_sha256"]:
@@ -297,12 +362,15 @@ def run_preoutcome_audit(root: str | Path, feature_run_id: str) -> Path:
             "feature_schema_sha256": audit["feature_schema_sha256"],
             "manifest_sha256": audit["manifest_sha256"],
             "parent_artifact_id": audit["parent_artifact_id"],
+            "source_features_sha256": source_features_sha256,
             "outcome_joined": False,
             "causal_claim": False,
         },
         producer="diagnostic_audit",
     )
     try:
+        audit["source_feature_run_id"] = feature_run_id
+        audit["source_features_sha256"] = source_features_sha256
         _write_json(run.path / "diag-family-preoutcome-audit.json", audit)
         run.finish(
             "completed",
