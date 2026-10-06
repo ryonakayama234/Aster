@@ -37,6 +37,10 @@ from aster.training.diag_interference import (
     _teacher_examples,
     _validate_parent_suite_lineage,
 )
+from aster.training.diag_update_depth import (
+    TRIAL_CYCLE_ID as DIAG_V2_CYCLE_ID,
+    TRIAL_FAMILY_IDS as DIAG_V2_FAMILY_IDS,
+)
 from aster.training.learn_confirmatory import (
     DEFAULT_MANIFEST_PATH,
     EXPECTED_MANIFEST_SHA256,
@@ -51,6 +55,8 @@ from aster.training.learn_probe import resolve_act_parent_artifact
 
 EXTRACTION_SCHEMA_VERSION = "aster-diag-family-feature-extraction-0"
 EXPECTED_CONFIRMATORY_MEASUREMENT_GIT_SHA = "c2fa2d175b4a23bbd246ed61266d0cdda2e22846"
+EXPECTED_DIAG_V2_SOURCE_GIT_SHA = "e7e8342e1b844320bb610fff10a9e8cce50660c8"
+EXPECTED_DIAG_V2_RUN_ID = "8100ff7fb195408995513bc0c40da901"
 EXPECTED_PRIMARY_SUMMARY = {
     "wins": 6,
     "losses": 19,
@@ -110,6 +116,80 @@ def reconstruct_confirmatory_evidence(
                 f"Reconstructed confirmatory result differs from canonical campaign: {key}"
             )
     return result, canonical_run_id
+
+
+def verify_diag_v2_run_identity(root: str | Path) -> dict[str, object]:
+    """Verify the exact completed DIAG v2 campaign selected for the later overlay."""
+    root_path = Path(root).resolve()
+    runs_root = (root_path / "runs").resolve()
+    run_dir = root_path / "runs" / EXPECTED_DIAG_V2_RUN_ID
+    run_file = run_dir / "run.json"
+    result_file = run_dir / "diag-update-depth-results.json"
+
+    if (
+        run_dir.is_symlink()
+        or not run_dir.is_dir()
+        or not run_file.is_file()
+        or run_file.is_symlink()
+    ):
+        raise RuntimeError("Expected DIAG v2 campaign Run is missing")
+    resolved_run = run_dir.resolve()
+    if not resolved_run.is_relative_to(runs_root):
+        raise RuntimeError("DIAG v2 campaign Run resolves outside the local Run store")
+
+    run = _read_json(run_file)
+    if run.get("schema_version") != "aster-run-0":
+        raise RuntimeError("DIAG v2 campaign Run schema mismatch")
+    if run.get("run_id") != EXPECTED_DIAG_V2_RUN_ID:
+        raise RuntimeError("DIAG v2 campaign Run ID mismatch")
+    if run.get("kind") != "diag_update_depth_trial_campaign":
+        raise RuntimeError("Expected Run is not the DIAG v2 update-depth campaign")
+    if run.get("status") != "completed":
+        raise RuntimeError("DIAG v2 campaign Run is not completed")
+
+    inputs = _require_dict(run, "inputs")
+    if inputs.get("cycle_id") != DIAG_V2_CYCLE_ID:
+        raise RuntimeError("DIAG v2 campaign cycle identity mismatch")
+    if inputs.get("source_git_sha") != EXPECTED_DIAG_V2_SOURCE_GIT_SHA:
+        raise RuntimeError("DIAG v2 campaign source Git SHA mismatch")
+    if inputs.get("families") != list(DIAG_V2_FAMILY_IDS):
+        raise RuntimeError("DIAG v2 campaign family set/order mismatch")
+    if inputs.get("planned_experiment_units") != 12:
+        raise RuntimeError("DIAG v2 campaign planned-unit identity mismatch")
+
+    if not result_file.is_file() or result_file.is_symlink():
+        raise RuntimeError("DIAG v2 campaign result is missing")
+    result = _read_json(result_file)
+    if result.get("schema_version") != "aster-diag-update-depth-result-0":
+        raise RuntimeError("DIAG v2 result schema mismatch")
+    if result.get("cycle_id") != DIAG_V2_CYCLE_ID or result.get("status") != "complete":
+        raise RuntimeError("DIAG v2 result cycle/status mismatch")
+    if result.get("source_git_sha") != EXPECTED_DIAG_V2_SOURCE_GIT_SHA:
+        raise RuntimeError("DIAG v2 result source Git SHA mismatch")
+    if result.get("independent_family_blocks") != len(DIAG_V2_FAMILY_IDS):
+        raise RuntimeError("DIAG v2 independent-family count mismatch")
+    if result.get("experiment_units") != 12:
+        raise RuntimeError("DIAG v2 experiment-unit count mismatch")
+
+    raw_summaries = result.get("family_summaries")
+    if not isinstance(raw_summaries, list):
+        raise RuntimeError("DIAG v2 family summaries are missing")
+    family_ids = [
+        summary.get("family_id")
+        for summary in raw_summaries
+        if isinstance(summary, dict)
+    ]
+    if family_ids != list(DIAG_V2_FAMILY_IDS) or len(raw_summaries) != len(family_ids):
+        raise RuntimeError("DIAG v2 result family summaries mismatch")
+
+    return {
+        "run_id": EXPECTED_DIAG_V2_RUN_ID,
+        "source_git_sha": EXPECTED_DIAG_V2_SOURCE_GIT_SHA,
+        "cycle_id": DIAG_V2_CYCLE_ID,
+        "family_ids": list(DIAG_V2_FAMILY_IDS),
+        "result_file": "diag-update-depth-results.json",
+        "identity_verified": True,
+    }
 
 
 def extract_family_feature_rows(
@@ -243,6 +323,7 @@ def run_family_feature_extraction(root: str | Path) -> Path:
         root_path,
         manifest,
     )
+    diag_v2_identity = verify_diag_v2_run_identity(root_path)
     lineage = _require_dict(manifest, "lineage")
     act_run_id = _require_str(lineage, "parent_act_run_id")
     artifact_id, artifact_path = resolve_act_parent_artifact(root_path, act_run_id)
@@ -268,6 +349,7 @@ def run_family_feature_extraction(root: str | Path) -> Path:
             "manifest_sha256": manifest_sha256,
             "feature_schema_sha256": schema_sha256,
             "canonical_confirmatory_run_id": canonical_run_id,
+            "diag_v2_identity": diag_v2_identity,
             "act_run_id": act_run_id,
             "parent_artifact_id": artifact_id,
             "source_git_sha": source["git_sha"],
@@ -323,6 +405,7 @@ def run_family_feature_extraction(root: str | Path) -> Path:
             "canonical_confirmatory_run_id": canonical_run_id,
             "reconstructed_confirmatory_result": confirmatory_result,
             "exact_family_results_reproduced": True,
+            "diag_v2_identity": diag_v2_identity,
         }
         summary = {
             "schema_version": EXTRACTION_SCHEMA_VERSION,
@@ -330,6 +413,7 @@ def run_family_feature_extraction(root: str | Path) -> Path:
             "feature_schema_sha256": schema_sha256,
             "manifest_sha256": manifest_sha256,
             "canonical_confirmatory_run_id": canonical_run_id,
+            "diag_v2_identity": diag_v2_identity,
             "act_run_id": act_run_id,
             "parent_artifact_id": artifact_id,
             "source": source,
