@@ -58,7 +58,7 @@ def main() -> int:
         "categorical_screening_columns": len(result["categorical_screening"]),
         "lead_columns": lead_columns,
         "unconfounded_lead_groups": unconfounded_groups,
-        "p_values_emitted": result["p_values_emitted"],
+        "inferential_statistics_emitted": result["inferential_statistics_emitted"],
         "next_gate": result["next_gate"],
     }
     print(run_path)
