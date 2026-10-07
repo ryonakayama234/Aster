@@ -25,6 +25,7 @@ from aster.training.diag_family_features import (
 from aster.training.diag_family_preoutcome import (
     PREOUTCOME_SCHEMA_VERSION,
     _continuous_screening_columns,
+    build_preoutcome_audit,
 )
 from aster.training.learn_confirmatory import (
     DEFAULT_MANIFEST_PATH,
@@ -575,6 +576,13 @@ def run_outcome_screening(
     if preoutcome.get("source_features_sha256") != source_features_sha256:
         raise RuntimeError("DIAG v3 Gate 2A feature payload digest mismatch")
     schema = _read_json(feature_path / "diag-family-feature-schema.json")
+    rebuilt_preoutcome = build_preoutcome_audit(feature_payload, schema)
+    rebuilt_preoutcome["source_feature_run_id"] = feature_run_id
+    rebuilt_preoutcome["source_features_sha256"] = source_features_sha256
+    if preoutcome != rebuilt_preoutcome:
+        raise RuntimeError(
+            "DIAG v3 Gate 2A persisted pre-outcome audit differs from deterministic rebuild"
+        )
 
     manifest = load_confirmatory_manifest(root_path / DEFAULT_MANIFEST_PATH)
     manifest_sha = confirmatory_manifest_sha256(manifest)
@@ -615,10 +623,6 @@ def run_outcome_screening(
             "source_features_sha256": source_features_sha256,
             "learn_evidence_source": evidence_source,
             "learn_evidence_campaign_run_id": campaign_run_id,
-            "learn_confirmatory_verdict": _require_dict(
-                confirmatory,
-                "verdict",
-            ).get("label"),
         }
     )
 
