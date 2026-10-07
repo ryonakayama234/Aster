@@ -357,7 +357,10 @@ def run_residual_head_unit(
     family = _family_by_id(manifest, family_id)
     correction_task = _task_from_family(family, "correction_task")
     sibling_task = _task_from_family(family, "sibling_task")
-    operation = _require_str(correction_task, "operation")
+    operation_value = correction_task.get("operation")
+    if not isinstance(operation_value, str) or not operation_value:
+        raise ValueError("DIAG v4 correction operation must be a non-empty string")
+    operation = operation_value
 
     artifact_id, artifact_path = resolve_act_parent_artifact(root_path, DEFAULT_ACT_RUN_ID)
     parent_model, tokenizer, parent_manifest = load_decision_artifact(artifact_path)
