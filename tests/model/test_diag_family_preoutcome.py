@@ -128,6 +128,16 @@ def test_preoutcome_audit_rejects_wrong_schema_hash():
         build_preoutcome_audit(payload, schema)
 
 
+def test_preoutcome_audit_rejects_persisted_schema_drift():
+    payload, schema = _feature_payload()
+    features = cast(list[dict[str, object]], schema["features"])
+    features[0]["screening_eligible"] = True
+    payload["feature_schema_sha256"] = feature_schema_sha256(schema)
+
+    with pytest.raises(RuntimeError, match="differs from frozen schema"):
+        build_preoutcome_audit(payload, schema)
+
+
 def test_run_preoutcome_audit_materializes_separate_completed_run(monkeypatch, tmp_path):
     payload, schema = _feature_payload()
     source_id = "source-feature-run"
