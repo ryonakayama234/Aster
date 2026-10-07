@@ -120,7 +120,7 @@ def test_outcome_screening_joins_after_preoutcome_and_emits_no_p_values():
     assert result["outcome_joined"] is True
     assert result["diag_v2_overlay_joined"] is False
     assert result["classification"] is None
-    assert result["p_values_emitted"] is False
+    assert result["inferential_statistics_emitted"] is False
 
     continuous = cast(dict[str, dict[str, object]], result["continuous_screening"])
     margin = continuous["correction_target_margin_mean"]
