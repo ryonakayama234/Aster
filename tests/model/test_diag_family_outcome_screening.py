@@ -209,6 +209,16 @@ def test_run_outcome_screening_rejects_tampered_persisted_preoutcome(
             "run_id": preoutcome_run_id,
             "kind": "diag_family_preoutcome_audit",
             "status": "completed",
+            "inputs": {
+                "schema_version": preoutcome["schema_version"],
+                "source_feature_run_id": feature_run_id,
+                "feature_schema_sha256": preoutcome["feature_schema_sha256"],
+                "manifest_sha256": preoutcome["manifest_sha256"],
+                "parent_artifact_id": preoutcome["parent_artifact_id"],
+                "source_features_sha256": preoutcome["source_features_sha256"],
+                "outcome_joined": False,
+                "causal_claim": False,
+            },
         },
     )
     _write_json(
@@ -217,6 +227,68 @@ def test_run_outcome_screening_rejects_tampered_persisted_preoutcome(
     )
 
     with pytest.raises(RuntimeError, match="differs from deterministic rebuild"):
+        run_outcome_screening(
+            tmp_path,
+            preoutcome_run_id=preoutcome_run_id,
+        )
+
+
+def test_run_outcome_screening_rejects_consistent_artifact_swap_after_gate_1_5(
+    tmp_path,
+):
+    payload, schema = _feature_payload()
+    original_features_sha = digest(json_bytes(payload))
+    feature_run_id = "feature-run"
+    preoutcome_run_id = "preoutcome-run"
+
+    rows = cast(list[dict[str, object]], payload["families"])
+    rows[0]["correction_target_margin_mean"] = 123.0
+    changed_features_sha = digest(json_bytes(payload))
+    assert changed_features_sha != original_features_sha
+
+    preoutcome = build_preoutcome_audit(payload, schema)
+    preoutcome["source_feature_run_id"] = feature_run_id
+    preoutcome["source_features_sha256"] = changed_features_sha
+
+    feature_path = tmp_path / "runs" / feature_run_id
+    feature_path.mkdir(parents=True)
+    _write_json(
+        feature_path / "run.json",
+        {
+            "run_id": feature_run_id,
+            "kind": "diag_family_feature_extraction",
+            "status": "completed",
+        },
+    )
+    _write_json(feature_path / "diag-family-features.json", payload)
+    _write_json(feature_path / "diag-family-feature-schema.json", schema)
+
+    preoutcome_path = tmp_path / "runs" / preoutcome_run_id
+    preoutcome_path.mkdir(parents=True)
+    _write_json(
+        preoutcome_path / "run.json",
+        {
+            "run_id": preoutcome_run_id,
+            "kind": "diag_family_preoutcome_audit",
+            "status": "completed",
+            "inputs": {
+                "schema_version": preoutcome["schema_version"],
+                "source_feature_run_id": feature_run_id,
+                "feature_schema_sha256": preoutcome["feature_schema_sha256"],
+                "manifest_sha256": preoutcome["manifest_sha256"],
+                "parent_artifact_id": preoutcome["parent_artifact_id"],
+                "source_features_sha256": original_features_sha,
+                "outcome_joined": False,
+                "causal_claim": False,
+            },
+        },
+    )
+    _write_json(
+        preoutcome_path / "diag-family-preoutcome-audit.json",
+        preoutcome,
+    )
+
+    with pytest.raises(RuntimeError, match="frozen identity mismatch for source_features_sha256"):
         run_outcome_screening(
             tmp_path,
             preoutcome_run_id=preoutcome_run_id,
@@ -255,6 +327,16 @@ def test_run_outcome_screening_materializes_separate_gate_2a_run(
             "run_id": preoutcome_run_id,
             "kind": "diag_family_preoutcome_audit",
             "status": "completed",
+            "inputs": {
+                "schema_version": preoutcome["schema_version"],
+                "source_feature_run_id": feature_run_id,
+                "feature_schema_sha256": preoutcome["feature_schema_sha256"],
+                "manifest_sha256": preoutcome["manifest_sha256"],
+                "parent_artifact_id": preoutcome["parent_artifact_id"],
+                "source_features_sha256": preoutcome["source_features_sha256"],
+                "outcome_joined": False,
+                "causal_claim": False,
+            },
         },
     )
     _write_json(
