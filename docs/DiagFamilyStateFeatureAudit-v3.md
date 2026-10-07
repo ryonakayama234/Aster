@@ -325,6 +325,31 @@ Only after Gate 2A has been persisted may the four DIAG v2 families receive thei
 Then perform the fixed pair inspection and emit exactly one diagnostic classification.
 The overlay is case-comparison evidence and must not alter or rerun the 30-family screen.
 
+### Gate 2B implementation
+
+Gate 2B consumes exactly one completed Gate 2A Run and the already-frozen DIAG v2
+campaign. It does not recompute the 30-family screen. The deterministic classification
+is computed from the persisted Gate 2A lead metadata before the four-family overlay is
+attached; DIAG v2 case-comparison values cannot override that classification.
+
+Run:
+
+```bash
+.venv/bin/python scripts/run_diag_family_closeout.py \
+  --root . \
+  --outcome-screening-run-id <completed-gate-2a-run-id>
+```
+
+The closeout writes:
+
+- `runs/<run-id>/diag-family-feature-audit.json`;
+- `reports/diag-family-feature-audit-v3.json`;
+- `reports/diag-family-feature-audit-v3.md`.
+
+The repository reports are generated from the same in-memory closeout object as the
+Run artifact. They remain descriptive/post-hoc evidence and do not add a new training
+arm or a confirmatory claim.
+
 ## Descriptive analysis
 
 No p-values are emitted in DIAG v3.
