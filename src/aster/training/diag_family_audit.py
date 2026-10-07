@@ -701,7 +701,7 @@ def run_family_feature_extraction(
                 "torch_num_threads": torch.get_num_threads(),
                 "device": str(next(model.parameters()).device),
             },
-            "next_gate": "join frozen family outcomes only after these artifacts are persisted",
+            "next_gate": "materialize pre-outcome confounding/collinearity audit before outcome join",
         }
         _write_json(run.path / "diag-family-features.json", feature_payload)
         _write_json(run.path / "diag-family-evidence-gate.json", gate_payload)

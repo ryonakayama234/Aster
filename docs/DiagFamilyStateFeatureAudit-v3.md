@@ -268,9 +268,27 @@ A pre-outcome design audit of the frozen family definitions gives:
 Therefore operand/result magnitude cannot be interpreted as an independent static
 explanation in this dataset merely because it correlates with the endpoint.
 
+## Gate 1.5 — Persist pre-outcome confounding/collinearity audit
+
+After raw feature extraction completes, but **before any outcome join**, materialize a
+separate read-only audit Run from the completed feature Run. It must:
+
+- verify the source feature Run is completed and still reports `outcome_joined=false`;
+- verify the frozen feature-schema SHA-256 and exact 30-row shape;
+- compute tie-aware Spearman summaries for all 30 families and separately for add/subtract;
+- record degenerate populations as `rho=null, degenerate=true`;
+- record within-operation feature-vs-`stratum_index` correlations;
+- mark `design_order_confounded=true` at `abs(rho) >= 0.95` in either operation;
+- persist pairwise continuous-feature Spearman values and deterministic connected
+  components at `abs(rho) >= 0.95`;
+- contain no outcome column, p-value, causal claim, or model update.
+
+This intermediate artifact is `diag-family-preoutcome-audit.json`. The completed raw
+feature Run remains immutable; Gate 1.5 creates a separate Run that points back to it.
+
 ## Gate 2 — Outcome join
 
-Only after Gate 1 artifacts exist, join the frozen family outcomes:
+Only after the Gate 1.5 pre-outcome artifact exists, join the frozen family outcomes:
 
 - primary accuracy delta:
   Correction - Replay uncorrected-sibling teacher-prefix accuracy;
@@ -420,9 +438,13 @@ Any mutation invalidates the audit Run.
 
 Local Run evidence should contain at minimum:
 
-- `diag-family-feature-schema.json`
-- `diag-family-features.json`
-- `diag-family-feature-audit.json`
+- Gate 1 feature Run:
+  - `diag-family-feature-schema.json`
+  - `diag-family-features.json`
+- Gate 1.5 pre-outcome Run:
+  - `diag-family-preoutcome-audit.json`
+- final audit Run:
+  - `diag-family-feature-audit.json`
 
 Repository closeout should add:
 
@@ -450,8 +472,11 @@ The machine-readable audit records:
 Preferred small implementation:
 
 - `src/aster/training/diag_family_features.py`
+- `src/aster/training/diag_family_preoutcome.py`
 - `scripts/run_diag_family_feature_audit.py`
+- `scripts/run_diag_family_preoutcome_audit.py`
 - `tests/model/test_diag_family_features.py`
+- `tests/model/test_diag_family_preoutcome.py`
 
 Reuse existing LEARN evidence discovery/extraction and Decision scoring code. Do not copy
 the 90-unit campaign parser into a second incompatible implementation.
