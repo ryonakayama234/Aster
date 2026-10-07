@@ -514,7 +514,7 @@ def build_outcome_screening(
         "diag_v2_overlay_joined": False,
         "classification": None,
         "causal_claim": False,
-        "p_values_emitted": False,
+        "inferential_statistics_emitted": False,
         "joined_families": joined,
         "continuous_screening": continuous_screening,
         "categorical_screening": categorical_screening,
