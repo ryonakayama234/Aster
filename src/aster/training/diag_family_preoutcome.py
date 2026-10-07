@@ -154,13 +154,19 @@ def build_preoutcome_audit(
     schema: Mapping[str, object] | None = None,
 ) -> dict[str, object]:
     """Build the frozen pre-outcome audit without reading any family outcomes."""
+    canonical_schema = build_frozen_feature_schema()
+    canonical_schema_sha = feature_schema_sha256(canonical_schema)
     frozen_schema = (
-        build_frozen_feature_schema()
+        canonical_schema
         if schema is None
         else cast(dict[str, object], dict(schema))
     )
     schema_sha = feature_schema_sha256(frozen_schema)
-    if feature_payload.get("feature_schema_sha256") != schema_sha:
+    if schema_sha != canonical_schema_sha:
+        raise RuntimeError(
+            "DIAG v3 pre-outcome persisted feature schema differs from frozen schema"
+        )
+    if feature_payload.get("feature_schema_sha256") != canonical_schema_sha:
         raise RuntimeError("DIAG v3 pre-outcome feature-schema identity mismatch")
     if feature_payload.get("outcome_columns_present") is not False:
         raise RuntimeError("DIAG v3 pre-outcome source must be outcome-free")
@@ -247,7 +253,7 @@ def build_preoutcome_audit(
     return {
         "schema_version": PREOUTCOME_SCHEMA_VERSION,
         "status": "preoutcome_audit_complete",
-        "feature_schema_sha256": schema_sha,
+        "feature_schema_sha256": canonical_schema_sha,
         "manifest_sha256": feature_payload.get("manifest_sha256"),
         "parent_artifact_id": feature_payload.get("parent_artifact_id"),
         "families": 30,
