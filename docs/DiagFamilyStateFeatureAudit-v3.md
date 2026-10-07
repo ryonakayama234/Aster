@@ -286,7 +286,7 @@ separate read-only audit Run from the completed feature Run. It must:
 This intermediate artifact is `diag-family-preoutcome-audit.json`. The completed raw
 feature Run remains immutable; Gate 1.5 creates a separate Run that points back to it.
 
-## Gate 2 — Outcome join
+## Gate 2A — Frozen outcome join and 30-family descriptive screening
 
 Only after the Gate 1.5 pre-outcome artifact exists, join the frozen family outcomes:
 
@@ -297,14 +297,39 @@ Only after the Gate 1.5 pre-outcome artifact exists, join the frozen family outc
 - Repair accuracy for Parent / Replay / Correction;
 - Repair_CR = Correction - Replay.
 
-The four DIAG v2 families receive their overlay only after the 30-family feature table and
-descriptive screening are materialized.
+Persist this as a separate completed Run before reading the DIAG v2 overlay. The Gate 2A
+artifact is `diag-family-outcome-screening.json` and must record
+`diag_v2_overlay_joined=false` and `classification=null`.
+
+For continuous columns, apply the preregistered lead rule to each column while retaining
+its pre-outcome collinearity-component IDs for all30/add/subtract. Do not choose a
+post-outcome "representative" column from a correlated component. For each pre-outcome
+component, persist the set of qualifying member columns and the union of their qualifying
+feature groups. A cross-group component remains cross-group; do not collapse it to a
+single mechanism label.
+
+Collinearity components are evidence-counting/interpretation units, not a feature-selection
+step. Multiple qualifying columns in the same component are not counted as independent
+support. The later classification consumes sets of qualifying feature groups rather than
+the number of correlated columns.
+
+For categorical features, use the frozen deterministic mode outputs (and the direct
+family-level category for `operation`) to report family count, median primary delta, and
+win/loss/tie counts per fixed category.
+
+No p-values are emitted.
+
+## Gate 2B — DIAG v2 overlay and exactly-one classification
+
+Only after Gate 2A has been persisted may the four DIAG v2 families receive their overlay.
+Then perform the fixed pair inspection and emit exactly one diagnostic classification.
+The overlay is case-comparison evidence and must not alter or rerun the 30-family screen.
 
 ## Descriptive analysis
 
 No p-values are emitted in DIAG v3.
 
-For each eligible continuous feature/cluster report:
+For each eligible continuous feature report:
 
 - n families;
 - number of distinct feature values;
@@ -312,7 +337,13 @@ For each eligible continuous feature/cluster report:
 - Spearman rho separately for add (n=15) and subtract (n=15);
 - whether the sign is the same across strata;
 - design-order-confounded flag;
+- pre-outcome collinearity-component membership for all30/add/subtract;
 - all 30 family value pairs in machine-readable output.
+
+For each pre-outcome collinearity component, also report its full member list, qualifying
+member list, qualifying feature-group union, and whether the component crosses feature
+groups. This cluster summary is deterministic metadata over the column-level screen; it
+does not refit, select, or substitute a representative column.
 
 Spearman is used as a monotonic descriptive measure, not as evidence of causation.
 
@@ -443,7 +474,9 @@ Local Run evidence should contain at minimum:
   - `diag-family-features.json`
 - Gate 1.5 pre-outcome Run:
   - `diag-family-preoutcome-audit.json`
-- final audit Run:
+- Gate 2A outcome-screening Run:
+  - `diag-family-outcome-screening.json`
+- final Gate 2B audit Run:
   - `diag-family-feature-audit.json`
 
 Repository closeout should add:
@@ -473,10 +506,13 @@ Preferred small implementation:
 
 - `src/aster/training/diag_family_features.py`
 - `src/aster/training/diag_family_preoutcome.py`
+- `src/aster/training/diag_family_outcome_screening.py`
 - `scripts/run_diag_family_feature_audit.py`
 - `scripts/run_diag_family_preoutcome_audit.py`
+- `scripts/run_diag_family_outcome_screening.py`
 - `tests/model/test_diag_family_features.py`
 - `tests/model/test_diag_family_preoutcome.py`
+- `tests/model/test_diag_family_outcome_screening.py`
 
 Reuse existing LEARN evidence discovery/extraction and Decision scoring code. Do not copy
 the 90-unit campaign parser into a second incompatible implementation.
