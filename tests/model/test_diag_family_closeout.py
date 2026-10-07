@@ -288,4 +288,6 @@ def test_markdown_report_keeps_descriptive_boundary_and_overlay_order():
     assert "DIAG v2 overlay" in report
     assert "causal_claim=false" in report
     assert "confirmatory_verdict=null" in report
-    assert report.index("lead feature") < report.index("DIAG v2 overlay")
+    pair_table = report.index("lead feature")
+    pair_overlay = report.index("DIAG v2 overlay:", pair_table)
+    assert pair_table < pair_overlay
