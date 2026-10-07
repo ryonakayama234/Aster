@@ -283,6 +283,8 @@ def test_run_outcome_screening_materializes_separate_gate_2a_run(
         lambda root, current_manifest: (
             {
                 "family_results": _family_results(),
+                "primary": {"sign_test_p_value": 0.01},
+                "verdict": {"label": "Not supported"},
             },
             "campaign-run",
         ),
@@ -303,6 +305,10 @@ def test_run_outcome_screening_materializes_separate_gate_2a_run(
     assert result["status"] == "outcome_screening_complete"
     assert result["learn_evidence_campaign_run_id"] == "campaign-run"
     assert result["diag_v2_overlay_joined"] is False
+    serialized_result = json.dumps(result, sort_keys=True)
+    assert "p_value" not in serialized_result
+    assert "sign_test" not in serialized_result
+    assert "verdict" not in serialized_result
     run = json.loads((run_path / "run.json").read_text(encoding="utf-8"))
     assert run["kind"] == "diag_family_outcome_screening"
     assert run["status"] == "completed"
