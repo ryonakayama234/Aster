@@ -130,7 +130,7 @@ def _module_state_digest(module: nn.Module) -> str:
         value.update(b"\0")
         value.update(str(tuple(cpu.shape)).encode("ascii"))
         value.update(b"\0")
-        value.update(cpu.numpy().tobytes())
+        value.update(bytes(cpu.view(torch.uint8).reshape(-1).tolist()))
         value.update(b"\0")
     return value.hexdigest()
 
