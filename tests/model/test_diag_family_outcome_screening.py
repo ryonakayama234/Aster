@@ -140,6 +140,7 @@ def test_outcome_screening_joins_after_preoutcome_and_emits_no_p_values():
     serialized = json.dumps(result, sort_keys=True)
     assert "p_value" not in serialized
     assert "sign_test" not in serialized
+    assert "verdict" not in serialized
 
 
 def test_outcome_screening_rejects_family_order_mismatch():
@@ -170,6 +171,55 @@ def test_outcome_screening_rejects_schema_drift():
             preoutcome,
             _family_results(),
             schema=schema,
+        )
+
+
+def test_run_outcome_screening_rejects_tampered_persisted_preoutcome(
+    monkeypatch,
+    tmp_path,
+):
+    payload, schema = _feature_payload()
+    preoutcome = build_preoutcome_audit(payload, schema)
+    feature_run_id = "feature-run"
+    preoutcome_run_id = "preoutcome-run"
+
+    feature_path = tmp_path / "runs" / feature_run_id
+    feature_path.mkdir(parents=True)
+    _write_json(
+        feature_path / "run.json",
+        {
+            "run_id": feature_run_id,
+            "kind": "diag_family_feature_extraction",
+            "status": "completed",
+        },
+    )
+    _write_json(feature_path / "diag-family-features.json", payload)
+    _write_json(feature_path / "diag-family-feature-schema.json", schema)
+
+    preoutcome["source_feature_run_id"] = feature_run_id
+    preoutcome["source_features_sha256"] = digest(json_bytes(payload))
+    design = cast(dict[str, dict[str, object]], preoutcome["design_order"])
+    design["left_operand"]["design_order_confounded"] = False
+
+    preoutcome_path = tmp_path / "runs" / preoutcome_run_id
+    preoutcome_path.mkdir(parents=True)
+    _write_json(
+        preoutcome_path / "run.json",
+        {
+            "run_id": preoutcome_run_id,
+            "kind": "diag_family_preoutcome_audit",
+            "status": "completed",
+        },
+    )
+    _write_json(
+        preoutcome_path / "diag-family-preoutcome-audit.json",
+        preoutcome,
+    )
+
+    with pytest.raises(RuntimeError, match="differs from deterministic rebuild"):
+        run_outcome_screening(
+            tmp_path,
+            preoutcome_run_id=preoutcome_run_id,
         )
 
 
@@ -233,7 +283,6 @@ def test_run_outcome_screening_materializes_separate_gate_2a_run(
         lambda root, current_manifest: (
             {
                 "family_results": _family_results(),
-                "verdict": {"label": "Not supported"},
             },
             "campaign-run",
         ),
