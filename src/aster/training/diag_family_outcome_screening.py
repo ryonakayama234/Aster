@@ -576,6 +576,24 @@ def run_outcome_screening(
     if preoutcome.get("source_features_sha256") != source_features_sha256:
         raise RuntimeError("DIAG v3 Gate 2A feature payload digest mismatch")
     schema = _read_json(feature_path / "diag-family-feature-schema.json")
+
+    preoutcome_inputs = _require_dict(preoutcome_run, "inputs")
+    frozen_identity = {
+        "schema_version": PREOUTCOME_SCHEMA_VERSION,
+        "source_feature_run_id": feature_run_id,
+        "feature_schema_sha256": preoutcome.get("feature_schema_sha256"),
+        "manifest_sha256": preoutcome.get("manifest_sha256"),
+        "parent_artifact_id": preoutcome.get("parent_artifact_id"),
+        "source_features_sha256": source_features_sha256,
+        "outcome_joined": False,
+        "causal_claim": False,
+    }
+    for key, expected in frozen_identity.items():
+        if preoutcome_inputs.get(key) != expected:
+            raise RuntimeError(
+                f"DIAG v3 Gate 2A Gate 1.5 frozen identity mismatch for {key}"
+            )
+
     rebuilt_preoutcome = build_preoutcome_audit(feature_payload, schema)
     rebuilt_preoutcome["source_feature_run_id"] = feature_run_id
     rebuilt_preoutcome["source_features_sha256"] = source_features_sha256
