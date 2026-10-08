@@ -7,7 +7,7 @@
   "confirmatory_verdict": null,
   "cycle_id": "diag-residual-head-trial-0",
   "descriptive_summary": {
-    "control_repair_gain_residual_median": 0,
+    "control_repair_gain_residual_median": 0.0,
     "control_stability_gain_residual_median": -0.004396490752696991,
     "loss_repair_gain_residual_median": 0.29166666666666663,
     "loss_stability_gain_residual_median": -0.00035825371742248535
@@ -40,19 +40,19 @@
     },
     {
       "contrasts": {
-        "repair_gain_residual": 0,
+        "repair_gain_residual": 0.0,
         "stability_gain_residual": -0.0038995295763015747
       },
       "family_id": "learn-confirm-keyshift-15",
       "family_stratum": "control",
       "linear_head": {
         "D_sibling_margin": -0.006513774394989014,
-        "Repair_CR": 1
+        "Repair_CR": 1.0
       },
       "operation": "add",
       "residual_head": {
         "D_sibling_margin": -0.010413303971290588,
-        "Repair_CR": 1
+        "Repair_CR": 1.0
       },
       "training_examples_sha256": {
         "correction": "29dc71d760f1915a38658ec612214a040aa0aa43fa3cdd85081e281f103a5756",
@@ -68,7 +68,7 @@
       "family_stratum": "loss",
       "linear_head": {
         "D_sibling_margin": -0.010984674096107483,
-        "Repair_CR": 0
+        "Repair_CR": 0.0
       },
       "operation": "subtract",
       "residual_head": {
@@ -82,19 +82,19 @@
     },
     {
       "contrasts": {
-        "repair_gain_residual": 0,
+        "repair_gain_residual": 0.0,
         "stability_gain_residual": -0.004893451929092407
       },
       "family_id": "learn-confirm-keyshift-12",
       "family_stratum": "control",
       "linear_head": {
         "D_sibling_margin": -0.00906236469745636,
-        "Repair_CR": 0
+        "Repair_CR": 0.0
       },
       "operation": "subtract",
       "residual_head": {
         "D_sibling_margin": -0.013955816626548767,
-        "Repair_CR": 0
+        "Repair_CR": 0.0
       },
       "training_examples_sha256": {
         "correction": "9aa87b9b2dd9a8ab7a3d6b219c1949efcecf84c6ecea31532dfba936127e8e51",
