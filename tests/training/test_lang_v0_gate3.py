@@ -161,7 +161,14 @@ def test_preflight_rejects_config_and_leakage(tmp_path, monkeypatch):
     rows = [json.loads(l) for l in rows_path.read_text().splitlines()]
     rows[1]['leakage_group'] = rows[0]['leakage_group']
     rows_path.write_text(''.join(json.dumps(row) + '\n' for row in rows))
-    with pytest.raises(ValueError, match='hash mismatch'):
+    manifest = json.loads((view / 'manifest.json').read_text())
+    manifest['files']['samples.jsonl'] = hashlib.sha256(rows_path.read_bytes()).hexdigest()
+    rewritten = json.dumps(manifest, sort_keys=True, separators=(',', ':')).encode()
+    (view / 'manifest.json').write_bytes(rewritten)
+    moved = view.rename(view.parent / hashlib.sha256(rewritten).hexdigest())
+    spec['training_view_id'] = moved.name
+    spec_file.write_text(json.dumps(spec))
+    with pytest.raises(ValueError, match='Cross-split'):
         preflight(tmp_path, spec_file)
 
 
