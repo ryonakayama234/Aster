@@ -14,7 +14,7 @@ from aster.tokenizer.artifact import train_aster_tokenizer, save_tokenizer
 from aster.training.view import read_jsonl
 
 
-def verify_view(view):
+def verify_view(view, *, verify_test_text=True):
     manifest_bytes = (view / 'manifest.json').read_bytes()
     if digest(manifest_bytes) != view.name:
         raise ValueError('Training manifest identity mismatch')
@@ -26,8 +26,14 @@ def verify_view(view):
         raise ValueError('Unexpected or missing view files')
     for name, expected in manifest['files'].items():
         path = view / name
-        if path.is_symlink() or not path.resolve().is_relative_to(view.resolve()) or digest(path.read_bytes()) != expected:
+        if path.is_symlink() or not path.resolve().is_relative_to(view.resolve()) or not path.is_file():
             raise ValueError('Training file hash/path mismatch: ' + name)
+        # Sealed test content is not touched by the language-training path.
+        # The test file must still exist and be manifest-listed; its declared
+        # hash is checked against samples.jsonl below without opening it.
+        if verify_test_text or not (name.startswith('test/') and name.endswith('.txt')):
+            if digest(path.read_bytes()) != expected:
+                raise ValueError('Training file hash mismatch: ' + name)
     samples = read_jsonl((view / 'samples.jsonl').read_bytes())
     ids, groups, texts = set(), {}, {}
     paths = set()
@@ -38,9 +44,12 @@ def verify_view(view):
             raise ValueError('Duplicate sample or untracked text')
         ids.add(s['record_id'])
         paths.add(s['text_path'])
-        body = (view / s['text_path']).read_bytes()
-        if digest(body) != s['text_sha256']:
-            raise ValueError('Sample text hash mismatch')
+        if manifest['files'][s['text_path']] != s['text_sha256']:
+            raise ValueError('Sample/manifest text hash mismatch')
+        if verify_test_text or s['split'] != 'test':
+            body = (view / s['text_path']).read_bytes()
+            if digest(body) != s['text_sha256']:
+                raise ValueError('Sample text hash mismatch')
         for mapping, key in [(groups, s['leakage_group']), (texts, s['text_sha256'])]:
             if key in mapping and mapping[key] != s['split']:
                 raise ValueError('Cross-split leakage')
