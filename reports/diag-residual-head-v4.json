@@ -1,0 +1,120 @@
+{
+  "architecture_conditions_are_independent_samples": false,
+  "arm_checkpoint_records": 80,
+  "arm_training_trajectories": 16,
+  "causal_claim": false,
+  "checkpoint_observations_are_independent": false,
+  "confirmatory_verdict": null,
+  "cycle_id": "diag-residual-head-trial-0",
+  "descriptive_summary": {
+    "control_repair_gain_residual_median": 0,
+    "control_stability_gain_residual_median": -0.004396490752696991,
+    "loss_repair_gain_residual_median": 0.29166666666666663,
+    "loss_stability_gain_residual_median": -0.00035825371742248535
+  },
+  "diagnostic_classification": null,
+  "evidence_scope": "diagnostic",
+  "experiment_mode": "trial",
+  "experiment_units": 8,
+  "family_summaries": [
+    {
+      "contrasts": {
+        "repair_gain_residual": 0.25,
+        "stability_gain_residual": 0.0012568235397338867
+      },
+      "family_id": "learn-confirm-keyshift-03",
+      "family_stratum": "loss",
+      "linear_head": {
+        "D_sibling_margin": -0.0029068440198898315,
+        "Repair_CR": 0.25
+      },
+      "operation": "add",
+      "residual_head": {
+        "D_sibling_margin": -0.0016500204801559448,
+        "Repair_CR": 0.5
+      },
+      "training_examples_sha256": {
+        "correction": "a8541a2bab227da4a0130c24694d6a24e7372d48192c2a0f67d8965b26dd4f2a",
+        "replay": "37db192d568be6f6201774974e3df892f811aa9821910b74c0a1fee5d13d9bf0"
+      }
+    },
+    {
+      "contrasts": {
+        "repair_gain_residual": 0,
+        "stability_gain_residual": -0.0038995295763015747
+      },
+      "family_id": "learn-confirm-keyshift-15",
+      "family_stratum": "control",
+      "linear_head": {
+        "D_sibling_margin": -0.006513774394989014,
+        "Repair_CR": 1
+      },
+      "operation": "add",
+      "residual_head": {
+        "D_sibling_margin": -0.010413303971290588,
+        "Repair_CR": 1
+      },
+      "training_examples_sha256": {
+        "correction": "29dc71d760f1915a38658ec612214a040aa0aa43fa3cdd85081e281f103a5756",
+        "replay": "37eeda84660fd83ed5e45b2a73c59b7781ba452aea324e9652ef0e06dd20aa4d"
+      }
+    },
+    {
+      "contrasts": {
+        "repair_gain_residual": 0.3333333333333333,
+        "stability_gain_residual": -0.0019733309745788574
+      },
+      "family_id": "learn-confirm-keyshift-02",
+      "family_stratum": "loss",
+      "linear_head": {
+        "D_sibling_margin": -0.010984674096107483,
+        "Repair_CR": 0
+      },
+      "operation": "subtract",
+      "residual_head": {
+        "D_sibling_margin": -0.01295800507068634,
+        "Repair_CR": 0.3333333333333333
+      },
+      "training_examples_sha256": {
+        "correction": "13d155b99253d17158e209b0e33e784333ac3a6745689154595cd7537fc1b28c",
+        "replay": "e3a646cf11588497689d7f0362901150804079b0134f03619cf8ffbe05e04037"
+      }
+    },
+    {
+      "contrasts": {
+        "repair_gain_residual": 0,
+        "stability_gain_residual": -0.004893451929092407
+      },
+      "family_id": "learn-confirm-keyshift-12",
+      "family_stratum": "control",
+      "linear_head": {
+        "D_sibling_margin": -0.00906236469745636,
+        "Repair_CR": 0
+      },
+      "operation": "subtract",
+      "residual_head": {
+        "D_sibling_margin": -0.013955816626548767,
+        "Repair_CR": 0
+      },
+      "training_examples_sha256": {
+        "correction": "9aa87b9b2dd9a8ab7a3d6b219c1949efcecf84c6ecea31532dfba936127e8e51",
+        "replay": "ea93bb44df3e6795728be65f5a97383abdd1c8f46fcaf0a206131ca119bdf946"
+      }
+    }
+  ],
+  "independent_family_blocks": 4,
+  "paired_architecture_conditions_per_family": 2,
+  "parent_cycle_id": "diag-family-feature-audit-v3",
+  "post_hoc_selected": true,
+  "primary_quantities": {
+    "D": "Correction sibling-margin delta - Replay sibling-margin delta",
+    "Repair_CR": "Correction repair-accuracy delta - Replay repair-accuracy delta",
+    "repair_gain_residual": "Repair_CR_residual - Repair_CR_linear",
+    "stability_gain_residual": "D_residual - D_linear"
+  },
+  "schema_version": "aster-diag-residual-head-result-0",
+  "source_git_sha": "91ed7432caffc32c40bc0923f4c2c3b9ea595439",
+  "status": "complete",
+  "stop_rule_satisfied": true,
+  "unit_checkpoint_records": 40
+}
