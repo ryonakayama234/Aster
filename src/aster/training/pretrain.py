@@ -6,6 +6,7 @@ import json
 import math
 from pathlib import Path
 import random
+import resource
 import sys
 import time
 import torch
@@ -178,6 +179,7 @@ def train(root, view, tokenizer_dir, config, *, tokenizer_artifact_id=None, wiri
         bundle.update(status='completed', reload_exact_match=True)
         (run.path / 'training-bundle.json').write_bytes(json_bytes(bundle))
         run.finish('completed', checkpoint=str(checkpoint), seconds=time.perf_counter()-began,
+                   peak_rss_kib=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
                    reload_exact_match=True, train_loss=observations[-1]['train']['loss'])
         return run.path
     except BaseException as error:
