@@ -270,6 +270,13 @@ def report_existing_run(root: Path, spec_path: Path, run_path: Path) -> Path:
         raise ValueError('Missing checkpoint reload verification')
     if experiment.get('device') != 'cpu':
         raise ValueError('Gate 3 requires CPU pilot')
+    if summary.get('run_id') != run_path.name or bundle.get('run_id') != run_path.name:
+        raise ValueError('Run and bundle identity mismatch')
+    code = experiment.get('code_sha256', {})
+    for relative in ('training/pretrain.py', 'training/dataset.py'):
+        source = _in_dir(root / 'src/aster', relative)
+        if code.get(relative) != digest(source.read_bytes()):
+            raise ValueError('Run source code changed since training: ' + relative)
     expected_steps = list(range(0, 201, 50))
     observations = bundle.get('observations')
     if not isinstance(observations, list) or [x.get('step') for x in observations] != expected_steps:
