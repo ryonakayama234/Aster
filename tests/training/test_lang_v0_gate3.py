@@ -163,3 +163,21 @@ def test_preflight_rejects_config_and_leakage(tmp_path, monkeypatch):
     rows_path.write_text(''.join(json.dumps(row) + '\n' for row in rows))
     with pytest.raises(ValueError, match='hash mismatch'):
         preflight(tmp_path, spec_file)
+
+
+def test_chunked_windows_conserve_utf8_bytes_and_eos(example):
+    tok, train, _ = example
+    # One document BOS,猫,a,!,EOS partitioned into context=2 windows.
+    pieces = [Window((3, 1, 0), 'doc', 'ja', 0), Window((0, 2, 4), 'doc', 'ja', 2)]
+    scored = score_unigram(pieces, tok, fit_unigram(train, tok))['all']
+    assert scored['target_tokens'] == 4
+    assert scored['text_bytes'] == len('猫a!'.encode('utf-8')) == 5
+    assert scored['eos_target_tokens'] == 1
+
+    class Flat(torch.nn.Module):
+        def forward(self, x):
+            return torch.zeros(*x.shape, tok.vocab_size)
+
+    measured1 = score_model(Flat(), pieces, tok, batch_size=1)
+    measured2 = score_model(Flat(), pieces, tok, batch_size=2)
+    assert measured1['all']['text_bits_per_byte'] == pytest.approx(measured2['all']['text_bits_per_byte'])
