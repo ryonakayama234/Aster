@@ -235,3 +235,26 @@ def test_original_view_verifier_still_detects_test_corruption(tmp_path):
     # Intentional train/dev-only mode remains sealed-text blind;
     # the manifest still pins the test record identity.
     assert len(verify_view(view, verify_test_text=False)) == 3
+
+
+def test_actual_tinylm_matches_existing_trainer_nll_and_padding(example):
+    """Integration: compare the new read-only scorer with the original trainer."""
+    from aster.model.tiny_lm import ModelConfig, TinyLM
+    from aster.training.pretrain import evaluate
+
+    tok, _, dev = example
+    torch.manual_seed(123)
+    model = TinyLM(ModelConfig(vocab_size=tok.vocab_size, context_length=8,
+                               width=8, heads=2, layers=1))
+    original = evaluate(model, dev, tok.eos_id, batch_size=2)
+    measured_batch = score_model(model, dev, tok, batch_size=2)
+    measured_single = score_model(model, dev, tok, batch_size=1)
+    assert original is not None
+    assert original['target_tokens'] == measured_batch['all']['target_tokens']
+    assert measured_batch['all']['mean_nll_nats'] == pytest.approx(original['loss'], abs=1e-5)
+    assert measured_single['all']['mean_nll_nats'] == pytest.approx(
+        measured_batch['all']['mean_nll_nats'], abs=1e-5)
+    assert measured_single['all']['text_bits_per_byte'] == pytest.approx(
+        measured_batch['all']['text_bits_per_byte'], abs=1e-5)
+    assert measured_batch['all']['total_nll_nats'] == pytest.approx(
+        sum(part['total_nll_nats'] for part in measured_batch['by_domain'].values()), abs=1e-5)
