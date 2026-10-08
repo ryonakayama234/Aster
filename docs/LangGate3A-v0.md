@@ -12,7 +12,7 @@ Does the frozen Japanese TinyLM improve held-out next-token NLL relative to (a) 
 - BPE artifact: 37e0b82f8e80f90a84346fd37d00b680669174388cf94f6cd88fa5b76cc13513
 - Total vocabulary: 514 (includes BOS/EOS)
 - Existing pilot config: configs/tinylm-pilot-v0.json — context 128, width 64, heads 4, layers 2, batch 8, 200 updates, eval every 50, LR .003, seed 42.
-- Source/config Git blob SHA pins: configs/lang-v0-gate3.json.
+- Source/config Git blob SHA pins: configs/lang-v0-gate3.json, including the view-verification code.
 - Trainer instrumentation change: save Linux ru_maxrss in completed local Run summary; no optimizer/model changes.
 
 ## Metrics
@@ -42,7 +42,7 @@ After that Run completes, the read-only reporter command is:
 
 It validates the completed Run and selected training windows, checks checkpoint SHA-256 and metadata, reloads all five frozen checkpoints and writes only local runs/<id>/lang-gate3-report.json. Existing differing reports are never overwritten.
 
-**Known legacy caveat:** the existing pretrain.prepare_windows -> verify_view code reads test file bytes *for integrity verification*, although it never trains or scores test targets. The new Gate 3A preflight/report does not perform that read. Before a Gate 3B training run, this provenance-only legacy read must be audited/changed or explicitly acknowledged. It does not justify opening sealed-test outcomes.
+**Sealed-test audit:** Gate 3A also changes the existing `prepare_windows` path to call `verify_view(..., verify_test_text=False)`. It still verifies the full manifest, all listed file paths, train/dev text bytes, and cross-split leakage metadata, but does not open sealed test text. The default `verify_view(view)` continues to perform full-integrity test-byte hashing for non-training callers. Synthetic regression tests enforce the no-read property.
 
 ## Interpretation and stop rule
 
