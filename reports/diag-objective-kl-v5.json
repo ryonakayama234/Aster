@@ -58,7 +58,7 @@
       "family_stratum": "control",
       "operation": "add",
       "parent_q_sha256": {
-        "correction": "821d929161f12be28b42cf3220c2fc3204d487b2ab4b57e8fc357754248e9f0",
+        "correction": "821d929161f12be28b42cf3220c2fc3204d487b2aeb4b57e8fc357754248e9f0",
         "replay": "958f819fd3a901734ac87dc870fd93ff651b11913bbcf6413dfea58f157443f9"
       },
       "training_examples_sha256": {
