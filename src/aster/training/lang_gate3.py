@@ -250,6 +250,22 @@ def score_model(model: torch.nn.Module, windows: list[Window], tokenizer: Any,
     return _score(windows, tokenizer, losses)
 
 
+def verify_run_sources(root: Path, spec: dict[str, Any], code: Any) -> None:
+    """Require all and only pinned model, tokenizer and trainer sources."""
+    frozen_code = {name.removeprefix('src/aster/'): sha
+                   for name, sha in spec['source_git_blobs'].items()
+                   if name.startswith('src/aster/')}
+    if not isinstance(code, dict) or not frozen_code or set(code) != set(frozen_code):
+        raise ValueError('Run code provenance file set does not match frozen Gate 3')
+    for relative, recorded_sha in sorted(code.items()):
+        source = _in_dir(root / 'src/aster', relative)
+        data = source.read_bytes()
+        if digest(data) != recorded_sha:
+            raise ValueError('Run source code changed since training: ' + relative)
+        if git_blob_sha(data) != frozen_code[relative]:
+            raise ValueError('Run source code differs from frozen Gate 3: ' + relative)
+
+
 def report_existing_run(root: Path, spec_path: Path, run_path: Path) -> Path:
     """Re-score a completed frozen pilot; never train or inspect test targets."""
     root = root.resolve()
@@ -272,19 +288,7 @@ def report_existing_run(root: Path, spec_path: Path, run_path: Path) -> Path:
         raise ValueError('Gate 3 requires CPU pilot')
     if summary.get('run_id') != run_path.name or bundle.get('run_id') != run_path.name:
         raise ValueError('Run and bundle identity mismatch')
-    code = experiment.get('code_sha256')
-    frozen_code = {name.removeprefix('src/aster/'): sha
-                   for name, sha in spec['source_git_blobs'].items()
-                   if name.startswith('src/aster/')}
-    if not isinstance(code, dict) or not frozen_code or set(code) != set(frozen_code):
-        raise ValueError('Run code provenance file set does not match frozen Gate 3')
-    for relative, recorded_sha in sorted(code.items()):
-        source = _in_dir(root / 'src/aster', relative)
-        data = source.read_bytes()
-        if digest(data) != recorded_sha:
-            raise ValueError('Run source code changed since training: ' + relative)
-        if git_blob_sha(data) != frozen_code[relative]:
-            raise ValueError('Run source code differs from frozen Gate 3: ' + relative)
+    verify_run_sources(root, spec, experiment.get('code_sha256'))
     expected_steps = list(range(0, 201, 50))
     observations = bundle.get('observations')
     if not isinstance(observations, list) or [x.get('step') for x in observations] != expected_steps:
