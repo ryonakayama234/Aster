@@ -258,3 +258,32 @@ def test_actual_tinylm_matches_existing_trainer_nll_and_padding(example):
         measured_batch['all']['text_bits_per_byte'], abs=1e-5)
     assert measured_batch['all']['total_nll_nats'] == pytest.approx(
         sum(part['total_nll_nats'] for part in measured_batch['by_domain'].values()), abs=1e-5)
+
+
+def test_run_source_provenance_requires_all_pinned_files(tmp_path):
+    """A changed Transformer is a different experiment even with identical dimensions."""
+    from aster.corpus.pipeline import digest
+    from aster.training.lang_gate3 import verify_run_sources
+
+    files = {'model/tiny_lm.py': b'model-v1', 'model/transformer.py': b'attention-v1',
+             'training/pretrain.py': b'trainer-v1'}
+    frozen = {}
+    recorded = {}
+    for name, raw in files.items():
+        path = tmp_path / 'src/aster' / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(raw)
+        frozen['src/aster/' + name] = git_blob_sha(raw)
+        recorded[name] = digest(raw)
+    spec = {'source_git_blobs': frozen}
+    verify_run_sources(tmp_path, spec, recorded)
+
+    with pytest.raises(ValueError, match='file set'):
+        verify_run_sources(tmp_path, spec, {'model/tiny_lm.py': recorded['model/tiny_lm.py']})
+    changed_path = tmp_path / 'src/aster/model/transformer.py'
+    changed_path.write_bytes(b'attention-v2')
+    with pytest.raises(ValueError, match='changed since training'):
+        verify_run_sources(tmp_path, spec, recorded)
+    recorded['model/transformer.py'] = digest(changed_path.read_bytes())
+    with pytest.raises(ValueError, match='differs from frozen'):
+        verify_run_sources(tmp_path, spec, recorded)
