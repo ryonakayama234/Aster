@@ -90,8 +90,6 @@ TRIAL_MAX_EPISODE_STEPS = 8
 RESIDUAL_HIDDEN_WIDTH = 16
 EXPECTED_LINEAR_HEAD_PARAMS = 17
 EXPECTED_RESIDUAL_BRANCH_PARAMS = 289
-EXPECTED_LINEAR_DECISION_PATH_PARAMS = 44_289
-EXPECTED_RESIDUAL_DECISION_PATH_PARAMS = 44_578
 
 EXPECTED_FAMILY_BLOCKS = len(TRIAL_FAMILY_IDS)
 EXPECTED_ARCHITECTURE_CONDITIONS = len(ARCHITECTURES)
@@ -189,18 +187,21 @@ def architecture_spec(
 
     if linear_parameters != EXPECTED_LINEAR_HEAD_PARAMS:
         raise RuntimeError("DIAG v4 parent linear head parameter count changed")
-    if parent_decision_path_parameters != EXPECTED_LINEAR_DECISION_PATH_PARAMS:
-        raise RuntimeError("DIAG v4 frozen ACT Decision path parameter count changed")
     if architecture == "linear-head":
         if residual_parameters != 0:
             raise RuntimeError("DIAG v4 linear control unexpectedly has residual parameters")
-        if decision_path_parameters != EXPECTED_LINEAR_DECISION_PATH_PARAMS:
-            raise RuntimeError("DIAG v4 linear Decision path parameter count changed")
+        if decision_path_parameters != parent_decision_path_parameters:
+            raise RuntimeError("DIAG v4 linear Decision path differs from loaded ACT parent")
     else:
         if residual_parameters != EXPECTED_RESIDUAL_BRANCH_PARAMS:
             raise RuntimeError("DIAG v4 residual branch parameter count changed")
-        if decision_path_parameters != EXPECTED_RESIDUAL_DECISION_PATH_PARAMS:
-            raise RuntimeError("DIAG v4 residual Decision path parameter count changed")
+        expected_treatment_parameters = (
+            parent_decision_path_parameters + EXPECTED_RESIDUAL_BRANCH_PARAMS
+        )
+        if decision_path_parameters != expected_treatment_parameters:
+            raise RuntimeError(
+                "DIAG v4 residual Decision path is not loaded ACT parent + residual branch"
+            )
 
     trainability = trainability_spec(model, "head-only")
     trainable_names = tuple(cast(list[str], trainability["trainable_parameter_names"]))
@@ -210,6 +211,8 @@ def architecture_spec(
     return {
         "architecture": architecture,
         "backbone_width": model.backbone.config.width,
+        "backbone_vocab_size": model.backbone.config.vocab_size,
+        "parent_decision_path_parameter_count": parent_decision_path_parameters,
         "residual_hidden_width": (
             RESIDUAL_HIDDEN_WIDTH if architecture == "residual-head" else None
         ),
