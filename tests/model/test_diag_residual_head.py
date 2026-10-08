@@ -20,6 +20,7 @@ from aster.training.diag_residual_head import (
     TRIAL_FAMILY_IDS,
     TRIAL_FAMILY_STRATA,
     aggregate_residual_head_units,
+    architecture_spec,
     assert_step0_equivalence,
     build_architecture_model,
 )
@@ -74,6 +75,33 @@ def test_residual_branch_adds_exactly_289_parameters():
         - sum(parameter.numel() for parameter in parent.head.parameters())
     )
     assert residual_params == EXPECTED_RESIDUAL_BRANCH_PARAMS == 289
+
+
+def test_architecture_spec_anchors_counts_to_loaded_parent():
+    parent = _model()
+    linear = build_architecture_model(parent, "linear-head")
+    residual = build_architecture_model(parent, "residual-head")
+
+    parent_count = sum(
+        parameter.numel()
+        for name, parameter in parent.named_parameters()
+        if not name.startswith("backbone.lm_head.")
+    )
+    assert parent_count != 44_289
+
+    linear_spec = architecture_spec(parent, linear, "linear-head")
+    residual_spec = architecture_spec(parent, residual, "residual-head")
+
+    assert linear_spec["backbone_vocab_size"] == parent.backbone.config.vocab_size
+    assert linear_spec["parent_decision_path_parameter_count"] == parent_count
+    assert linear_spec["decision_path_parameter_count"] == parent_count
+    assert linear_spec["added_decision_path_parameters_vs_linear"] == 0
+    assert residual_spec["parent_decision_path_parameter_count"] == parent_count
+    assert residual_spec["decision_path_parameter_count"] == (
+        parent_count + EXPECTED_RESIDUAL_BRANCH_PARAMS
+    )
+    assert residual_spec["added_decision_path_parameters_vs_linear"] == 289
+    assert residual_spec["added_fraction_vs_linear"] == pytest.approx(289 / parent_count)
 
 
 def test_architecture_builder_preserves_parent_and_caller_rng():
