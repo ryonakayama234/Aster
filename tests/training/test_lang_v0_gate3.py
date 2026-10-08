@@ -188,3 +188,50 @@ def test_chunked_windows_conserve_utf8_bytes_and_eos(example):
     measured1 = score_model(Flat(), pieces, tok, batch_size=1)
     measured2 = score_model(Flat(), pieces, tok, batch_size=2)
     assert measured1['all']['text_bits_per_byte'] == pytest.approx(measured2['all']['text_bits_per_byte'])
+
+
+def test_training_windows_never_open_sealed_test(tmp_path, monkeypatch):
+    from aster.training.dataset import prepare_windows
+    from aster.training.tokenizer_run import verify_view
+
+    view = _build_view(tmp_path)
+    original_bytes = Path.read_bytes
+    original_text = Path.read_text
+
+    def guarded_bytes(path):
+        if '/test/' in str(path):
+            raise AssertionError('Training must not read sealed-test bytes')
+        return original_bytes(path)
+
+    def guarded_text(path, *args, **kwargs):
+        if '/test/' in str(path):
+            raise AssertionError('Training must not read sealed-test text')
+        return original_text(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, 'read_bytes', guarded_bytes)
+    monkeypatch.setattr(Path, 'read_text', guarded_text)
+    splits = prepare_windows(view, ToyTokenizer(), 2)
+    assert splits['train'] and splits['dev']
+    assert all(w.record_id != 'c' for windows in splits.values() for w in windows)
+    # Full-integrity default for non-training callers remains unchanged.
+    with pytest.raises(AssertionError, match='sealed-test bytes'):
+        verify_view(view)
+
+
+def test_training_view_detects_tampered_train_bytes(tmp_path):
+    from aster.training.dataset import prepare_windows
+    view = _build_view(tmp_path)
+    (view / 'train/a.txt').write_text('aa', encoding='utf-8')
+    with pytest.raises(ValueError, match='Training file hash'):
+        prepare_windows(view, ToyTokenizer(), 2)
+
+
+def test_original_view_verifier_still_detects_test_corruption(tmp_path):
+    from aster.training.tokenizer_run import verify_view
+    view = _build_view(tmp_path)
+    (view / 'test/c.txt').write_text('aa', encoding='utf-8')
+    with pytest.raises(ValueError, match='Training file hash'):
+        verify_view(view)
+    # Intentional train/dev-only mode remains sealed-text blind;
+    # the manifest still pins the test record identity.
+    assert len(verify_view(view, verify_test_text=False)) == 3
