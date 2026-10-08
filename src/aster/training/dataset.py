@@ -115,7 +115,7 @@ def prepare_windows(view, tokenizer, context_length):
     if type(context_length) is not int or context_length < 1:
         raise ValueError('context_length must be positive')
     view = Path(view).resolve()
-    samples = sorted(verify_view(view), key=lambda s: s['record_id'])
+    samples = sorted(verify_view(view, skip_test_bytes=True), key=lambda s: s['record_id'])
     splits = {'train': [], 'dev': []}
     for sample in samples:
         if sample['split'] not in splits:
