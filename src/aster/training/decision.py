@@ -1,6 +1,6 @@
 """Supervised imitation utilities for AsterDecision-v0."""
 
-from collections.abc import Collection
+from collections.abc import Callable, Collection
 from copy import deepcopy
 from dataclasses import dataclass
 from time import perf_counter
@@ -200,6 +200,7 @@ def train_decision_with_checkpoints(
     checkpoints: Sequence[int],
     config: DecisionTrainConfig = DecisionTrainConfig(),
     trainable_parameter_names: Collection[str] | None = None,
+    loss_fn: Callable[[DecisionModel, AsterTokenizer, DecisionExample], torch.Tensor] | None = None,
 ) -> tuple[list[float], dict[int, DecisionModel], dict[int, float]]:
     """Train once while snapshotting model weights at fixed optimizer steps.
 
@@ -242,7 +243,7 @@ def train_decision_with_checkpoints(
     for step in range(config.steps):
         example = examples[step % len(examples)]
         optimizer.zero_grad(set_to_none=True)
-        loss = decision_loss(model, tokenizer, example)
+        loss = (decision_loss if loss_fn is None else loss_fn)(model, tokenizer, example)
         loss.backward()
         optimizer.step()
         losses.append(float(loss.detach().item()))

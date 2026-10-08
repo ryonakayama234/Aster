@@ -1,0 +1,84 @@
+{
+  "schema_version": "aster-diag-objective-kl-protocol-0",
+  "cycle_id": "diag-objective-kl-trial-0",
+  "parent_cycle_id": "diag-residual-head-trial-0",
+  "registration_issue": 87,
+  "implementation_base_sha": "a9a979588bc501575de24be89d5423ebe6fe7f3d",
+  "evidence_scope": "diagnostic",
+  "experiment_mode": "trial",
+  "post_hoc_selected": true,
+  "causal_claim": false,
+  "confirmatory_verdict": null,
+  "single_factor": "training_objective",
+  "objectives": [
+    "ce",
+    "ce-kl"
+  ],
+  "coefficient": 1,
+  "temperature": 1,
+  "kl_direction": "KL(parent||student)",
+  "parent_model": {
+    "resolution": "resolve_act_parent_artifact(DEFAULT_ACT_RUN_ID)",
+    "backbone": "frozen",
+    "head": "linear",
+    "artifact_digest": "resolve-and-verify-on-WSL"
+  },
+  "same_training_examples_across_objectives": true,
+  "same_parent_q_probabilities_across_objectives": true,
+  "teacher_score_example_set": "training_examples_only_no_sibling_examples",
+  "candidate_order": "identical",
+  "families": [
+    {
+      "family_id": "learn-confirm-keyshift-03",
+      "operation": "add",
+      "stratum": "loss"
+    },
+    {
+      "family_id": "learn-confirm-keyshift-15",
+      "operation": "add",
+      "stratum": "control"
+    },
+    {
+      "family_id": "learn-confirm-keyshift-02",
+      "operation": "subtract",
+      "stratum": "loss"
+    },
+    {
+      "family_id": "learn-confirm-keyshift-12",
+      "operation": "subtract",
+      "stratum": "control"
+    }
+  ],
+  "seed": 42,
+  "optimizer": "AdamW",
+  "lr": 0.003,
+  "steps": 100,
+  "checkpoints": [
+    0,
+    10,
+    25,
+    50,
+    100
+  ],
+  "cpu_threads": 2,
+  "trainable_parameters": "head.*",
+  "expected_experiment_units": 8,
+  "expected_training_trajectories": 16,
+  "expected_unit_checkpoint_records": 40,
+  "expected_arm_checkpoint_records": 80,
+  "target_metric": "D_sibling_margin=delta(Correction)-delta(Replay)",
+  "repair_metric": "Repair_CR=delta(Correction)-delta(Replay)",
+  "contrasts": [
+    "D_ce_kl-D_ce",
+    "Repair_CR_ce_kl-Repair_CR_ce"
+  ],
+  "decision_tree": {
+    "preservation_supported_diagnostic": "both loss stability > 0, both loss repair >= 0, all controls stability >= 0 and repair >= 0",
+    "repair_only": "both loss repair > 0 and first predicate false",
+    "stability_only": "both loss stability > 0 and previous predicates false",
+    "mixed_or_no_useful_effect": "otherwise"
+  },
+  "no_sealed_test": true,
+  "no_model_promotion": true,
+  "no_p_values": true
+}
