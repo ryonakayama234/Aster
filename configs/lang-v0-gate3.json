@@ -1,0 +1,27 @@
+{
+  "schema_version": "aster-lang-gate3-0",
+  "training_view_id": "6dd51f52b903829b8548686743acda1dd33ccd6d3a4dfefc8abd14deb6e9ff4d",
+  "tokenizer_artifact_id": "37e0b82f8e80f90a84346fd37d00b680669174388cf94f6cd88fa5b76cc13513",
+  "vocab_size": 514,
+  "pilot_config_path": "configs/tinylm-pilot-v0.json",
+  "source_git_blobs": {
+    "configs/tinylm-pilot-v0.json": "f1c3ce585e9e0e012701124352a00c87255cfac1",
+    "src/aster/training/dataset.py": "3b876bcf092a33d2ec35c698dace851ad53c51df",
+    "src/aster/training/pretrain.py": "db24aeec81963966d8093c40b26c5153d87c7f18"
+  },
+  "pilot_config": {
+    "mode": "pilot",
+    "context_length": 128,
+    "width": 64,
+    "heads": 4,
+    "layers": 2,
+    "batch_size": 8,
+    "steps": 200,
+    "eval_every": 50,
+    "learning_rate": 0.003,
+    "weight_decay": 0.01,
+    "seed": 42,
+    "overfit_windows": 1,
+    "threads": 2
+  }
+}
