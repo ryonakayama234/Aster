@@ -70,7 +70,7 @@ from aster.training.learn_probe import DEFAULT_ACT_RUN_ID, resolve_act_parent_ar
 
 
 TRIAL_CYCLE_ID = "diag-objective-kl-trial-0"
-TRIAL_PARENT_CYCLE_ID = "diag-objective-kl-trial-0"
+TRIAL_PARENT_CYCLE_ID = "diag-residual-head-trial-0"
 TRIAL_FAMILY_IDS = (
     "learn-confirm-keyshift-03",
     "learn-confirm-keyshift-15",
@@ -152,7 +152,7 @@ def objective_spec(
     model: DecisionModel,
     objective: str,
 ) -> dict[str, object]:
-    """Verify that only the loss, not the objective, changes."""
+    """Verify that only the loss, not the architecture, changes."""
     if objective not in OBJECTIVES:
         raise ValueError(f"Unknown DIAG v5 objective: {objective}")
     if not isinstance(parent.head, DecisionHead) or isinstance(
@@ -323,6 +323,25 @@ def assert_step0_equivalence(
 def _examples_digest(examples: Sequence[DecisionExample]) -> str:
     return digest(json_bytes([example.to_dict() for example in examples]))
 
+def parent_q_digest(
+    parent: DecisionModel,
+    tokenizer: AsterTokenizer,
+    examples: Sequence[DecisionExample],
+) -> str:
+    """Fingerprint ordered parent distributions on training examples only."""
+    probabilities: list[list[float]] = []
+    parent.eval()
+    with torch.no_grad():
+        for example in examples:
+            scores = score_candidates(
+                parent, tokenizer, example.state, example.trajectory,
+                example.candidates,
+            )
+            q = torch.softmax(scores / KL_TEMPERATURE, dim=0)
+            probabilities.append([float(v) for v in q.cpu().tolist()])
+    return digest(json_bytes(probabilities))
+
+
 
 def _checkpoint_metrics(
     baseline: DecisionModel,
@@ -346,6 +365,9 @@ def _checkpoint_metrics(
 
 def _validate_unit_invariants(unit: dict[str, object]) -> None:
     equivalence = _require_dict(unit, "step0_equivalence")
+    gradient = _require_dict(unit, "step0_objective_gradient_equivalence")
+    if gradient.get("gradient_identity_within_1e_6") is not True:
+        raise RuntimeError("DIAG v5 step-0 KL gradient gate failed")
     if equivalence.get("exact_candidate_score_identity") is not True:
         raise RuntimeError("DIAG v5 lacks exact step-0 score identity")
     if equivalence.get("exact_argmax_identity") is not True:
@@ -495,6 +517,10 @@ def run_objective_kl_unit(
             "replay": _examples_digest(replay_training),
             "correction": _examples_digest(correction_training),
         }
+        parent_q_digests = {
+            "replay": parent_q_digest(parent_model, tokenizer, replay_training),
+            "correction": parent_q_digest(parent_model, tokenizer, correction_training),
+        }
 
         control_baseline = deepcopy(parent_model)
         treatment_baseline = deepcopy(parent_model)
@@ -575,6 +601,7 @@ def run_objective_kl_unit(
                     "config": asdict(config),
                     "trainability": trainability,
                     "training_examples_sha256": training_digests[arm],
+                    "parent_q_sha256": parent_q_digests[arm],
                     "losses": losses,
                     "ce_losses": recorder.ce_losses,
                     "kl_losses": recorder.kl_losses,
@@ -648,6 +675,7 @@ def run_objective_kl_unit(
                 "after_sha256": tokenizer_after_sha,
             },
             "training_examples_sha256": training_digests,
+            "parent_q_sha256": parent_q_digests,
             "checkpoints": checkpoints,
             "resources": resources,
         }
@@ -678,7 +706,11 @@ def _validate_matched_training_data(
 ) -> None:
     linear_digests = _require_dict(linear, "training_examples_sha256")
     residual_digests = _require_dict(residual, "training_examples_sha256")
+    control_q = _require_dict(linear, "parent_q_sha256")
+    treatment_q = _require_dict(residual, "parent_q_sha256")
     for arm in ("replay", "correction"):
+        if _require_str(control_q, arm) != _require_str(treatment_q, arm):
+            raise ValueError(f"DIAG v5 causal factor changed {arm} parent Q distribution")
         if _require_str(linear_digests, arm) != _require_str(residual_digests, arm):
             raise ValueError(
                 f"DIAG v5 causal factor changed {arm} training examples"
@@ -688,7 +720,7 @@ def _validate_matched_training_data(
 def aggregate_objective_kl_units(
     units: Sequence[dict[str, object]],
 ) -> dict[str, object]:
-    """Aggregate paired architectures without treating repeated conditions as samples."""
+    """Aggregate paired objectives without treating repeated conditions as samples."""
     if len(units) != EXPECTED_EXPERIMENT_UNITS:
         return {
             "schema_version": "aster-diag-objective-kl-result-0",
@@ -762,7 +794,7 @@ def aggregate_objective_kl_units(
                     "D_sibling_margin": linear_d,
                     "Repair_CR": linear_repair,
                 },
-                "objective_kl": {
+                "ce_kl": {
                     "D_sibling_margin": residual_d,
                     "Repair_CR": residual_repair,
                 },
@@ -773,6 +805,7 @@ def aggregate_objective_kl_units(
                 "training_examples_sha256": _require_dict(
                     linear, "training_examples_sha256"
                 ),
+                "parent_q_sha256": _require_dict(linear, "parent_q_sha256"),
             }
         )
 
@@ -825,11 +858,13 @@ def aggregate_objective_kl_units(
         "checkpoint_observations_are_independent": False,
         "confirmatory_verdict": None,
         "diagnostic_classification": None,
+        "kl_lambda": KL_LAMBDA,
+        "kl_temperature": KL_TEMPERATURE,
         "primary_quantities": {
             "D": "Correction sibling-margin delta - Replay sibling-margin delta",
             "Repair_CR": "Correction repair-accuracy delta - Replay repair-accuracy delta",
-            "stability_gain_kl": "D_residual - D_linear",
-            "repair_gain_kl": "Repair_CR_residual - Repair_CR_linear",
+            "stability_gain_kl": "D_(ce-kl) - D_ce",
+            "repair_gain_kl": "Repair_CR_(ce-kl) - Repair_CR_ce",
         },
         "family_summaries": family_summaries,
         "descriptive_summary": descriptive,
@@ -858,7 +893,7 @@ def run_objective_kl_campaign(root: str | Path) -> Path:
             "independent_family_blocks": EXPECTED_FAMILY_BLOCKS,
             "source_git_sha": source_git_sha,
             "families": list(TRIAL_FAMILY_IDS),
-            "architectures": list(OBJECTIVES),
+            "objectives": list(OBJECTIVES),
             "seed": TRIAL_SEED,
             "checkpoints": list(TRIAL_CHECKPOINTS),
             "completed_units_at_start": len(completed),
