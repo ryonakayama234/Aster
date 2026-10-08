@@ -70,10 +70,10 @@ Only the training **objective** would differ. Use the same fixed training exampl
 
 - Source: the user's full WSL terminal output of `diag-residual-head-results.json` for Run `7fd70402448d463fac4472931c623b84`.
 - Companion `reports/diag-residual-head-v4.json` is a reserialization of that printed aggregate, with `diagnostic_classification=null` preserved exactly as the runner emitted it. The interpretive classification exists **only in this report and Issue #82**, not as a retroactive edit of measurement output.
-- **Pending checksum gate:** compare `git hash-object runs/7fd70402448d463fac4472931c623b84/diag-residual-head-results.json` on the WSL machine with the GitHub blob SHA for `reports/diag-residual-head-v4.json`. Until the hashes match, the repo copy is **transcript-derived, not verified byte-identical to the source**.
+- **Checksum gate satisfied (user-reported WSL check, 2026-10-08):** the user ran `git hash-object runs/7fd70402448d463fac4472931c623b84/diag-residual-head-results.json` and supplied `9b0a02be9da9db24ce417ccc65d4a965aef8fc49`. This exactly matches the GitHub blob SHA of `reports/diag-residual-head-v4.json`. The identity confirmation relies on the user's command output; the reviewer did not directly access the user's WSL filesystem.
 - This report does not include or independently read the eight `diag-residual-head-unit.json` files. Their per-checkpoint frozen-backbone digests, step-0 score identity, tokenizer identity, and architecture parameter counts are asserted by the successful runner gates but not independently audited from the pasted aggregate.
 - The full generated local Run tree is retained under ignored `runs/`; no model promotion, sealed-test access, or rerun was performed for this report.
 
 ## Research action
 
-Close Issue #82 only after this report and the transcript-derived JSON are merged and the byte-identity check is documented. Start any objective Trial under a new, separately pre-registered issue rather than extending the eight-unit DIAG v4 budget.
+The user-reported byte-identity check is recorded above. Close Issue #82 after this report and JSON are merged, preserving the independent-review limitation (Codex usage limit) in PR discussion. The next objective Trial is separately pre-registered as Issue #87; do not extend the eight-unit DIAG v4 budget.
