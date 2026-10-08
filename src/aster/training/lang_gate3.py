@@ -272,11 +272,19 @@ def report_existing_run(root: Path, spec_path: Path, run_path: Path) -> Path:
         raise ValueError('Gate 3 requires CPU pilot')
     if summary.get('run_id') != run_path.name or bundle.get('run_id') != run_path.name:
         raise ValueError('Run and bundle identity mismatch')
-    code = experiment.get('code_sha256', {})
-    for relative in ('training/pretrain.py', 'training/dataset.py', 'training/tokenizer_run.py'):
+    code = experiment.get('code_sha256')
+    frozen_code = {name.removeprefix('src/aster/'): sha
+                   for name, sha in spec['source_git_blobs'].items()
+                   if name.startswith('src/aster/')}
+    if not isinstance(code, dict) or not frozen_code or set(code) != set(frozen_code):
+        raise ValueError('Run code provenance file set does not match frozen Gate 3')
+    for relative, recorded_sha in sorted(code.items()):
         source = _in_dir(root / 'src/aster', relative)
-        if code.get(relative) != digest(source.read_bytes()):
+        data = source.read_bytes()
+        if digest(data) != recorded_sha:
             raise ValueError('Run source code changed since training: ' + relative)
+        if git_blob_sha(data) != frozen_code[relative]:
+            raise ValueError('Run source code differs from frozen Gate 3: ' + relative)
     expected_steps = list(range(0, 201, 50))
     observations = bundle.get('observations')
     if not isinstance(observations, list) or [x.get('step') for x in observations] != expected_steps:
@@ -309,6 +317,7 @@ def report_existing_run(root: Path, spec_path: Path, run_path: Path) -> Path:
                'pilot_config': spec['pilot_config'],
                'source_git_blobs': spec['source_git_blobs'],
                'gate3_spec_sha256': digest(spec_path.read_bytes()),
+               'evaluator_git_blob': git_blob_sha(Path(__file__).read_bytes()),
                'preflight': audit, 'baseline': {'fit_split': 'train',
                'counts_sha256': digest(json_bytes(baseline)), 'train_targets': baseline['train_target_tokens'],
                'dev': score_unigram(windows['dev'], tokenizer, baseline)},
