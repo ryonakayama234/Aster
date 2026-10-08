@@ -14,7 +14,7 @@ from aster.tokenizer.artifact import train_aster_tokenizer, save_tokenizer
 from aster.training.view import read_jsonl
 
 
-def verify_view(view):
+def verify_view(view, *, skip_test_bytes=False):
     manifest_bytes = (view / 'manifest.json').read_bytes()
     if digest(manifest_bytes) != view.name:
         raise ValueError('Training manifest identity mismatch')
@@ -26,7 +26,12 @@ def verify_view(view):
         raise ValueError('Unexpected or missing view files')
     for name, expected in manifest['files'].items():
         path = view / name
-        if path.is_symlink() or not path.resolve().is_relative_to(view.resolve()) or digest(path.read_bytes()) != expected:
+        if path.is_symlink() or not path.resolve().is_relative_to(view.resolve()):
+            raise ValueError('Training file hash/path mismatch: ' + name)
+        # LANG experiments keep sealed test bytes unopened. File metadata remains audited.
+        if skip_test_bytes and name.startswith('test/'):
+            continue
+        if digest(path.read_bytes()) != expected:
             raise ValueError('Training file hash/path mismatch: ' + name)
     samples = read_jsonl((view / 'samples.jsonl').read_bytes())
     ids, groups, texts = set(), {}, {}
@@ -38,9 +43,10 @@ def verify_view(view):
             raise ValueError('Duplicate sample or untracked text')
         ids.add(s['record_id'])
         paths.add(s['text_path'])
-        body = (view / s['text_path']).read_bytes()
-        if digest(body) != s['text_sha256']:
-            raise ValueError('Sample text hash mismatch')
+        if not (skip_test_bytes and s['split'] == 'test'):
+            body = (view / s['text_path']).read_bytes()
+            if digest(body) != s['text_sha256']:
+                raise ValueError('Sample text hash mismatch')
         for mapping, key in [(groups, s['leakage_group']), (texts, s['text_sha256'])]:
             if key in mapping and mapping[key] != s['split']:
                 raise ValueError('Cross-split leakage')
