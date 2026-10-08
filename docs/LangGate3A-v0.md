@@ -12,7 +12,7 @@ Does the frozen Japanese TinyLM improve held-out next-token NLL relative to (a) 
 - BPE artifact: 37e0b82f8e80f90a84346fd37d00b680669174388cf94f6cd88fa5b76cc13513
 - Total vocabulary: 514 (includes BOS/EOS)
 - Existing pilot config: configs/tinylm-pilot-v0.json — context 128, width 64, heads 4, layers 2, batch 8, 200 updates, eval every 50, LR .003, seed 42.
-- Source/config Git blob SHA pins: configs/lang-v0-gate3.json, including the view-verification code.
+- Source/config Git blob SHA pins: configs/lang-v0-gate3.json, including **all 11 files captured by the trainer's code_sha256 provenance** (TinyLM, Transformer, LM head, checkpoint, inference, Tokenizer, records, and training/view preparation). The read-only report checks the complete code-file set and both the Run-recorded SHA-256 and frozen Git blob hash for each source. A mismatch stops reporting instead of silently comparing different implementations.
 - Trainer instrumentation change: save Linux ru_maxrss in completed local Run summary; no optimizer/model changes.
 
 ## Metrics
@@ -48,4 +48,4 @@ It validates the completed Run and selected training windows, checks checkpoint 
 
 Gate 3B will classify results as LANG-Learning observed, Overfit only, or Inconclusive. The current held-out dev is only one Japanese prose document, so improvement would not demonstrate broad dialogue capability. No hyperparameter search, corpus edits, new Tokenizer or Decision/DIAG modification is part of this gate.
 
-Gate 3A local synthetic tests are not evidence of language-learning success. GitHub CI and independent review must be checked before merging. Do not commit private corpus, local model checkpoints, or measurement Run data.
+Gate 3A synthetic tests also cross-check the actual TinyLM's NLL against the original training evaluator, padding invariance, and adversarial changes to the Transformer code hash. They are not evidence of language-learning success. GitHub CI and independent review must be checked before merging. Do not commit private corpus, local model checkpoints, or measurement Run data.
