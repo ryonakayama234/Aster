@@ -1,0 +1,138 @@
+{
+  "arm_checkpoint_records": 80,
+  "arm_training_trajectories": 16,
+  "causal_claim": false,
+  "checkpoint_observations_are_independent": false,
+  "confirmatory_verdict": null,
+  "cycle_id": "diag-objective-kl-trial-0",
+  "descriptive_summary": {
+    "control_repair_gain_kl_median": 0.0,
+    "control_stability_gain_kl_median": 0.0009527653455734253,
+    "loss_repair_gain_kl_median": 0.0625,
+    "loss_stability_gain_kl_median": 0.0009122714400291443
+  },
+  "diagnostic_classification": null,
+  "evidence_scope": "diagnostic",
+  "experiment_mode": "trial",
+  "experiment_units": 8,
+  "family_summaries": [
+    {
+      "ce": {
+        "D_sibling_margin": -0.0029068440198898315,
+        "Repair_CR": 0.25
+      },
+      "ce_kl": {
+        "D_sibling_margin": -0.0026132166385650635,
+        "Repair_CR": 0.375
+      },
+      "contrasts": {
+        "repair_gain_kl": 0.125,
+        "stability_gain_kl": 0.00029362738132476807
+      },
+      "family_id": "learn-confirm-keyshift-03",
+      "family_stratum": "loss",
+      "operation": "add",
+      "parent_q_sha256": {
+        "correction": "176919b06231e9ab01070466681a05d090b91732e7d846a9f629115c78b8d2fa",
+        "replay": "966b544ac7b88f792af1a0075a889ea6d25766e8bd5b36507061550d8be43921"
+      },
+      "training_examples_sha256": {
+        "correction": "6a01266c3dd6b1ec3bed12f3e86e5a90e77e1b2d93b011e68f958b2e15caba82",
+        "replay": "37db192d568be6f6201774974e3df892f811aa9821910b74c0a1fee5d13d9bf0"
+      }
+    },
+    {
+      "ce": {
+        "D_sibling_margin": -0.006513774394989014,
+        "Repair_CR": 1.0
+      },
+      "ce_kl": {
+        "D_sibling_margin": -0.005339369177818298,
+        "Repair_CR": 1.0
+      },
+      "contrasts": {
+        "repair_gain_kl": 0.0,
+        "stability_gain_kl": 0.0011744052171707153
+      },
+      "family_id": "learn-confirm-keyshift-15",
+      "family_stratum": "control",
+      "operation": "add",
+      "parent_q_sha256": {
+        "correction": "821d929161f12be28b42cf3220c2fc3204d487b2aeb4b57e8fc357754248e9f0",
+        "replay": "958f819fd3a901734ac87dc870fd93ff651b11913bbcf6413dfea58f157443f9"
+      },
+      "training_examples_sha256": {
+        "correction": "758d66325c193234835c9a6ad00f7d227142145522b3aa3e16003f50fc3189f8",
+        "replay": "37eeda84660fd83ed5e45b2a73c59b7781ba452aea324e9652ef0e06dd20aa4d"
+      }
+    },
+    {
+      "ce": {
+        "D_sibling_margin": -0.010984674096107483,
+        "Repair_CR": 0.0
+      },
+      "ce_kl": {
+        "D_sibling_margin": -0.009453758597373962,
+        "Repair_CR": 0.0
+      },
+      "contrasts": {
+        "repair_gain_kl": 0.0,
+        "stability_gain_kl": 0.0015309154987335205
+      },
+      "family_id": "learn-confirm-keyshift-02",
+      "family_stratum": "loss",
+      "operation": "subtract",
+      "parent_q_sha256": {
+        "correction": "0a02b87559630bac96e42814b1ce66ecef671874a23fdf2f64eb557c2f0c904f",
+        "replay": "b964d54f1f98b668e87c618a5d7070ffd3865684a8de69b16908713afebfb8b7"
+      },
+      "training_examples_sha256": {
+        "correction": "769aeedddbfaca4598e2ab7b35afd425fa5c51e792d920a9f76a2ea77f0f4b6a",
+        "replay": "e3a646cf11588497689d7f0362901150804079b0134f03619cf8ffbe05e04037"
+      }
+    },
+    {
+      "ce": {
+        "D_sibling_margin": -0.00906236469745636,
+        "Repair_CR": 0.0
+      },
+      "ce_kl": {
+        "D_sibling_margin": -0.008331239223480225,
+        "Repair_CR": 0.0
+      },
+      "contrasts": {
+        "repair_gain_kl": 0.0,
+        "stability_gain_kl": 0.0007311254739761353
+      },
+      "family_id": "learn-confirm-keyshift-12",
+      "family_stratum": "control",
+      "operation": "subtract",
+      "parent_q_sha256": {
+        "correction": "ff0d844c51d416080c8027939a937303dfc3e01eb5147fd53e5235cdccfb7d10",
+        "replay": "41ebc1c05a7d009ad9e49358064fb0819a36a28ba52b778ca2715f26ca774646"
+      },
+      "training_examples_sha256": {
+        "correction": "db8604e2a27ddbe56f6e7afc9ecbeaaa0de0773088283603eb4b36d8d3a13a71",
+        "replay": "ea93bb44df3e6795728be65f5a97383abdd1c8f46fcaf0a206131ca119bdf946"
+      }
+    }
+  ],
+  "independent_family_blocks": 4,
+  "kl_lambda": 1.0,
+  "kl_temperature": 1.0,
+  "objective_conditions_are_independent_samples": false,
+  "paired_objective_conditions_per_family": 2,
+  "parent_cycle_id": "diag-residual-head-trial-0",
+  "post_hoc_selected": true,
+  "primary_quantities": {
+    "D": "Correction sibling-margin delta - Replay sibling-margin delta",
+    "Repair_CR": "Correction repair-accuracy delta - Replay repair-accuracy delta",
+    "repair_gain_kl": "Repair_CR_(ce-kl) - Repair_CR_ce",
+    "stability_gain_kl": "D_(ce-kl) - D_ce"
+  },
+  "schema_version": "aster-diag-objective-kl-result-0",
+  "source_git_sha": "2227729b2c1589ebc2027b3b42d03993665eaa68",
+  "status": "complete",
+  "stop_rule_satisfied": true,
+  "unit_checkpoint_records": 40
+}
