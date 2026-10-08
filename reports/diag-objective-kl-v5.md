@@ -4,9 +4,9 @@ Issue: #87. Implementation: merged PR #88 at `2227729b2c1589ebc2027b3b42d0399366
 
 ## Evidence status
 
-**`pending_checksum` — do not merge until the user-reported WSL file hash matches the exact GitHub JSON blob SHA.**
+**`user_attested_blob_match` — user-reported WSL Git blob SHA matches the GitHub JSON blob SHA byte-for-byte.**
 
-This report transcribes and interprets the complete aggregate pasted from the user's WSL2 run on 2026-10-08. The accompanying `reports/diag-objective-kl-v5.json` is a reconstruction from that user-visible aggregate, preserving the original machine-readable diagnostic fields; it is **not** an independently accessed WSL file. Comparison against the real WSL `git hash-object` of `runs/bdd77d5a2dfc455790d0cca0dba879c9/diag-objective-kl-results.json` is mandatory before accepting this report as the archived original. Per-unit artifacts and raw parent weights cannot be examined through GitHub; the runner checks parent and tokenizer/artifact lineage locally.
+This report transcribes and interprets the complete aggregate pasted from the user's WSL2 run on 2026-10-08. The accompanying `reports/diag-objective-kl-v5.json` was reconstructed from that user-visible aggregate, **not** fetched directly from WSL. The user subsequently supplied a terminal capture of `git hash-object runs/bdd77d5a2dfc455790d0cca0dba879c9/diag-objective-kl-results.json` returning **`08d72a79e0b30a1366b9e27e3c92969c9441d5fb`**. An audit detected a single transcription error in the reconstructed family 15 parent-Q correction digest (`...d487b2ab4b57...` instead of `...d487b2aeb4b57...`); after restoring the omitted `e`, the GitHub JSON blob SHA became **`08d72a79e0b30a1366b9e27e3c92969c9441d5fb`**, exactly matching the user-reported local SHA. Wolfram independently computed the same Git blob SHA from the corrected report bytes. The local file itself, eight per-unit artifacts and raw parent weights were not independently inspected through GitHub; the runner checks parent and tokenizer/artifact lineage locally.
 
 User-reported completion: `status=complete`, `stop_rule_satisfied=true`, `source_git_sha=2227729b2c1589ebc2027b3b42d03993665eaa68`; all four fixed families × two objectives = **8 experiment units**, Replay and Correction = **16 training trajectories**, checkpoints = **40 unit / 80 arm observations**. The JSON's `diagnostic_classification` stays `null` by measurement contract; the interpretation is in this separate report. The NumPy warning did not prevent Trial completion.
 
@@ -36,7 +36,7 @@ Wolfram independently recalculated contrasts, medians, all signs, and the exact 
 
 ## Classification and limitations
 
-**Proposed diagnostic classification (conditional on verified raw-file checksum): `preservation_supported_diagnostic`.**
+**Diagnostic classification following successful user-attested original-blob match: `preservation_supported_diagnostic`.**
 
 This is the first pre-registered descriptive branch of `docs/DiagObjectiveKL-v5.md`:
 
@@ -54,9 +54,10 @@ The treatment preserved model architecture and switched only the training object
 
 This requires a separate research plan and new independent family manifest **frozen before any new endpoint measurement**. No family reuse from the diagnostic/previous confirmatory suites, hyperparameter tuning, seed cherry-picking or inspection of the project's sealed test. Do not start the next trial before the source evidence gate and new study pre-registration.
 
-## Artifact and closing gate
+## Artifact identity and closing gate
 
-1. User runs the read-only command in local WSL: `git hash-object runs/bdd77d5a2dfc455790d0cca0dba879c9/diag-objective-kl-results.json`.
-2. Compare its 40-character Git blob SHA with the GitHub blob SHA of **`reports/diag-objective-kl-v5.json`** on this PR branch. If different, treat the reconstruction as unverified and correct it using original bytes rather than changing the measured values. Never claim a match by comparing Git commit SHAs.
-3. Confirm report-only diff, CI, mathematical audit, open review boundary (no independent Codex reviewer claim). Merge this report-only PR to main **only after** checksum identity.
-4. Record the confirmed SHA and report merge, then close #87 as a completed diagnostic. The next prospective study is a **new issue** and may not inherit DIAG v5's diagnostic evidence as confirmation.
+1. **WSL user-terminal attestation:** `git hash-object runs/bdd77d5a2dfc455790d0cca0dba879c9/diag-objective-kl-results.json` returned `08d72a79e0b30a1366b9e27e3c92969c9441d5fb` on 2026-10-08.
+2. **GitHub content API verification:** `reports/diag-objective-kl-v5.json` blob SHA, after correcting a single-character transcription omission in family 15's `parent_q_sha256.correction`, equals `08d72a79e0b30a1366b9e27e3c92969c9441d5fb`.
+3. Wolfram's Git `blob <length>\\0<bytes>` SHA-1 calculation independently matched that exact SHA on corrected JSON bytes. This verifies content identity conditional on the user's genuine local command output, not independent access to their WSL filesystem.
+4. Confirm only the two report files changed; CI and PR review before merging report-only PR #89. No independent Codex reviewer approval is claimed.
+5. Close Issue #87 only after report merge; retain `causal_claim=false`, `confirmatory_verdict=null` and no AsterDecision-v1 promotion. Issue #90 is a **separate study design gate**, not automatically a confirmatory trial.
