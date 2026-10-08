@@ -54,14 +54,24 @@ The residual branch adds 289 parameters:
 16*16 + 16 + 16*1 + 1 = 289
 ```
 
-The frozen design records:
+The frozen design records the absolute Decision-path count from the exact loaded ACT
+parent artifact, then checks the architecture relation:
 
-- current linear Decision path: 44,289 parameters
-- residual Decision path: 44,578 parameters
-- added fraction: about 0.652532%
+- linear control Decision path = loaded ACT parent Decision path;
+- residual treatment Decision path = loaded ACT parent Decision path + 289 parameters;
+- added fraction = `289 / loaded_parent_decision_path_parameter_count`.
+
+The original preregistration arithmetic (44,289 -> 44,578, about 0.652532%) assumed
+that the tokenizer's `target_vocab_size=512` was also the realized vocabulary size.
+Aster BPE may stop before the target when no eligible pair remains, so the realized
+vocabulary is an artifact property rather than a protocol constant. This bookkeeping
+correction does not change the parent artifact, tokenizer, residual width, training
+objective, family block, or any measured outcome.
 
 The Decision path count excludes the unused TinyLM LM head because
-`DecisionModel.forward()` calls `backbone.encode()` and the Decision Head.
+`DecisionModel.forward()` calls `backbone.encode()` and the Decision Head. Machine-readable
+evidence records both `backbone_vocab_size` and
+`parent_decision_path_parameter_count`.
 
 ## Mandatory step-0 equivalence gate
 
@@ -121,7 +131,9 @@ A unit is rejected if:
 - backbone digest differs from the architecture baseline;
 - tokenizer artifact digest changes;
 - the parent linear-head parameter count changes;
+- the linear control Decision path differs from the exact loaded ACT parent;
 - the residual branch is not exactly 289 parameters;
+- the residual Decision path is not exactly loaded ACT parent + 289 parameters;
 - the architecture changes the training-example digests.
 
 ## Primary quantities
