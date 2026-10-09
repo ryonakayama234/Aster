@@ -37,7 +37,15 @@ It audits pinned file identities, config, tokenizer provenance and split hashes.
 
 ## Gate 3B — later, not started in this PR
 
-After an independent review, a separate approved 200-update local pilot Run can use the existing train_tinylm.py command with the pinned view/tokenizer and the unchanged configs/tinylm-pilot-v0.json.
+After an independent review, a separate approved 200-update local pilot Run must record the pinned BPE artifact ID at the training boundary (the ID is now an optional CLI argument for legacy runs, but required for this Gate 3 Run). Use the frozen inputs and unchanged optimizer/model configuration:
+
+    .venv/bin/python scripts/train_tinylm.py --root . \
+      --view data/training/6dd51f52b903829b8548686743acda1dd33ccd6d3a4dfefc8abd14deb6e9ff4d \
+      --tokenizer artifacts/tokenizers/lang-v0/37e0b82f8e80f90a84346fd37d00b680669174388cf94f6cd88fa5b76cc13513 \
+      --tokenizer-artifact-id 37e0b82f8e80f90a84346fd37d00b680669174388cf94f6cd88fa5b76cc13513 \
+      --config configs/tinylm-pilot-v0.json
+
+The read-only reporter verifies both `experiment.json` and `run.json` carry exactly this artifact ID, and validates each checkpoint's embedded `model_config` and parameter count (174,080) against the frozen model, not just checkpoint metadata. A Run made with the previous untagged CLI must not be retroactively relabeled.
 
 After that Run completes, the read-only reporter command is:
 
