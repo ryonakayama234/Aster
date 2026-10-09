@@ -491,6 +491,16 @@ def test_frozen_pilot_source_pins_cover_transitive_local_imports():
             continue
         filename = local / relative
         assert filename.is_file(), relative
+        # Python executes each existing parent package initializer on import.
+        # Enqueue initializers even when they have no explicit import statements.
+        parent = Path(relative).parent
+        while True:
+            init = (parent / '__init__.py').as_posix()
+            if (local / init).is_file() and init not in seen:
+                pending.append(init)
+            if parent == Path('.'):
+                break
+            parent = parent.parent
         seen.add(relative)
         module = ast.parse(filename.read_text(encoding='utf-8'))
         for node in ast.walk(module):
