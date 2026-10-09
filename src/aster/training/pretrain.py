@@ -199,9 +199,12 @@ def main():
     parser.add_argument('--view', type=Path, required=True)
     parser.add_argument('--tokenizer', type=Path, required=True)
     parser.add_argument('--config', type=Path, default=Path('configs/tinylm-overfit-v0.json'))
+    parser.add_argument('--tokenizer-artifact-id', type=str, default=None,
+                        help='Verified tokenizer artifact ID to save in Run provenance')
     args = parser.parse_args()
     config = TrainConfig(**json.loads(args.config.read_text(encoding='utf-8')))
-    print(train(args.root, args.view, args.tokenizer, config))
+    print(train(args.root, args.view, args.tokenizer, config,
+                tokenizer_artifact_id=args.tokenizer_artifact_id))
 
 
 if __name__ == '__main__':
