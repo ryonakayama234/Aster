@@ -111,6 +111,8 @@ def _build_view(root: Path):
 
 def test_preflight_does_not_read_test_bytes(tmp_path, monkeypatch):
     from aster.training import lang_gate3 as gate
+    # The other synthetic tests probe lower-level validators, not the frozen v0 contract.
+    monkeypatch.setattr(gate, 'verify_locked_spec', lambda *args: None)
     view = _build_view(tmp_path)
     (tmp_path / 'configs').mkdir()
     config = {'mode': 'pilot', 'steps': 200, 'eval_every': 50, 'context_length': 128}
@@ -141,6 +143,8 @@ def test_preflight_does_not_read_test_bytes(tmp_path, monkeypatch):
 
 def test_preflight_rejects_config_and_leakage(tmp_path, monkeypatch):
     from aster.training import lang_gate3 as gate
+    # The other synthetic tests probe lower-level validators, not the frozen v0 contract.
+    monkeypatch.setattr(gate, 'verify_locked_spec', lambda *args: None)
     view = _build_view(tmp_path)
     (tmp_path / 'configs').mkdir()
     cfg = {'mode': 'pilot', 'steps': 200, 'eval_every': 50, 'context_length': 128}
@@ -306,8 +310,9 @@ def test_evaluator_code_identity_is_frozen(tmp_path):
         verify_evaluator_source(spec, source)
 
 
-def test_preflight_rejects_wrong_evaluator_before_tokenizer_or_test(tmp_path):
+def test_preflight_rejects_wrong_evaluator_before_tokenizer_or_test(tmp_path, monkeypatch):
     from aster.training import lang_gate3 as gate
+    monkeypatch.setattr(gate, 'verify_locked_spec', lambda *args: None)
 
     (tmp_path / 'configs').mkdir()
     spec_path = tmp_path / 'configs/gate.json'
@@ -521,3 +526,41 @@ def test_frozen_pilot_source_pins_cover_transitive_local_imports():
     config_path = 'configs/tinylm-pilot-v0.json'
     assert set(spec['source_git_blobs']) == {config_path} | {'src/aster/' + r for r in seen}
     assert git_blob_sha((root / config_path).read_bytes()) == spec['source_git_blobs'][config_path]
+
+
+def test_gate3_v0_spec_is_canonical_and_has_reviewed_git_blob(tmp_path):
+    """A modified v0 spec or --spec alternative cannot redefine frozen inputs."""
+    import ast
+    from aster.training.lang_gate3 import verify_locked_spec
+    from aster.training.lang_gate3_lock import (
+        CANONICAL_SPEC_RELATIVE_PATH, FROZEN_SPEC_GIT_BLOB_SHA,
+    )
+
+    root = Path(__file__).resolve().parents[2]
+    canonical = root / CANONICAL_SPEC_RELATIVE_PATH
+    original = canonical.read_bytes()
+    assert git_blob_sha(original) == FROZEN_SPEC_GIT_BLOB_SHA
+    assert verify_locked_spec(root, canonical) == FROZEN_SPEC_GIT_BLOB_SHA
+
+    local = tmp_path / CANONICAL_SPEC_RELATIVE_PATH
+    local.parent.mkdir(parents=True)
+    local.write_bytes(original)
+    assert verify_locked_spec(tmp_path, local) == FROZEN_SPEC_GIT_BLOB_SHA
+    alternate = tmp_path / 'other.json'
+    alternate.write_bytes(original)
+    with pytest.raises(ValueError, match='canonical frozen spec path'):
+        verify_locked_spec(tmp_path, alternate)
+    local.write_bytes(original + b' ')
+    with pytest.raises(ValueError, match='frozen spec Git blob SHA'):
+        verify_locked_spec(tmp_path, local)
+
+    # The reviewed WSL entrypoint pins the otherwise independent lock source.
+    launcher = root / 'scripts/run_lang_v0_gate3.py'
+    tree = ast.parse(launcher.read_text(encoding='utf-8'))
+    literal = [node for node in tree.body
+               if isinstance(node, ast.Assign)
+               and any(isinstance(x, ast.Name) and x.id == 'EXPECTED_LOCK_GIT_BLOB_SHA'
+                       for x in node.targets)]
+    assert len(literal) == 1
+    expected = ast.literal_eval(literal[0].value)
+    assert git_blob_sha((root / 'src/aster/training/lang_gate3_lock.py').read_bytes()) == expected
