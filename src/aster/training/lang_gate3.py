@@ -276,6 +276,15 @@ def verify_run_sources(root: Path, spec: dict[str, Any], code: Any) -> None:
             raise ValueError('Run source code differs from frozen Gate 3: ' + relative)
 
 
+def configure_scoring_runtime(config: dict[str, Any]) -> None:
+    """Match the frozen CPU training runtime before inference starts."""
+    threads = config.get('threads')
+    if type(threads) is not int or threads <= 0:
+        raise ValueError('Frozen scoring threads must be a positive integer')
+    torch.set_num_threads(threads)
+    torch.use_deterministic_algorithms(True)
+
+
 def report_existing_run(root: Path, spec_path: Path, run_path: Path) -> Path:
     """Re-score a completed frozen pilot; never train or inspect test targets."""
     root = root.resolve()
@@ -283,6 +292,7 @@ def report_existing_run(root: Path, spec_path: Path, run_path: Path) -> Path:
     if run_path.parent != (root / 'runs').resolve():
         raise ValueError('Run must be an immediate child of root/runs')
     spec, tokenizer, windows, audit = preflight(root, spec_path)
+    configure_scoring_runtime(spec['pilot_config'])
     summary = _load_json(run_path / 'run.json')
     experiment = _load_json(run_path / 'experiment.json')
     bundle = _load_json(run_path / 'training-bundle.json')
