@@ -13,6 +13,7 @@ Does the frozen Japanese TinyLM improve held-out next-token NLL relative to (a) 
 - Total vocabulary: 514 (includes BOS/EOS)
 - Existing pilot config: configs/tinylm-pilot-v0.json — context 128, width 64, heads 4, layers 2, batch 8, 200 updates, eval every 50, LR .003, seed 42.
 - Source/config Git blob SHA pins: configs/lang-v0-gate3.json, including **all 11 files captured by the trainer's code_sha256 provenance** (TinyLM, Transformer, LM head, checkpoint, inference, Tokenizer, records, and training/view preparation). The read-only report checks the complete code-file set and both the Run-recorded SHA-256 and frozen Git blob hash for each source. A mismatch stops reporting instead of silently comparing different implementations.
+- Independent-review finding (PR #94): the Gate 3 evaluator itself is pinned by `evaluator_git_blob_sha` in `configs/lang-v0-gate3.json`. Before reading any view or creating a report, preflight compares the actual `src/aster/training/lang_gate3.py` Git blob SHA with the frozen value and aborts on missing/drifted evaluator code. Synthetic tests cover matching, tampered, missing, and preflight-refused hashes.
 - Trainer instrumentation change: save Linux ru_maxrss in completed local Run summary; no optimizer/model changes.
 
 ## Metrics
