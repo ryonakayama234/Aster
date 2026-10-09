@@ -306,6 +306,55 @@ def verify_scoring_dependencies(experiment: dict[str, Any],
             'evaluation_python_version': evaluation_python_version}
 
 
+def validate_run_observations(
+    observations: Any, experiment: dict[str, Any], summary: dict[str, Any],
+    bundle: dict[str, Any],
+) -> list[dict[str, Any]]:
+    """Reject mixed/partial Run records before reading checkpoint weights."""
+    if bundle.get('experiment') != experiment:
+        raise ValueError('Training bundle experiment provenance mismatch')
+    inputs = summary.get('inputs')
+    if not isinstance(inputs, dict) or inputs.get('view_id') != experiment.get('view_id') or inputs.get('config') != experiment.get('config'):
+        raise ValueError('Run inputs do not match experiment provenance')
+    steps = list(range(0, 201, 50))
+    if not isinstance(observations, list) or len(observations) != len(steps):
+        raise ValueError('Pilot checkpoint count differs from frozen cadence')
+    previous = -1
+    for obs, step in zip(observations, steps):
+        if not isinstance(obs, dict) or type(obs.get('step')) is not int or obs['step'] != step:
+            raise ValueError('Pilot checkpoint steps differ from frozen cadence')
+        count = obs.get('tokens_seen')
+        if type(count) is not int or count < 0 or (count != 0 if step == 0 else count <= previous):
+            raise ValueError('Invalid or nonmonotonic tokens_seen')
+        if obs.get('checkpoint') != f'checkpoint-{step:06d}.pt':
+            raise ValueError('Unexpected checkpoint filename or step')
+        previous = count
+    return observations
+
+
+def verify_checkpoint_observation(
+    checkpoint: dict[str, Any], obs: dict[str, Any], experiment: dict[str, Any],
+) -> None:
+    """The saved weights must carry the same provenance, step and token counter."""
+    expected = {**experiment, 'step': obs['step'], 'tokens_seen': obs['tokens_seen']}
+    if checkpoint.get('metadata') != expected:
+        raise ValueError('Checkpoint metadata/provenance or tokens_seen mismatch')
+
+
+def verify_recorded_loss(obs: dict[str, Any], split: str, scored: dict[str, Any]) -> None:
+    """Cross-check trainer-observed loss against independent checkpoint rescoring."""
+    recorded = obs.get(split)
+    if not isinstance(recorded, dict):
+        raise ValueError('Missing recorded ' + split + ' evaluation')
+    loss = recorded.get('loss')
+    target_count = recorded.get('target_tokens')
+    measured = scored['all']
+    if (type(loss) not in (float, int) or not math.isfinite(loss)
+            or type(target_count) is not int or target_count != measured['target_tokens']
+            or not math.isclose(loss, measured['mean_nll_nats'], abs_tol=1e-5, rel_tol=1e-5)):
+        raise ValueError('Recorded ' + split + ' NLL/target count differs from checkpoint rescoring')
+
+
 def report_existing_run(root: Path, spec_path: Path, run_path: Path) -> Path:
     """Re-score a completed frozen pilot; never train or inspect test targets."""
     root = root.resolve()
@@ -331,10 +380,7 @@ def report_existing_run(root: Path, spec_path: Path, run_path: Path) -> Path:
     if summary.get('run_id') != run_path.name or bundle.get('run_id') != run_path.name:
         raise ValueError('Run and bundle identity mismatch')
     verify_run_sources(root, spec, experiment.get('code_sha256'))
-    expected_steps = list(range(0, 201, 50))
-    observations = bundle.get('observations')
-    if not isinstance(observations, list) or [x.get('step') for x in observations] != expected_steps:
-        raise ValueError('Pilot checkpoints differ from frozen evaluation cadence')
+    observations = validate_run_observations(bundle.get('observations'), experiment, summary, bundle)
     selected = json.loads((run_path / 'training-windows.json').read_text(encoding='utf-8'))
     expected = [{'record_id': w.record_id, 'offset': w.offset, 'domain': w.domain}
                 for w in windows['train']]
@@ -347,16 +393,16 @@ def report_existing_run(root: Path, spec_path: Path, run_path: Path) -> Path:
         if digest(file.read_bytes()) != obs['checkpoint_sha256']:
             raise ValueError('Checkpoint SHA mismatch')
         model, checkpoint_tokenizer, checkpoint = load_checkpoint(file, audit['tokenizer_payload_sha256'])
-        if checkpoint.get('metadata', {}).get('step') != obs['step']:
-            raise ValueError('Checkpoint step mismatch')
-        if checkpoint.get('metadata', {}).get('config') != spec['pilot_config']:
-            raise ValueError('Checkpoint config mismatch')
+        verify_checkpoint_observation(checkpoint, obs, experiment)
+        train_scored = score_model(model, windows['train'], checkpoint_tokenizer,
+                                   spec['pilot_config']['batch_size'])
+        dev_scored = score_model(model, windows['dev'], checkpoint_tokenizer,
+                                 spec['pilot_config']['batch_size'])
+        verify_recorded_loss(obs, 'train', train_scored)
+        verify_recorded_loss(obs, 'dev', dev_scored)
         reports.append({'step': obs['step'], 'tokens_seen': obs['tokens_seen'],
                         'checkpoint_sha256': obs['checkpoint_sha256'],
-                        'train': score_model(model, windows['train'], checkpoint_tokenizer,
-                                             spec['pilot_config']['batch_size']),
-                        'dev': score_model(model, windows['dev'], checkpoint_tokenizer,
-                                           spec['pilot_config']['batch_size'])})
+                        'train': train_scored, 'dev': dev_scored})
     payload = {'schema_version': SCHEMA, 'mode': 'read_only_report',
                'run_id': summary['run_id'], 'training_view_id': audit['view_id'],
                'tokenizer_artifact_id': spec['tokenizer_artifact_id'],

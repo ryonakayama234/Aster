@@ -52,3 +52,7 @@ It validates the completed Run and selected training windows, checks checkpoint 
 Gate 3B will classify results as LANG-Learning observed, Overfit only, or Inconclusive. The current held-out dev is only one Japanese prose document, so improvement would not demonstrate broad dialogue capability. No hyperparameter search, corpus edits, new Tokenizer or Decision/DIAG modification is part of this gate.
 
 Gate 3A synthetic tests also cross-check the actual TinyLM's NLL against the original training evaluator, padding invariance, and adversarial changes to the Transformer code hash. They are not evidence of language-learning success. GitHub CI and independent review must be checked before merging. Do not commit private corpus, local model checkpoints, or measurement Run data.
+
+## Full synthetic Run integrity audit (review hardening)
+
+The reporter now rejects a mixed training-bundle experiment, mismatched Run input configuration, wrong/nonmonotonic checkpoint step or `tokens_seen`, unexpected checkpoint filenames, mismatched checkpoint metadata/provenance (including the token counter), and checkpoint train/dev NLL or target counts that disagree with the trainer's observations. A synthetic five-checkpoint report test exercises successful serialization and idempotent read-only reruns, then deliberately corrupts the token counter, observed NLL, and bundle provenance to verify fail-closed behavior. The standalone CLI now mirrors the TinyLM trainer's `src` import fallback. All test inputs are synthetic and do not include private corpus text.

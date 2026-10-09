@@ -353,3 +353,92 @@ def test_scoring_rejects_mismatched_pytorch_version():
         verify_scoring_dependencies({'torch_version': '2.6.0+cpu'}, '2.6.0+cpu', '3.12.2')
     with pytest.raises(ValueError, match='Missing evaluation Python'):
         verify_scoring_dependencies(train, '2.6.0+cpu', '')
+
+
+def test_full_synthetic_report_rejects_mixed_observations(tmp_path, monkeypatch, example):
+    """The real reporter scores all 5 synthetic checkpoints, then rejects corrupted Run data."""
+    from aster.corpus.pipeline import digest, json_bytes
+    from aster.training import lang_gate3 as gate
+
+    tok, train_windows, dev_windows = example
+    root = tmp_path
+    run_path = root / 'runs/synthetic-run'
+    run_path.mkdir(parents=True)
+    relative = 'training/pretrain.py'
+    source_file = root / 'src/aster' / relative
+    source_file.parent.mkdir(parents=True)
+    source_file.write_bytes(b'unchanged trainer for the fixture')
+    code_hash = digest(source_file.read_bytes())
+    cfg = {'mode': 'pilot', 'steps': 200, 'eval_every': 50, 'batch_size': 2, 'threads': 2}
+    spec = {'pilot_config': cfg, 'tokenizer_artifact_id': 'synthetic-tokenizer',
+            'source_git_blobs': {'src/aster/' + relative: git_blob_sha(source_file.read_bytes())}}
+    audit = {'view_id': 'synthetic-view', 'tokenizer_payload_sha256': 'synthetic-payload',
+             'sealed_test_text_read': False}
+    monkeypatch.setattr(gate, 'preflight',
+                        lambda *args: (spec, tok, {'train': train_windows, 'dev': dev_windows}, audit))
+    experiment = {'view_id': audit['view_id'], 'tokenizer_id': audit['tokenizer_payload_sha256'],
+                  'config': cfg, 'torch_version': str(torch.__version__),
+                  'python_version': 'synthetic Python', 'device': 'cpu',
+                  'code_sha256': {relative: code_hash}}
+    summary = {'kind': 'pretrain', 'status': 'completed', 'run_id': run_path.name,
+               'inputs': {'view_id': audit['view_id'], 'config': cfg}}
+    observations = []
+    for step in (0, 50, 100, 150, 200):
+        name = f'checkpoint-{step:06d}.pt'
+        checkpoint_path = run_path / name
+        checkpoint_path.write_bytes(f'fake checkpoint {step}'.encode('utf-8'))
+        observations.append({'step': step, 'tokens_seen': step * 5,
+                             'checkpoint': name,
+                             'checkpoint_sha256': digest(checkpoint_path.read_bytes()),
+                             'train': {'loss': math.log(tok.vocab_size), 'target_tokens': 5},
+                             'dev': {'loss': math.log(tok.vocab_size), 'target_tokens': 5}})
+    bundle = {'run_id': run_path.name, 'status': 'completed', 'reload_exact_match': True,
+              'experiment': experiment, 'observations': observations}
+
+    def store():
+        for name, record in (('run.json', summary), ('experiment.json', experiment),
+                             ('training-bundle.json', bundle)):
+            (run_path / name).write_bytes(json_bytes(record))
+
+    selected = [{'record_id': w.record_id, 'offset': w.offset, 'domain': w.domain}
+                for w in train_windows]
+    (run_path / 'training-windows.json').write_bytes(json_bytes(selected))
+    spec_path = root / 'synthetic-gate.json'
+    spec_path.write_bytes(json_bytes(spec))
+    class Flat(torch.nn.Module):
+        def forward(self, x):
+            return torch.zeros(*x.shape, tok.vocab_size)
+
+    def fake_load(file, expected_tokenizer_id=None):
+        assert expected_tokenizer_id == audit['tokenizer_payload_sha256']
+        step = int(file.stem.split('-')[-1])
+        observation = next(x for x in observations if x['step'] == step)
+        # Values below mimic checkpoint metadata that was saved with the weights.
+        return Flat(), tok, {'metadata': {**experiment, 'step': step,
+                                         'tokens_seen': step * 5}}
+    monkeypatch.setattr(gate, 'load_checkpoint', fake_load)
+    store()
+    output = gate.report_existing_run(root, spec_path, run_path)
+    data = json.loads(output.read_text())
+    assert [r['step'] for r in data['checkpoint_evaluations']] == [0, 50, 100, 150, 200]
+    assert [r['tokens_seen'] for r in data['checkpoint_evaluations']] == [0, 250, 500, 750, 1000]
+    assert data['checkpoint_evaluations'][0]['dev']['all']['target_tokens'] == 5
+    assert data['sealed_test_scored'] is False
+    assert gate.report_existing_run(root, spec_path, run_path) == output
+
+    observations[2]['tokens_seen'] += 1
+    store()
+    with pytest.raises(ValueError, match='tokens_seen'):
+        gate.report_existing_run(root, spec_path, run_path)
+    observations[2]['tokens_seen'] -= 1
+
+    observations[1]['train']['loss'] += 0.5
+    store()
+    with pytest.raises(ValueError, match='Recorded train NLL'):
+        gate.report_existing_run(root, spec_path, run_path)
+    observations[1]['train']['loss'] -= 0.5
+
+    bundle['experiment'] = {**experiment, 'device': 'cuda'}
+    store()
+    with pytest.raises(ValueError, match='provenance mismatch'):
+        gate.report_existing_run(root, spec_path, run_path)

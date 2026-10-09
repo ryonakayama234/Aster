@@ -3,6 +3,10 @@
 import argparse
 import json
 from pathlib import Path
+import sys
+
+# Match the standalone TinyLM training script when run from the WSL checkout.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
 
 from aster.training.lang_gate3 import preflight, report_existing_run
 
