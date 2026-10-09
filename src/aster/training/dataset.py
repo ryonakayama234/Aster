@@ -115,7 +115,9 @@ def prepare_windows(view, tokenizer, context_length):
     if type(context_length) is not int or context_length < 1:
         raise ValueError('context_length must be positive')
     view = Path(view).resolve()
-    samples = sorted(verify_view(view), key=lambda s: s['record_id'])
+    # Split/group and train/dev byte hashes are checked. Sealed-test bytes
+    # remain unopened; their declared identities are checked as metadata.
+    samples = sorted(verify_view(view, verify_test_text=False), key=lambda s: s['record_id'])
     splits = {'train': [], 'dev': []}
     for sample in samples:
         if sample['split'] not in splits:

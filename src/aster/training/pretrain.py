@@ -6,6 +6,7 @@ import json
 import math
 from pathlib import Path
 import random
+import resource
 import sys
 import time
 import torch
@@ -107,7 +108,10 @@ def train(root, view, tokenizer_dir, config, *, tokenizer_artifact_id=None, wiri
                                     config.width, config.heads, config.layers))
         optimizer = torch.optim.AdamW(model.parameters(), lr=config.learning_rate, weight_decay=config.weight_decay)
         source = Path(__file__).parents[1]
-        code_files = ['training/pretrain.py', 'training/dataset.py', 'training/tokenizer_run.py',
+        # Closed over local aster imports, including transitive shared dependencies.
+        code_files = ['__init__.py', 'corpus/__init__.py', 'tokenizer/__init__.py',
+                      'training/pretrain.py', 'training/dataset.py', 'training/tokenizer_run.py',
+                      'training/view.py', 'training/extract.py', 'corpus/pipeline.py',
                       'model/tiny_lm.py', 'model/transformer.py', 'model/lm_head.py',
                       'model/checkpoint.py', 'inference/generate.py', 'tokenizer/artifact.py',
                       'tokenizer/bpe.py', 'records/runlog.py']
@@ -178,6 +182,7 @@ def train(root, view, tokenizer_dir, config, *, tokenizer_artifact_id=None, wiri
         bundle.update(status='completed', reload_exact_match=True)
         (run.path / 'training-bundle.json').write_bytes(json_bytes(bundle))
         run.finish('completed', checkpoint=str(checkpoint), seconds=time.perf_counter()-began,
+                   peak_rss_kib=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
                    reload_exact_match=True, train_loss=observations[-1]['train']['loss'])
         return run.path
     except BaseException as error:
@@ -197,9 +202,12 @@ def main():
     parser.add_argument('--view', type=Path, required=True)
     parser.add_argument('--tokenizer', type=Path, required=True)
     parser.add_argument('--config', type=Path, default=Path('configs/tinylm-overfit-v0.json'))
+    parser.add_argument('--tokenizer-artifact-id', type=str, default=None,
+                        help='Verified tokenizer artifact ID to save in Run provenance')
     args = parser.parse_args()
     config = TrainConfig(**json.loads(args.config.read_text(encoding='utf-8')))
-    print(train(args.root, args.view, args.tokenizer, config))
+    print(train(args.root, args.view, args.tokenizer, config,
+                tokenizer_artifact_id=args.tokenizer_artifact_id))
 
 
 if __name__ == '__main__':
