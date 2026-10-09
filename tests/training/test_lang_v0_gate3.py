@@ -332,3 +332,24 @@ def test_scoring_runtime_matches_frozen_training_threads(monkeypatch):
         with pytest.raises(ValueError, match='threads'):
             configure_scoring_runtime({'threads': invalid})
     assert called == [('threads', 2), ('deterministic', True)]
+
+
+def test_scoring_rejects_mismatched_pytorch_version():
+    from aster.training.lang_gate3 import verify_scoring_dependencies
+
+    train = {'torch_version': '2.6.0+cpu', 'python_version': '3.12.1 (training)'}
+    observed = verify_scoring_dependencies(train, '2.6.0+cpu', '3.12.2 (evaluation)')
+    assert observed == {
+        'training_torch_version': '2.6.0+cpu',
+        'evaluation_torch_version': '2.6.0+cpu',
+        'training_python_version': '3.12.1 (training)',
+        'evaluation_python_version': '3.12.2 (evaluation)',
+    }
+    with pytest.raises(ValueError, match='PyTorch versions differ'):
+        verify_scoring_dependencies(train, '2.7.0+cpu', '3.12.2')
+    with pytest.raises(ValueError, match='Missing training PyTorch'):
+        verify_scoring_dependencies({'python_version': '3.12.1'}, '2.6.0+cpu', '3.12.2')
+    with pytest.raises(ValueError, match='Missing training Python'):
+        verify_scoring_dependencies({'torch_version': '2.6.0+cpu'}, '2.6.0+cpu', '3.12.2')
+    with pytest.raises(ValueError, match='Missing evaluation Python'):
+        verify_scoring_dependencies(train, '2.6.0+cpu', '')
