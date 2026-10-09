@@ -349,7 +349,8 @@ def verify_recorded_loss(obs: dict[str, Any], split: str, scored: dict[str, Any]
     loss = recorded.get('loss')
     target_count = recorded.get('target_tokens')
     measured = scored['all']
-    if (type(loss) not in (float, int) or not math.isfinite(loss)
+    if (not isinstance(loss, (int, float)) or isinstance(loss, bool)
+            or not math.isfinite(loss)
             or type(target_count) is not int or target_count != measured['target_tokens']
             or not math.isclose(loss, measured['mean_nll_nats'], abs_tol=1e-5, rel_tol=1e-5)):
         raise ValueError('Recorded ' + split + ' NLL/target count differs from checkpoint rescoring')
