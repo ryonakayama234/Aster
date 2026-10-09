@@ -369,8 +369,12 @@ def test_full_synthetic_report_rejects_mixed_observations(tmp_path, monkeypatch,
     source_file.parent.mkdir(parents=True)
     source_file.write_bytes(b'unchanged trainer for the fixture')
     code_hash = digest(source_file.read_bytes())
-    cfg = {'mode': 'pilot', 'steps': 200, 'eval_every': 50, 'batch_size': 2, 'threads': 2}
+    cfg = {'mode': 'pilot', 'steps': 200, 'eval_every': 50, 'batch_size': 2, 'threads': 2,
+           'context_length': 128, 'width': 64, 'heads': 4, 'layers': 2}
+    checkpoint_model_config = {'vocab_size': tok.vocab_size, 'context_length': 128,
+                               'width': 64, 'heads': 4, 'layers': 2}
     spec = {'pilot_config': cfg, 'tokenizer_artifact_id': 'synthetic-tokenizer',
+            'vocab_size': tok.vocab_size, 'model_parameter_count': 0,
             'source_git_blobs': {'src/aster/' + relative: git_blob_sha(source_file.read_bytes())},
             'evaluator_git_blob_sha': git_blob_sha(Path(gate.__file__).read_bytes())}
     audit = {'view_id': 'synthetic-view', 'tokenizer_payload_sha256': 'synthetic-payload',
@@ -378,11 +382,13 @@ def test_full_synthetic_report_rejects_mixed_observations(tmp_path, monkeypatch,
     monkeypatch.setattr(gate, 'preflight',
                         lambda *args: (spec, tok, {'train': train_windows, 'dev': dev_windows}, audit))
     experiment = {'view_id': audit['view_id'], 'tokenizer_id': audit['tokenizer_payload_sha256'],
-                  'config': cfg, 'torch_version': str(torch.__version__),
+                  'tokenizer_artifact_id': spec['tokenizer_artifact_id'],
+                  'parameter_count': 0, 'config': cfg, 'torch_version': str(torch.__version__),
                   'python_version': 'synthetic Python', 'device': 'cpu',
                   'code_sha256': {relative: code_hash}}
     summary = {'kind': 'pretrain', 'status': 'completed', 'run_id': run_path.name,
-               'inputs': {'view_id': audit['view_id'], 'config': cfg}}
+               'inputs': {'view_id': audit['view_id'], 'config': cfg,
+                          'tokenizer_artifact_id': spec['tokenizer_artifact_id']}}
     observations = []
     for step in (0, 50, 100, 150, 200):
         name = f'checkpoint-{step:06d}.pt'
@@ -415,8 +421,9 @@ def test_full_synthetic_report_rejects_mixed_observations(tmp_path, monkeypatch,
         step = int(file.stem.split('-')[-1])
         observation = next(x for x in observations if x['step'] == step)
         # Values below mimic checkpoint metadata that was saved with the weights.
-        return Flat(), tok, {'metadata': {**experiment, 'step': step,
-                                         'tokens_seen': step * 5}}
+        return Flat(), tok, {'model_config': checkpoint_model_config.copy(),
+                             'metadata': {**experiment, 'step': step,
+                                          'tokens_seen': step * 5}}
     monkeypatch.setattr(gate, 'load_checkpoint', fake_load)
     store()
     output = gate.report_existing_run(root, spec_path, run_path)
@@ -442,4 +449,19 @@ def test_full_synthetic_report_rejects_mixed_observations(tmp_path, monkeypatch,
     bundle['experiment'] = {**experiment, 'device': 'cuda'}
     store()
     with pytest.raises(ValueError, match='provenance mismatch'):
+        gate.report_existing_run(root, spec_path, run_path)
+    bundle['experiment'] = experiment
+    summary['inputs'].pop('tokenizer_artifact_id')
+    store()
+    with pytest.raises(ValueError, match='tokenizer artifact ID'):
+        gate.report_existing_run(root, spec_path, run_path)
+    summary['inputs']['tokenizer_artifact_id'] = spec['tokenizer_artifact_id']
+    checkpoint_model_config['width'] = 32
+    store()
+    with pytest.raises(ValueError, match='model_config'):
+        gate.report_existing_run(root, spec_path, run_path)
+    checkpoint_model_config['width'] = 64
+    spec['model_parameter_count'] = 1
+    store()
+    with pytest.raises(ValueError, match='parameter count'):
         gate.report_existing_run(root, spec_path, run_path)
