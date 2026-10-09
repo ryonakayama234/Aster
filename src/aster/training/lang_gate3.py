@@ -334,11 +334,24 @@ def validate_run_observations(
 
 def verify_checkpoint_observation(
     checkpoint: dict[str, Any], obs: dict[str, Any], experiment: dict[str, Any],
+    spec: dict[str, Any], model: torch.nn.Module,
 ) -> None:
-    """The saved weights must carry the same provenance, step and token counter."""
+    """Check checkpoint provenance and the exact frozen model architecture."""
     expected = {**experiment, 'step': obs['step'], 'tokens_seen': obs['tokens_seen']}
     if checkpoint.get('metadata') != expected:
         raise ValueError('Checkpoint metadata/provenance or tokens_seen mismatch')
+    cfg = spec['pilot_config']
+    expected_model_config = {'vocab_size': spec['vocab_size'],
+                             'context_length': cfg['context_length'],
+                             'width': cfg['width'], 'heads': cfg['heads'],
+                             'layers': cfg['layers']}
+    if checkpoint.get('model_config') != expected_model_config:
+        raise ValueError('Checkpoint model_config differs from frozen Gate 3')
+    expected_params = spec['model_parameter_count']
+    if (type(expected_params) is not int or expected_params < 0
+            or experiment.get('parameter_count') != expected_params
+            or sum(p.numel() for p in model.parameters()) != expected_params):
+        raise ValueError('Checkpoint model parameter count differs from frozen Gate 3')
 
 
 def verify_recorded_loss(obs: dict[str, Any], split: str, scored: dict[str, Any]) -> None:
@@ -373,6 +386,10 @@ def report_existing_run(root: Path, spec_path: Path, run_path: Path) -> Path:
         raise ValueError('Run view/config does not match frozen Gate 3')
     if experiment.get('tokenizer_id') != audit['tokenizer_payload_sha256']:
         raise ValueError('Run Tokenizer payload mismatch')
+    if (experiment.get('tokenizer_artifact_id') != spec['tokenizer_artifact_id']
+            or not isinstance(summary.get('inputs'), dict)
+            or summary['inputs'].get('tokenizer_artifact_id') != spec['tokenizer_artifact_id']):
+        raise ValueError('Run tokenizer artifact ID missing or differs from frozen Gate 3')
     if bundle.get('status') != 'completed' or bundle.get('reload_exact_match') is not True:
         raise ValueError('Missing checkpoint reload verification')
     if experiment.get('device') != 'cpu':
@@ -394,7 +411,7 @@ def report_existing_run(root: Path, spec_path: Path, run_path: Path) -> Path:
         if digest(file.read_bytes()) != obs['checkpoint_sha256']:
             raise ValueError('Checkpoint SHA mismatch')
         model, checkpoint_tokenizer, checkpoint = load_checkpoint(file, audit['tokenizer_payload_sha256'])
-        verify_checkpoint_observation(checkpoint, obs, experiment)
+        verify_checkpoint_observation(checkpoint, obs, experiment, spec, model)
         train_scored = score_model(model, windows['train'], checkpoint_tokenizer,
                                    spec['pilot_config']['batch_size'])
         dev_scored = score_model(model, windows['dev'], checkpoint_tokenizer,
