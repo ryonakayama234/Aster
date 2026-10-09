@@ -21,6 +21,7 @@ from torch.nn import functional as F
 from aster.corpus.pipeline import digest, json_bytes
 from aster.model.checkpoint import load_checkpoint
 from aster.training.dataset import IGNORE_INDEX, Window, collate, load_training_tokenizer
+from aster.training.lang_gate3_lock import CANONICAL_SPEC_RELATIVE_PATH, FROZEN_SPEC_GIT_BLOB_SHA
 
 SCHEMA = 'aster-lang-gate3-0'
 
@@ -102,8 +103,21 @@ def verify_evaluator_source(spec: dict[str, Any], source: Path = Path(__file__))
     return actual_sha
 
 
+def verify_locked_spec(root: Path, spec_path: Path) -> str:
+    """Trust only the reviewed canonical v0 spec before reading any of its pins."""
+    root = root.resolve()
+    expected_path = (root / CANONICAL_SPEC_RELATIVE_PATH).resolve()
+    if spec_path.is_symlink() or spec_path.resolve() != expected_path:
+        raise ValueError('Gate 3 requires the canonical frozen spec path')
+    actual_sha = git_blob_sha(spec_path.read_bytes())
+    if actual_sha != FROZEN_SPEC_GIT_BLOB_SHA:
+        raise ValueError('Gate 3 frozen spec Git blob SHA mismatch')
+    return actual_sha
+
+
 def preflight(root: Path, spec_path: Path) -> tuple[dict[str, Any], Any, dict[str, list[Window]], dict[str, Any]]:
     root = root.resolve()
+    verify_locked_spec(root, spec_path)
     spec = _load_json(spec_path)
     if spec.get('schema_version') != SCHEMA:
         raise ValueError('Unknown Gate 3 schema')
