@@ -6,4 +6,4 @@ The WSL CLI additionally pins this lock module's own Git blob.
 """
 
 CANONICAL_SPEC_RELATIVE_PATH = 'configs/lang-v0-gate3.json'
-FROZEN_SPEC_GIT_BLOB_SHA = '0000000000000000000000000000000000000000'
+FROZEN_SPEC_GIT_BLOB_SHA = 'bb3b991c8fffcc3218cf041a00575ce5268ba299'
