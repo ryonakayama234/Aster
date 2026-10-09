@@ -465,3 +465,59 @@ def test_full_synthetic_report_rejects_mixed_observations(tmp_path, monkeypatch,
     store()
     with pytest.raises(ValueError, match='parameter count'):
         gate.report_existing_run(root, spec_path, run_path)
+
+
+def test_frozen_pilot_source_pins_cover_transitive_local_imports():
+    """The trainer must record every local import needed for the frozen pilot.
+
+    Detects future changes that silently extend the imported Aster module graph,
+    rather than depending on a manually maintained, incomplete list.
+    """
+    import ast
+
+    root = Path(__file__).resolve().parents[2]
+    local = root / 'src/aster'
+    seen = set()
+    pending = ['training/pretrain.py']
+
+    while pending:
+        relative = pending.pop()
+        if relative in seen:
+            continue
+        filename = local / relative
+        assert filename.is_file(), relative
+        seen.add(relative)
+        module = ast.parse(filename.read_text(encoding='utf-8'))
+        for node in ast.walk(module):
+            names = []
+            if isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
+                names = [node.module]
+            elif isinstance(node, ast.Import):
+                names = [alias.name for alias in node.names]
+            for name in names:
+                if not name.startswith('aster.'):
+                    continue
+                target = name.removeprefix('aster.').replace('.', '/') + '.py'
+                if (local / target).is_file() and target not in seen:
+                    pending.append(target)
+
+    trainer_ast = ast.parse((local / 'training/pretrain.py').read_text(encoding='utf-8'))
+    assignments = [node for node in ast.walk(trainer_ast)
+                   if isinstance(node, ast.Assign)
+                   and any(isinstance(name, ast.Name) and name.id == 'code_files'
+                           for name in node.targets)]
+    assert len(assignments) == 1
+    recorded = ast.literal_eval(assignments[0].value)
+    assert len(recorded) == len(set(recorded))
+    assert set(recorded) == seen, 'Trainer provenance misses or adds local import modules'
+
+    spec = json.loads((root / 'configs/lang-v0-gate3.json').read_text(encoding='utf-8'))
+    frozen = {key.removeprefix('src/aster/'): value
+              for key, value in spec['source_git_blobs'].items()
+              if key.startswith('src/aster/')}
+    assert set(frozen) == seen, 'Gate 3 spec source pins differ from trainer import closure'
+    for relative in seen:
+        assert git_blob_sha((local / relative).read_bytes()) == frozen[relative]
+    config_path = 'configs/tinylm-pilot-v0.json'
+    assert set(spec['source_git_blobs']) == {config_path} | {'src/aster/' + r for r in seen}
+    assert git_blob_sha((root / config_path).read_bytes()) == spec['source_git_blobs'][config_path]
