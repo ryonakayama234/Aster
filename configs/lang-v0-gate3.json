@@ -6,6 +6,8 @@
   "pilot_config_path": "configs/tinylm-pilot-v0.json",
   "source_git_blobs": {
     "configs/tinylm-pilot-v0.json": "f1c3ce585e9e0e012701124352a00c87255cfac1",
+    "src/aster/__init__.py": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "src/aster/corpus/__init__.py": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
     "src/aster/corpus/pipeline.py": "6bd320d0e0ef174957c86c4f40ae2c1df9a1c196",
     "src/aster/inference/generate.py": "1897c7c07465db717857a3bfea3e18bd5044258c",
     "src/aster/model/checkpoint.py": "c383a3b53f2a8418f15fd8aa7663f7aca33351c7",
@@ -13,11 +15,12 @@
     "src/aster/model/tiny_lm.py": "0084a02de6d327aa81d6ee63c12ca60efebc79d6",
     "src/aster/model/transformer.py": "3eac9f72022ef23735a025e97a8d847c47dd9f75",
     "src/aster/records/runlog.py": "5cbef368bca69b235bea8bf1d46272a178daaf2b",
+    "src/aster/tokenizer/__init__.py": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
     "src/aster/tokenizer/artifact.py": "6a9bc17378978e93f6d76713d26705c6d7aea4e4",
     "src/aster/tokenizer/bpe.py": "a611620ba4c1c52ed18f5f1a1d96d313bd7c68e7",
     "src/aster/training/dataset.py": "df14e3ec56ca2d4cac05b55cc5ddc5196e5ee8a7",
     "src/aster/training/extract.py": "6af2cfb33ea2065fde99ecee097ac2b3100f28ca",
-    "src/aster/training/pretrain.py": "b038d355a73db45bac9199f1d6311f0ac7e82311",
+    "src/aster/training/pretrain.py": "d98077b09b888232d091ed57997ed43c59bf2c6e",
     "src/aster/training/tokenizer_run.py": "ebce824dd5b0fab82e1ba6c4be4b36b173bebdbe",
     "src/aster/training/view.py": "86b46fbad6a215aeef535ccdbb09380cd67a8e14"
   },
