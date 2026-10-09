@@ -12,6 +12,7 @@ import hashlib
 import json
 import math
 from pathlib import Path
+import sys
 from typing import Any
 
 import torch
@@ -285,6 +286,26 @@ def configure_scoring_runtime(config: dict[str, Any]) -> None:
     torch.use_deterministic_algorithms(True)
 
 
+def verify_scoring_dependencies(experiment: dict[str, Any],
+                                evaluation_torch_version: str,
+                                evaluation_python_version: str) -> dict[str, str]:
+    """Require identical PyTorch builds; record both evaluation runtimes."""
+    train_torch = experiment.get('torch_version')
+    train_python = experiment.get('python_version')
+    if not isinstance(train_torch, str) or not train_torch:
+        raise ValueError('Missing training PyTorch version')
+    if not isinstance(train_python, str) or not train_python:
+        raise ValueError('Missing training Python version')
+    if train_torch != evaluation_torch_version:
+        raise ValueError('Training and evaluation PyTorch versions differ')
+    if not evaluation_python_version:
+        raise ValueError('Missing evaluation Python version')
+    return {'training_torch_version': train_torch,
+            'evaluation_torch_version': evaluation_torch_version,
+            'training_python_version': train_python,
+            'evaluation_python_version': evaluation_python_version}
+
+
 def report_existing_run(root: Path, spec_path: Path, run_path: Path) -> Path:
     """Re-score a completed frozen pilot; never train or inspect test targets."""
     root = root.resolve()
@@ -306,6 +327,7 @@ def report_existing_run(root: Path, spec_path: Path, run_path: Path) -> Path:
         raise ValueError('Missing checkpoint reload verification')
     if experiment.get('device') != 'cpu':
         raise ValueError('Gate 3 requires CPU pilot')
+    dependencies = verify_scoring_dependencies(experiment, str(torch.__version__), sys.version)
     if summary.get('run_id') != run_path.name or bundle.get('run_id') != run_path.name:
         raise ValueError('Run and bundle identity mismatch')
     verify_run_sources(root, spec, experiment.get('code_sha256'))
@@ -346,6 +368,7 @@ def report_existing_run(root: Path, spec_path: Path, run_path: Path) -> Path:
                'counts_sha256': digest(json_bytes(baseline)), 'train_targets': baseline['train_target_tokens'],
                'dev': score_unigram(windows['dev'], tokenizer, baseline)},
                'checkpoint_evaluations': reports,
+               'dependency_versions': dependencies,
                'training_seconds': summary.get('seconds'),
                'training_peak_rss_kib': summary.get('peak_rss_kib'),
                'reload_exact_match': True, 'sealed_test_scored': False,
