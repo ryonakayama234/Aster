@@ -92,11 +92,21 @@ def _view_samples_no_test_read(view: Path) -> list[dict[str, Any]]:
     return samples
 
 
+def verify_evaluator_source(spec: dict[str, Any], source: Path = Path(__file__)) -> str:
+    """Refuse to evaluate unless this evaluator matches the frozen spec."""
+    expected_sha = spec.get('evaluator_git_blob_sha')
+    actual_sha = git_blob_sha(source.read_bytes())
+    if not isinstance(expected_sha, str) or actual_sha != expected_sha:
+        raise ValueError('Pinned evaluator source changed or hash is missing')
+    return actual_sha
+
+
 def preflight(root: Path, spec_path: Path) -> tuple[dict[str, Any], Any, dict[str, list[Window]], dict[str, Any]]:
     root = root.resolve()
     spec = _load_json(spec_path)
     if spec.get('schema_version') != SCHEMA:
         raise ValueError('Unknown Gate 3 schema')
+    verify_evaluator_source(spec)
     for name, expected_sha in spec['source_git_blobs'].items():
         if git_blob_sha(_in_dir(root, name).read_bytes()) != expected_sha:
             raise ValueError('Pinned source/config changed: ' + name)
@@ -321,7 +331,7 @@ def report_existing_run(root: Path, spec_path: Path, run_path: Path) -> Path:
                'pilot_config': spec['pilot_config'],
                'source_git_blobs': spec['source_git_blobs'],
                'gate3_spec_sha256': digest(spec_path.read_bytes()),
-               'evaluator_git_blob': git_blob_sha(Path(__file__).read_bytes()),
+               'evaluator_git_blob': spec['evaluator_git_blob_sha'],
                'preflight': audit, 'baseline': {'fit_split': 'train',
                'counts_sha256': digest(json_bytes(baseline)), 'train_targets': baseline['train_target_tokens'],
                'dev': score_unigram(windows['dev'], tokenizer, baseline)},
