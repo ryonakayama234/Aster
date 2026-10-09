@@ -13,6 +13,7 @@ Does the frozen Japanese TinyLM improve held-out next-token NLL relative to (a) 
 - Total vocabulary: 514 (includes BOS/EOS)
 - Existing pilot config: configs/tinylm-pilot-v0.json — context 128, width 64, heads 4, layers 2, batch 8, 200 updates, eval every 50, LR .003, seed 42.
 - Source/config Git blob SHA pins: configs/lang-v0-gate3.json, including **all 14 files captured by the trainer's code_sha256 provenance**, including transitive shared modules (TinyLM, Transformer, LM head, checkpoint, inference, Tokenizer, records, and training/view preparation). The read-only report checks the complete code-file set and both the Run-recorded SHA-256 and frozen Git blob hash for each source. A mismatch stops reporting instead of silently comparing different implementations.
+- **Frozen spec trust chain (latest P1 fix):** the public WSL entrypoint `scripts/run_lang_v0_gate3.py` checks the reviewed Git blob SHA of `src/aster/training/lang_gate3_lock.py` before importing Aster code. The independent lock module pins the Git blob of the canonical `configs/lang-v0-gate3.json`, and `preflight()` refuses either a noncanonical `--spec` path or modified spec bytes before accepting any identities/paths/hashes from JSON. The frozen spec continues to pin the evaluator Git blob and training source closure. This prevents a spec/evaluator self-hash cycle and prevents silent v0 input substitution. The authority is the reviewed CLI source revision; programmatic calls using monkeypatched checkers in synthetic tests are not an alternate public validation interface. Regression tests cover canonical pass, alternate-path refusal, spec-byte drift, and launcher lock pin.
 - Independent-review finding (PR #94): the Gate 3 evaluator itself is pinned by `evaluator_git_blob_sha` in `configs/lang-v0-gate3.json`. Before reading any view or creating a report, preflight compares the actual `src/aster/training/lang_gate3.py` Git blob SHA with the frozen value and aborts on missing/drifted evaluator code. Synthetic tests cover matching, tampered, missing, and preflight-refused hashes.
 - Subsequent Codex reviewer finding: the read-only reporter runs as a separate CPU process, so before scoring checkpoints it now applies frozen `threads=2` with `torch.set_num_threads` and the trainer's `torch.use_deterministic_algorithms(True)`. A synthetic test checks the exact runtime settings. This limits thread-related scoring drift; it does not promise byte-identical results across arbitrary CPU/PyTorch versions.
 - Third Codex review finding: before loading/scoring any checkpoint, the reporter now requires the evaluation PyTorch version (including its build suffix) to match the training version in `experiment.json`. It also records the training and evaluation PyTorch and Python versions in `dependency_versions` in the local report. A synthetic regression test covers a version mismatch and missing provenance. This does not guarantee bitwise reproducibility across CPU hardware or numerical kernels.
@@ -34,7 +35,7 @@ Run from the local Aster Linux checkout after switching to the reviewed branch:
     cd /home/zhong/src/Aster
     .venv/bin/python scripts/run_lang_v0_gate3.py --root .
 
-It audits pinned file identities, config, tokenizer provenance and split hashes. It reads train/dev text only, not test bytes. It prints aggregate counts and returns without weight updates.
+It first authenticates the fixed spec lock, then audits pinned file identities, config, tokenizer provenance and split hashes. The CLI's optional `--spec` flag may not select a different v0 spec; any alternate path fails closed. It reads train/dev text only, not test bytes. It prints aggregate counts and returns without weight updates.
 
 ## Gate 3B — later, not started in this PR
 
@@ -60,7 +61,7 @@ It validates the completed Run and selected training windows, checks checkpoint 
 
 Gate 3B will classify results as LANG-Learning observed, Overfit only, or Inconclusive. The current held-out dev is only one Japanese prose document, so improvement would not demonstrate broad dialogue capability. No hyperparameter search, corpus edits, new Tokenizer or Decision/DIAG modification is part of this gate.
 
-Gate 3A synthetic tests also cross-check the actual TinyLM's NLL against the original training evaluator, padding invariance, and adversarial changes to the Transformer code hash. They are not evidence of language-learning success. GitHub CI and independent review must be checked before merging. Do not commit private corpus, local model checkpoints, or measurement Run data.
+Gate 3A synthetic tests also cross-check the actual TinyLM's NLL against the original training evaluator, padding invariance, and adversarial changes to the Transformer code hash. They are not evidence of language-learning success. GitHub CI and independent review must be checked before merging. After any new source-pinning commit, rerun the read-only WSL preflight at the *new exact head*; older successful logs do not verify newer code. Do not commit private corpus, local model checkpoints, or measurement Run data.
 
 ## Full synthetic Run integrity audit (review hardening)
 
