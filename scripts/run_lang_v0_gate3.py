@@ -8,7 +8,7 @@ import sys
 
 # Public WSL entrypoint is the trust root: lock module -> spec -> evaluator/sources.
 # Check lock bytes before importing any Aster package code.
-EXPECTED_LOCK_GIT_BLOB_SHA = '53fe0e27c797f92b68bbcecb1958220035365704'
+EXPECTED_LOCK_GIT_BLOB_SHA = '53068dfbeedfba1df84c2fb886724a1016b03392'
 SOURCE_ROOT = Path(__file__).resolve().parents[1] / 'src'
 lock_bytes = (SOURCE_ROOT / 'aster/training/lang_gate3_lock.py').read_bytes()
 lock_header = b'blob ' + str(len(lock_bytes)).encode() + b'\x00'
