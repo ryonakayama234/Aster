@@ -15,7 +15,7 @@
     "src/aster/tokenizer/artifact.py": "6a9bc17378978e93f6d76713d26705c6d7aea4e4",
     "src/aster/tokenizer/bpe.py": "a611620ba4c1c52ed18f5f1a1d96d313bd7c68e7",
     "src/aster/training/dataset.py": "df14e3ec56ca2d4cac05b55cc5ddc5196e5ee8a7",
-    "src/aster/training/pretrain.py": "db24aeec81963966d8093c40b26c5153d87c7f18",
+    "src/aster/training/pretrain.py": "e95e7c158a0127278e922f68db839c503fe10043",
     "src/aster/training/tokenizer_run.py": "ebce824dd5b0fab82e1ba6c4be4b36b173bebdbe"
   },
   "pilot_config": {
@@ -33,5 +33,6 @@
     "overfit_windows": 1,
     "threads": 2
   },
-  "evaluator_git_blob_sha": "7ef6102d7fa62f64cf0fe500a89cf8d3f94afb8b"
+  "evaluator_git_blob_sha": "5be4d8e720da5c30632f7d40705f949d4855b09c",
+  "model_parameter_count": 174080
 }
