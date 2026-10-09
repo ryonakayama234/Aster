@@ -119,7 +119,8 @@ def test_preflight_does_not_read_test_bytes(tmp_path, monkeypatch):
     spec = {'schema_version': gate.SCHEMA, 'training_view_id': view.name,
             'tokenizer_artifact_id': 'fake-tokenizer', 'vocab_size': 5,
             'pilot_config_path': 'configs/pilot.json', 'pilot_config': config,
-            'source_git_blobs': {'configs/pilot.json': git_blob_sha(config_bytes)}}
+            'source_git_blobs': {'configs/pilot.json': git_blob_sha(config_bytes)},
+            'evaluator_git_blob_sha': git_blob_sha(Path(gate.__file__).read_bytes())}
     spec_path = tmp_path / 'configs/gate3.json'
     spec_path.write_text(json.dumps(spec))
     tok = ToyTokenizer()
@@ -148,7 +149,8 @@ def test_preflight_rejects_config_and_leakage(tmp_path, monkeypatch):
     spec = {'schema_version': gate.SCHEMA, 'training_view_id': view.name,
             'tokenizer_artifact_id': 'fake-tokenizer', 'vocab_size': 5,
             'pilot_config_path': 'configs/pilot.json', 'pilot_config': cfg,
-            'source_git_blobs': {'configs/pilot.json': git_blob_sha(cbytes)}}
+            'source_git_blobs': {'configs/pilot.json': git_blob_sha(cbytes)},
+            'evaluator_git_blob_sha': git_blob_sha(Path(gate.__file__).read_bytes())}
     spec_file = tmp_path / 'configs/gate.json'
     spec_file.write_text(json.dumps(spec))
     monkeypatch.setattr(gate, 'load_training_tokenizer', lambda *a, **kw: (ToyTokenizer(), {'fixture': True}))
@@ -287,3 +289,29 @@ def test_run_source_provenance_requires_all_pinned_files(tmp_path):
     recorded['model/transformer.py'] = digest(changed_path.read_bytes())
     with pytest.raises(ValueError, match='differs from frozen'):
         verify_run_sources(tmp_path, spec, recorded)
+
+
+def test_evaluator_code_identity_is_frozen(tmp_path):
+    from aster.training.lang_gate3 import verify_evaluator_source
+
+    source = tmp_path / 'frozen-evaluator.py'
+    source.write_bytes(b'evaluator version 1')
+    spec = {'evaluator_git_blob_sha': git_blob_sha(source.read_bytes())}
+    assert verify_evaluator_source(spec, source) == spec['evaluator_git_blob_sha']
+
+    with pytest.raises(ValueError, match='Pinned evaluator'):
+        verify_evaluator_source({}, source)
+    source.write_bytes(b'evaluator version 2')
+    with pytest.raises(ValueError, match='Pinned evaluator'):
+        verify_evaluator_source(spec, source)
+
+
+def test_preflight_rejects_wrong_evaluator_before_tokenizer_or_test(tmp_path):
+    from aster.training import lang_gate3 as gate
+
+    (tmp_path / 'configs').mkdir()
+    spec_path = tmp_path / 'configs/gate.json'
+    spec_path.write_text(json.dumps({'schema_version': gate.SCHEMA,
+                                     'evaluator_git_blob_sha': '0' * 40}))
+    with pytest.raises(ValueError, match='Pinned evaluator'):
+        preflight(tmp_path, spec_path)
