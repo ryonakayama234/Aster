@@ -315,3 +315,20 @@ def test_preflight_rejects_wrong_evaluator_before_tokenizer_or_test(tmp_path):
                                      'evaluator_git_blob_sha': '0' * 40}))
     with pytest.raises(ValueError, match='Pinned evaluator'):
         preflight(tmp_path, spec_path)
+
+
+def test_scoring_runtime_matches_frozen_training_threads(monkeypatch):
+    """Keep separate-process checkpoint scoring on the trainer's CPU settings."""
+    from aster.training.lang_gate3 import configure_scoring_runtime
+
+    called = []
+    monkeypatch.setattr(torch, 'set_num_threads', lambda n: called.append(('threads', n)))
+    monkeypatch.setattr(torch, 'use_deterministic_algorithms',
+                        lambda enabled: called.append(('deterministic', enabled)))
+
+    configure_scoring_runtime({'threads': 2})
+    assert called == [('threads', 2), ('deterministic', True)]
+    for invalid in (None, 0, -1, 2.0, True, '2'):
+        with pytest.raises(ValueError, match='threads'):
+            configure_scoring_runtime({'threads': invalid})
+    assert called == [('threads', 2), ('deterministic', True)]
