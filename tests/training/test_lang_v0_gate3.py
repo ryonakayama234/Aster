@@ -371,7 +371,8 @@ def test_full_synthetic_report_rejects_mixed_observations(tmp_path, monkeypatch,
     code_hash = digest(source_file.read_bytes())
     cfg = {'mode': 'pilot', 'steps': 200, 'eval_every': 50, 'batch_size': 2, 'threads': 2}
     spec = {'pilot_config': cfg, 'tokenizer_artifact_id': 'synthetic-tokenizer',
-            'source_git_blobs': {'src/aster/' + relative: git_blob_sha(source_file.read_bytes())}}
+            'source_git_blobs': {'src/aster/' + relative: git_blob_sha(source_file.read_bytes())},
+            'evaluator_git_blob_sha': git_blob_sha(Path(gate.__file__).read_bytes())}
     audit = {'view_id': 'synthetic-view', 'tokenizer_payload_sha256': 'synthetic-payload',
              'sealed_test_text_read': False}
     monkeypatch.setattr(gate, 'preflight',
