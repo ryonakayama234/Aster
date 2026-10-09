@@ -108,7 +108,9 @@ def train(root, view, tokenizer_dir, config, *, tokenizer_artifact_id=None, wiri
                                     config.width, config.heads, config.layers))
         optimizer = torch.optim.AdamW(model.parameters(), lr=config.learning_rate, weight_decay=config.weight_decay)
         source = Path(__file__).parents[1]
+        # Closed over local aster imports, including transitive shared dependencies.
         code_files = ['training/pretrain.py', 'training/dataset.py', 'training/tokenizer_run.py',
+                      'training/view.py', 'training/extract.py', 'corpus/pipeline.py',
                       'model/tiny_lm.py', 'model/transformer.py', 'model/lm_head.py',
                       'model/checkpoint.py', 'inference/generate.py', 'tokenizer/artifact.py',
                       'tokenizer/bpe.py', 'records/runlog.py']
