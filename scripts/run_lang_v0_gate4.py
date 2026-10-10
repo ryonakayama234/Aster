@@ -21,7 +21,7 @@ import torch
 from aster.inference.generate import describe_ids, generate_ids
 from aster.model.checkpoint import load_checkpoint
 from aster.training.lang_gate3 import (
-    preflight, validate_run_observations, verify_checkpoint_observation,
+    _in_dir, preflight, validate_run_observations, verify_checkpoint_observation,
     verify_run_sources, verify_scoring_dependencies,
 )
 
@@ -90,6 +90,61 @@ def token_bytes(tokenizer, ids: list[int] | tuple[int, ...]) -> bytes:
     return b''.join(tokenizer.model.vocab[token] for token in ids if token in tokenizer.model.vocab)
 
 
+def verified_training_chunks(root: Path, spec: dict, tokenizer, expected_windows: int) -> tuple[bytes, ...]:
+    """Build train-only windows from SHA-verified bytes read exactly once.
+
+    Gate 3 preflight validates the frozen view, but its window builder opens
+    files again after checking them. Do not trust those later reads for a
+    memorization assertion: independently hash each train snapshot and
+    tokenize the verified bytes. The sealed test is never opened.
+    """
+    view = root / 'data/training' / spec['training_view_id']
+    if view.is_symlink():
+        raise ValueError('Training view symlink is not permitted')
+    manifest_bytes = (view / 'manifest.json').read_bytes()
+    if sha256(manifest_bytes) != view.name:
+        raise ValueError('Training view manifest identity mismatch')
+    manifest = json.loads(manifest_bytes)
+    if manifest.get('schema_version') != 'aster-training-view-0':
+        raise ValueError('Unexpected training view schema')
+    files = manifest.get('files')
+    if not isinstance(files, dict):
+        raise ValueError('Missing training view file manifest')
+
+    # samples.jsonl also must be read from one verified snapshot; never open
+    # even the pathname of any test text.
+    sample_bytes = _in_dir(view, 'samples.jsonl').read_bytes()
+    if sha256(sample_bytes) != files.get('samples.jsonl'):
+        raise ValueError('Training sample index hash mismatch')
+    rows = [json.loads(line) for line in sample_bytes.decode('utf-8').splitlines() if line.strip()]
+    train_rows = sorted((row for row in rows if row.get('split') == 'train'),
+                        key=lambda row: row['record_id'])
+    if not train_rows:
+        raise ValueError('No train samples for overlap audit')
+
+    context = spec['pilot_config']['context_length']
+    if type(context) is not int or context <= 0:
+        raise ValueError('Invalid frozen context length')
+    chunks: list[bytes] = []
+    for row in train_rows:
+        name = row.get('text_path')
+        if (not isinstance(name, str)
+                or name != f"train/{row['record_id']}.txt"):
+            raise ValueError('Invalid train sample path')
+        # Read once. Checking this very snapshot closes the preflight-to-use
+        # race even if another process swaps the file later.
+        snapshot = _in_dir(view, name).read_bytes()
+        observed_hash = sha256(snapshot)
+        if observed_hash != row.get('text_sha256') or observed_hash != files.get(name):
+            raise ValueError('Training snapshot hash mismatch')
+        ids = tokenizer.encode(snapshot.decode('utf-8'), add_bos=True, add_eos=True)
+        for offset in range(0, len(ids) - 1, context):
+            chunks.append(token_bytes(tokenizer, ids[offset:offset + context + 1]))
+    if len(chunks) != expected_windows:
+        raise ValueError('Frozen training window count mismatch')
+    return tuple(chunks)
+
+
 def verify_checkpoint(run: Path, entry: dict, obs: dict, experiment: dict,
                       spec: dict, tokenizer_payload_id: str):
     step = entry['step']
@@ -155,7 +210,7 @@ def audit(root: Path) -> dict:
     verify_scoring_dependencies(experiment, str(torch.__version__), sys.version)
     verify_run_sources(root, spec, experiment.get('code_sha256'))
     observations = validate_run_observations(bundle.get('observations'), experiment, summary, bundle)
-    chunks = tuple(token_bytes(tokenizer, list(w.ids)) for w in windows['train'])
+    chunks = verified_training_chunks(root, spec, tokenizer, len(windows['train']))
     entries = report['checkpoint_evaluations']
     comparisons = []
     counters: dict[str, dict[str, int]] = {}
