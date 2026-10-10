@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import io
 import json
 import os
 from pathlib import Path
@@ -98,9 +99,12 @@ def verify_checkpoint(run: Path, entry: dict, obs: dict, experiment: dict,
             or entry.get('tokens_seen') != obs.get('tokens_seen')):
         raise ValueError('Gate 3 report and Run checkpoint observations disagree')
     path = run / obs['checkpoint']
-    if sha256(path.read_bytes()) != entry['checkpoint_sha256']:
+    snapshot = path.read_bytes()
+    if sha256(snapshot) != entry['checkpoint_sha256']:
         raise ValueError('Frozen checkpoint content SHA-256 mismatch')
-    model, tokenizer, payload = load_checkpoint(path, tokenizer_payload_id)
+    # Torch accepts a file-like object: infer from the *same verified bytes*.
+    # Reopening a path after checking its hash would admit a file-swap race.
+    model, tokenizer, payload = load_checkpoint(io.BytesIO(snapshot), tokenizer_payload_id)
     verify_checkpoint_observation(payload, obs, experiment, spec, model)
     if model.training:
         raise ValueError('Checkpoint must load in evaluation mode')
