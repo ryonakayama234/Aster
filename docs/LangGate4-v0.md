@@ -6,7 +6,7 @@ Issue #97. **No new training.** The previous held-out NLL improvement is on one 
 
 - Completed private Run: `runs/f884ea724e854ab09ed6a3944f03f8f2`.
 - Canonical Gate 3 report SHA-256: `08f1c62ee949e45ccc32f67f5ded9c9c48044804c15587d45672571e8ba555f1`. The runner refuses any changed report, model checkpoint hash, step, tokenizer, configuration or source provenance.
-- Only checkpoint steps **0 and 200** are used. The checksum is verified against checkpoint bytes **read once**, and PyTorch loads that very same in-memory byte snapshot to eliminate the check/use file-swap race. No weights updated, no sealed test bytes read.
+- Only checkpoint steps **0 and 200** are used. Each checkpoint SHA is verified against bytes **read once**, and PyTorch loads that very same in-memory byte snapshot. The train-only overlap scan likewise reloads a manifest/SHA-pinned **single byte snapshot** for each training document and tokenizes those verified bytes; it never reuses an unverified post-preflight read. Both paths prevent check/use file-swap races. No weights updated, no sealed test bytes read.
 - **Six fixed prompts**, in order: 「朝、窓を開けると」「雨がやんだので」「机の上には」「昨日読んだ本には」「静かな駅で」「それから、私は」.
 - Decoding: existing `generate_ids`, greedy argmax, BOS excluded, stop at EOS, rolling context 128, up to 64 new tokens. Deterministic torch runtime with 2 CPU threads, no seed search. Total 6 × 2 = 12 outputs, theoretical maximum 768 generated tokens. No edits after previewing outputs.
 
