@@ -56,6 +56,57 @@ def test_report_is_sha_locked_and_sealed_test_unused(tmp_path, monkeypatch):
         r.read_frozen_report(tmp_path)
 
 
+def synthetic_train_view(tmp_path):
+    """One manifest-pinned train row and no dev/test document reads."""
+    r = runner()
+    body = '朝が始まる。'.encode('utf-8')
+    row = {'record_id': 'first', 'split': 'train', 'text_path': 'train/first.txt',
+           'text_sha256': hashlib.sha256(body).hexdigest()}
+    index = (json.dumps(row, ensure_ascii=False) + '\n').encode('utf-8')
+    manifest = json.dumps({'schema_version': 'aster-training-view-0', 'files': {
+        'train/first.txt': hashlib.sha256(body).hexdigest(),
+        'samples.jsonl': hashlib.sha256(index).hexdigest(),
+    }}, ensure_ascii=False).encode('utf-8')
+    view_name = hashlib.sha256(manifest).hexdigest()
+    view = tmp_path / 'data/training' / view_name
+    (view / 'train').mkdir(parents=True)
+    (view / 'train/first.txt').write_bytes(body)
+    (view / 'samples.jsonl').write_bytes(index)
+    (view / 'manifest.json').write_bytes(manifest)
+    spec = {'training_view_id': view_name, 'pilot_config': {'context_length': 8}}
+    tok = SimpleNamespace(model=SimpleNamespace(vocab={1: b'A', 2: b'B', 3: b'C'}))
+    tok.encode = lambda _text, add_bos=True, add_eos=True: [0, 1, 2, 3, 99]
+    return r, spec, view, tok
+
+
+def test_verified_train_chunks_use_hash_pinned_snapshot(tmp_path):
+    r, spec, view, tok = synthetic_train_view(tmp_path)
+    assert r.verified_training_chunks(tmp_path, spec, tok, expected_windows=1) == (b'ABC',)
+    (view / 'train/first.txt').write_bytes(b'changed after prior preflight')
+    with pytest.raises(ValueError, match='Training snapshot hash mismatch'):
+        r.verified_training_chunks(tmp_path, spec, tok, expected_windows=1)
+
+
+def test_verified_train_bytes_are_used_if_path_swapped_during_tokenization(tmp_path):
+    r, spec, view, tok = synthetic_train_view(tmp_path)
+    observed = []
+    def swap_on_encode(text, add_bos=True, add_eos=True):
+        observed.append(text)
+        (view / 'train/first.txt').write_bytes(b'swapped only after snapshot verified')
+        return [0, 1, 2, 3, 99]
+    tok.encode = swap_on_encode
+    assert r.verified_training_chunks(tmp_path, spec, tok, expected_windows=1) == (b'ABC',)
+    assert observed == ['朝が始まる。']
+    assert (view / 'train/first.txt').read_bytes() != observed[0].encode('utf-8')
+
+
+def test_verified_sample_index_tampering_is_rejected(tmp_path):
+    r, spec, view, tok = synthetic_train_view(tmp_path)
+    (view / 'samples.jsonl').write_text('{}\n')
+    with pytest.raises(ValueError, match='sample index hash mismatch'):
+        r.verified_training_chunks(tmp_path, spec, tok, expected_windows=1)
+
+
 def test_checkpoint_sha_mismatch_is_rejected_before_load(tmp_path, monkeypatch):
     r = runner()
     (tmp_path / 'checkpoint-000000.pt').write_bytes(b'fake payload')
@@ -133,6 +184,7 @@ def test_full_audit_runs_exactly_two_pairs_with_silent_stdout(tmp_path, monkeypa
         tok, {'train': [SimpleNamespace(ids=[1, 2, 1, 2])]}, preflight))
     monkeypatch.setattr(r, 'verify_scoring_dependencies', lambda *_args: {})
     monkeypatch.setattr(r, 'verify_run_sources', lambda *_args: None)
+    monkeypatch.setattr(r, 'verified_training_chunks', lambda *_args: (b'xyxy',))
     monkeypatch.setattr(r, 'validate_run_observations', lambda *_args: checkpoints)
     visited = []
     def fake_verify(_run, entry, _obs, *_args):
