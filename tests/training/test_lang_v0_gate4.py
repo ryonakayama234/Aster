@@ -68,6 +68,33 @@ def test_checkpoint_sha_mismatch_is_rejected_before_load(tmp_path, monkeypatch):
                              'checkpoint': 'checkpoint-000000.pt'}, {}, {}, 'tokenizer-id')
 
 
+
+def test_verified_checkpoint_snapshot_is_the_bytes_loaded_even_if_path_changes(tmp_path, monkeypatch):
+    r = runner()
+    path = tmp_path / 'checkpoint-000200.pt'
+    verified = b'frozen checkpoint bytes'
+    path.write_bytes(verified)
+    expected = hashlib.sha256(verified).hexdigest()
+    checkpoint = {'step': 200, 'tokens_seen': 202172, 'checkpoint_sha256': expected}
+    observation = {**checkpoint, 'checkpoint': path.name}
+    loaded_bytes = []
+
+    def fake_load(file_like, expected_tokenizer_id):
+        # A path re-open here would read the swapped payload, not verified data.
+        path.write_bytes(b'swapped after verification')
+        loaded_bytes.append(file_like.read())
+        assert expected_tokenizer_id == 'payload-id'
+        return SimpleNamespace(training=False), SimpleNamespace(), {}
+
+    monkeypatch.setattr(r, 'load_checkpoint', fake_load)
+    monkeypatch.setattr(r, 'verify_checkpoint_observation', lambda *_args: None)
+    model, _tok = r.verify_checkpoint(
+        tmp_path, checkpoint, observation, {}, {}, 'payload-id')
+    assert not model.training
+    assert loaded_bytes == [verified]
+    assert path.read_bytes() != verified
+
+
 def test_private_output_is_0600_and_never_overwritten(tmp_path):
     r = runner()
     path = tmp_path / r.PRIVATE_OUTPUT
