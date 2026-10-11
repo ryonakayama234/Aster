@@ -1,6 +1,7 @@
 """Synthetic-only tests: strict UTF-8 decoding without private corpus or retraining."""
 
 import hashlib
+import importlib
 import importlib.util
 import json
 from pathlib import Path
@@ -100,6 +101,8 @@ def runner():
         "lang_v01_runner", ROOT / "scripts/run_lang_v01_utf8.py")
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
+    # Tests use ordinary synthetic imports; the CLI uses checked source-only loading.
+    mod.gate4 = importlib.import_module("run_lang_v0_gate4")
     return mod
 
 
@@ -152,6 +155,7 @@ def test_exact_reviewed_commit_and_source_integrity(tmp_path):
     r = runner()
     for name, contents in [
         ("scripts/run_lang_v01_utf8.py", b"trusted runner\n"),
+        ("scripts/run_lang_v0_gate4.py", b"trusted Gate 4\n"),
         ("src/aster/inference/utf8_greedy.py", b"trusted decoder\n"),
     ]:
         path = tmp_path / name
@@ -166,10 +170,11 @@ def test_exact_reviewed_commit_and_source_integrity(tmp_path):
                     "-c", "user.email=test@example.com", "commit", "-qm", "synthetic"],
                    check=True, capture_output=True)
     commit = git("rev-parse", "HEAD")
-    checked, verified_decoder = r.verify_reviewed_checkout(tmp_path, commit)
-    assert verified_decoder == b"trusted decoder\n"
+    checked, verified_snapshots = r.verify_reviewed_checkout(tmp_path, commit)
+    assert verified_snapshots["src/aster/inference/utf8_greedy.py"] == b"trusted decoder\n"
+    assert verified_snapshots["scripts/run_lang_v0_gate4.py"] == b"trusted Gate 4\n"
     assert checked["scripts/run_lang_v01_utf8.py"] == hashlib.sha256(b"trusted runner\n").hexdigest()
-    assert len(checked) == 2
+    assert len(checked) == 3
     with pytest.raises(ValueError, match="differs from exact reviewed commit"):
         r.verify_reviewed_checkout(tmp_path, "f"*40)
     with pytest.raises(ValueError, match="exact 40-hex"):
@@ -185,8 +190,9 @@ def test_loader_executes_verified_bytes_not_current_file_or_pyc(tmp_path):
     changed_bytes = b"def generate_utf8_greedy(*args): return 'POISONED'\n"
     path = tmp_path / "utf8_greedy.py"
     path.write_bytes(changed_bytes)
-    fn = r.load_verified_decoder(checked_bytes, path)
-    assert fn(None) == "VERIFIED"
+    verified_module = r.load_verified_module(checked_bytes, path,
+                                            "aster.inference._synthetic_checked", "aster.inference")
+    assert verified_module.generate_utf8_greedy(None) == "VERIFIED"
     assert path.read_bytes() == changed_bytes
 
 
@@ -224,8 +230,10 @@ def test_read_only_pair_run_no_private_stdout_no_overwrite(tmp_path, monkeypatch
     tok.encode = lambda _prompt, add_bos=True: [5, 1]
     monkeypatch.setattr(r, "verify_reviewed_checkout",
                         lambda *_args: ({"scripts/run_lang_v01_utf8.py": "d"*64,
+                                         "scripts/run_lang_v0_gate4.py": "f"*64,
                                          "src/aster/inference/utf8_greedy.py": "e"*64},
-                                        b"synthetic verified decoder bytes"))
+                                        {"scripts/run_lang_v0_gate4.py": b"verified Gate 4",
+                                         "src/aster/inference/utf8_greedy.py": b"verified decoder"}))
     monkeypatch.setattr(r.gate4, "read_frozen_report", lambda *_args: report)
     monkeypatch.setattr(r.gate4, "preflight", lambda *_args: (
         {"pilot_config": conf, "tokenizer_artifact_id": "artifact"},
@@ -239,14 +247,15 @@ def test_read_only_pair_run_no_private_stdout_no_overwrite(tmp_path, monkeypatch
         used.append(entry["step"])
         return SimpleNamespace(), tok
     monkeypatch.setattr(r.gate4, "verify_checkpoint", verified_model)
-    monkeypatch.setattr(r, "load_verified_decoder",
-                        lambda *_args: (lambda *_args: Utf8Generation([1], b"", "budget")))
+    monkeypatch.setattr(r, "prepare_verified_imports",
+                        lambda *_args: (r.gate4,
+                                        lambda *_args: Utf8Generation([1], b"", "budget")))
     summary = r.audit(tmp_path, "a"*40)
     assert summary["training_updates"] == 0
     assert summary["sealed_test_text_read"] is False
     assert summary["paired_prompts"] == 6 and used == [0, 200]
     assert summary["reviewed_source_commit"] == "a"*40
-    assert len(summary["verified_source_sha256"]) == 2
+    assert len(summary["verified_source_sha256"]) == 3
     assert summary["utf8_constrained_by_step"]["200"]["valid_utf8"] == 6
     assert "continuation" not in json.dumps(summary)
     assert capsys.readouterr().out == ""
