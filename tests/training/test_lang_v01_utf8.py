@@ -166,7 +166,8 @@ def test_exact_reviewed_commit_and_source_integrity(tmp_path):
                     "-c", "user.email=test@example.com", "commit", "-qm", "synthetic"],
                    check=True, capture_output=True)
     commit = git("rev-parse", "HEAD")
-    checked = r.verify_reviewed_checkout(tmp_path, commit)
+    checked, verified_decoder = r.verify_reviewed_checkout(tmp_path, commit)
+    assert verified_decoder == b"trusted decoder\n"
     assert checked["scripts/run_lang_v01_utf8.py"] == hashlib.sha256(b"trusted runner\n").hexdigest()
     assert len(checked) == 2
     with pytest.raises(ValueError, match="differs from exact reviewed commit"):
@@ -176,6 +177,17 @@ def test_exact_reviewed_commit_and_source_integrity(tmp_path):
     (tmp_path / "src/aster/inference/utf8_greedy.py").write_bytes(b"tampered")
     with pytest.raises(ValueError, match="dirty"):
         r.verify_reviewed_checkout(tmp_path, commit)
+
+
+def test_loader_executes_verified_bytes_not_current_file_or_pyc(tmp_path):
+    r = runner()
+    checked_bytes = b"def generate_utf8_greedy(*args): return 'VERIFIED'\n"
+    changed_bytes = b"def generate_utf8_greedy(*args): return 'POISONED'\n"
+    path = tmp_path / "utf8_greedy.py"
+    path.write_bytes(changed_bytes)
+    fn = r.load_verified_decoder(checked_bytes, path)
+    assert fn(None) == "VERIFIED"
+    assert path.read_bytes() == changed_bytes
 
 
 def test_wrong_execution_checkout_is_rejected_before_reading_private_run(tmp_path, monkeypatch):
@@ -211,8 +223,9 @@ def test_read_only_pair_run_no_private_stdout_no_overwrite(tmp_path, monkeypatch
     tok = SimpleNamespace(model=SimpleNamespace(vocab={1: b"A"}))
     tok.encode = lambda _prompt, add_bos=True: [5, 1]
     monkeypatch.setattr(r, "verify_reviewed_checkout",
-                        lambda *_args: {"scripts/run_lang_v01_utf8.py": "d"*64,
-                                        "src/aster/inference/utf8_greedy.py": "e"*64})
+                        lambda *_args: ({"scripts/run_lang_v01_utf8.py": "d"*64,
+                                         "src/aster/inference/utf8_greedy.py": "e"*64},
+                                        b"synthetic verified decoder bytes"))
     monkeypatch.setattr(r.gate4, "read_frozen_report", lambda *_args: report)
     monkeypatch.setattr(r.gate4, "preflight", lambda *_args: (
         {"pilot_config": conf, "tokenizer_artifact_id": "artifact"},
@@ -226,8 +239,8 @@ def test_read_only_pair_run_no_private_stdout_no_overwrite(tmp_path, monkeypatch
         used.append(entry["step"])
         return SimpleNamespace(), tok
     monkeypatch.setattr(r.gate4, "verify_checkpoint", verified_model)
-    monkeypatch.setattr(r, "generate_utf8_greedy",
-                        lambda *_args: Utf8Generation([1], b"", "budget"))
+    monkeypatch.setattr(r, "load_verified_decoder",
+                        lambda *_args: (lambda *_args: Utf8Generation([1], b"", "budget")))
     summary = r.audit(tmp_path, "a"*40)
     assert summary["training_updates"] == 0
     assert summary["sealed_test_text_read"] is False
