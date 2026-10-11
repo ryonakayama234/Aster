@@ -196,6 +196,31 @@ def test_loader_executes_verified_bytes_not_current_file_or_pyc(tmp_path):
     assert path.read_bytes() == changed_bytes
 
 
+def test_source_only_loader_ignores_pyc_and_checks_git_bytes(tmp_path):
+    r = runner()
+    file = tmp_path / "src/aster/synthetic.py"
+    file.parent.mkdir(parents=True)
+    file.write_text("ANSWER = 'VERIFIED'\n", encoding="utf-8")
+    def git(*args):
+        return subprocess.run(["git", "-C", str(tmp_path), *args], check=True,
+                              capture_output=True).stdout.decode().strip()
+    git("init", "-q")
+    git("add", ".")
+    subprocess.run(["git", "-C", str(tmp_path), "-c", "user.name=Test",
+                    "-c", "user.email=test@example.com", "commit", "-qm", "synthetic"],
+                   check=True, capture_output=True)
+    commit = git("rev-parse", "HEAD")
+    captured = {}
+    loader = r.PinnedAsterLoader("aster.synthetic", str(file), tmp_path, commit, captured)
+    namespace = {}
+    exec(loader.get_code("aster.synthetic"), namespace)
+    assert namespace["ANSWER"] == "VERIFIED"
+    assert captured["src/aster/synthetic.py"] == hashlib.sha256(file.read_bytes()).hexdigest()
+    file.write_text("ANSWER = 'POISONED'\n", encoding="utf-8")
+    with pytest.raises(ImportError, match="differs from Git"):
+        loader.get_code("aster.synthetic")
+
+
 def test_wrong_execution_checkout_is_rejected_before_reading_private_run(tmp_path, monkeypatch):
     r = runner()
     def should_not_verify(*_args):
