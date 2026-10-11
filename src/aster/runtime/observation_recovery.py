@@ -225,21 +225,28 @@ def model_preflight(model, tokenizer) -> dict:
     inputs = {}
     for branch in BRANCHES:
         episode = create_episode(branch)
+        # Measure BEFORE mutating the episode with a subsequent retry.
         positions = [(branch + "_postprefix", episode)]
-        if branch == "transient_failure":
-            # Truthful tool retry, solely to preflight the later model input.
-            _append_action(episode, RETRY)
-            positions.append((branch + "_after_retry", episode))
         for name, point in positions:
             state = point.context.snapshot(len(point.trajectory))
-            lengths = [
+            inputs[name] = [
                 len(tokenizer.encode(
                     serialize_decision_input(state, point.trajectory, candidate),
                     add_bos=True, add_eos=True,
                 ))
                 for candidate in FIXED_CANDIDATES
             ]
-            inputs[name] = lengths
+        if branch == "transient_failure":
+            # Truthful tool retry, solely to preflight the later model input.
+            _append_action(episode, RETRY)
+            state = episode.context.snapshot(len(episode.trajectory))
+            inputs[branch + "_after_retry"] = [
+                len(tokenizer.encode(
+                    serialize_decision_input(state, episode.trajectory, candidate),
+                    add_bos=True, add_eos=True,
+                ))
+                for candidate in FIXED_CANDIDATES
+            ]
     limit = model.backbone.config.context_length
     maximum = max(max(values) for values in inputs.values())
     return {
