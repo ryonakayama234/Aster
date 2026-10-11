@@ -44,7 +44,9 @@ semantic equivalence or leakage without examining source/session identity.
 - Private: new runs/lang-v02-corpus-audit/private-report.json (0700 directory,
   0600 file) with per-document labels, metrics and candidate overlap pairs.
 - Never rewrite previous Runs or the frozen data, model or tokenizer.
-- Second run fails instead of overwriting private report.
+- The private file is fsynced in a temporary 0600 file, then published
+  atomically. I/O failures delete incomplete artifacts and the new directory.
+- Second successful run fails instead of overwriting private report.
 - No Drive writes, raw text transfers to GitHub, new ingestion or training.
 
 ## WSL2 command after review and merge
