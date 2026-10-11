@@ -10,6 +10,8 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import re
+import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -73,13 +75,59 @@ def read_immutable_baseline(run: Path, report: dict) -> tuple[str, dict]:
     return hashlib.sha256(snapshot).hexdigest(), baseline
 
 
+SOURCE_FILES = (
+    "scripts/run_lang_v01_utf8.py",
+    "src/aster/inference/utf8_greedy.py",
+)
+
+
+def verify_reviewed_checkout(root: Path, expected_commit: str) -> dict[str, str]:
+    """Require a clean exact Git revision; hash exactly its audited source bytes.
+
+    The expected reviewed/merged commit is supplied in the *user's invocation*
+    (not inferred from their checkout). The source hash is checked against Git's
+    immutable blobs and stored in the private result for post-hoc auditing.
+    """
+    if not re.fullmatch(r"[0-9a-f]{40}", expected_commit):
+        raise ValueError("An exact 40-hex reviewed commit SHA is required")
+
+    def git(*args: str) -> bytes:
+        try:
+            return subprocess.run(["git", "-C", str(root), *args], check=True,
+                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout
+        except subprocess.CalledProcessError as exc:
+            raise ValueError("Cannot verify reviewed Git sources") from exc
+
+    top = Path(git("rev-parse", "--show-toplevel").decode().strip()).resolve()
+    if top != root:
+        raise ValueError("Specified root is not the exact checkout root")
+    head = git("rev-parse", "HEAD").decode().strip()
+    if head != expected_commit:
+        raise ValueError("Checkout HEAD differs from exact reviewed commit")
+    if git("status", "--porcelain", "--untracked-files=no"):
+        raise ValueError("Tracked working tree/index is dirty; preserve private changes")
+
+    verified: dict[str, str] = {}
+    for relative in SOURCE_FILES:
+        path = root / relative
+        if path.is_symlink() or not path.is_file():
+            raise ValueError("Missing or symlinked audited source: " + relative)
+        actual = path.read_bytes()
+        committed = git("show", f"{expected_commit}:{relative}")
+        if actual != committed:
+            raise ValueError("Audited source differs from Git blob: " + relative)
+        verified[relative] = hashlib.sha256(actual).hexdigest()
+    return verified
+
+
 def contains_controls(s: str) -> bool:
     """Flag controls excluding printable spacing of TAB/LF/CR."""
     return any((ord(c) < 32 and c not in "\t\n\r") or 0x7f <= ord(c) < 0xa0 for c in s)
 
 
-def audit(root: Path) -> dict:
+def audit(root: Path, expected_commit: str) -> dict:
     root = root.resolve()
+    source_hashes = verify_reviewed_checkout(root, expected_commit)
     run = root / "runs" / gate4.RUN_ID
     if run.is_symlink() or run.resolve().parent != (root / "runs").resolve():
         raise ValueError("Unexpected frozen Run location")
@@ -166,6 +214,8 @@ def audit(root: Path) -> dict:
         "schema_version": "aster-lang-v01-utf8-private-0",
         "run_id": gate4.RUN_ID, "gate3_report_sha256": gate4.REPORT_SHA256,
         "gate4_baseline_sha256": baseline_sha, "baseline_counts": baseline,
+        "reviewed_source_commit": expected_commit,
+        "verified_source_sha256": source_hashes,
         "new_policy": NEW_POLICY, "max_new_tokens": gate4.MAX_NEW_TOKENS,
         "prompts": list(gate4.PROMPTS), "checkpoints": pairs,
         "limitations": "Post-hoc decoding-only intervention, not Gate 4 PASS. "
@@ -177,6 +227,8 @@ def audit(root: Path) -> dict:
         "status": "utf8_decoding_diagnostic_completed",
         "run_id": gate4.RUN_ID, "gate3_report_sha256": gate4.REPORT_SHA256,
         "gate4_baseline_sha256": baseline_sha,
+        "reviewed_source_commit": expected_commit,
+        "verified_source_sha256": source_hashes,
         "paired_prompts": len(gate4.PROMPTS),
         "new_policy": NEW_POLICY, "max_new_tokens": gate4.MAX_NEW_TOKENS,
         "original_gate4_by_step": baseline, "utf8_constrained_by_step": counts,
@@ -188,8 +240,10 @@ def audit(root: Path) -> dict:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=ROOT)
+    parser.add_argument("--expected-commit", required=True,
+                        help="Exact 40-hex reviewed/merged commit SHA, never inferred from HEAD")
     args = parser.parse_args()
-    print(json.dumps(audit(args.root), ensure_ascii=False, indent=2))
+    print(json.dumps(audit(args.root, args.expected_commit), ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
