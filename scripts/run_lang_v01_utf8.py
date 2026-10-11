@@ -132,6 +132,8 @@ def contains_controls(s: str) -> bool:
 
 def audit(root: Path, expected_commit: str) -> dict:
     root = root.resolve()
+    if root != ROOT.resolve():
+        raise ValueError("The --root checkout must match the executing runner's own checkout")
     source_hashes = verify_reviewed_checkout(root, expected_commit)
     run = root / "runs" / gate4.RUN_ID
     if run.is_symlink() or run.resolve().parent != (root / "runs").resolve():
