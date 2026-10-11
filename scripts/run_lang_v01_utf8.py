@@ -8,6 +8,8 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.abc
+import importlib.machinery
 import json
 from pathlib import Path
 import re
@@ -20,25 +22,82 @@ sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "scripts"))
 
 import torch
-import run_lang_v0_gate4 as gate4
 
-def load_verified_decoder(snapshot: bytes, path: Path):
-    """Execute the SHA-verified source bytes directly, never an existing .pyc.
+# Loaded only from the reviewed Git snapshot after verifying the checkout.
+gate4 = None
 
-    Register a uniquely named module before exec: @dataclass needs its
-    defining module available in sys.modules at class construction time.
-    """
-    name = "aster.inference._lang_v01_verified_utf8"
+def load_verified_module(snapshot: bytes, path: Path, name: str, package: str):
+    """Execute exactly the Git-verified bytes, bypassing importlib's .pyc cache."""
     module = types.ModuleType(name)
     module.__file__ = str(path)
-    module.__package__ = "aster.inference"
+    module.__package__ = package
     sys.modules[name] = module
     try:
         exec(compile(snapshot, str(path), "exec"), module.__dict__)
-        return module.generate_utf8_greedy
+        return module
     except BaseException:
         sys.modules.pop(name, None)
         raise
+
+
+class PinnedAsterLoader(importlib.machinery.SourceFileLoader):
+    """Source-only loader that checks Git bytes before compiling each module."""
+
+    def __init__(self, fullname: str, path: str, root: Path, commit: str,
+                 loaded_hashes: dict[str, str]):
+        super().__init__(fullname, path)
+        self.root, self.commit, self.loaded_hashes = root, commit, loaded_hashes
+
+    def get_code(self, fullname):
+        path = Path(self.path).resolve()
+        relative = path.relative_to(self.root).as_posix()
+        snapshot = path.read_bytes()
+        try:
+            committed = subprocess.run(
+                ["git", "-C", str(self.root), "show", f"{self.commit}:{relative}"],
+                check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            ).stdout
+        except subprocess.CalledProcessError as exc:
+            raise ImportError("Could not verify Aster source: " + relative) from exc
+        if snapshot != committed:
+            raise ImportError("Aster module differs from Git source: " + relative)
+        self.loaded_hashes[relative] = hashlib.sha256(snapshot).hexdigest()
+        # No get_data for .pyc / pycache: compile precisely the verified bytes.
+        return self.source_to_code(snapshot, str(path))
+
+
+class PinnedAsterFinder(importlib.abc.MetaPathFinder):
+    def __init__(self, root: Path, commit: str, loaded_hashes: dict[str, str]):
+        self.root, self.commit, self.loaded_hashes = root, commit, loaded_hashes
+
+    def find_spec(self, fullname, path=None, target=None):
+        if fullname != "aster" and not fullname.startswith("aster."):
+            return None
+        spec = importlib.machinery.PathFinder.find_spec(fullname, path, target)
+        if spec is None or not spec.origin:
+            raise ImportError("Missing expected Aster source module: " + fullname)
+        source = Path(spec.origin).resolve()
+        if source.suffix != ".py" or not source.is_relative_to(self.root / "src/aster"):
+            raise ImportError("Unexpected Aster module outside reviewed checkout")
+        spec.loader = PinnedAsterLoader(
+            fullname, str(source), self.root, self.commit, self.loaded_hashes)
+        return spec
+
+
+def prepare_verified_imports(root: Path, commit: str, snapshots: dict[str, bytes],
+                             loaded_hashes: dict[str, str]):
+    """Bind Gate 4 and all imported local Aster dependencies to verified bytes."""
+    if any(name == "aster" or name.startswith("aster.") for name in sys.modules):
+        raise ValueError("Aster modules imported before source attestation")
+    sys.meta_path.insert(0, PinnedAsterFinder(root, commit, loaded_hashes))
+    gate4_mod = load_verified_module(
+        snapshots["scripts/run_lang_v0_gate4.py"],
+        root / "scripts/run_lang_v0_gate4.py", "run_lang_v0_gate4_verified", "")
+    decoder_mod = load_verified_module(
+        snapshots["src/aster/inference/utf8_greedy.py"],
+        root / "src/aster/inference/utf8_greedy.py",
+        "aster.inference._lang_v01_verified_utf8", "aster.inference")
+    return gate4_mod, decoder_mod.generate_utf8_greedy
 
 
 PRIVATE_OUTPUT = "lang-v01-utf8-private.json"
@@ -96,11 +155,12 @@ def read_immutable_baseline(run: Path, report: dict) -> tuple[str, dict]:
 
 SOURCE_FILES = (
     "scripts/run_lang_v01_utf8.py",
+    "scripts/run_lang_v0_gate4.py",
     "src/aster/inference/utf8_greedy.py",
 )
 
 
-def verify_reviewed_checkout(root: Path, expected_commit: str) -> tuple[dict[str, str], bytes]:
+def verify_reviewed_checkout(root: Path, expected_commit: str) -> tuple[dict[str, str], dict[str, bytes]]:
     """Require a clean exact Git revision; hash exactly its audited source bytes.
 
     The expected reviewed/merged commit is supplied in the *user's invocation*
@@ -138,7 +198,7 @@ def verify_reviewed_checkout(root: Path, expected_commit: str) -> tuple[dict[str
             raise ValueError("Audited source differs from Git blob: " + relative)
         verified[relative] = hashlib.sha256(actual).hexdigest()
         source_snapshots[relative] = actual
-    return verified, source_snapshots["src/aster/inference/utf8_greedy.py"]
+    return verified, source_snapshots
 
 
 def contains_controls(s: str) -> bool:
@@ -150,9 +210,10 @@ def audit(root: Path, expected_commit: str) -> dict:
     root = root.resolve()
     if root != ROOT.resolve():
         raise ValueError("The --root checkout must match the executing runner's own checkout")
-    source_hashes, decoder_snapshot = verify_reviewed_checkout(root, expected_commit)
-    generate = load_verified_decoder(
-        decoder_snapshot, root / "src/aster/inference/utf8_greedy.py")
+    source_hashes, source_snapshots = verify_reviewed_checkout(root, expected_commit)
+    global gate4
+    gate4, generate = prepare_verified_imports(
+        root, expected_commit, source_snapshots, source_hashes)
     run = root / "runs" / gate4.RUN_ID
     if run.is_symlink() or run.resolve().parent != (root / "runs").resolve():
         raise ValueError("Unexpected frozen Run location")
