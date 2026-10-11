@@ -2,11 +2,14 @@
 import hashlib
 import importlib.util
 import json
+import os
 from pathlib import Path
 import stat
 import subprocess
 
 import pytest
+
+from aster.tokenizer.bpe import BPEModel
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -29,6 +32,24 @@ class ToyTokenizer:
             [self.eos_id] if add_eos else [])
     def decode(self, ids):
         return bytes(token for token in ids if token < 256).decode("utf-8")
+
+
+class MergedToyTokenizer(ToyTokenizer):
+    """A real byte-BPE merge makes text token counts differ from byte counts."""
+    bos_id, eos_id = 257, 258
+
+    def __init__(self):
+        vocab = {i: bytes([i]) for i in range(256)}
+        vocab[256] = b"Le"
+        self.model = BPEModel(merges=[((ord("L"), ord("e")), 256)], vocab=vocab)
+
+    def encode(self, value, *, add_bos=False, add_eos=False):
+        ids = self.model.encode(value)
+        return ([self.bos_id] if add_bos else []) + ids + (
+            [self.eos_id] if add_eos else [])
+
+    def decode(self, ids):
+        return self.model.decode([i for i in ids if i not in (self.bos_id, self.eos_id)])
 
 
 def fixture(tmp_path):
@@ -72,15 +93,18 @@ def test_train_scan_never_opens_sealed_test(tmp_path, monkeypatch):
         assert not name.startswith("test/"), "sealed test accessed"
         return original(base, name)
     monkeypatch.setattr(r, "_in_dir", guarded)
+    tokenizer = MergedToyTokenizer()
+    merged_token_count = len(tokenizer.encode(text))
+    assert merged_token_count < len(data)
     result = r.scan_train_view(
-        view, rows, manifest, ToyTokenizer(), 128,
+        view, rows, manifest, tokenizer, 128,
         {"prose/ja/003.txt": len(data)+5})
     assert result["train_documents"] == 1
     assert result["totals"]["raw_original_bytes"] == len(data)+5
     assert result["totals"]["extracted_train_bytes"] == len(data)
-    assert result["totals"]["bpe_text_tokens"] == len(data)
-    assert result["totals"]["bpe_targets_including_eos"] == len(data)+1
-    assert result["totals"]["training_windows"] == (len(data)+1+127)//128
+    assert result["totals"]["bpe_text_tokens"] == merged_token_count
+    assert result["totals"]["bpe_targets_including_eos"] == merged_token_count+1
+    assert result["totals"]["training_windows"] == (merged_token_count+1+127)//128
     assert result["lean_source_text_token_share"] == 1
     assert result["totals"]["bracket_3"] == 8
 
@@ -135,17 +159,30 @@ def test_runner_requires_exact_reviewed_clean_checkout(tmp_path, monkeypatch):
         r.verify_checkout(tmp_path, commit)
 
 
-def test_private_output_contract_uses_exclusive_directory_and_modes(tmp_path):
+def test_private_report_is_exclusive_and_0600(tmp_path):
     r = runner()
-    # Simulate the exact exclusive directory / private file boundary without
-    # needing any real local corpus data or touching an existing Run.
-    target = tmp_path / r.OUTPUT_DIR
-    target.mkdir(mode=0o700, exist_ok=False)
-    output = target / "private-report.json"
-    import os
-    fd = os.open(output, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
-    os.close(fd)
-    assert stat.S_IMODE(target.stat().st_mode) == 0o700
-    assert stat.S_IMODE(output.stat().st_mode) == 0o600
+    written = r.write_private_once(tmp_path, {"hello": "private"})
+    assert written.name == "private-report.json"
+    assert json.loads(written.read_text()) == {"hello": "private"}
+    assert stat.S_IMODE(written.parent.stat().st_mode) == 0o700
+    assert stat.S_IMODE(written.stat().st_mode) == 0o600
     with pytest.raises(FileExistsError):
-        target.mkdir(mode=0o700, exist_ok=False)
+        r.write_private_once(tmp_path, {"hello": "overwrite"})
+    assert json.loads(written.read_text()) == {"hello": "private"}
+
+
+def test_failed_private_write_cleans_partial_file_and_directory(tmp_path, monkeypatch):
+    r = runner()
+    def simulated_fdopen(fd, *_args, **_kwargs):
+        class BrokenWriter:
+            def __enter__(self):
+                return self
+            def write(self, *_a):
+                raise OSError("simulated disk full")
+            def __exit__(self, *_a):
+                os.close(fd)
+        return BrokenWriter()
+    monkeypatch.setattr(r.os, "fdopen", simulated_fdopen)
+    with pytest.raises(OSError, match="disk full"):
+        r.write_private_once(tmp_path, {"secret": "should never persist"})
+    assert not (tmp_path / r.OUTPUT_DIR).exists()
