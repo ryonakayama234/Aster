@@ -20,7 +20,12 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 import torch
 import run_lang_v0_gate4 as gate4
-from aster.inference.utf8_greedy import generate_utf8_greedy
+
+def generate_utf8_greedy(*args, **kwargs):
+    """Import the NEW decoder only after audit() verifies its Git blob."""
+    from aster.inference.utf8_greedy import generate_utf8_greedy as decoder
+    return decoder(*args, **kwargs)
+
 
 PRIVATE_OUTPUT = "lang-v01-utf8-private.json"
 NEW_POLICY = "UTF-8 strict-prefix masked greedy; BOS excluded; EOS at scalar boundary; sliding context"
