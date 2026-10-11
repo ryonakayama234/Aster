@@ -25,7 +25,7 @@ MERGED_COMMIT_SHA="PASTE_EXACT_40_HEX_MERGED_COMMIT_HERE"
 .venv/bin/python scripts/run_lang_v01_utf8.py --root . --expected-commit "$MERGED_COMMIT_SHA"
 ```
 
-The runner checks `git rev-parse HEAD`, root checkout identity, clean tracked working tree, then compares the bytes of BOTH `scripts/run_lang_v01_utf8.py` and `src/aster/inference/utf8_greedy.py` against their exact Git blobs from the supplied commit **before generating**. The commit SHA and both SHA-256 source hashes are stored in the private audit and aggregate stdout, so the audited code can be identified after execution. It fails closed on a mismatch or dirty tracked checkout.
+The runner first requires that `--root` **is exactly the checkout containing the executing runner itself** (resolved physical path), so an altered runner from checkout A cannot attest checkout B. Then it checks `git rev-parse HEAD`, Git checkout identity, clean tracked working tree, then compares the bytes of BOTH `scripts/run_lang_v01_utf8.py` and `src/aster/inference/utf8_greedy.py` against their exact Git blobs from the supplied commit **before generating**. The commit SHA and both SHA-256 source hashes are stored in the private audit and aggregate stdout, so the audited code can be identified after execution. It fails closed on a mismatch or dirty tracked checkout.
 
 The CLI emits **only aggregate counts**. Complete per-prompt results are stored **only locally** in the existing Run as `lang-v01-utf8-private.json` with mode 0600, using exclusive create (no overwrite); Gate 4 `lang-gate4-private.json` is read but never rewritten. Never commit or upload private prompts, generated text, weight files, the full Run, or training corpus.
 
