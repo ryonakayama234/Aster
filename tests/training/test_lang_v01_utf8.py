@@ -178,8 +178,18 @@ def test_exact_reviewed_commit_and_source_integrity(tmp_path):
         r.verify_reviewed_checkout(tmp_path, commit)
 
 
+def test_wrong_execution_checkout_is_rejected_before_reading_private_run(tmp_path, monkeypatch):
+    r = runner()
+    def should_not_verify(*_args):
+        raise AssertionError("Must reject wrong root before source verification")
+    monkeypatch.setattr(r, "verify_reviewed_checkout", should_not_verify)
+    with pytest.raises(ValueError, match="runner's own checkout"):
+        r.audit(tmp_path, "a"*40)
+
+
 def test_read_only_pair_run_no_private_stdout_no_overwrite(tmp_path, monkeypatch, capsys):
     r = runner()
+    monkeypatch.setattr(r, "ROOT", tmp_path)
     run = tmp_path / "runs" / r.gate4.RUN_ID
     run.mkdir(parents=True)
     conf = {"threads": 2}
