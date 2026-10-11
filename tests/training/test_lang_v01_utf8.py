@@ -67,8 +67,8 @@ def test_mask_rejects_stray_bytes_and_eos_inside_scalar():
     # Japanese codepoint is unfinished, but both must be masked out.
     scores = [
         [150, 0, 0, 100, 200, 0, 0, 1],
-        [0, 150, 0, 90, 200, 0, 0, 250],
-        [0, 0, 150, 90, 200, 0, 0, 250],
+        [0, 150, 0, 200, 10, 0, 0, 250],
+        [0, 0, 150, 200, 10, 0, 0, 250],
         [0, 0, 0, 100, 200, 0, 0, 250],
     ]
     output = generate_utf8_greedy(FrozenSyntheticModel(scores), t, [6], 4)
@@ -189,7 +189,7 @@ def test_read_only_pair_run_no_private_stdout_no_overwrite(tmp_path, monkeypatch
     assert summary["sealed_test_text_read"] is False
     assert summary["paired_prompts"] == 6 and used == [0, 200]
     assert summary["utf8_constrained_by_step"]["200"]["valid_utf8"] == 6
-    assert "A" not in json.dumps(summary)
+    assert "continuation" not in json.dumps(summary)
     assert capsys.readouterr().out == ""
     saved = run / r.PRIVATE_OUTPUT
     assert stat.S_IMODE(saved.stat().st_mode) == 0o600
