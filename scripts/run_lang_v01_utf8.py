@@ -13,6 +13,7 @@ from pathlib import Path
 import re
 import subprocess
 import sys
+import types
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
@@ -21,10 +22,23 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import torch
 import run_lang_v0_gate4 as gate4
 
-def generate_utf8_greedy(*args, **kwargs):
-    """Import the NEW decoder only after audit() verifies its Git blob."""
-    from aster.inference.utf8_greedy import generate_utf8_greedy as decoder
-    return decoder(*args, **kwargs)
+def load_verified_decoder(snapshot: bytes, path: Path):
+    """Execute the SHA-verified source bytes directly, never an existing .pyc.
+
+    Register a uniquely named module before exec: @dataclass needs its
+    defining module available in sys.modules at class construction time.
+    """
+    name = "aster.inference._lang_v01_verified_utf8"
+    module = types.ModuleType(name)
+    module.__file__ = str(path)
+    module.__package__ = "aster.inference"
+    sys.modules[name] = module
+    try:
+        exec(compile(snapshot, str(path), "exec"), module.__dict__)
+        return module.generate_utf8_greedy
+    except BaseException:
+        sys.modules.pop(name, None)
+        raise
 
 
 PRIVATE_OUTPUT = "lang-v01-utf8-private.json"
@@ -86,7 +100,7 @@ SOURCE_FILES = (
 )
 
 
-def verify_reviewed_checkout(root: Path, expected_commit: str) -> dict[str, str]:
+def verify_reviewed_checkout(root: Path, expected_commit: str) -> tuple[dict[str, str], bytes]:
     """Require a clean exact Git revision; hash exactly its audited source bytes.
 
     The expected reviewed/merged commit is supplied in the *user's invocation*
@@ -113,6 +127,7 @@ def verify_reviewed_checkout(root: Path, expected_commit: str) -> dict[str, str]
         raise ValueError("Tracked working tree/index is dirty; preserve private changes")
 
     verified: dict[str, str] = {}
+    source_snapshots: dict[str, bytes] = {}
     for relative in SOURCE_FILES:
         path = root / relative
         if path.is_symlink() or not path.is_file():
@@ -122,7 +137,8 @@ def verify_reviewed_checkout(root: Path, expected_commit: str) -> dict[str, str]
         if actual != committed:
             raise ValueError("Audited source differs from Git blob: " + relative)
         verified[relative] = hashlib.sha256(actual).hexdigest()
-    return verified
+        source_snapshots[relative] = actual
+    return verified, source_snapshots["src/aster/inference/utf8_greedy.py"]
 
 
 def contains_controls(s: str) -> bool:
@@ -134,7 +150,9 @@ def audit(root: Path, expected_commit: str) -> dict:
     root = root.resolve()
     if root != ROOT.resolve():
         raise ValueError("The --root checkout must match the executing runner's own checkout")
-    source_hashes = verify_reviewed_checkout(root, expected_commit)
+    source_hashes, decoder_snapshot = verify_reviewed_checkout(root, expected_commit)
+    generate = load_verified_decoder(
+        decoder_snapshot, root / "src/aster/inference/utf8_greedy.py")
     run = root / "runs" / gate4.RUN_ID
     if run.is_symlink() or run.resolve().parent != (root / "runs").resolve():
         raise ValueError("Unexpected frozen Run location")
@@ -183,7 +201,7 @@ def audit(root: Path, expected_commit: str) -> dict:
         generated_results = []
         for i, prompt in enumerate(gate4.PROMPTS):
             prompt_ids = tok.encode(prompt, add_bos=True)
-            generation = generate_utf8_greedy(model, tok, prompt_ids, gate4.MAX_NEW_TOKENS)
+            generation = generate(model, tok, prompt_ids, gate4.MAX_NEW_TOKENS)
             raw = gate4.token_bytes(tok, generation.token_ids)
             try:
                 continuation = raw.decode("utf-8")
