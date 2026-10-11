@@ -1,0 +1,196 @@
+"""LANG v0.1: one private, frozen-checkpoint UTF-8 decoding diagnostic.
+
+This is a NEW post-hoc decoding policy, not a rerun of Gate 4, a tuning
+exercise, or a new training run. No corpus/weights/completions go to stdout.
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+sys.path.insert(0, str(ROOT / "scripts"))
+
+import torch
+import run_lang_v0_gate4 as gate4
+from aster.inference.utf8_greedy import generate_utf8_greedy
+
+PRIVATE_OUTPUT = "lang-v01-utf8-private.json"
+NEW_POLICY = "UTF-8 strict-prefix masked greedy; BOS excluded; EOS at scalar boundary; sliding context"
+EXPECTED_OLD_COUNTS = {
+    0: {"outputs": 6, "valid_utf8": 0, "repeated_trigram": 0,
+        "train_32byte_match": 0, "eos_stopped": 1, "prompt_in_train": 0},
+    200: {"outputs": 6, "valid_utf8": 0, "repeated_trigram": 6,
+          "train_32byte_match": 0, "eos_stopped": 0, "prompt_in_train": 0},
+}
+
+
+def read_immutable_baseline(run: Path, report: dict) -> tuple[str, dict]:
+    """Pin against the single original local Gate 4 run; never regenerate it."""
+    path = run / gate4.PRIVATE_OUTPUT
+    if path.is_symlink():
+        raise ValueError("Baseline file symlink not allowed")
+    snapshot = path.read_bytes()
+    old = json.loads(snapshot)
+    if (old.get("schema_version") != "aster-lang-gate4-private-0"
+            or old.get("run_id") != gate4.RUN_ID
+            or old.get("gate3_report_sha256") != gate4.REPORT_SHA256
+            or old.get("policy") != gate4.POLICY
+            or old.get("max_new_tokens") != gate4.MAX_NEW_TOKENS
+            or old.get("prompts") != list(gate4.PROMPTS)):
+        raise ValueError("Original frozen Gate 4 policy/identity mismatch")
+    entries = old.get("checkpoints")
+    if not isinstance(entries, list) or [x.get("step") for x in entries] != list(gate4.STEPS):
+        raise ValueError("Original Gate 4 checkpoint steps mismatch")
+    baseline: dict[str, dict] = {}
+    by_step = {entry["step"]: entry for entry in report["checkpoint_evaluations"]}
+    for entry in entries:
+        step = entry["step"]
+        if entry.get("checkpoint_sha256") != by_step[step]["checkpoint_sha256"]:
+            raise ValueError("Gate 4 checkpoint hash differs from Gate 3")
+        results = entry.get("results")
+        if not isinstance(results, list) or len(results) != len(gate4.PROMPTS):
+            raise ValueError("Original Gate 4 prompts/results missing")
+        if any(r.get("prompt_index") != i or r.get("prompt") != prompt
+               for i, (r, prompt) in enumerate(zip(results, gate4.PROMPTS))):
+            raise ValueError("Original Gate 4 prompt ordering mismatch")
+        fields = {
+            "outputs": len(results),
+            "valid_utf8": sum(r["utf8_valid"] is True for r in results),
+            "repeated_trigram": sum(r["repeated_token_trigram"] is True for r in results),
+            "train_32byte_match": sum(r["train_exact_32_byte_match"] is True for r in results),
+            "eos_stopped": sum(r["ended_with_eos"] is True for r in results),
+            "prompt_in_train": sum(r["prompt_in_train_window"] is True for r in results),
+        }
+        if fields != EXPECTED_OLD_COUNTS[step]:
+            raise ValueError("Original Gate 4 aggregate counters differ from frozen observation")
+        baseline[str(step)] = fields
+    return hashlib.sha256(snapshot).hexdigest(), baseline
+
+
+def contains_controls(s: str) -> bool:
+    """Flag controls excluding printable spacing of TAB/LF/CR."""
+    return any((ord(c) < 32 and c not in "\t\n\r") or 0x7f <= ord(c) < 0xa0 for c in s)
+
+
+def audit(root: Path) -> dict:
+    root = root.resolve()
+    run = root / "runs" / gate4.RUN_ID
+    if run.is_symlink() or run.resolve().parent != (root / "runs").resolve():
+        raise ValueError("Unexpected frozen Run location")
+    output = run / PRIVATE_OUTPUT
+    if output.exists() or output.is_symlink():
+        raise FileExistsError("LANG v0.1 private result already exists; never overwrite")
+
+    report = gate4.read_frozen_report(run)
+    baseline_sha, baseline = read_immutable_baseline(run, report)
+    spec, tokenizer, windows, preflight = gate4.preflight(
+        root, root / "configs/lang-v0-gate3.json")
+    if (report.get("training_view_id") != preflight["view_id"]
+            or report.get("tokenizer_artifact_id") != spec["tokenizer_artifact_id"]
+            or report.get("pilot_config") != spec["pilot_config"]
+            or report.get("preflight") != preflight
+            or preflight.get("sealed_test_text_read") is not False):
+        raise ValueError("Frozen Gate 3 report/preflight mismatch")
+    torch.set_num_threads(spec["pilot_config"]["threads"])
+    torch.use_deterministic_algorithms(True)
+
+    experiment = gate4.load_json(run / "experiment.json")
+    summary = gate4.load_json(run / "run.json")
+    bundle = gate4.load_json(run / "training-bundle.json")
+    if (experiment.get("config") != spec["pilot_config"]
+            or experiment.get("tokenizer_id") != preflight["tokenizer_payload_sha256"]
+            or experiment.get("tokenizer_artifact_id") != spec["tokenizer_artifact_id"]
+            or summary.get("status") != "completed" or summary.get("run_id") != gate4.RUN_ID
+            or summary.get("inputs", {}).get("tokenizer_artifact_id") != spec["tokenizer_artifact_id"]
+            or bundle.get("status") != "completed" or bundle.get("run_id") != gate4.RUN_ID
+            or bundle.get("experiment") != experiment):
+        raise ValueError("Frozen Run provenance mismatch")
+    gate4.verify_scoring_dependencies(experiment, str(torch.__version__), sys.version)
+    gate4.verify_run_sources(root, spec, experiment.get("code_sha256"))
+    observations = gate4.validate_run_observations(
+        bundle.get("observations"), experiment, summary, bundle)
+    train_chunks = gate4.verified_training_chunks(
+        root, spec, tokenizer, len(windows["train"]))
+
+    pairs: list[dict] = []
+    counts: dict[str, dict[str, int]] = {}
+    for step in gate4.STEPS:
+        record = next(x for x in report["checkpoint_evaluations"] if x["step"] == step)
+        obs = next(x for x in observations if x["step"] == step)
+        model, tok = gate4.verify_checkpoint(
+            run, record, obs, experiment, spec, preflight["tokenizer_payload_sha256"])
+        generated_results = []
+        for i, prompt in enumerate(gate4.PROMPTS):
+            prompt_ids = tok.encode(prompt, add_bos=True)
+            generation = generate_utf8_greedy(model, tok, prompt_ids, gate4.MAX_NEW_TOKENS)
+            raw = gate4.token_bytes(tok, generation.token_ids)
+            try:
+                continuation = raw.decode("utf-8")
+                valid_utf8 = True
+            except UnicodeDecodeError:
+                continuation = raw.decode("utf-8", errors="replace")
+                valid_utf8 = False
+            if valid_utf8 != (generation.pending_bytes == b""):
+                raise AssertionError("Streaming UTF-8 state and final decode disagree")
+            generated_results.append({
+                "prompt_index": i, "prompt": prompt, "continuation": continuation,
+                "utf8_valid": valid_utf8, "pending_utf8_hex": generation.pending_bytes.hex(),
+                "stop_reason": generation.stop_reason,
+                "generated_tokens": len(generation.token_ids),
+                "ended_with_eos": generation.stop_reason == "eos",
+                "contains_control": contains_controls(continuation),
+                "repeated_token_trigram": gate4.has_repeated_trigram(generation.token_ids),
+                "train_exact_32_byte_match": gate4.has_long_training_match(raw, train_chunks),
+                "prompt_in_train_window": any(prompt.encode("utf-8") in c for c in train_chunks),
+            })
+        pairs.append({"step": step, "checkpoint_sha256": record["checkpoint_sha256"],
+                      "results": generated_results})
+        counts[str(step)] = {
+            "outputs": len(generated_results),
+            "valid_utf8": sum(r["utf8_valid"] for r in generated_results),
+            "incomplete_utf8_at_budget": sum(r["stop_reason"] == "budget" and
+                                             bool(r["pending_utf8_hex"]) for r in generated_results),
+            "control_characters": sum(r["contains_control"] for r in generated_results),
+            "repeated_trigram": sum(r["repeated_token_trigram"] for r in generated_results),
+            "train_32byte_match": sum(r["train_exact_32_byte_match"] for r in generated_results),
+            "eos_stopped": sum(r["ended_with_eos"] for r in generated_results),
+            "prompt_in_train": sum(r["prompt_in_train_window"] for r in generated_results),
+        }
+    private = {
+        "schema_version": "aster-lang-v01-utf8-private-0",
+        "run_id": gate4.RUN_ID, "gate3_report_sha256": gate4.REPORT_SHA256,
+        "gate4_baseline_sha256": baseline_sha, "baseline_counts": baseline,
+        "new_policy": NEW_POLICY, "max_new_tokens": gate4.MAX_NEW_TOKENS,
+        "prompts": list(gate4.PROMPTS), "checkpoints": pairs,
+        "limitations": "Post-hoc decoding-only intervention, not Gate 4 PASS. "
+                       "UTF-8 validity is technical correctness, not Japanese fluency. "
+                       "Pending bytes on budget cutoff are not silently repaired.",
+    }
+    gate4.write_private_once(output, private)
+    return {
+        "status": "utf8_decoding_diagnostic_completed",
+        "run_id": gate4.RUN_ID, "gate3_report_sha256": gate4.REPORT_SHA256,
+        "gate4_baseline_sha256": baseline_sha,
+        "paired_prompts": len(gate4.PROMPTS),
+        "new_policy": NEW_POLICY, "max_new_tokens": gate4.MAX_NEW_TOKENS,
+        "original_gate4_by_step": baseline, "utf8_constrained_by_step": counts,
+        "training_updates": 0, "sealed_test_text_read": False,
+        "private_result_path": str(output),
+    }
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--root", type=Path, default=ROOT)
+    args = parser.parse_args()
+    print(json.dumps(audit(args.root), ensure_ascii=False, indent=2))
+
+
+if __name__ == "__main__":
+    main()
