@@ -5,6 +5,7 @@ import importlib.util
 import json
 from pathlib import Path
 import stat
+import subprocess
 from types import SimpleNamespace
 
 import pytest
@@ -147,6 +148,36 @@ def test_original_baseline_is_immutable_and_count_locked(tmp_path):
         r.read_immutable_baseline(tmp_path, report)
 
 
+def test_exact_reviewed_commit_and_source_integrity(tmp_path):
+    r = runner()
+    for name, contents in [
+        ("scripts/run_lang_v01_utf8.py", b"trusted runner\n"),
+        ("src/aster/inference/utf8_greedy.py", b"trusted decoder\n"),
+    ]:
+        path = tmp_path / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(contents)
+    def git(*args):
+        return subprocess.run(["git", "-C", str(tmp_path), *args], check=True,
+                              capture_output=True).stdout.decode().strip()
+    git("init", "-q")
+    git("add", ".")
+    subprocess.run(["git", "-C", str(tmp_path), "-c", "user.name=Test",
+                    "-c", "user.email=test@example.com", "commit", "-qm", "synthetic"],
+                   check=True, capture_output=True)
+    commit = git("rev-parse", "HEAD")
+    checked = r.verify_reviewed_checkout(tmp_path, commit)
+    assert checked["scripts/run_lang_v01_utf8.py"] == hashlib.sha256(b"trusted runner\n").hexdigest()
+    assert len(checked) == 2
+    with pytest.raises(ValueError, match="differs from exact reviewed commit"):
+        r.verify_reviewed_checkout(tmp_path, "f"*40)
+    with pytest.raises(ValueError, match="exact 40-hex"):
+        r.verify_reviewed_checkout(tmp_path, "HEAD")
+    (tmp_path / "src/aster/inference/utf8_greedy.py").write_bytes(b"tampered")
+    with pytest.raises(ValueError, match="dirty"):
+        r.verify_reviewed_checkout(tmp_path, commit)
+
+
 def test_read_only_pair_run_no_private_stdout_no_overwrite(tmp_path, monkeypatch, capsys):
     r = runner()
     run = tmp_path / "runs" / r.gate4.RUN_ID
@@ -169,6 +200,9 @@ def test_read_only_pair_run_no_private_stdout_no_overwrite(tmp_path, monkeypatch
     original_path = write_original_gate4(run, r, report)
     tok = SimpleNamespace(model=SimpleNamespace(vocab={1: b"A"}))
     tok.encode = lambda _prompt, add_bos=True: [5, 1]
+    monkeypatch.setattr(r, "verify_reviewed_checkout",
+                        lambda *_args: {"scripts/run_lang_v01_utf8.py": "d"*64,
+                                        "src/aster/inference/utf8_greedy.py": "e"*64})
     monkeypatch.setattr(r.gate4, "read_frozen_report", lambda *_args: report)
     monkeypatch.setattr(r.gate4, "preflight", lambda *_args: (
         {"pilot_config": conf, "tokenizer_artifact_id": "artifact"},
@@ -184,18 +218,21 @@ def test_read_only_pair_run_no_private_stdout_no_overwrite(tmp_path, monkeypatch
     monkeypatch.setattr(r.gate4, "verify_checkpoint", verified_model)
     monkeypatch.setattr(r, "generate_utf8_greedy",
                         lambda *_args: Utf8Generation([1], b"", "budget"))
-    summary = r.audit(tmp_path)
+    summary = r.audit(tmp_path, "a"*40)
     assert summary["training_updates"] == 0
     assert summary["sealed_test_text_read"] is False
     assert summary["paired_prompts"] == 6 and used == [0, 200]
+    assert summary["reviewed_source_commit"] == "a"*40
+    assert len(summary["verified_source_sha256"]) == 2
     assert summary["utf8_constrained_by_step"]["200"]["valid_utf8"] == 6
     assert "continuation" not in json.dumps(summary)
     assert capsys.readouterr().out == ""
     saved = run / r.PRIVATE_OUTPUT
     assert stat.S_IMODE(saved.stat().st_mode) == 0o600
     assert len(json.loads(saved.read_bytes())["checkpoints"]) == 2
+    assert json.loads(saved.read_bytes())["reviewed_source_commit"] == "a"*40
     assert original_path.exists()
     before = saved.read_bytes()
     with pytest.raises(FileExistsError):
-        r.audit(tmp_path)
+        r.audit(tmp_path, "a"*40)
     assert saved.read_bytes() == before
