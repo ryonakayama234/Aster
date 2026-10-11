@@ -221,6 +221,25 @@ def test_source_only_loader_ignores_pyc_and_checks_git_bytes(tmp_path):
         loader.get_code("aster.synthetic")
 
 
+def test_namespace_packages_inside_checkout_are_permitted(tmp_path):
+    r = runner()
+    namespace = tmp_path / "src/aster/inference"
+    namespace.mkdir(parents=True)
+    finder = r.PinnedAsterFinder(tmp_path, "a"*40, {})
+    spec = finder.find_spec("aster.inference", path=[str(namespace.parent)])
+    assert spec is not None and spec.origin is None
+    assert list(spec.submodule_search_locations) == [str(namespace)]
+
+
+def test_namespace_package_outside_checkout_is_rejected(tmp_path):
+    r = runner()
+    external = tmp_path.parent / "external-aster-namespace"
+    external.mkdir(exist_ok=True)
+    finder = r.PinnedAsterFinder(tmp_path, "a"*40, {})
+    with pytest.raises(ImportError, match="escapes reviewed checkout"):
+        finder.find_spec("aster.inference", path=[str(external.parent)])
+
+
 def test_wrong_execution_checkout_is_rejected_before_reading_private_run(tmp_path, monkeypatch):
     r = runner()
     def should_not_verify(*_args):
