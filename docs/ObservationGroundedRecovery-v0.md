@@ -1,6 +1,6 @@
 # OBS v0a — Observation-Grounded Read Recovery Protocol
 
-Status: **design freeze candidate; no implementation/run/learning authorized by this document**. Date: 2026-10-11 JST. Parent: [Issue #103](https://github.com/ryonakayama234/Aster/issues/103). Baseline: main `3b19dca7b1f8111f9d587a42ce952c927cb52ca9`.
+Status: **isolated G0/G1 fixture, regression tests and optional G2 runner implemented on PR #104; no private frozen-model G2 run or training performed**. Date: 2026-10-11 JST. Parent: [Issue #103](https://github.com/ryonakayama234/Aster/issues/103). Baseline: main `3b19dca7b1f8111f9d587a42ce952c927cb52ca9`.
 
 ## Exactly one research question
 
@@ -72,3 +72,22 @@ If G0 is blocked by input length, version a compact-observation serializer and s
 - Step-indexed `state_before`, model candidate score trace, selected/executed Action, real `Observation`, `state_after`, independent `EvaluationResult`, terminal and `goal_verified`.
 - Protocol gate statuses and explicit separation of scripted prefix, rule/reference/observation-blind controls, and frozen-model continuation.
 - A deterministic source/evidence audit asserting zero updates to weights, corpus, tokenizer and old Runs.
+
+## Code delivery and local execution
+
+Implemented as research-only files in PR #104:
+
+- `src/aster/runtime/observation_recovery.py`: truthful scripted-prefix read, one-shot nonmutating error, fixed candidate tuple, same-state observation-only assertion, rule/blind controls, exact tokenizer length preflight, frozen ModelPolicy continuation and trace alignment.
+- `tests/runtime/test_observation_recovery.py`: genuine executor/TaskEvaluator prefix and retry, serialized history isolation, reference and blind checks, unchanged old builder, preflight tests.
+- `scripts/run_obs_v0a.py`: G0/G1 by default; with `--artifact`, verify existing DecisionModel manifest and run G2 only if exact inputs fit. Persists separate trajectory, decision traces and derived evaluations in a **new** Run. No old Run is rewritten.
+
+From the Aster root on WSL2 using the reviewed code checkout:
+
+```bash
+.venv/bin/python scripts/run_obs_v0a.py --root .
+# Optional only after choosing ONE frozen baseline artifact:
+.venv/bin/python scripts/run_obs_v0a.py --root . --artifact runs/<baseline-run>/model-artifact
+```
+
+Preflight `BLOCKED_CONTEXT` is a meaningful infrastructure result and **must not be interpreted as model failure**. The G0/G1 output is a reference/wiring result; only the explicit pinned artifact command produces G2 model-only continuation evidence. This task needs no corpus or sealed test. The G2 run cannot be executed from a public GitHub Actions job because the selected frozen model artifact lives only in the user's private local WSL2 environment.
+
