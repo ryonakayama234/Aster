@@ -74,8 +74,18 @@ class PinnedAsterFinder(importlib.abc.MetaPathFinder):
         if fullname != "aster" and not fullname.startswith("aster."):
             return None
         spec = importlib.machinery.PathFinder.find_spec(fullname, path, target)
-        if spec is None or not spec.origin:
-            raise ImportError("Missing expected Aster source module: " + fullname)
+        if spec is None:
+            raise ImportError("Missing expected Aster module: " + fullname)
+        # src/aster/inference, model, and training are legitimate namespace
+        # packages without __init__.py; validate every search location.
+        if spec.origin is None:
+            locations = list(spec.submodule_search_locations or [])
+            if not locations or any(
+                not Path(location).resolve().is_relative_to(self.root / "src/aster")
+                for location in locations
+            ):
+                raise ImportError("Namespace package escapes reviewed checkout: " + fullname)
+            return spec
         source = Path(spec.origin).resolve()
         if source.suffix != ".py" or not source.is_relative_to(self.root / "src/aster"):
             raise ImportError("Unexpected Aster module outside reviewed checkout")
