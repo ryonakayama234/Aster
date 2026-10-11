@@ -160,6 +160,34 @@ def scan_train_view(view: Path, samples: list[dict], manifest: dict,
     }
 
 
+def write_private_once(runs: Path, report: dict) -> Path:
+    """Exclusive, atomic local publication; failed writes leave no partial Run."""
+    if runs.is_symlink() or not runs.is_dir():
+        raise ValueError("Run directory missing or symlinked")
+    destination = runs / OUTPUT_DIR
+    destination.mkdir(mode=0o700, exist_ok=False)
+    temporary = destination / "private-report.json.tmp"
+    output = destination / "private-report.json"
+    fd = None
+    try:
+        content = (json.dumps(report, ensure_ascii=False, indent=2) + "\n").encode()
+        fd = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(fd, "wb") as handle:
+            fd = None  # fdopen now owns the descriptor
+            handle.write(content)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary, output)  # Atomic final name only after full write.
+        return output
+    except BaseException:
+        if fd is not None:
+            os.close(fd)
+        temporary.unlink(missing_ok=True)
+        output.unlink(missing_ok=True)
+        destination.rmdir()
+        raise
+
+
 def audit(root: Path, expected_commit: str) -> dict:
     root = root.resolve()
     source_sha = verify_checkout(root, expected_commit)
@@ -199,15 +227,7 @@ def audit(root: Path, expected_commit: str) -> dict:
                   "counts differ from extracted train bytes. Marker counts are not proof of "
                   "noise or cause. One prose-only held-out dev group; no dialogue generalization.",
     })
-    runs = root / "runs"
-    if runs.is_symlink() or not runs.is_dir():
-        raise ValueError("Run directory missing or symlinked")
-    destination = runs / OUTPUT_DIR
-    destination.mkdir(mode=0o700, exist_ok=False)
-    output = destination / "private-report.json"
-    fd = os.open(output, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
-    with os.fdopen(fd, "wb") as handle:
-        handle.write((json.dumps(report, ensure_ascii=False, indent=2) + "\n").encode())
+    output = write_private_once(root / "runs", report)
     return {
         "status": "train_only_corpus_audit_completed",
         "train_documents": report["train_documents"],
