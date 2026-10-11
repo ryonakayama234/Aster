@@ -21,7 +21,8 @@ Use the exact **reviewed and merged commit SHA** while protecting any uncommitte
 
 ```bash
 cd ~/src/Aster
-.venv/bin/python scripts/run_lang_v01_utf8.py --root . --expected-commit <40-hex-merged-commit-SHA>
+MERGED_COMMIT_SHA="PASTE_EXACT_40_HEX_MERGED_COMMIT_HERE"
+.venv/bin/python scripts/run_lang_v01_utf8.py --root . --expected-commit "$MERGED_COMMIT_SHA"
 ```
 
 The runner checks `git rev-parse HEAD`, root checkout identity, clean tracked working tree, then compares the bytes of BOTH `scripts/run_lang_v01_utf8.py` and `src/aster/inference/utf8_greedy.py` against their exact Git blobs from the supplied commit **before generating**. The commit SHA and both SHA-256 source hashes are stored in the private audit and aggregate stdout, so the audited code can be identified after execution. It fails closed on a mismatch or dirty tracked checkout.
