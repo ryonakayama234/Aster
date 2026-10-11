@@ -17,12 +17,14 @@ Maximum new policy generation: 6 fixed inputs × 2 unchanged checkpoints × 64 n
 
 ## WSL2 execution after reviewed merge
 
-Use the exact merged revision while protecting any uncommitted work and original checkout, as in Gate 4. From that revision run once:
+Use the exact **reviewed and merged commit SHA** while protecting any uncommitted work and original checkout, as in Gate 4. The flag is **required**; it must be the actual 40-digit merged commit SHA, not `HEAD` or a branch name. From that checked-out exact revision run once:
 
 ```bash
 cd ~/src/Aster
-.venv/bin/python scripts/run_lang_v01_utf8.py --root .
+.venv/bin/python scripts/run_lang_v01_utf8.py --root . --expected-commit <40-hex-merged-commit-SHA>
 ```
+
+The runner checks `git rev-parse HEAD`, root checkout identity, clean tracked working tree, then compares the bytes of BOTH `scripts/run_lang_v01_utf8.py` and `src/aster/inference/utf8_greedy.py` against their exact Git blobs from the supplied commit **before generating**. The commit SHA and both SHA-256 source hashes are stored in the private audit and aggregate stdout, so the audited code can be identified after execution. It fails closed on a mismatch or dirty tracked checkout.
 
 The CLI emits **only aggregate counts**. Complete per-prompt results are stored **only locally** in the existing Run as `lang-v01-utf8-private.json` with mode 0600, using exclusive create (no overwrite); Gate 4 `lang-gate4-private.json` is read but never rewritten. Never commit or upload private prompts, generated text, weight files, the full Run, or training corpus.
 
