@@ -233,8 +233,8 @@ def test_namespace_packages_inside_checkout_are_permitted(tmp_path):
 
 def test_namespace_package_outside_checkout_is_rejected(tmp_path):
     r = runner()
-    external = tmp_path.parent / "external-aster-namespace"
-    external.mkdir(exist_ok=True)
+    external = tmp_path.parent / "external-aster-namespace" / "inference"
+    external.mkdir(parents=True, exist_ok=True)
     finder = r.PinnedAsterFinder(tmp_path, "a"*40, {})
     with pytest.raises(ImportError, match="escapes reviewed checkout"):
         finder.find_spec("aster.inference", path=[str(external.parent)])
