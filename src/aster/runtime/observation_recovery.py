@@ -13,7 +13,7 @@ from aster.evaluator.verifier import TaskEvaluator
 from aster.records.decision import serialize_decision_input
 from aster.records.recorder import TrajectoryRecorder
 from aster.records.trajectory import Trajectory
-from aster.records.transition import Action, Observation, Transition
+from aster.records.transition import Action, JsonValue, Observation, Transition
 from aster.runtime.context import RuntimeContext
 from aster.runtime.state import RuntimeState
 from aster.tools.builtin.memory import MEMORY_GET_SPEC, memory_get
@@ -24,9 +24,9 @@ from aster.tools.schema import ToolExecutionError
 PROTOCOL_ID = "obs-read-retry-v0a"
 CANDIDATE_BUILDER_ID = "obs-read-retry-v0a-experimental"
 SOURCE_BUILDER_ID = "calculate-and-store-v0"
-TASK = {"kind": "calculate_and_store", "operation": "add",
+TASK: dict[str, JsonValue] = {"kind": "calculate_and_store", "operation": "add",
         "left": 23, "right": 19, "store_as": "answer"}
-START_MEMORY = {"answer": 42}
+START_MEMORY: dict[str, JsonValue] = {"answer": 42}
 RETRY = Action.tool("memory.get", key="answer")
 STOP = Action.stop("policy_stop")
 FIXED_CANDIDATES = (RETRY, STOP)
@@ -51,7 +51,10 @@ class ReferenceReadPolicy:
         ReadRetryCandidates().build(state, trajectory, available_actions)
         if not trajectory.transitions:
             raise ValueError("Scripted prefix missing")
-        return STOP if trajectory.last.evaluation.goal_satisfied else RETRY
+        last = trajectory.last
+        if last is None:
+            raise ValueError("Scripted prefix missing")
+        return STOP if last.evaluation.goal_satisfied else RETRY
 
 
 class ObservationBlindPolicy:
