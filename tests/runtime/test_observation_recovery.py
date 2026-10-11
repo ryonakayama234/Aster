@@ -116,3 +116,67 @@ def test_preflight_checks_all_three_decision_positions_without_truncation():
     result = model_preflight(Model(), Tokenizer())
     assert result["status"] == "BLOCKED_CONTEXT"
     assert result["max_input_length"] > result["context_length"]
+
+
+def test_g2_fake_model_adapter_success_failure_and_context_block(monkeypatch):
+    """Exercise the G2 adapter/traces without claiming that a real model succeeded."""
+    torch = pytest.importorskip("torch")
+    from types import SimpleNamespace
+
+    from aster.records.decision import DecisionTrace
+    from aster.runtime.observation_recovery import run_frozen_model
+    import aster.inference.decide as decide
+
+    class FakeModel:
+        backbone = SimpleNamespace(config=SimpleNamespace(context_length=999999))
+
+        def state_dict(self):
+            return {"weight": torch.tensor([1.0])}
+
+    class FakeTokenizer:
+        def encode(self, text, *, add_bos, add_eos):
+            assert add_bos and add_eos
+            return list(text.encode("utf-8")) + [256, 257]
+
+    class FakeObservationPolicy:
+        def __init__(self, model, tokenizer, *, candidate_builder, model_id):
+            self.candidate_builder = candidate_builder
+            self.traces = []
+
+        def decide(self, state, trajectory, available_actions):
+            candidates = self.candidate_builder.build(state, trajectory, available_actions)
+            choice = STOP if trajectory.last.evaluation.goal_satisfied else RETRY
+            index = candidates.index(choice)
+            self.traces.append(DecisionTrace(
+                step=state.step, model_id="synthetic-test",
+                candidates=candidates, scores=(0.0, 0.0),
+                probabilities=(0.5, 0.5), selected_index=index,
+            ))
+            return choice
+
+    monkeypatch.setattr(decide, "ModelPolicy", FakeObservationPolicy)
+    model = FakeModel()
+    result = run_frozen_model(model, FakeTokenizer(), model_id="synthetic-test")
+    assert result["G2"] == "DEV_PAIR_SUCCESS_ONLY"
+    assert result["weights_unchanged"]
+    assert len(result["branches"]["success"]["decision_traces"]) == 1
+    assert len(result["branches"]["transient_failure"]["decision_traces"]) == 2
+
+    class FakeBlindModelPolicy(FakeObservationPolicy):
+        def decide(self, state, trajectory, available_actions):
+            candidates = self.candidate_builder.build(state, trajectory, available_actions)
+            self.traces.append(DecisionTrace(
+                step=state.step, model_id="synthetic-blind",
+                candidates=candidates, scores=(0.0, 1.0),
+                probabilities=(0.1, 0.9), selected_index=1,
+            ))
+            return STOP
+
+    monkeypatch.setattr(decide, "ModelPolicy", FakeBlindModelPolicy)
+    blind = run_frozen_model(model, FakeTokenizer(), model_id="synthetic-blind")
+    assert blind["G2"] == "NOT_SUPPORTED_ON_DEV_PAIR"
+
+    model.backbone.config.context_length = 10
+    blocked = run_frozen_model(model, FakeTokenizer(), model_id="synthetic-test")
+    assert blocked["G2"] == "BLOCKED_CONTEXT"
+    assert "branches" not in blocked
