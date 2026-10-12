@@ -12,7 +12,6 @@ from pathlib import Path
 import subprocess
 
 from aster.evaluator.episode import write_episode_evaluation
-from aster.model.decision_artifact import load_decision_artifact
 from aster.records.decision import serialize_decision_input
 from aster.records.recorder import TrajectoryRecorder
 from aster.records.runlog import RunLog
@@ -78,6 +77,9 @@ def main() -> None:
             "evidence_scope": "development",
         }, indent=2, ensure_ascii=False))
         return
+
+    # G2-only dependency: default G0/G1 must run without optional torch.
+    from aster.model.decision_artifact import load_decision_artifact
 
     # Refuse a different checkpoint even if it has a compatible model config.
     model, tokenizer, manifest = load_decision_artifact(args.artifact.resolve())
