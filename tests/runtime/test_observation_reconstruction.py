@@ -2,6 +2,10 @@
 from __future__ import annotations
 
 from json import loads
+import os
+from pathlib import Path
+import subprocess
+import sys
 from types import SimpleNamespace
 
 import pytest
@@ -24,6 +28,24 @@ from aster.tools.builtin.memory import (
 from aster.tools.executor import ToolExecutor
 from aster.tools.registry import ToolRegistry
 
+
+
+def test_g0_g1_cli_runs_without_optional_site_packages(tmp_path):
+    """Simulate core-only Python: no torch or any site-packages available."""
+    (tmp_path / "runs").mkdir()
+    repo = Path(__file__).resolve().parents[2]
+    env = {**os.environ, "PYTHONPATH": str(repo / "src")}
+    process = subprocess.run(
+        [
+            sys.executable, "-S", str(repo / "scripts" / "run_obs_v0c.py"),
+            "--root", str(tmp_path),
+        ],
+        cwd=repo, env=env, capture_output=True, text=True, check=True,
+    )
+    payload = loads(process.stdout)
+    assert payload["G0_structure"] == "PASS"
+    assert payload["G1_reference"] == "PASS"
+    assert payload["G2"] == "NOT_RUN_NO_ARTIFACT"
 
 def test_truthful_missing_key_prefix_and_serialization(tmp_path):
     episode = create_episode()
