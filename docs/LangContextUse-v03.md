@@ -143,12 +143,12 @@ None of these publications proves transfer of published gains to Aster's 174k-pa
 | `scripts/run_lang_v03_context.py` | ソース・元Run・入力の照合、新しいprivate診断Runへの保存 |
 | `tests/training/test_lang_v03_context.py` | 人工データによる数値、保存、破損拒否、既存Run保護の検証 |
 
-既存の `scripts/run_lang_v01_utf8.py` のsource-only import loaderを、Git照合済みbytesから再利用する。新しい実行器・Gate4・全Aster依存も同じGit revisionに束縛し、古い `.pyc` を実行しない。Gate 3の固定view/BPE/ソースhash、元reportのSHA、checkpointのSHAと実体、PyTorchのbuild一致も検証する。train/dev本文は再度hash確認した同じbytesからtoken化し、sealed test本文は開かない。
+既存の `scripts/run_lang_v01_utf8.py` のsource-only import loaderを、Git照合済みbytesから再利用する。新しい実行器・Gate4・全Aster依存も同じGit revisionに束縛し、古い `.pyc` を実行しない。Pythonの `-I` 隔離モードを必須とし、stdlibを読む前に非隔離起動を拒否する。helperが追加するsrc/scripts探索ルートの未追跡・ignored Python/nativeコードやsymlinkも拒否し、ローカルtorch.py等による依存の差し替えを防ぐ。ユーザーのファイルは削除しない。Gate 3の固定view/BPE/ソースhash、元reportのSHA、checkpointのSHAと実体、PyTorchのbuild一致も検証する。train/dev本文は再度hash確認した同じbytesからtoken化し、sealed test本文は開かない。
 
 手元の既存Python環境から、**レビュー済みの正確な40桁commitへ切り替えたcheckout**で一度だけ実行する。`<reviewed SHA>` はPRの実際のレビュー済みheadまたはmerge SHAを使い、動的に現在のHEADを代入して自己承認しない。
 
 ```sh
-.venv/bin/python scripts/run_lang_v03_context.py --root . --expected-commit <reviewed SHA>
+.venv/bin/python -I scripts/run_lang_v03_context.py --root . --expected-commit <reviewed SHA>
 ```
 
 未コミット作業を保護するため、既存の手元作業をcommit/reset/stashさせない。別checkoutを使う場合、検証済みprivate view・Tokenizer・元Runをそのcheckoutへローカルコピーする必要がある。private素材をGitにaddしない。
@@ -167,3 +167,4 @@ DriveのAster/data/inboxは一覧確認時に空。既存poolのprose 10件・di
 - 実際のTinyLM checkpoint形式を使った人工Runを一周し、元Runの全ファイルdigest不変、0600/0700保存、再実行拒否を確認。checkpoint破損・PyTorch不一致・評価target数不一致では集計成功を出さない。
 - Bigramの正規化・未出現predecessorのunigramへのbackoffをWolframで検算。これは数式・コードの確認であり、私的Asterへの効果の証拠ではない。
 - 本物のprivate view・保存済みRunにはアクセスしていない。実測NLL、文脈反応、モデル改善は未測定。新しい学習、Tokenizer fitting、Drive書込み、sealed test本文の閲覧はなし。
+- 独立CodexレビューのP2（未追跡コードによるtorch import shadowing）を修正。隔離起動、未追跡・ignored module拒否、symlink package拒否、ローカルjson/__future__差し替え非実行を検証し、新規診断testsは27 cases PASS、Pyright 0 errors / 0 warnings。初期386件の記録は修正前の全体検証であり、修正後headのGitHub CI・再レビューを別に確認する。

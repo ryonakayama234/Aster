@@ -3,7 +3,12 @@
 Stdout is aggregate-only. Sources, original Runs, Corpus and weights are never
 modified. New private diagnostic output is exclusive and cannot be overwritten.
 """
-from __future__ import annotations
+import sys
+
+# sys is built in. Refuse before importing even stdlib modules that a local
+# scripts/json.py could shadow. -I removes script/CWD/PYTHONPATH search roots.
+if __name__ == '__main__' and not sys.flags.isolated:
+    raise SystemExit('Use the existing Python environment with -I: python -I scripts/run_lang_v03_context.py ...')
 
 import argparse
 import hashlib
@@ -14,7 +19,6 @@ import os
 from pathlib import Path
 import re
 import subprocess
-import sys
 import time
 import types
 
@@ -45,6 +49,22 @@ def attest(root: Path, expected_commit: str) -> tuple[dict[str, str], dict[str, 
         raise ValueError('Checkout differs from reviewed commit')
     if git('status', '--porcelain', '--untracked-files=no'):
         raise ValueError('Tracked checkout is dirty; preserve local work')
+    # The verified helper adds src/ and scripts/ to sys.path. Reject untracked
+    # importable code there, including ignored files and directory symlinks.
+    # Ordinary __pycache__ files are not sourceless module candidates and our
+    # project source loader never executes them. Top-level .pyc is rejected.
+    untracked = git('ls-files', '-z', '--others', '--exclude-standard', '--', 'src', 'scripts')
+    ignored = git('ls-files', '-z', '--others', '--ignored', '--exclude-standard', '--', 'src', 'scripts')
+    for raw in (untracked + ignored).split(b'\x00'):
+        if not raw:
+            continue
+        relative = Path(os.fsdecode(raw))
+        path = root / relative
+        if path.is_symlink() or (relative.suffix.lower() in ('.py', '.so', '.pyd', '.pyo', '.pyc')
+                                 and '__pycache__' not in relative.parts):
+            raise ValueError('Untracked importable code in diagnostic search roots; preserve local work')
+        if relative.suffix.lower() == '.py':
+            raise ValueError('Untracked importable code in diagnostic search roots; preserve local work')
     hashes, snapshots = {}, {}
     for relative in SOURCE_FILES:
         path = root / relative

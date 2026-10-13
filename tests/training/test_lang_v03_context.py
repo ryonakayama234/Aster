@@ -5,6 +5,7 @@ import math
 from pathlib import Path
 import stat
 import subprocess
+import sys
 from types import SimpleNamespace
 
 import pytest
@@ -203,6 +204,59 @@ def test_verified_helper_ignores_changed_disk_or_bytecode(tmp_path):
     path.write_text('raise RuntimeError("unverified disk source")')
     module = r.execute_snapshot(b'answer = 42\n', path, '_synthetic_context_loader')
     assert module.answer == 42
+
+
+@pytest.mark.parametrize('relative,ignored', [
+    ('scripts/torch.py', False), ('src/torch.py', False),
+    ('src/torch/__init__.py', False), ('src/torch.py', True),
+    ('scripts/torch.pyc', False), ('src/torch', False),
+])
+def test_attestation_rejects_untracked_import_shadows(tmp_path, monkeypatch, relative, ignored):
+    r = runner()
+    monkeypatch.setattr(r, 'ROOT', tmp_path)
+    monkeypatch.setattr(r, 'SOURCE_FILES', ('source.py',))
+    (tmp_path / 'source.py').write_text('pass\n')
+    if ignored:
+        (tmp_path / '.gitignore').write_text('src/torch.py\n')
+    subprocess.run(['git', 'init', '-q', str(tmp_path)], check=True)
+    subprocess.run(['git', '-C', str(tmp_path), 'add', '.'], check=True)
+    subprocess.run(['git', '-C', str(tmp_path), '-c', 'user.name=Synthetic',
+                    '-c', 'user.email=synthetic@example.invalid', 'commit', '-qm', 'fixture'], check=True)
+    sha = subprocess.check_output(['git', '-C', str(tmp_path), 'rev-parse', 'HEAD']).decode().strip()
+    shadow = tmp_path / relative
+    shadow.parent.mkdir(parents=True, exist_ok=True)
+    if relative == 'src/torch':
+        target = tmp_path / 'outside-package'
+        target.mkdir()
+        (target / '__init__.py').write_text('raise RuntimeError("must not execute")')
+        shadow.symlink_to(target, target_is_directory=True)
+        before = shadow.readlink()
+    else:
+        shadow.write_bytes(b'raise RuntimeError("must not execute")')
+        before = shadow.read_bytes()
+    with pytest.raises(ValueError, match='Untracked importable'):
+        r.attest(tmp_path, sha)
+    assert (shadow.readlink() if shadow.is_symlink() else shadow.read_bytes()) == before
+
+
+def test_nonisolated_cli_stops_before_stdlib_or_project_imports():
+    result = subprocess.run([sys.executable, str(ROOT / 'scripts/run_lang_v03_context.py')], capture_output=True)
+    assert result.returncode != 0
+    assert b'with -I' in result.stderr
+    assert b'Traceback' not in result.stderr
+
+
+@pytest.mark.parametrize('isolated', [False, True])
+def test_bootstrap_never_executes_local_stdlib_shadow(tmp_path, isolated):
+    script = tmp_path / 'run_context.py'
+    script.write_bytes((ROOT / 'scripts/run_lang_v03_context.py').read_bytes())
+    (tmp_path / 'json.py').write_text('raise RuntimeError("UNREVIEWED_JSON_EXECUTED")')
+    (tmp_path / '__future__.py').write_text('raise RuntimeError("UNREVIEWED_FUTURE_EXECUTED")')
+    command = [sys.executable] + (['-I'] if isolated else []) + [str(script)]
+    result = subprocess.run(command, capture_output=True)
+    assert result.returncode != 0  # Nonisolated refusal or argparse missing required SHA.
+    assert b'UNREVIEWED_' not in result.stderr
+    assert b'Traceback' not in result.stderr
 
 
 @pytest.mark.parametrize('corruption', [None, 'checkpoint', 'runtime', 'target_count'])
