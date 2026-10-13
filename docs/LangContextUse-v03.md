@@ -168,3 +168,31 @@ DriveのAster/data/inboxは一覧確認時に空。既存poolのprose 10件・di
 - Bigramの正規化・未出現predecessorのunigramへのbackoffをWolframで検算。これは数式・コードの確認であり、私的Asterへの効果の証拠ではない。
 - 本物のprivate view・保存済みRunにはアクセスしていない。実測NLL、文脈反応、モデル改善は未測定。新しい学習、Tokenizer fitting、Drive書込み、sealed test本文の閲覧はなし。
 - 独立CodexレビューのP2（未追跡コードによるtorch import shadowing）を修正。隔離起動、未追跡・ignored module拒否、symlink package拒否、ローカルjson/__future__差し替え非実行を検証し、新規診断testsは27 cases PASS、Pyright 0 errors / 0 warnings。初期386件の記録は修正前の全体検証であり、修正後headのGitHub CI・再レビューを別に確認する。
+
+## BLOCKEDの原因確認（2026-10-14 JST）
+
+ユーザーのWSL実行は旧版の汎用 `BLOCKED` で停止した。旧表示は複数の停止理由をまとめていたため、具体的な原因・採点到達の有無はstdoutから判別できない。NumPy warningの後も実行が続いており、警告だけを停止原因と決めつけない。私的Runの内容は未確認。
+
+新しい停止表示は `stage`（止まった段階）、`code`、日本語の `note` を持つ。PyTorch版不一致では確認済みの形式の版を表示し、ファイル不足では既知の記録ファイル名だけを表示する。例外本文・traceback・私的path・本文・token列はstdoutに出さない。新しい採点失敗では、同じ安全な停止情報を新規Runのrun.jsonに保存する。既存の失敗Runは修正・削除しない。
+
+まず `--check-only` を使う。これはソース・入力・記録・train頻度count identity・target数・checkpoint identityだけの確認で、TinyLM、unigram、bigramの予測採点、prefix感度測定、新しい診断Runの作成を行わない。既存出力がある場合は先に固定名のファイル存在とrun.jsonの状態だけを確認して返し、private-report本文を読まず、測定の再実行をしない。check-only通過はモデル能力の判定や採点再実行の許可ではない。
+
+```sh
+.venv/bin/python -I scripts/run_lang_v03_context.py --root . --expected-commit <reviewed SHA> --check-only
+```
+
+Git操作をまとめる `scripts/check_lang_v03_context.sh` も用意した。未コミット作業があれば停止し、レビュー済み版へ一時的に切り替え、成功・停止どちらでも元のbranch/detached commitへ戻る。実際のレビュー済みSHAを固定して、fetch後に `git show <reviewed SHA>:scripts/check_lang_v03_context.sh | bash -s -- <reviewed SHA>` と呼ぶ。最新版main/現在HEADを自動的に信頼せず、runを削除するオプションも設けない。
+
+独立レビューで指摘されたignoredファイルの上書きを防ぐため、切替・復元の両方に `--no-overwrite-ignore` を指定する。対象版のtrackedファイルと手元のignored素材が衝突した場合は、素材を維持して採点前に停止する。人工Git repositoryで衝突拒否・元branchとcommitの維持・素材bytes不変・Python非実行を確認した。
+
+再レビューに従い、通常測定での基準モデル構築・unigram採点・bigram採点・保存値との照合も、新規Runの失敗記録対象に含めた。各段階で人工的に失敗させ、元Run不変・安全な停止理由の保存・同じRunの再実行拒否を確認する。check-onlyの無採点・Run未作成は維持する。
+
+| 表示 | 次に確認すること |
+| --- | --- |
+| MISSING_LOCAL_FILE | 表示された記録ファイルの配置。学習し直さない |
+| PYTORCH_VERSION_MISMATCH | 学習時と現在の版。環境を無条件にupgradeしない |
+| EXISTING_DIAGNOSTIC | 既存Runの状態とファイル有無。削除・再実行しない |
+| PREFIX_REPLAY_MISMATCH | 元入力の採点一致。小さな仮説検証の結果と混同しない |
+| PREFLIGHT_PASSED | 前処理・記録の確認通過。元停止の原因が採点中だった可能性を別に調べる |
+
+検証：原因表示・check-onlyを含む全体401 tests PASS、ignored素材保護修正までのPR CIは全404 tests PASS。最終追加した基準モデル失敗保存を含む診断40 cases PASS、Pyright 0 errors / 0 warnings、Bash syntax PASS。人工checkpointでcheck-only中のTinyLM・unigram・bigram・prefix採点を禁止し、新しいRunが作られず元Runのdigestが変わらないことを確認した。私的WSLの停止原因そのものは未確定で、入力変更・測定再実行の判断は原因確認後に行う。
