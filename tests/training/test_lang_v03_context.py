@@ -259,7 +259,8 @@ def test_bootstrap_never_executes_local_stdlib_shadow(tmp_path, isolated):
     assert b'Traceback' not in result.stderr
 
 
-@pytest.mark.parametrize('corruption', [None, 'checkpoint', 'runtime', 'target_count'])
+@pytest.mark.parametrize('corruption', [None, 'checkpoint', 'runtime', 'target_count',
+                                       'baseline_fit', 'baseline_unigram', 'baseline_bigram', 'baseline_replay'])
 def test_full_synthetic_private_run_and_frozen_source_preservation(tmp_path, monkeypatch, corruption):
     r = runner()
     from aster.training import lang_gate3 as scoring
@@ -325,6 +326,27 @@ def test_full_synthetic_private_run_and_frozen_source_preservation(tmp_path, mon
             raise AssertionError('Sealed test read')
         return read(p)
     monkeypatch.setattr(Path, 'read_bytes', guarded)
+    if corruption and corruption.startswith('baseline_'):
+        def fail_baseline(*args, **kwargs):
+            raise ValueError('Synthetic baseline failure PRIVATE_TEXT_SECRET')
+        module, function = {'baseline_fit': (ctx, 'fit_bigram'),
+                            'baseline_unigram': (scoring, 'score_unigram'),
+                            'baseline_bigram': (ctx, 'bigram_losses'),
+                            'baseline_replay': (r, 'verify_matched_scores')}[corruption]
+        monkeypatch.setattr(module, function, fail_baseline)
+        with pytest.raises(ValueError, match='Synthetic baseline failure'):
+            r.audit(tmp_path, 'a' * 40)
+        output = tmp_path / 'runs' / r.OUTPUT_NAME
+        failed = json.loads((output / 'run.json').read_bytes())
+        assert failed['status'] == 'failed'
+        assert failed['blocked']['stage'] == 'baseline_replay'
+        assert failed['blocked']['model_scoring_performed'] is (corruption != 'baseline_fit')
+        assert 'PRIVATE_TEXT_SECRET' not in json.dumps(failed)
+        assert not (output / 'aggregate.json').exists()
+        assert before == {p.name: digest(p.read_bytes()) for p in run.iterdir()}
+        with pytest.raises(FileExistsError):
+            r.audit(tmp_path, 'a' * 40)
+        return
     if corruption == 'checkpoint':
         (run / 'checkpoint-000200.pt').write_bytes(b'tampered weights')
     elif corruption == 'runtime':

@@ -302,14 +302,6 @@ def audit(root: Path, expected_commit: str, *, check_only: bool = False,
                 'training_updates': 0, 'model_scoring_performed': False,
                 'diagnostic_output_created': False, 'sealed_test_text_read': False,
                 'note': 'ソース・入力・実行記録・checkpointの確認は通過しました。モデル採点と結果作成は行っていません。'}
-    progress['stage'] = 'baseline_replay'
-    baseline = context.fit_bigram(windows['train'], tokenizer)
-    unigram = scoring.score_unigram(windows['dev'], tokenizer, baseline['unigram'])
-    if scoring.digest(scoring.json_bytes(baseline['unigram'])) != frozen['baseline']['counts_sha256']:
-        raise ValueError('Frozen train unigram differs')
-    verify_matched_scores(unigram, frozen['baseline']['dev'])
-    bigram_rows = context.bigram_losses(windows['dev'], tokenizer, baseline)
-    bigram = context.score_rows(windows['dev'], tokenizer, bigram_rows)
     cases = context.select_prefix_cases(windows['dev'], tokenizer)
     # Seal selected positions before any TinyLM scoring or prefix intervention.
     progress['stage'] = 'publication'
@@ -326,6 +318,15 @@ def audit(root: Path, expected_commit: str, *, check_only: bool = False,
     write_once(output / 'inputs.json', manifest)
     began = time.perf_counter()
     try:
+        progress['stage'] = 'baseline_replay'
+        baseline = context.fit_bigram(windows['train'], tokenizer)
+        progress['model_scoring_performed'] = True
+        unigram = scoring.score_unigram(windows['dev'], tokenizer, baseline['unigram'])
+        if scoring.digest(scoring.json_bytes(baseline['unigram'])) != frozen['baseline']['counts_sha256']:
+            raise ValueError('Frozen train unigram differs')
+        verify_matched_scores(unigram, frozen['baseline']['dev'])
+        bigram_rows = context.bigram_losses(windows['dev'], tokenizer, baseline)
+        bigram = context.score_rows(windows['dev'], tokenizer, bigram_rows)
         checkpoints, public_models = [], {}
         for step in gate.STEPS:
             progress['stage'] = f'checkpoint_{step}'
