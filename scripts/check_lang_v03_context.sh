@@ -16,7 +16,7 @@ if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
 fi
 
 aster_previous=$(git symbolic-ref -q --short HEAD || git rev-parse HEAD)
-trap 'aster_rc=$?; trap - EXIT; git checkout --quiet "$aster_previous"; exit "$aster_rc"' EXIT
-git switch --quiet --detach "$aster_revision"
+trap 'aster_rc=$?; trap - EXIT; git checkout --quiet --no-overwrite-ignore "$aster_previous"; exit "$aster_rc"' EXIT
+git switch --quiet --no-overwrite-ignore --detach "$aster_revision"
 .venv/bin/python -I scripts/run_lang_v03_context.py \
   --root . --expected-commit "$aster_revision" --check-only

@@ -457,6 +457,35 @@ def test_check_launcher_restores_branch_and_preserves_python_exit_status(tmp_pat
     assert (repo / 'tracked.txt').read_text() == 'original'
 
 
+def test_check_launcher_refuses_to_overwrite_ignored_local_file(tmp_path):
+    repo = tmp_path / 'repo'
+    repo.mkdir()
+    subprocess.run(['git', 'init', '-q', str(repo)], check=True)
+    def git(*args):
+        return subprocess.check_output(['git', '-C', str(repo), *args]).decode().strip()
+    (repo / '.gitignore').write_text('private.txt\n.venv/\n')
+    git('add', '.')
+    git('-c', 'user.name=Synthetic', '-c', 'user.email=synthetic@example.invalid', 'commit', '-qm', 'original')
+    original_branch, original_sha = git('symbolic-ref', '--short', 'HEAD'), git('rev-parse', 'HEAD')
+    (repo / 'private.txt').write_text('tracked content in target revision')
+    git('add', '-f', 'private.txt')
+    git('-c', 'user.name=Synthetic', '-c', 'user.email=synthetic@example.invalid', 'commit', '-qm', 'reviewed')
+    revision = git('rev-parse', 'HEAD')
+    git('reset', '--hard', original_sha)  # Disposable synthetic repository only.
+    (repo / 'private.txt').write_text('private local sentinel')
+    (repo / '.venv/bin').mkdir(parents=True)
+    fake_python = repo / '.venv/bin/python'
+    fake_python.write_text('#!/bin/sh\necho PYTHON_EXECUTED\n')
+    fake_python.chmod(0o700)
+    shell = (ROOT / 'scripts/check_lang_v03_context.sh').read_bytes()
+    result = subprocess.run(['bash', '-s', '--', revision], input=shell, cwd=repo, capture_output=True)
+    assert result.returncode != 0
+    assert b'PYTHON_EXECUTED' not in result.stdout
+    assert git('symbolic-ref', '--short', 'HEAD') == original_branch
+    assert git('rev-parse', 'HEAD') == original_sha
+    assert (repo / 'private.txt').read_text() == 'private local sentinel'
+
+
 @pytest.mark.parametrize('delta,changes,verdict', [
     (0.1, [True], 'observed_on_one_development_document'),
     (-0.1, [False], 'useful_multi_token_context_not_observed'),
