@@ -337,13 +337,37 @@ def test_full_synthetic_private_run_and_frozen_source_preservation(tmp_path, mon
         (run / 'lang-gate3-report.json').write_bytes(json_bytes(report))
         gate.REPORT_SHA256 = digest((run / 'lang-gate3-report.json').read_bytes())
     if corruption:
+        progress = {}
+        with pytest.raises(ValueError) as caught:
+            r.audit(tmp_path, 'a' * 40, check_only=True, progress=progress)
+        block = r.blocked_result(caught.value, progress)
+        assert block['stage'] == {'checkpoint': 'checkpoint_200', 'runtime': 'dependency_versions',
+                                  'target_count': 'baseline_replay'}[corruption]
+        assert block['check_only'] is True
+        assert block['model_scoring_performed'] is False
+        assert not (tmp_path / 'runs' / r.OUTPUT_NAME).exists()
         with pytest.raises(ValueError):
             r.audit(tmp_path, 'a' * 40)
         output = tmp_path / 'runs' / r.OUTPUT_NAME
         assert not (output / 'aggregate.json').exists()
         if corruption == 'checkpoint':
-            assert json.loads((output / 'run.json').read_bytes())['status'] == 'failed'
+            failed = json.loads((output / 'run.json').read_bytes())
+            assert failed['status'] == 'failed'
+            assert failed['blocked']['stage'] == 'checkpoint_200'
         return
+    # The check-only path must never use either neural or statistical predictors.
+    with monkeypatch.context() as patch:
+        def forbidden(*a, **kw):
+            raise AssertionError('Check-only must not score any model')
+        patch.setattr(ctx, 'model_losses', forbidden)
+        patch.setattr(ctx, 'prefix_sensitivity', forbidden)
+        patch.setattr(ctx, 'fit_bigram', forbidden)
+        patch.setattr(scoring, 'score_unigram', forbidden)
+        checked = r.audit(tmp_path, 'a' * 40, check_only=True)
+    assert checked['status'] == 'PREFLIGHT_PASSED'
+    assert checked['diagnostic_output_created'] is False
+    assert not (tmp_path / 'runs' / r.OUTPUT_NAME).exists()
+    assert before == {p.name: digest(p.read_bytes()) for p in run.iterdir()}
     public = r.audit(tmp_path, 'a' * 40)
     assert public['status'] == 'context_diagnostic_completed'
     assert public['training_updates'] == 0
@@ -358,6 +382,79 @@ def test_full_synthetic_private_run_and_frozen_source_preservation(tmp_path, mon
     assert 'per_position_nll' not in json.dumps(public)
     with pytest.raises(FileExistsError):
         r.audit(tmp_path, 'a' * 40)
+    existing_before = {p.name: digest(p.read_bytes()) for p in output.iterdir()}
+    existing = r.audit(tmp_path, 'a' * 40, check_only=True)
+    assert existing['status'] == 'EXISTING_DIAGNOSTIC'
+    assert existing['existing_run_status'] == 'completed'
+    assert existing_before == {p.name: digest(p.read_bytes()) for p in output.iterdir()}
+
+
+@pytest.mark.parametrize('error,stage,code', [
+    (FileNotFoundError(2, 'PRIVATE_TEXT_SECRET', '/private/source/lang-gate3-report.json'), 'source_report', 'MISSING_LOCAL_FILE'),
+    (ValueError('Training and evaluation PyTorch versions differ'), 'dependency_versions', 'PYTORCH_VERSION_MISMATCH'),
+    (ValueError('Prefix original score differs from matched model target'), 'prefix_replay', 'PREFIX_REPLAY_MISMATCH'),
+    (FileExistsError('PRIVATE_TEXT_SECRET'), 'existing_output', 'EXISTING_DIAGNOSTIC'),
+    (RuntimeError('PRIVATE_TEXT_SECRET'), 'model_scoring', 'GATE_CHECK_FAILED'),
+])
+def test_blocked_output_is_actionable_without_private_exception_leak(error, stage, code):
+    r = runner()
+    result = r.blocked_result(error, {'stage': stage, 'check_only': True,
+                                     'training_torch': '2.14.0+cpu', 'evaluation_torch': '2.14.1+cpu'})
+    assert result['stage'] == stage
+    assert result['code'] == code
+    assert result['note']
+    assert 'PRIVATE_TEXT_SECRET' not in json.dumps(result)
+    assert '/private/source' not in json.dumps(result)
+    if code == 'PYTORCH_VERSION_MISMATCH':
+        assert result['training_torch'] == '2.14.0+cpu'
+        assert result['evaluation_torch'] == '2.14.1+cpu'
+
+
+def test_existing_output_inspection_never_opens_private_report_or_relabels_bad_status(tmp_path, monkeypatch):
+    r = runner()
+    (tmp_path / 'run.json').write_text(json.dumps({'status': 'PRIVATE_TEXT_SECRET'}))
+    (tmp_path / 'private-report.json').write_text('PRIVATE_TEXT_SECRET')
+    original = Path.open
+    def guarded(path, *args, **kwargs):
+        if path.name == 'private-report.json':
+            raise AssertionError('Private report content must not be opened')
+        return original(path, *args, **kwargs)
+    monkeypatch.setattr(Path, 'open', guarded)
+    result = r.existing_output_summary(tmp_path)
+    assert result['existing_run_status'] == 'unknown'
+    assert 'PRIVATE_TEXT_SECRET' not in json.dumps(result)
+
+
+@pytest.mark.parametrize('python_status', [0, 2])
+def test_check_launcher_restores_branch_and_preserves_python_exit_status(tmp_path, python_status):
+    repo = tmp_path / 'repo'
+    repo.mkdir()
+    subprocess.run(['git', 'init', '-q', str(repo)], check=True)
+    def git(*args):
+        return subprocess.check_output(['git', '-C', str(repo), *args]).decode().strip()
+    (repo / 'tracked.txt').write_text('original')
+    git('add', '.')
+    git('-c', 'user.name=Synthetic', '-c', 'user.email=synthetic@example.invalid', 'commit', '-qm', 'original')
+    original_branch, original_sha = git('symbolic-ref', '--short', 'HEAD'), git('rev-parse', 'HEAD')
+    (repo / 'scripts').mkdir()
+    shell = (ROOT / 'scripts/check_lang_v03_context.sh').read_bytes()
+    (repo / 'scripts/check_lang_v03_context.sh').write_bytes(shell)
+    (repo / 'tracked.txt').write_text('reviewed')
+    git('add', '.')
+    git('-c', 'user.name=Synthetic', '-c', 'user.email=synthetic@example.invalid', 'commit', '-qm', 'reviewed')
+    revision = git('rev-parse', 'HEAD')
+    git('reset', '--hard', original_sha)  # Disposable synthetic repository only.
+    (repo / '.venv/bin').mkdir(parents=True)
+    fake_python = repo / '.venv/bin/python'
+    fake_python.write_text(f'#!/bin/sh\nprintf "%s\\n" "$@"\nexit {python_status}\n')
+    fake_python.chmod(0o700)
+    result = subprocess.run(['bash', '-s', '--', revision], input=shell, cwd=repo, capture_output=True)
+    assert result.returncode == python_status
+    assert b'--check-only' in result.stdout
+    assert b'-I' in result.stdout
+    assert git('symbolic-ref', '--short', 'HEAD') == original_branch
+    assert git('rev-parse', 'HEAD') == original_sha
+    assert (repo / 'tracked.txt').read_text() == 'original'
 
 
 @pytest.mark.parametrize('delta,changes,verdict', [
