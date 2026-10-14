@@ -8,6 +8,18 @@ AIの仕組み、Python、数学、コンピューターサイエンスを、ひ
 将来の目標は、外部の計算器・記録・検索・実行環境を使い、自分の処理を進められるAsterです。
 道具の呼び出し方に加え、返った結果を読み、失敗を修正し、記録を次の行動に使うところまで扱います。
 
+## 研究の現在地（2026-10-14）
+
+**研究Gate（現在）: [LANG #113](https://github.com/ryonakayama234/Aster/issues/113)**。固定TinyLMが元の文脈から予測上の利益を得ているかを、保存済み6箇所の符号付き再集計から確認する。私的WSL2 reportの中身はこのGitHub資料だけでは検証できない。追加forward、学習、sealed-test開封はこの段階では行わない。
+
+**次の能力候補: [READ #115](https://github.com/ryonakayama234/Aster/issues/115)**。外部の短い観測から要求された値の**根拠候補をモデルが選び**、選択済みspanをコードがコピーし、別のVerifierが判定する。**未実装・評価条件未凍結・NOT_RUN**。小さなモデルの言語理解が完成済みとは仮定しない。
+
+- [全体システム図と実装・計測の区別](docs/architecture.md)
+- [READの仮説・データ構造・比較実験・進行順](docs/EvidenceUse-v0-plan.md)（設計Draft [PR #116](https://github.com/ryonakayama234/Aster/pull/116)）
+- [試験設計の基準（Trial と Batch）](docs/ExperimentCycle-v0.md) / [GitHub共同作業の契約](AGENTS.md)
+
+機能ごとのPRでは、**図・データ契約・実験記録を同時更新**する。設計（NOT_RUN）、CIで動作したこと、私的WSL実測、能力の支持を混同せず、旧Run/Artifactを上書きしない。下の研究履歴にある「現在」の表記は各時点での記録であり、現行Gateの正本はこの節とIssueで確認する。
+
 ## コーパスの方針
 
 | 領域 | 作り手 | 役割 |
@@ -83,7 +95,7 @@ Decision baselineはtestを自動開封しません。まずdevelopment runを�
 
 学習支援・開発時の約束は [AGENTS.md](AGENTS.md) にまとめています。
 
-## 次に作るもの
+## 研究履歴（2026-10-03からの記録）
 
 2026-10-03: **ACT v0はユーザーWSL2実機で確認済み**。PR #49はmainへmerge済み、Issue #48は完了。後続調査で実ACT Run ID `5a8076571dca446fa07190cf4fc62509` を回収し、LEARNのparent lineageとして固定した。未記録のbundle ID等は推測して補わない。
 
