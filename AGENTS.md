@@ -88,3 +88,12 @@ Asterは、自作TinyLMを通してAI・Python・数学・コンピューター�
 - parent ArtifactはACT Runのlogical IDから解決し、suite IDだけでなくsuite SHA-256もcurrent base supervisionと一致させる。
 - R1/C1ではexample/stepだけでなくtoken presentations、padding込みtoken positions、wall time、process max RSSも保存する。equal stepをequal FLOPsと呼ばない。
 - candidate coverage failure、infrastructure failure、behavioral failureを区別し、missing familyを新familyで補充しない。
+
+## 機能ごとの図・データ・実験記録（2026-10-14合意）
+
+- 機能/能力を追加・変更するPRでは、同じ作業でシステム図、入力/出力/由来/保存のデータ契約、実験記録を更新する。
+- 実装前に一つの能力、競合仮説、比較条件、達成目標、停止条件を記述する。既存Gateを確認して重複Issueや無断のscope拡張を避ける。
+- `docs/architecture.md`を現在地の入口とし、細部は機能仕様へリンクする。実装済み、設計案、実測済みを図と本文で区別する。
+- recordはsource revision、artifact/Tokenizer/serializer identity、Run、結果、未検証、次の一問を追跡する。未計測ならNOT_RUNとし、成功記録を先に作らない。
+- 候補器/コピー器/ルール/実行器の仕事とモデルの学習成果を分ける。CI PASSは能力PASSではない。
+- Git/Issue/PR/CIの管理はエージェント側で進める。必要なユーザー作業だけを具体化する。private WSL実行や素材選定を済んだと推測しない。
