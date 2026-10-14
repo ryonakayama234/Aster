@@ -134,6 +134,8 @@ CIのコード確認とprivate WSL能力計測を別に記録する。公開Git�
 担当: エージェント側で仕様・実装・Git/Issue/PR/CI・記録更新を進める。ユーザー側には必要時にproseの選定とWSL private実行を一度に一つ依頼する。
 現在はprose新素材の必要性を #113 の設計に沿って整理し、私的モデルへのアクセスを装わない。
 
+機械可読な設計時点の実験台帳は [READ proposal metadata](experiments/read-evidence-selection-v0.json) に置く。`proposal_not_run` は能力計測結果ではない。
+
 ## 文献と転用範囲
 
 - [Khandelwal et al., ACL2018](https://aclanthology.org/P18-1027/): LSTM文脈の並べ替え/置換/削除による分析。#113の手法上の参考。
