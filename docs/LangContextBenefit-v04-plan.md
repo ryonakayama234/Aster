@@ -10,11 +10,11 @@ H1: 先行tokenを反転した対照より、元の文脈で正解targetの平�
 
 ## まず既存の保存値を使う
 
-WSLでprivate report bytesを読み、aggregateのprivate_report_sha256との一致と、埋込みaggregate・checkpoint step・選択件数の一致を確認する。集計対象は既存step0/200の既存全6箇所。例の差し替え・新しい採点・結果上書きは行わない。
+WSLでprivate report bytesを読み、外側aggregateのprivate_report_sha256との一致を確認する。埋込みaggregateは、**外側aggregateからprivate_report_sha256だけを除いた内容**と照合する。既存writerはprivate report保存後にそのhashを外側へ追加するため、埋込み側に自己hashを要求しない。checkpoint step・選択件数の一致も確認する。集計対象は既存step0/200の既存全6箇所。例の差し替え・新しい採点・結果上書きは行わない。
 
 `利益 = NLL(反転) - NLL(元) = logP(正解 | 元) - logP(正解 | 反転)`。
 
-正なら元の文脈が有利。各stepで件数、利益が正・負・数値許容差内の件数、平均・中央値を出す。位置、token、本文、hash、個別case値はprivateに保つ。比較の符号を旧reportの `delta_logp_changed_minus_original` と取り違えない。step0との差は補助的に見るが、単独で学習の因果効果や理解を証明しない。
+正なら元の文脈が有利。この補助集計の規則は、改善 `利益 > 1e-5`、悪化 `利益 < -1e-5`、同等 `abs(利益) <= 1e-5` の排他的な3区分とする。全値が有限で、3区分の和が選択件数と一致することを確認する。各stepで件数、3区分の件数、平均・中央値を出す。位置、token、本文、hash、個別case値はprivateに保つ。比較の符号を旧reportの `delta_logp_changed_minus_original` と取り違えない。step0との差は補助的に見るが、単独で学習の因果効果や理解を証明しない。
 
 ## 新しい素材の採用案
 
