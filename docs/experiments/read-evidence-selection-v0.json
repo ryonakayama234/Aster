@@ -1,0 +1,257 @@
+{
+  "schema_id": "aster.research-experiment-proposal.v0",
+  "feature_id": "READ-v0-evidence-selection",
+  "created_at_jst": "2026-10-15",
+  "repository": "ryonakayama234/Aster",
+  "tracking_issue": 115,
+  "source_design_pr": 116,
+  "blocked_by_active_gate": 113,
+  "status": "proposal_not_run",
+  "experiment_mode": "trial",
+  "evidence_scope": "design",
+  "protocol_frozen": false,
+  "sample_count_frozen": false,
+  "model_choice_frozen": false,
+  "measurement_run_id": null,
+  "parent_artifact_id": null,
+  "model_artifact_id": null,
+  "tokenizer_artifact_id": null,
+  "manifest_sha256": null,
+  "source_git_sha_for_measurement": null,
+  "results": null,
+  "capability": {
+    "exactly_one": "Select an evidence value span corresponding to the requested key from a short actual observation, and preserve source attribution",
+    "not_claimed": [
+      "general Japanese comprehension",
+      "retrieval quality",
+      "multistep tool use",
+      "RAG question-answering",
+      "learning from corrections",
+      "ability of current checkpoint"
+    ]
+  },
+  "hypotheses": {
+    "h1": "Choice depends on requested-key-to-observed-record relation; both members of valid changed-value pairs have correct evidence and copied value",
+    "h0": "Selection fails or follows constant position, memorized value, format shortcut, or a leaked target label"
+  },
+  "interfaces": {
+    "world": {
+      "required": [
+        "task_id",
+        "source_group",
+        "split",
+        "paired_world_id",
+        "request",
+        "observation_records"
+      ],
+      "model_visible": [
+        "request",
+        "observation_records"
+      ]
+    },
+    "candidate": {
+      "required": [
+        "candidate_id",
+        "record_ref",
+        "value_utf8_byte_span",
+        "value",
+        "token_count"
+      ],
+      "generation_policy": "Enumerate every eligible observation value, without filtering to the requested key"
+    },
+    "selection": {
+      "required": [
+        "all_candidate_scores",
+        "selected_candidate_id",
+        "model_artifact_id",
+        "tokenizer_artifact_id",
+        "serializer_id"
+      ]
+    },
+    "verifier_sidecar": {
+      "required": [
+        "gold_record_ref",
+        "gold_value_utf8_bytes",
+        "valid_evidence_relation"
+      ],
+      "model_visible": false
+    },
+    "run": {
+      "required_when_executed": [
+        "cycle_id",
+        "source_git_sha",
+        "protocol_id",
+        "manifest_sha256",
+        "artifacts",
+        "eligible_pairs",
+        "blocked_pairs",
+        "outcomes",
+        "resource_usage",
+        "limitations",
+        "next_question"
+      ]
+    }
+  },
+  "example_not_measurement": {
+    "request": "wanted_key=answer",
+    "world_a": {
+      "observation_records": [
+        {
+          "key": "answer",
+          "value": "42"
+        },
+        {
+          "key": "other",
+          "value": "17"
+        }
+      ],
+      "expected_source_key": "answer",
+      "expected_value": "42"
+    },
+    "world_b": {
+      "observation_records": [
+        {
+          "key": "answer",
+          "value": "57"
+        },
+        {
+          "key": "other",
+          "value": "17"
+        }
+      ],
+      "expected_source_key": "answer",
+      "expected_value": "57"
+    }
+  },
+  "proposed_gates": [
+    {
+      "id": "LANG-113-A",
+      "required": "Only existing private report: verify aggregate identity and six signed context-benefit differences",
+      "may_train": false
+    },
+    {
+      "id": "LANG-113-B",
+      "required": "Provenance groups and prospective context-benefit design; keep holdout isolated",
+      "may_train": false
+    },
+    {
+      "id": "READ-design",
+      "required": "Choose model/tokenizer/serializer/eligible pairs/primary endpoint/budget and freeze before scoring",
+      "may_train": false
+    },
+    {
+      "id": "READ-G0-G1",
+      "required": "Verify candidate completeness, oracle and position controls, UTF-8 spans, token limits and no label leakage",
+      "may_train": false
+    },
+    {
+      "id": "READ-G2",
+      "required": "Bounded model-only one-step CPU trial on predeclared paired worlds; append all failures",
+      "may_train": false
+    }
+  ],
+  "metrics": {
+    "proposed_primary": "paired_correct_evidence_and_value / eligible_world_pairs",
+    "reference_control": "Rule-based key lookup, explicitly not a learned Aster ability",
+    "negative_controls": [
+      "constant-position choice",
+      "distractor-value change",
+      "record-order swap",
+      "unseen values",
+      "unseen template group separately"
+    ],
+    "failures": [
+      "candidate_missing",
+      "context_overflow",
+      "reference_mismatch",
+      "value_copy_mismatch",
+      "label_leakage",
+      "infrastructure_failure"
+    ],
+    "unit_of_independence": "task/template/source family, not generated variants or seeds",
+    "numeric_threshold": "not_frozen"
+  },
+  "guardrails": [
+    "Do not modify old model, tokenizer, serializer or data splits while diagnosing",
+    "Do not open sealed test or private records via public repository",
+    "Keep answer labels in verifier-only sidecar",
+    "Leave old run and artifact immutable; append a new cycle for changes",
+    "Code/CI pass does not establish capability",
+    "No model training or metric is authorized by this proposal"
+  ],
+  "next_question": "After LANG #113 and READ preflight: does the fixed model choose evidence correctly in both paired worlds, or does it exploit a shortcut?",
+  "sources": [
+    "docs/EvidenceUse-v0-plan.md",
+    "docs/architecture.md",
+    "docs/ExperimentCycle-v0.md",
+    "https://github.com/ryonakayama234/Aster/issues/113",
+    "https://github.com/ryonakayama234/Aster/issues/115"
+  ],
+  "execution_plan": {
+    "status": "proposed_not_frozen",
+    "canonical_todo": "docs/TODO/ReadEvidence-v0.md",
+    "canonical_progress": "docs/Progress/ReadEvidence-v0.md",
+    "immediate_work": "LANG-113-A read-only private-run digest and signed-benefit audit; do not score or train",
+    "dependencies": [
+      "LANG-113-A",
+      "LANG-113-B design",
+      "READ design",
+      "READ G0/G1",
+      "READ G2"
+    ],
+    "provisional_trial": {
+      "unit": "task_family",
+      "task_families": 6,
+      "pairs_per_family": 8,
+      "worlds_per_pair": 2,
+      "candidates_per_world": 2,
+      "planned_pair_count": 48,
+      "planned_world_count": 96,
+      "planned_candidate_exposures": 192,
+      "balanced_correct_position_per_family": [
+        4,
+        4
+      ],
+      "fixed_position_expected_pair_correct": 24,
+      "reference_expected_pair_correct": 48,
+      "primary": "both_worlds_correct_evidence_and_value / planned_pair_count",
+      "diagnostic_go_no_go_not_capability_pass": {
+        "minimum_both_correct_pairs": 36,
+        "minimum_families_at_or_above_six_of_eight": 4,
+        "minimum_pairs_correct_per_counted_family": 6
+      },
+      "independence_warning": "Variants, paired worlds, seeds, and families sharing a template/source are not independent confirmatory evidence",
+      "all_numeric_values_provisional": true,
+      "freeze_before_model_scoring": true
+    },
+    "gates": {
+      "lang_113_a": "NOT_RUN",
+      "lang_113_b": "PROPOSED",
+      "read_design": "PROPOSED",
+      "read_g0_g1": "NOT_RUN",
+      "read_g2": "NOT_RUN"
+    },
+    "note": "Planning metadata only. No authorized training, measurement, heldout access or promotion."
+  },
+  "implementation_blueprint": {
+    "status": "design_only_not_implemented",
+    "modules_proposed": [
+      "src/aster/reading/schema.py",
+      "src/aster/reading/candidates.py",
+      "src/aster/reading/serialization.py",
+      "src/aster/reading/selection.py",
+      "src/aster/reading/verify.py",
+      "src/aster/reading/trial.py",
+      "scripts/run_read_v0.py",
+      "tests/reading/"
+    ],
+    "frozen_model_compatibility_gate": "Existing DecisionModel scores Action candidates. READ Evidence candidate compatibility must be verified; otherwise DESIGN_BLOCKED, no implicit head training or weight transfer.",
+    "input_visibility": "request and observation records only; source_group/split/gold belong to offline evaluator",
+    "pair_position_invariant": "Correct candidate position is unchanged between A/B value-change worlds; balanced 4/8 per family gives 24/48 fixed-position baseline",
+    "no_new_training": true,
+    "no_production_agent_changes": true,
+    "architecture_doc": "docs/architecture.md",
+    "module_plan_doc": "docs/TODO/ReadEvidence-v0.md",
+    "progress_doc": "docs/Progress/ReadEvidence-v0.md"
+  }
+}
