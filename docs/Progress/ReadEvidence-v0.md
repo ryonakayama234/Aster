@@ -25,3 +25,10 @@ cycle_id、source_git_sha、manifest_sha256、model/Tokenizer/serializer ID、�
 - **設計上の追加:** [Liu et al., TACL 2024](https://aclanthology.org/2024.tacl-1.9/) の根拠位置依存を踏まえ、既存の位置バランスと順序交換probeを保持する根拠を[READ設計](../EvidenceUse-v0-plan.md)へ追記。RAG原著/Pointer Sentinelも転用限界を明記。
 - **進行Gateは変更なし:** #113-A private Runのread-only同一性確認・signed benefit集計が最初。私的Runへのアクセスなし。#113-Bの素材選定も未開始。
 - **実験結果:** READ G0/G1/G2は**NOT_RUN**、学習/追加forward/新しい実測値は0。既存検証状態を改ざんせず、旧Runの成功claimを拡張しない。
+
+
+## 2026-10-15 実装単位の具体化（設計文書の追記のみ）
+- 既存GitHubの`DecisionHead.forward`/`DecisionModel.forward`、`CandidateBuilder`、Agent `run_loop`を照合。DecisionModelは候補スカラー採点用だが現在の訓練対象はAction候補であり、READ候補への互換性は未確定と判断。
+- READを`schema / candidate enumeration / serializer / frozen selection adapter / byte copier + independent verifier / trial runner`へ分解し、[実装TODO](../TODO/ReadEvidence-v0.md)へ各責任と検収条件を追記。[architecture](../architecture.md)にもoffline評価の境界図を記録。
+- Wolfram計算による設計値の整合: 6×8=48 pairs、×2=96 worlds、×2=192 candidate scores。value-change pairで**正解候補位置を両worldで固定**し、位置バランスが各family 4/8なら固定位置対照は24/48。36/48=75%。この条件が崩れれば対照期待値を再設計。
+- 実行状態は以前と同じ: #113-Aのprivate report集計**NOT_RUN**、READ model eligibility未凍結、READ G0/G1/G2 **NOT_RUN**、学習0、追加forward0。合格値を先取りしていない。機能成功とCI PASSを混同しない。

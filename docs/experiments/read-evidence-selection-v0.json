@@ -232,5 +232,26 @@
       "read_g2": "NOT_RUN"
     },
     "note": "Planning metadata only. No authorized training, measurement, heldout access or promotion."
+  },
+  "implementation_blueprint": {
+    "status": "design_only_not_implemented",
+    "modules_proposed": [
+      "src/aster/reading/schema.py",
+      "src/aster/reading/candidates.py",
+      "src/aster/reading/serialization.py",
+      "src/aster/reading/selection.py",
+      "src/aster/reading/verify.py",
+      "src/aster/reading/trial.py",
+      "scripts/run_read_v0.py",
+      "tests/reading/"
+    ],
+    "frozen_model_compatibility_gate": "Existing DecisionModel scores Action candidates. READ Evidence candidate compatibility must be verified; otherwise DESIGN_BLOCKED, no implicit head training or weight transfer.",
+    "input_visibility": "request and observation records only; source_group/split/gold belong to offline evaluator",
+    "pair_position_invariant": "Correct candidate position is unchanged between A/B value-change worlds; balanced 4/8 per family gives 24/48 fixed-position baseline",
+    "no_new_training": true,
+    "no_production_agent_changes": true,
+    "architecture_doc": "docs/architecture.md",
+    "module_plan_doc": "docs/TODO/ReadEvidence-v0.md",
+    "progress_doc": "docs/Progress/ReadEvidence-v0.md"
   }
 }

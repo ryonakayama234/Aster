@@ -142,3 +142,21 @@ flowchart LR
 ## 実行タスクと達成目標（2026-10-15 / NOT_RUN）
 
 実装・研究を混同しない作業順は [READ 実行TODO](TODO/ReadEvidence-v0.md)、進捗と未計測状態は [READ Progress](Progress/ReadEvidence-v0.md) を正本とする。提案数字は6 task-family×8 pair=48 pair、96 worlds、192 candidate exposures。reference 48/48、固定位置対照24/48、次の独立検証を設計するための暫定判断目安は36/48（75%）+複数family。**protocol未凍結・READ実装/実測なし**。なお#113-Aの私的Run集計を先に行い、結果不明なら推測して次GateをPASSにしない。
+
+
+## 2026-10-15 実装単位の具体化（READ v0単独・設計）
+
+```mermaid
+flowchart TD
+  W["World: request + actual Observation"] --> B["Reading Candidate Builder: 全value span"]
+  B --> S["Versioned serializer + tokenizer/context preflight"]
+  S --> M["Frozen scorer: eligible DecisionModel等 / 適合性は未確定"]
+  M --> C["Select one candidate ID / raw scores"]
+  C --> K["Byte copier: source record span -> value + provenance"]
+  K --> V["Independent verifier: value AND record evidence"]
+  G["Verifier-only gold sidecar / model不可視"] --> V
+  V --> R["Append-only Run / pair/family metrics / limitations"]
+  R -. "別のGateで初めて接続を検証" .-> A["既存Agent Kernel / Tool action"]
+```
+
+READ v0は**現在のAgent本番推論経路へ挿入しない**。現行モデルの既存Action serializerを暗黙変更せず、候補採点の互換性はDESIGN Gateで確認。モデルは根拠候補IDを選び、コピー器は対応bytesを取り出すだけ。正解sidecarは選択器に読ませない。正解keyを候補作成器でフィルタして成功を捏造しない。G0/G1は実験器の正常動作、G2のみ固定モデルの選択を診断する。作業モジュール案・検収条件は[READ実装TODO](TODO/ReadEvidence-v0.md)、状態は[Progress](Progress/ReadEvidence-v0.md)へ。
