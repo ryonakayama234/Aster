@@ -19,3 +19,9 @@
 
 ## 最終報告に必須の項目
 cycle_id、source_git_sha、manifest_sha256、model/Tokenizer/serializer ID、同一family由来、対象全件/適格/blocked、worldごとの選択と根拠、primary、各対照、全失敗、CPU時間/RSS、Trialの限界、次の一問。外部提供するのは許された安全なaggregateのみ。
+
+## 2026-10-15: 文献と優先順位の再点検（design-only）
+- **実施済み:** GitHub #113/#115、Draft PR #116、当該architecture/TODO/実験台帳を照合。Wolframで6×8=48 pairs /96 worlds/192 candidate exposures、二候補の独立ランダム両world正答確率1/4を算術確認（後者はworld間独立を仮定した理想対照で、固定位置やfamily相関がある実験の帰無分布ではない）。
+- **設計上の追加:** [Liu et al., TACL 2024](https://aclanthology.org/2024.tacl-1.9/) の根拠位置依存を踏まえ、既存の位置バランスと順序交換probeを保持する根拠を[READ設計](../EvidenceUse-v0-plan.md)へ追記。RAG原著/Pointer Sentinelも転用限界を明記。
+- **進行Gateは変更なし:** #113-A private Runのread-only同一性確認・signed benefit集計が最初。私的Runへのアクセスなし。#113-Bの素材選定も未開始。
+- **実験結果:** READ G0/G1/G2は**NOT_RUN**、学習/追加forward/新しい実測値は0。既存検証状態を改ざんせず、旧Runの成功claimを拡張しない。
