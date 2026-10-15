@@ -267,3 +267,14 @@ A–Eを同じTask / document-family単位、同じ目標・出典・評価器�
 ## 作業の実施順と検収（2026-10-15）
 
 実際の担当作業、具体的な検収条件、失敗時の停止/分岐は [READ 実行TODO](TODO/ReadEvidence-v0.md) に集約した。実施状態は [Progress](Progress/ReadEvidence-v0.md)、機械可読な案は [実験台帳](experiments/read-evidence-selection-v0.json) に置く。48 pair/96 worldsと目安36/48は**未凍結の提案**で、READ capability計測ではない。まず#113-Aの保存済み6 caseの符号を私的Runから読取専用で集計する。
+
+## 2026-10-15 研究選択レビュー（文献追加・設計のみ）
+
+**選択:** 偏ったCorpusと小さなモデル容量への第一対応は、モデル構造や大規模学習の追加ではなく「短い観測からの根拠選択（READ）」の分離評価とする。ただし稼働中の実験Gateは[#113](https://github.com/ryonakayama234/Aster/issues/113)で、#113-Aのprivate Run真正性確認・符号付き利益集計が直近の実作業。#115のREADは未凍結・未実装・NOT_RUNのまま。
+
+- **なぜ直ちにRAGを作らないか:** 外部から取得した事実だけでは、モデルが「要求 ↔ 根拠」の関係を選べるとは限らない。原著RAGは事前学習済みreader/retrieverを用いており、Asterの極小モデルへの性能保証ではない。[Lewis et al., 2020](https://arxiv.org/abs/2005.11401)。
+- **なぜ参照先をコピーするか:** 出典のbyte spanを採用後に機械的にコピーするなら、未学習の値の綴りをモデル自身に生成させず、関係選択の失敗と文字列生成の失敗を分離できる。文脈からのコピーは[Merity et al., 2016](https://arxiv.org/abs/1609.07843)にも先例があるが、AsterのREADとは同一アーキテクチャではない。
+- **なぜ候補位置を対照化するか:** 長文LMでは根拠位置で性能が変わることが報告されている。[Liu et al., TACL 2024](https://aclanthology.org/2024.tacl-1.9/)。READ v0は短文でも位置shortcutを検出するよう、既存のfamily内4/8位置バランス、固定位置baseline、順序交換probeを保持する。後付けで良い配置だけ選ばない。
+- **なぜLoRA/RL/拡大を今は導入しないか:** まず選択、copy、Agent操作、context利用の失敗を分離する必要がある。新しいoptimizerや初期化を同じTrialで混ぜると因果帰属が崩れる。READで失敗した場合のscratch対事前学習初期化比較も、同一データ・予算を別Gateとして事前登録する。
+
+**意思決定の証拠境界:** 6 family×8 paired examples=48 pairs /96 worlds/192 candidate exposuresの数は実験計画の算術であり、実測でも統計的検出力保証でもない。値・位置を固定した単純referenceは独立Verifierを監査するための対照。一般日本語理解、未知templateへの転移、Corpus偏りの解消を宣言しない。private Run未確認、モデルの追加forwardなし、学習なし、sealed testなし。
