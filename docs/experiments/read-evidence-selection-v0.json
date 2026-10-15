@@ -186,5 +186,51 @@
     "docs/ExperimentCycle-v0.md",
     "https://github.com/ryonakayama234/Aster/issues/113",
     "https://github.com/ryonakayama234/Aster/issues/115"
-  ]
+  ],
+  "execution_plan": {
+    "status": "proposed_not_frozen",
+    "canonical_todo": "docs/TODO/ReadEvidence-v0.md",
+    "canonical_progress": "docs/Progress/ReadEvidence-v0.md",
+    "immediate_work": "LANG-113-A read-only private-run digest and signed-benefit audit; do not score or train",
+    "dependencies": [
+      "LANG-113-A",
+      "LANG-113-B design",
+      "READ design",
+      "READ G0/G1",
+      "READ G2"
+    ],
+    "provisional_trial": {
+      "unit": "task_family",
+      "task_families": 6,
+      "pairs_per_family": 8,
+      "worlds_per_pair": 2,
+      "candidates_per_world": 2,
+      "planned_pair_count": 48,
+      "planned_world_count": 96,
+      "planned_candidate_exposures": 192,
+      "balanced_correct_position_per_family": [
+        4,
+        4
+      ],
+      "fixed_position_expected_pair_correct": 24,
+      "reference_expected_pair_correct": 48,
+      "primary": "both_worlds_correct_evidence_and_value / planned_pair_count",
+      "diagnostic_go_no_go_not_capability_pass": {
+        "minimum_both_correct_pairs": 36,
+        "minimum_families_at_or_above_six_of_eight": 4,
+        "minimum_pairs_correct_per_counted_family": 6
+      },
+      "independence_warning": "Variants, paired worlds, seeds, and families sharing a template/source are not independent confirmatory evidence",
+      "all_numeric_values_provisional": true,
+      "freeze_before_model_scoring": true
+    },
+    "gates": {
+      "lang_113_a": "NOT_RUN",
+      "lang_113_b": "PROPOSED",
+      "read_design": "PROPOSED",
+      "read_g0_g1": "NOT_RUN",
+      "read_g2": "NOT_RUN"
+    },
+    "note": "Planning metadata only. No authorized training, measurement, heldout access or promotion."
+  }
 }

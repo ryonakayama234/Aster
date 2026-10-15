@@ -262,3 +262,8 @@ A–Eを同じTask / document-family単位、同じ目標・出典・評価器�
 
 **次の一問は変えない**：まず #113 の保存済み文脈診断を確認し、READ v0が
 「要求と観測の関係」から根拠を選べるかを独立に測る。検索・Memory・自動学習はまだ作らない。
+
+
+## 作業の実施順と検収（2026-10-15）
+
+実際の担当作業、具体的な検収条件、失敗時の停止/分岐は [READ 実行TODO](TODO/ReadEvidence-v0.md) に集約した。実施状態は [Progress](Progress/ReadEvidence-v0.md)、機械可読な案は [実験台帳](experiments/read-evidence-selection-v0.json) に置く。48 pair/96 worldsと目安36/48は**未凍結の提案**で、READ capability計測ではない。まず#113-Aの保存済み6 caseの符号を私的Runから読取専用で集計する。

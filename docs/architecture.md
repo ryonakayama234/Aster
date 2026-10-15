@@ -138,3 +138,7 @@ flowchart LR
 **毎機能PRの最低構成**: (a) この全体図または機能図、(b) 入力・出力・可視性・source/artifact lineage、(c) `docs/experiments/` のNOT_RUNを含む実験記録または `reports/` の実測結果、(d) 比較条件・失敗分類・停止条件・次の一問。実験のTrialとBatchは[ExperimentCycle-v0](ExperimentCycle-v0.md)に従う。
 
 **この追記の証拠範囲**: ドキュメント整理のみ。学習0、モデル評価0、sealed test開封0。追加した図の将来経路に実行実績はない。既存 #113 / #115 / Draft PR #116 を正本とし、重複Issueを作らない。
+
+## 実行タスクと達成目標（2026-10-15 / NOT_RUN）
+
+実装・研究を混同しない作業順は [READ 実行TODO](TODO/ReadEvidence-v0.md)、進捗と未計測状態は [READ Progress](Progress/ReadEvidence-v0.md) を正本とする。提案数字は6 task-family×8 pair=48 pair、96 worlds、192 candidate exposures。reference 48/48、固定位置対照24/48、次の独立検証を設計するための暫定判断目安は36/48（75%）+複数family。**protocol未凍結・READ実装/実測なし**。なお#113-Aの私的Run集計を先に行い、結果不明なら推測して次GateをPASSにしない。
